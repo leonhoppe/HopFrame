@@ -1,7 +1,9 @@
+using System.Net;
+
 namespace HopFrame.Api.Logic;
 
 public interface ILogicResult {
-    LogicResultState State { get; set; }
+    HttpStatusCode State { get; set; }
 
     string Message { get; set; }
 
@@ -9,7 +11,7 @@ public interface ILogicResult {
 }
 
 public interface ILogicResult<T> {
-    LogicResultState State { get; set; }
+    HttpStatusCode State { get; set; }
 
     T Data { get; set; }
 

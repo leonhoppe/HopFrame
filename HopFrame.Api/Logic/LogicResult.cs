@@ -1,68 +1,69 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HopFrame.Api.Logic;
 
 public class LogicResult : ILogicResult {
-    public LogicResultState State { get; set; }
+    public HttpStatusCode State { get; set; }
 
     public string Message { get; set; }
 
-    public bool IsSuccessful => State == LogicResultState.Ok;
+    public bool IsSuccessful => State == HttpStatusCode.OK;
 
     public static LogicResult Ok() {
         return new LogicResult() {
-            State = LogicResultState.Ok
+            State = HttpStatusCode.OK
         };
     }
 
     public static LogicResult BadRequest() {
         return new LogicResult() {
-            State = LogicResultState.BadRequest
+            State = HttpStatusCode.BadRequest
         };
     }
 
     public static LogicResult BadRequest(string message) {
         return new LogicResult() {
-            State = LogicResultState.BadRequest,
+            State = HttpStatusCode.BadRequest,
             Message = message
         };
     }
 
     public static LogicResult Forbidden() {
         return new LogicResult() {
-            State = LogicResultState.Forbidden
+            State = HttpStatusCode.Forbidden
         };
     }
 
     public static LogicResult Forbidden(string message) {
         return new LogicResult() {
-            State = LogicResultState.Forbidden,
+            State = HttpStatusCode.Forbidden,
             Message = message
         };
     }
 
     public static LogicResult NotFound() {
         return new LogicResult() {
-            State = LogicResultState.NotFound
+            State = HttpStatusCode.NotFound
         };
     }
 
     public static LogicResult NotFound(string message) {
         return new LogicResult() {
-            State = LogicResultState.NotFound,
+            State = HttpStatusCode.NotFound,
             Message = message
         };
     }
 
     public static LogicResult Conflict() {
         return new LogicResult() {
-            State = LogicResultState.Conflict
+            State = HttpStatusCode.Conflict
         };
     }
 
     public static LogicResult Conflict(string message) {
         return new LogicResult() {
-            State = LogicResultState.Conflict,
+            State = HttpStatusCode.Conflict,
             Message = message
         };
     }
@@ -80,78 +81,86 @@ public class LogicResult : ILogicResult {
             Message = result.Message
         };
     }
+
+    public static implicit operator ActionResult(LogicResult v) {
+        if (v.State == HttpStatusCode.OK) return new OkResult();
+
+        return new ObjectResult(v.Message) {
+            StatusCode = (int)v.State
+        };
+    }
 }
 
 public class LogicResult<T> : ILogicResult<T> {
-    public LogicResultState State { get; set; }
+    public HttpStatusCode State { get; set; }
 
     public T Data { get; set; }
 
     public string Message { get; set; }
 
-    public bool IsSuccessful => State == LogicResultState.Ok;
+    public bool IsSuccessful => State == HttpStatusCode.OK;
 
     public static LogicResult<T> Ok() {
         return new LogicResult<T>() {
-            State = LogicResultState.Ok
+            State = HttpStatusCode.OK
         };
     }
 
     public static LogicResult<T> Ok(T result) {
         return new LogicResult<T>() {
-            State = LogicResultState.Ok,
+            State = HttpStatusCode.OK,
             Data = result
         };
     }
 
     public static LogicResult<T> BadRequest() {
         return new LogicResult<T>() {
-            State = LogicResultState.BadRequest
+            State = HttpStatusCode.BadRequest
         };
     }
 
     public static LogicResult<T> BadRequest(string message) {
         return new LogicResult<T>() {
-            State = LogicResultState.BadRequest,
+            State = HttpStatusCode.BadRequest,
             Message = message
         };
     }
 
     public static LogicResult<T> Forbidden() {
         return new LogicResult<T>() {
-            State = LogicResultState.Forbidden
+            State = HttpStatusCode.Forbidden
         };
     }
 
     public static LogicResult<T> Forbidden(string message) {
         return new LogicResult<T>() {
-            State = LogicResultState.Forbidden,
+            State = HttpStatusCode.Forbidden,
             Message = message
         };
     }
 
     public static LogicResult<T> NotFound() {
         return new LogicResult<T>() {
-            State = LogicResultState.NotFound
+            State = HttpStatusCode.NotFound
         };
     }
 
     public static LogicResult<T> NotFound(string message) {
         return new LogicResult<T>() {
-            State = LogicResultState.NotFound,
+            State = HttpStatusCode.NotFound,
             Message = message
         };
     }
 
     public static LogicResult<T> Conflict() {
         return new LogicResult<T>() {
-            State = LogicResultState.Conflict
+            State = HttpStatusCode.Conflict
         };
     }
 
     public static LogicResult<T> Conflict(string message) {
         return new LogicResult<T>() {
-            State = LogicResultState.Conflict,
+            State = HttpStatusCode.Conflict,
             Message = message
         };
     }
@@ -167,6 +176,14 @@ public class LogicResult<T> : ILogicResult<T> {
         return new LogicResult<T>() {
             State = result.State,
             Message = result.Message
+        };
+    }
+
+    public static implicit operator ActionResult<T>(LogicResult<T> v) {
+        if (v.State == HttpStatusCode.OK) return new OkObjectResult(v.Data);
+
+        return new ObjectResult(v.Message) {
+            StatusCode = (int)v.State
         };
     }
 }

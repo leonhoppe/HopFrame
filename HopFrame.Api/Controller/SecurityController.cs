@@ -24,11 +24,11 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         var user = await context.Users.SingleOrDefaultAsync(user => user.Email == login.Email);
 
         if (user is null)
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.NotFound("The provided email address was not found"));
+            return LogicResult<SingleValueResult<string>>.NotFound("The provided email address was not found");
 
         var hashedPassword = EncryptionManager.Hash(login.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
         if (hashedPassword != user.Password)
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct"));
+            return LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct");
 
         var refreshToken = new TokenEntry {
             CreatedAt = DateTime.Now,
@@ -52,16 +52,16 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         await context.Tokens.AddRangeAsync(refreshToken, accessToken);
         await context.SaveChangesAsync();
 
-        return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Ok(accessToken.Token));
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
     [HttpPost("register")]
     public async Task<ActionResult<SingleValueResult<string>>> Register([FromBody] UserRegister register) {
         if (register.Password.Length < 8)
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Conflict("Password needs to be at least 8 characters long"));
+            return LogicResult<SingleValueResult<string>>.Conflict("Password needs to be at least 8 characters long");
         
         if (await context.Users.AnyAsync(user => user.Username == register.Username || user.Email == register.Email))
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Conflict("Username or Email is already registered"));
+            return LogicResult<SingleValueResult<string>>.Conflict("Username or Email is already registered");
 
         var user = new UserEntry {
             CreatedAt = DateTime.Now,
@@ -106,7 +106,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         await context.Tokens.AddRangeAsync(refreshToken, accessToken);
         await context.SaveChangesAsync();
 
-        return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Ok(accessToken.Token));
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
     [HttpGet("authenticate")]
@@ -114,15 +114,15 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         var refreshToken = HttpContext.Request.Cookies[RefreshTokenType];
         
         if (string.IsNullOrEmpty(refreshToken))
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Conflict("Refresh token not provided"));
+            return LogicResult<SingleValueResult<string>>.Conflict("Refresh token not provided");
 
         var token = await context.Tokens.SingleOrDefaultAsync(token => token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType);
         
         if (token is null)
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.NotFound("Refresh token not valid"));
+            return LogicResult<SingleValueResult<string>>.NotFound("Refresh token not valid");
 
         if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now)
-            return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Conflict("Refresh token is expired"));
+            return LogicResult<SingleValueResult<string>>.Conflict("Refresh token is expired");
 
         var accessToken = new TokenEntry {
             CreatedAt = DateTime.Now,
@@ -134,7 +134,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         await context.Tokens.AddAsync(accessToken);
         await context.SaveChangesAsync();
         
-        return this.FromLogicResult(LogicResult<SingleValueResult<string>>.Ok(accessToken.Token));
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
     [HttpDelete("logout"), Authorized]
@@ -143,7 +143,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         var refreshToken = HttpContext.Request.Cookies[RefreshTokenType];
         
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
-            return this.FromLogicResult(LogicResult.Conflict("access or refresh token not provided"));
+            return LogicResult.Conflict("access or refresh token not provided");
 
         var tokenEntries = await context.Tokens.Where(token =>
                 (token.Token == accessToken && token.Type == TokenEntry.AccessTokenType) ||
@@ -151,7 +151,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
             .ToArrayAsync();
         
         if (tokenEntries.Length != 2)
-            return this.FromLogicResult(LogicResult.NotFound("One or more of the provided tokens was not found"));
+            return LogicResult.NotFound("One or more of the provided tokens was not found");
 
         context.Tokens.Remove(tokenEntries[0]);
         context.Tokens.Remove(tokenEntries[1]);
@@ -159,7 +159,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         
         HttpContext.Response.Cookies.Delete(RefreshTokenType);
         
-        return this.FromLogicResult(LogicResult.Ok());
+        return LogicResult.Ok();
     }
 
     [HttpDelete("delete"), Authorized]
@@ -168,13 +168,13 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         var userId = (await context.Tokens.SingleOrDefaultAsync(t => t.Token == token && t.Type == TokenEntry.AccessTokenType))?.UserId;
 
         if (string.IsNullOrEmpty(userId))
-            return this.FromLogicResult(LogicResult.NotFound("Access token does not match any user"));
+            return LogicResult.NotFound("Access token does not match any user");
 
         var user = await context.Users.SingleAsync(user => user.Id == userId);
         
         var password = EncryptionManager.Hash(login.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
         if (user.Password != password)
-            return this.FromLogicResult(LogicResult.Forbidden("The provided password is not correct"));
+            return LogicResult.Forbidden("The provided password is not correct");
 
         var tokens = await context.Tokens.Where(t => t.UserId == userId).ToArrayAsync();
         var permissions = await context.Permissions.Where(perm => perm.UserId == userId).ToArrayAsync();
@@ -186,7 +186,7 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
         
         HttpContext.Response.Cookies.Delete(RefreshTokenType);
 
-        return this.FromLogicResult(LogicResult.Ok());
+        return LogicResult.Ok();
     }
     
 }
