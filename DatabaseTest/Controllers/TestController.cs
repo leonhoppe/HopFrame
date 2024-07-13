@@ -1,4 +1,3 @@
-using HopFrame.Api.Controller;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatabaseTest.Controllers;
 
 [ApiController]
-public class TestController(DatabaseContext context, ITokenContext userContext) : SecurityController<DatabaseContext>(context) {
+[Route("test")]
+public class TestController(ITokenContext userContext) : ControllerBase {
 
     [HttpGet("permissions"), Authorized]
     public ActionResult<IList<string>> Permissions() {

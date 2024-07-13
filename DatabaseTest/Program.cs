@@ -1,22 +1,18 @@
 using DatabaseTest;
-using HopFrame.Api;
-using HopFrame.Api.Controller;
-using HopFrame.Security.Authentication;
+using HopFrame.Api.Extensions;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers()
-    .AddController<SecurityController<DatabaseContext>>();
+builder.Services.AddControllers();
+builder.Services.AddHopFrame<DatabaseContext>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddHopFrameAuthentication<DatabaseContext>();
-//builder.Logging.AddFilter<HopFrameAuthentication<DatabaseContext>>(options => options == LogLevel.None);
 
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
@@ -51,7 +47,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
