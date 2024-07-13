@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Database;
 
+/// <summary>
+/// This class includes the basic database structure in order for HopFrame to work
+/// </summary>
 public class HopDbContextBase : DbContext {
     
     public HopDbContextBase() {}

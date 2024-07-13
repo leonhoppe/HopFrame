@@ -12,29 +12,29 @@ using Microsoft.Extensions.Options;
 
 namespace HopFrame.Security.Authentication;
 
-public class HopFrameAuthentication<TDbContext> : AuthenticationHandler<AuthenticationSchemeOptions> where TDbContext : HopDbContextBase {
+public class HopFrameAuthentication<TDbContext>(
+    IOptionsMonitor<AuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder,
+    ISystemClock clock,
+    TDbContext context)
+    : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock)
+    where TDbContext : HopDbContextBase {
 
     public const string SchemeName = "HopCore.Authentication";
     public static readonly TimeSpan AccessTokenTime = new(0, 0, 5, 0);
     public static readonly TimeSpan RefreshTokenTime = new(30, 0, 0, 0);
 
-    private readonly TDbContext _context;
-
-    public HopFrameAuthentication(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger,
-        UrlEncoder encoder, ISystemClock clock, TDbContext context) : base(options, logger, encoder, clock) {
-        _context = context;
-    }
-    
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync() {
         var accessToken = Request.Headers["Authorization"].ToString();
         if (string.IsNullOrEmpty(accessToken)) return AuthenticateResult.Fail("No Access Token provided");
         
-        var tokenEntry = await _context.Tokens.SingleOrDefaultAsync(token => token.Token == accessToken);
+        var tokenEntry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == accessToken);
         
         if (tokenEntry is null) return AuthenticateResult.Fail("The provided Access Token does not exist");
         if (tokenEntry.CreatedAt + AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
         
-        if (!(await _context.Users.AnyAsync(user => user.Id == tokenEntry.UserId)))
+        if (!(await context.Users.AnyAsync(user => user.Id == tokenEntry.UserId)))
             return AuthenticateResult.Fail("The provided Access Token does not match any user");
 
         var claims = new List<Claim> {
@@ -42,7 +42,7 @@ public class HopFrameAuthentication<TDbContext> : AuthenticationHandler<Authenti
             new(HopFrameClaimTypes.UserId, tokenEntry.UserId)
         };
 
-        var permissions = await _context.Permissions
+        var permissions = await context.Permissions
             .Where(perm => perm.UserId == tokenEntry.UserId)
             .Select(perm => perm.PermissionText)
             .ToListAsync();
@@ -51,7 +51,7 @@ public class HopFrameAuthentication<TDbContext> : AuthenticationHandler<Authenti
             .Where(perm => perm.StartsWith("group."))
             .ToList();
 
-        var groupPerms = await _context.Permissions
+        var groupPerms = await context.Permissions
             .Where(perm => groups.Contains(perm.UserId))
             .Select(perm => perm.PermissionText)
             .ToListAsync();
