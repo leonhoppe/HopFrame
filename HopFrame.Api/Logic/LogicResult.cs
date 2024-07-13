@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace HopFrame.Api.Logic;
 
 public class LogicResult : ILogicResult {

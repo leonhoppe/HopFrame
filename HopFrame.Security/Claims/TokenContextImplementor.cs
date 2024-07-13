@@ -4,20 +4,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Security.Claims;
 
-public class TokenContextImplementor : ITokenContextBase {
-    private readonly IHttpContextAccessor _accessor;
-    private readonly HopDbContextBase _context;
+internal class TokenContextImplementor<TDbContext>(IHttpContextAccessor accessor, TDbContext context) : ITokenContext where TDbContext : HopDbContextBase {
+    public bool IsAuthenticated => accessor.HttpContext?.User.Identity?.IsAuthenticated == true;
 
-    public TokenContextImplementor(IHttpContextAccessor accessor, HopDbContextBase context) {
-        _accessor = accessor;
-        _context = context;
-    }
-
-    public bool IsAuthenticated => _accessor.HttpContext?.User.Identity?.IsAuthenticated == true;
-
-    public User User => _context.Users
-        .SingleOrDefault(user => user.Id == _accessor.HttpContext.User.GetUserId())?
-        .ToUserModel(_context);
+    public User User => context.Users
+        .SingleOrDefault(user => user.Id == accessor.HttpContext.User.GetUserId())?
+        .ToUserModel(context);
     
-    public Guid AccessToken => Guid.Parse(_accessor.HttpContext?.User.GetAccessTokenId() ?? string.Empty);
+    public Guid AccessToken => Guid.Parse(accessor.HttpContext?.User.GetAccessTokenId() ?? string.Empty);
 }

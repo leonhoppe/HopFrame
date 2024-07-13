@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace HopFrame.Security.Authentication;
 
@@ -38,13 +39,24 @@ public class HopFrameAuthentication<TDbContext> : AuthenticationHandler<Authenti
 
         var claims = new List<Claim> {
             new(HopFrameClaimTypes.AccessTokenId, accessToken),
-            new(HopFrameClaimTypes.UserId, tokenEntry.UserId.ToString())
+            new(HopFrameClaimTypes.UserId, tokenEntry.UserId)
         };
 
         var permissions = await _context.Permissions
             .Where(perm => perm.UserId == tokenEntry.UserId)
             .Select(perm => perm.PermissionText)
             .ToListAsync();
+
+        var groups = permissions
+            .Where(perm => perm.StartsWith("group."))
+            .ToList();
+
+        var groupPerms = await _context.Permissions
+            .Where(perm => groups.Contains(perm.UserId))
+            .Select(perm => perm.PermissionText)
+            .ToListAsync();
+        
+        permissions.AddRange(groupPerms);
         
         claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
 

@@ -1,3 +1,4 @@
+using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -19,6 +20,13 @@ public class AuthorizedFilter : IAuthorizationFilter {
             return;
         }
         
-        //TODO: Check Permissions
+        if (_permissions.Length == 0) return;
+
+        var permissions = context.HttpContext.User.GetPermissions();
+
+        if (!_permissions.Any(permission => PermissionValidator.IncludesPermission(permission, permissions))) {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
     }
 }
