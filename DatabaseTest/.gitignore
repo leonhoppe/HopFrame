@@ -1,3 +1,5 @@
 ﻿obj
 bin
+Migrations
 appsettings.Development.json
+test.db
