@@ -4,6 +4,9 @@ namespace HopFrame.Security.Claims;
 
 public interface ITokenContext {
     
+    public const string RefreshTokenType = "HopFrame.Security.RefreshToken";
+    public const string AccessTokenType = "HopFrame.Security.AccessToken";
+    
     /// <summary>
     /// This field specifies that a valid user is accessing the endpoint
     /// </summary>

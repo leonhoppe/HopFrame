@@ -17,13 +17,16 @@ public static class HopFrameAuthenticationExtensions {
     /// <param name="service">The service provider to add the services to</param>
     /// <typeparam name="TDbContext">The database object that saves all entities that are important for the security api</typeparam>
     /// <returns></returns>
-    public static AuthenticationBuilder AddHopFrameAuthentication<TDbContext>(this IServiceCollection service) where TDbContext : HopDbContextBase {
+    public static IServiceCollection AddHopFrameAuthentication<TDbContext>(this IServiceCollection service) where TDbContext : HopDbContextBase {
         service.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         service.AddScoped<ITokenContext, TokenContextImplementor<TDbContext>>();
         service.AddScoped<IPermissionService, PermissionService<TDbContext>>();
         service.AddScoped<IUserService, UserService<TDbContext>>();
         
-        return service.AddAuthentication(HopFrameAuthentication<TDbContext>.SchemeName).AddScheme<AuthenticationSchemeOptions, HopFrameAuthentication<TDbContext>>(HopFrameAuthentication<TDbContext>.SchemeName, _ => {});
+        service.AddAuthentication(HopFrameAuthentication<TDbContext>.SchemeName).AddScheme<AuthenticationSchemeOptions, HopFrameAuthentication<TDbContext>>(HopFrameAuthentication<TDbContext>.SchemeName, _ => {});
+        service.AddAuthorization();
+
+        return service;
     }
     
 }

@@ -23,5 +23,5 @@ public interface IUserService {
 
     Task DeleteUser(User user);
 
-    Task<string> GetUserPassword(User user);
+    Task<bool> CheckUserPassword(User user, string password);
 }

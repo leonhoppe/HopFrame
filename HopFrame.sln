@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Security", "HopFra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Api", "HopFrame.Api\HopFrame.Api.csproj", "{1E821490-AEDC-4F55-B758-52F4FADAB53A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Web", "HopFrame.Web\HopFrame.Web.csproj", "{3BE585BC-13A5-4BE4-A806-E9EC2D825956}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontendTest", "FrontendTest\FrontendTest.csproj", "{8F983A37-63CF-48D5-988D-58B78EF8AECD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,17 @@ Global
 		{1E821490-AEDC-4F55-B758-52F4FADAB53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E821490-AEDC-4F55-B758-52F4FADAB53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E821490-AEDC-4F55-B758-52F4FADAB53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BE585BC-13A5-4BE4-A806-E9EC2D825956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BE585BC-13A5-4BE4-A806-E9EC2D825956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BE585BC-13A5-4BE4-A806-E9EC2D825956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BE585BC-13A5-4BE4-A806-E9EC2D825956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F983A37-63CF-48D5-988D-58B78EF8AECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F983A37-63CF-48D5-988D-58B78EF8AECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F983A37-63CF-48D5-988D-58B78EF8AECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F983A37-63CF-48D5-988D-58B78EF8AECD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{921159CE-AF75-44C3-A3F9-6B9B1A4E85CF} = {58703056-8DAD-4221-BBE3-42425D2F4929}
+		{8F983A37-63CF-48D5-988D-58B78EF8AECD} = {58703056-8DAD-4221-BBE3-42425D2F4929}
 	EndGlobalSection
 EndGlobal

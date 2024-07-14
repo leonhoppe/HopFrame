@@ -24,7 +24,7 @@ public class AuthorizedFilter : IAuthorizationFilter {
 
         var permissions = context.HttpContext.User.GetPermissions();
 
-        if (!_permissions.Any(permission => PermissionValidator.IncludesPermission(permission, permissions))) {
+        if (!_permissions.All(permission => PermissionValidator.IncludesPermission(permission, permissions))) {
             context.Result = new UnauthorizedResult();
             return;
         }

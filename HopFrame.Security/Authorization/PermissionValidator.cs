@@ -1,6 +1,6 @@
 namespace HopFrame.Security.Authorization;
 
-internal static class PermissionValidator {
+public static class PermissionValidator {
     
     public static bool IncludesPermission(string permission, string[] permissions) {
         if (permission == "*") return true;

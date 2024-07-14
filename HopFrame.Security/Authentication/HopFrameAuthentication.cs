@@ -28,7 +28,7 @@ public class HopFrameAuthentication<TDbContext>(
     public static readonly TimeSpan RefreshTokenTime = new(30, 0, 0, 0);
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync() {
-        var accessToken = Request.Headers["Authorization"].ToString();
+        var accessToken = Request.Cookies[ITokenContext.AccessTokenType];
         if (string.IsNullOrEmpty(accessToken)) return AuthenticateResult.Fail("No Access Token provided");
         
         var tokenEntry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == accessToken);
@@ -36,7 +36,7 @@ public class HopFrameAuthentication<TDbContext>(
         if (tokenEntry is null) return AuthenticateResult.Fail("The provided Access Token does not exist");
         if (tokenEntry.CreatedAt + AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
         
-        if (!(await context.Users.AnyAsync(user => user.Id == tokenEntry.UserId)))
+        if (!await context.Users.AnyAsync(user => user.Id == tokenEntry.UserId))
             return AuthenticateResult.Fail("The provided Access Token does not match any user");
 
         var claims = new List<Claim> {

@@ -39,6 +39,9 @@ internal sealed class UserService<TDbContext>(TDbContext context) : IUserService
     }
 
     public async Task<User> AddUser(UserRegister user) {
+        if (await GetUserByEmail(user.Email) is not null) return null;
+        if (await GetUserByUsername(user.Username) is not null) return null;
+        
         var entry = new UserEntry {
             Id = Guid.NewGuid().ToString(),
             Email = user.Email,
@@ -100,11 +103,14 @@ internal sealed class UserService<TDbContext>(TDbContext context) : IUserService
         await context.SaveChangesAsync();
     }
 
-    public Task<string> GetUserPassword(User user) {
+    public async Task<bool> CheckUserPassword(User user, string password) {
         var id = user.Id.ToString();
-        return context.Users
+        var hash = EncryptionManager.Hash(password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
+
+        var entry = await context.Users
             .Where(entry => entry.Id == id)
-            .Select(entry => entry.Password)
             .SingleOrDefaultAsync();
+
+        return entry.Password == hash;
     }
 }

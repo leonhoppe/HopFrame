@@ -1,0 +1,23 @@
+﻿@page "/counter"
+@using HopFrame.Web.Components
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<AuthorizedView Permissions="@permissions">
+    <p role="status">Current count: @currentCount</p>
+
+    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+</AuthorizedView>
+
+@code {
+    private int currentCount = 0;
+    private string[] permissions = ["web.counter"];
+
+    private void IncrementCount() {
+        currentCount++;
+    }
+
+}

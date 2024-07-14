@@ -1,0 +1,99 @@
+@page "/register"
+@using HopFrame.Security.Services
+@using HopFrame.Web.Model
+@using HopFrame.Web.Services
+@using Microsoft.AspNetCore.Components.Forms
+
+@implements IDisposable
+
+<div class="register-wrapper">
+    <EditForm EditContext="_context" OnValidSubmit="OnRegister" FormName="register-form">
+        @*<AntiforgeryToken/>*@
+        <div class="field-wrapper">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <InputText type="email" class="form-control" id="email" required @bind-Value="RegisterData.Email"/>
+                <ValidationMessage For="() => RegisterData.Email"/>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <InputText type="text" class="form-control" id="username" required @bind-Value="RegisterData.Username"/>
+                <ValidationMessage For="() => RegisterData.Username"/>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <InputText type="password" class="form-control" id="password" aria-describedby="passwordHelp" required @bind-Value="RegisterData.Password"/>
+                <div id="passwordHelp" class="form-text">The password needs to be at least 8 characters long</div>
+                <ValidationMessage For="() => RegisterData.Password"/>
+            </div>
+            <div class="mb-3">
+                <label for="passwordRepeat" class="form-label">Repeat password</label>
+                <InputText type="password" class="form-control" id="passwordRepeat" aria-describedby="passwordHelp" required @bind-Value="RegisterData.RepeatedPassword"/>
+                <ValidationMessage For="() => RegisterData.RepeatedPassword"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </EditForm>
+</div>
+
+@inject NavigationManager Navigation
+@inject IUserService Users
+@inject IAuthService Auth
+
+@code {
+    public static string RedirectAfterRegister { get; set; } = "/";
+    private const string RefreshTokenType = "HopFrame.Security.RefreshToken";
+
+    [SupplyParameterFromForm]
+    private RegisterData RegisterData { get; set; }
+
+    private EditContext _context;
+    private ValidationMessageStore _messages;
+
+    protected override void OnInitialized() {
+        RegisterData ??= new();
+
+        _context = new EditContext(RegisterData);
+        _context.OnValidationRequested += ValidateForm;
+        _messages = new ValidationMessageStore(_context);
+    }
+
+    private async Task OnRegister() {
+        var hasConflict = false;
+        
+        if (await Users.GetUserByEmail(RegisterData.Email) is not null) {
+            _messages.Add(() => RegisterData.Email, "Email is already in use");
+            hasConflict = true;
+        }
+        
+        if (await Users.GetUserByUsername(RegisterData.Username) is not null) {
+            _messages.Add(() => RegisterData.Username, "Username is already in use");
+            hasConflict = true;
+        }
+        
+        if (hasConflict) return;
+
+        await Auth.Register(RegisterData);
+        Navigation.NavigateTo(RedirectAfterRegister, true);
+    }
+
+    private void ValidateForm(object sender, ValidationRequestedEventArgs e) {
+        _messages.Clear();
+
+        if (RegisterData.Password != RegisterData.RepeatedPassword) {
+            _messages.Add(() => RegisterData.RepeatedPassword,  "Passwords doesn't mach");
+        }
+
+        if (RegisterData.Password.Length < 8) {
+            _messages.Add(() => RegisterData.Password, "Password needs to be at least 8 characters long");
+        }
+
+        if (!RegisterData.Email.Contains("@") || !RegisterData.Email.Contains(".") || RegisterData.Email.EndsWith(".")) {
+            _messages.Add(() => RegisterData.Email, "Please enter a valid email address");
+        }
+    }
+
+    public void Dispose() {
+        _context.OnValidationRequested -= ValidateForm;
+    }
+}

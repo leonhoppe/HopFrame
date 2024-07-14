@@ -1,4 +1,4 @@
-namespace HopFrame.Api.Models;
+namespace HopFrame.Security.Models;
 
 public struct UserLogin {
     public string Email { get; set; }
