@@ -3,13 +3,18 @@
 @using HopFrame.Web.Model
 @using HopFrame.Web.Services
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
 
 @implements IDisposable
+
+<PageTitle>Register</PageTitle>
 
 <div class="register-wrapper">
     <EditForm EditContext="_context" OnValidSubmit="OnRegister" FormName="register-form">
         @*<AntiforgeryToken/>*@
         <div class="field-wrapper">
+            <h2>Register</h2>
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <InputText type="email" class="form-control" id="email" required @bind-Value="RegisterData.Email"/>
@@ -31,18 +36,20 @@
                 <InputText type="password" class="form-control" id="passwordRepeat" aria-describedby="passwordHelp" required @bind-Value="RegisterData.RepeatedPassword"/>
                 <ValidationMessage For="() => RegisterData.RepeatedPassword"/>
             </div>
+            <div class="mb-3">
+                <span>Already have an account? <NavLink href="login">Login</NavLink></span>
+            </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </div>
     </EditForm>
 </div>
 
-@inject NavigationManager Navigation
+@inject NavigationManager Navigator
 @inject IUserService Users
 @inject IAuthService Auth
 
 @code {
     public static string RedirectAfterRegister { get; set; } = "/";
-    private const string RefreshTokenType = "HopFrame.Security.RefreshToken";
 
     [SupplyParameterFromForm]
     private RegisterData RegisterData { get; set; }
@@ -74,7 +81,7 @@
         if (hasConflict) return;
 
         await Auth.Register(RegisterData);
-        Navigation.NavigateTo(RedirectAfterRegister, true);
+        Navigator.NavigateTo(RedirectAfterRegister, true);
     }
 
     private void ValidateForm(object sender, ValidationRequestedEventArgs e) {

@@ -1,0 +1,61 @@
+@page "/login"
+@using HopFrame.Security.Models
+@using HopFrame.Web.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-wrapper">
+    <EditForm Model="LoginData" FormName="login-form" OnSubmit="OnLogin">
+        <div class="field-wrapper">
+            <h2>Login</h2>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <InputText type="email" class="form-control" id="email" required @bind-Value="LoginData.Email"/>
+                @*<ValidationMessage For="() => RegisterData.Email"/>*@
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <InputText type="password" class="form-control" id="password" aria-describedby="passwordHelp" required @bind-Value="LoginData.Password"/>
+                @*<ValidationMessage For="() => RegisterData.Password"/>*@
+            </div>
+            <div class="mb-3">
+                <span>Don't have an account? <NavLink href="register">Register</NavLink></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+            
+            @if (_loginError) {
+                <div class="alert alert-danger" role="alert" style="margin-top: 16px; margin-bottom: 0px">
+                    Email or password does not match any account!
+                </div>
+            }
+        </div>
+    </EditForm>
+</div>
+
+@inject IAuthService Auth
+@inject NavigationManager Navigator
+
+@code {
+    [SupplyParameterFromForm]
+    private UserLogin LoginData { get; set; }
+
+    private bool _loginError;
+
+    protected override void OnInitialized() {
+        LoginData ??= new();
+    }
+
+    private async Task OnLogin() {
+        var result = await Auth.Login(LoginData);
+
+        if (!result) {
+            _loginError = true;
+            return;
+        }
+        
+        Navigator.NavigateTo(Register.RedirectAfterRegister, true);
+    }
+}

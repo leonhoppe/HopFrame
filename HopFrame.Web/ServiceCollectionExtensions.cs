@@ -1,4 +1,5 @@
 using HopFrame.Database;
+using HopFrame.Security.Authentication;
 using HopFrame.Web.Services;
 using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,9 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrameServices<TDbContext>(this IServiceCollection services) where TDbContext : HopDbContextBase {
         services.AddHttpClient();
         services.AddScoped<IAuthService, AuthService<TDbContext>>();
+        services.AddTransient<AuthMiddleware>();
+
+        services.AddHopFrameAuthentication<TDbContext>();
 
         return services;
     }

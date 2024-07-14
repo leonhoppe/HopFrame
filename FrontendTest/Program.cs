@@ -1,12 +1,10 @@
 using FrontendTest;
 using FrontendTest.Components;
-using HopFrame.Security.Authentication;
 using HopFrame.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddHopFrameAuthentication<DatabaseContext>();
 builder.Services.AddHopFrameServices<DatabaseContext>();
 
 // Add services to the container.
@@ -27,6 +25,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseAuthorization();
+app.UseAuthentication();
+app.UseMiddleware<AuthMiddleware>();
 
 app.MapRazorComponents<App>()
     .AddHopFramePages()

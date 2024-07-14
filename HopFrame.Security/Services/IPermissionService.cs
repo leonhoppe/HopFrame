@@ -26,6 +26,6 @@ public interface IPermissionService {
 
     Task DeletePermission(Permission permission);
 
-    internal Task<string[]> GetFullPermissions(string user);
+    Task<string[]> GetFullPermissions(string user);
 
 }

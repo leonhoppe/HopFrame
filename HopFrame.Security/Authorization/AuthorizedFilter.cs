@@ -15,7 +15,7 @@ public class AuthorizedFilter : IAuthorizationFilter {
     public void OnAuthorization(AuthorizationFilterContext context) {
         if (context.Filters.Any(item => item is IAllowAnonymousFilter)) return;
 
-        if (context.HttpContext.User.Identity?.IsAuthenticated == false) {
+        if (string.IsNullOrEmpty(context.HttpContext.User.GetAccessTokenId())) {
             context.Result = new UnauthorizedResult();
             return;
         }

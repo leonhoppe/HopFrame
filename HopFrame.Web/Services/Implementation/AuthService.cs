@@ -51,7 +51,7 @@ public class AuthService<TDbContext>(
         var user = await userService.GetUserByEmail(login.Email);
 
         if (user == null) return false;
-        if (await userService.CheckUserPassword(user, login.Password)) return false;
+        if (await userService.CheckUserPassword(user, login.Password) == false) return false;
         
         var refreshToken = new TokenEntry {
             CreatedAt = DateTime.Now,
@@ -100,7 +100,7 @@ public class AuthService<TDbContext>(
         httpAccessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);
     }
 
-    public async Task<bool> RefreshLogin() {
+    public async Task<TokenEntry> RefreshLogin() {
         if (await IsLoggedIn()) {
             var oldToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
             var entry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == oldToken);
@@ -110,14 +110,14 @@ public class AuthService<TDbContext>(
             }
         }
         
-        var refreshToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
+        var refreshToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
 
-        if (string.IsNullOrWhiteSpace(refreshToken)) return false;
+        if (string.IsNullOrWhiteSpace(refreshToken)) return null;
         
         var token = await context.Tokens.SingleOrDefaultAsync(token => token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType);
 
-        if (token is null) return false;
-        if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now) return false;
+        if (token is null) return null;
+        if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now) return null;
         
         var accessToken = new TokenEntry {
             CreatedAt = DateTime.Now,
@@ -135,7 +135,7 @@ public class AuthService<TDbContext>(
             Secure = true
         });
 
-        return true;
+        return accessToken;
     }
 
     public async Task<bool> IsLoggedIn() {

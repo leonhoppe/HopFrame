@@ -1,5 +1,8 @@
 ﻿@page "/"
 @using HopFrame.Security.Claims
+@using HopFrame.Web.Components
+
+<AuthorizedView RedirectIfUnauthorized="login"/>
 
 <PageTitle>Home</PageTitle>
 

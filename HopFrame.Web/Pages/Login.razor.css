@@ -1,4 +1,4 @@
-.register-wrapper {
+.login-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,7 +7,7 @@
 .field-wrapper {
     margin-top: 25vh;
     min-width: 30vw;
-    
+
     padding: 30px;
     border: 2px solid #ced4da;
     border-radius: 10px;

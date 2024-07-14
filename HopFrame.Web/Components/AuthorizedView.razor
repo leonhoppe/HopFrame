@@ -2,12 +2,13 @@
 @using HopFrame.Security.Claims
 @using Microsoft.AspNetCore.Http
 
-@if (IsAuthorized()) {
+@if (HandleComponent()) {
     @ChildContent
 }
 
 @inject ITokenContext Auth
 @inject IHttpContextAccessor HttpAccessor
+@inject NavigationManager Navigator
 
 @code {
     [Parameter]
@@ -17,18 +18,31 @@
     public string Permission { get; set; }
     
     [Parameter]
+    public string RedirectIfUnauthorized { get; set; }
+    
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     private bool IsAuthorized() {
         if (!Auth.IsAuthenticated) return false;
-        if (Permissions.Length == 0 && string.IsNullOrEmpty(Permission)) return true;
+        if ((Permissions == null || Permissions.Length == 0) && string.IsNullOrEmpty(Permission)) return true;
         
-        var perms = new List<string>(Permissions);
+        var perms = new List<string>(Permissions!);
         if (!string.IsNullOrEmpty(Permission)) perms.Add(Permission);
         
         var permissions = HttpAccessor.HttpContext?.User.GetPermissions();
         if (!perms.All(perm => PermissionValidator.IncludesPermission(perm, permissions))) return false;
 
         return true;
+    }
+
+    private bool HandleComponent() {
+        var authorized = IsAuthorized();
+
+        if (authorized == false && !string.IsNullOrEmpty(RedirectIfUnauthorized)) {
+            Navigator.NavigateTo(RedirectIfUnauthorized, true);
+        }
+
+        return authorized;
     }
 }
