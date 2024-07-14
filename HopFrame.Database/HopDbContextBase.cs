@@ -6,11 +6,7 @@ namespace HopFrame.Database;
 /// <summary>
 /// This class includes the basic database structure in order for HopFrame to work
 /// </summary>
-public class HopDbContextBase : DbContext {
-    
-    public HopDbContextBase() {}
-    
-    public HopDbContextBase(DbContextOptions options) : base(options) {}
+public abstract class HopDbContextBase : DbContext {
 
     public virtual DbSet<UserEntry> Users { get; set; }
     public virtual DbSet<PermissionEntry> Permissions { get; set; }
@@ -25,4 +21,12 @@ public class HopDbContextBase : DbContext {
         modelBuilder.Entity<TokenEntry>();
         modelBuilder.Entity<GroupEntry>();
     }
+
+    /// <summary>
+    /// Gets executed when a user is deleted through the IUserService from the
+    /// HopFrame.Security package. You can override this method to also delete
+    /// related user specific entries in the database
+    /// </summary>
+    /// <param name="user"></param>
+    public virtual void OnUserDelete(UserEntry user) {}
 }

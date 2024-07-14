@@ -1,43 +1,31 @@
+using HopFrame.Database.Models;
+
 namespace HopFrame.Security.Services;
 
 public interface IPermissionService {
-    
-    /// <summary>
-    /// Checks for the user to have the specified permission
-    /// Permission system:<br/>
-    /// - "*" -> all rights<br/>
-    /// - "group.[name]" -> group member<br/>
-    /// - "[namespace].[name]" -> single permission<br/>
-    /// - "[namespace].*" -> all permissions in the namespace
-    /// </summary>
-    /// <param name="permission">The permission the user needs</param>
-    /// <returns>rather the user has the permission or not</returns>
-    Task<bool> HasPermission(string permission);
-    
-    /// <summary>
-    /// Checks if the user has all the specified permissions
-    /// </summary>
-    /// <param name="permissions">list of the permissions</param>
-    /// <returns>rather the user has all the permissions or not</returns>
-    Task<bool> HasPermissions(params string[] permissions);
-    
-    /// <summary>
-    /// Checks if the user has any of the specified permissions
-    /// </summary>
-    /// <param name="permissions">list of the permissions</param>
-    /// <returns>rather the user has any permission or not</returns>
-    Task<bool> HasAnyPermission(params string[] permissions);
+
+    Task<bool> HasPermission(string permission, Guid user);
+
+    Task<PermissionGroup> GetPermissionGroup(string name);
+
+    Task CreatePermissionGroup(string name, bool isDefault = false, string description = null);
+
+    Task DeletePermissionGroup(PermissionGroup group);
 
     /// <summary>
-    /// Checks for the user to have the specified permission
-    /// Permission system:<br/>
+    /// permission system:<br/>
     /// - "*" -> all rights<br/>
     /// - "group.[name]" -> group member<br/>
     /// - "[namespace].[name]" -> single permission<br/>
     /// - "[namespace].*" -> all permissions in the namespace
     /// </summary>
-    /// <param name="permission">The permission the user needs</param>
-    /// <param name="user">The user who gets checked</param>
-    /// <returns>rather the user has the permission or not</returns>
-    Task<bool> HasPermission(string permission, Guid user);
+    /// <param name="owner"></param>
+    /// <param name="permission"></param>
+    /// <returns></returns>
+    Task AddPermission(IPermissionOwner owner, string permission);
+
+    Task DeletePermission(Permission permission);
+
+    internal Task<string[]> GetFullPermissions(string user);
+
 }

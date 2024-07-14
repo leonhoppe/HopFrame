@@ -1,6 +1,7 @@
 using HopFrame.Database;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Services;
+using HopFrame.Security.Services.Implementation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,8 @@ public static class HopFrameAuthenticationExtensions {
         service.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         service.AddScoped<ITokenContext, TokenContextImplementor<TDbContext>>();
         service.AddScoped<IPermissionService, PermissionService<TDbContext>>();
+        service.AddScoped<IUserService, UserService<TDbContext>>();
+        
         return service.AddAuthentication(HopFrameAuthentication<TDbContext>.SchemeName).AddScheme<AuthenticationSchemeOptions, HopFrameAuthentication<TDbContext>>(HopFrameAuthentication<TDbContext>.SchemeName, _ => {});
     }
     

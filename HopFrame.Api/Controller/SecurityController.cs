@@ -4,9 +4,12 @@ using HopFrame.Api.Logic;
 using HopFrame.Api.Models;
 using HopFrame.Database;
 using HopFrame.Database.Models.Entries;
+using HopFrame.Security;
 using HopFrame.Security.Authentication;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
+using HopFrame.Security.Models;
+using HopFrame.Security.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,32 +18,32 @@ namespace HopFrame.Api.Controller;
 
 [ApiController]
 [Route("authentication")]
-public class SecurityController<TDbContext>(TDbContext context) : ControllerBase where TDbContext : HopDbContextBase {
+public class SecurityController<TDbContext>(TDbContext context, IUserService users, ITokenContext tokenContext) : ControllerBase where TDbContext : HopDbContextBase {
 
     private const string RefreshTokenType = "HopFrame.Security.RefreshToken";
 
     [HttpPut("login")]
     public async Task<ActionResult<SingleValueResult<string>>> Login([FromBody] UserLogin login) {
-        var user = await context.Users.SingleOrDefaultAsync(user => user.Email == login.Email);
+        var user = await users.GetUserByEmail(login.Email);
 
         if (user is null)
             return LogicResult<SingleValueResult<string>>.NotFound("The provided email address was not found");
 
         var hashedPassword = EncryptionManager.Hash(login.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
-        if (hashedPassword != user.Password)
+        if (hashedPassword != await users.GetUserPassword(user))
             return LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct");
 
         var refreshToken = new TokenEntry {
             CreatedAt = DateTime.Now,
             Token = Guid.NewGuid().ToString(),
             Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id
+            UserId = user.Id.ToString()
         };
         var accessToken = new TokenEntry {
             CreatedAt = DateTime.Now,
             Token = Guid.NewGuid().ToString(),
             Type = TokenEntry.AccessTokenType,
-            UserId = user.Id
+            UserId = user.Id.ToString()
         };
         
         HttpContext.Response.Cookies.Append(RefreshTokenType, refreshToken.Token, new CookieOptions {
@@ -59,42 +62,24 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
     public async Task<ActionResult<SingleValueResult<string>>> Register([FromBody] UserRegister register) {
         if (register.Password.Length < 8)
             return LogicResult<SingleValueResult<string>>.Conflict("Password needs to be at least 8 characters long");
-        
-        if (await context.Users.AnyAsync(user => user.Username == register.Username || user.Email == register.Email))
+
+        var allUsers = await users.GetUsers();
+        if (allUsers.Any(user => user.Username == register.Username || user.Email == register.Email))
             return LogicResult<SingleValueResult<string>>.Conflict("Username or Email is already registered");
 
-        var user = new UserEntry {
-            CreatedAt = DateTime.Now,
-            Email = register.Email,
-            Username = register.Username,
-            Id = Guid.NewGuid().ToString()
-        };
-        user.Password = EncryptionManager.Hash(register.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
-
-        await context.Users.AddAsync(user);
-
-        var defaultGroups = await context.Groups
-            .Where(group => group.Default)
-            .Select(group => "group." + group.Name)
-            .ToListAsync();
-
-        await context.Permissions.AddRangeAsync(defaultGroups.Select(group => new PermissionEntry {
-            GrantedAt = DateTime.Now,
-            PermissionText = group,
-            UserId = user.Id
-        }));
+        var user = await users.AddUser(register);
         
         var refreshToken = new TokenEntry {
             CreatedAt = DateTime.Now,
             Token = Guid.NewGuid().ToString(),
             Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id
+            UserId = user.Id.ToString()
         };
         var accessToken = new TokenEntry {
             CreatedAt = DateTime.Now,
             Token = Guid.NewGuid().ToString(),
             Type = TokenEntry.AccessTokenType,
-            UserId = user.Id
+            UserId = user.Id.ToString()
         };
         
         HttpContext.Response.Cookies.Append(RefreshTokenType, refreshToken.Token, new CookieOptions {
@@ -163,26 +148,14 @@ public class SecurityController<TDbContext>(TDbContext context) : ControllerBase
     }
 
     [HttpDelete("delete"), Authorized]
-    public async Task<ActionResult> Delete([FromBody] UserLogin login) {
-        var token = HttpContext.User.GetAccessTokenId();
-        var userId = (await context.Tokens.SingleOrDefaultAsync(t => t.Token == token && t.Type == TokenEntry.AccessTokenType))?.UserId;
-
-        if (string.IsNullOrEmpty(userId))
-            return LogicResult.NotFound("Access token does not match any user");
-
-        var user = await context.Users.SingleAsync(user => user.Id == userId);
+    public async Task<ActionResult> Delete([FromBody] UserPasswordValidation validation) {
+        var user = tokenContext.User;
         
-        var password = EncryptionManager.Hash(login.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
-        if (user.Password != password)
+        var password = EncryptionManager.Hash(validation.Password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
+        if (await users.GetUserPassword(user) != password)
             return LogicResult.Forbidden("The provided password is not correct");
 
-        var tokens = await context.Tokens.Where(t => t.UserId == userId).ToArrayAsync();
-        var permissions = await context.Permissions.Where(perm => perm.UserId == userId).ToArrayAsync();
-        
-        context.Tokens.RemoveRange(tokens);
-        context.Permissions.RemoveRange(permissions);
-        context.Users.Remove(user);
-        await context.SaveChangesAsync();
+        await users.DeleteUser(user);
         
         HttpContext.Response.Cookies.Delete(RefreshTokenType);
 

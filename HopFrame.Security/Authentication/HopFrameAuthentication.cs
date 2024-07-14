@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using HopFrame.Database;
 using HopFrame.Security.Claims;
+using HopFrame.Security.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,8 @@ public class HopFrameAuthentication<TDbContext>(
     ILoggerFactory logger,
     UrlEncoder encoder,
     ISystemClock clock,
-    TDbContext context)
+    TDbContext context,
+    IPermissionService perms)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock)
     where TDbContext : HopDbContextBase {
 
@@ -42,22 +44,7 @@ public class HopFrameAuthentication<TDbContext>(
             new(HopFrameClaimTypes.UserId, tokenEntry.UserId)
         };
 
-        var permissions = await context.Permissions
-            .Where(perm => perm.UserId == tokenEntry.UserId)
-            .Select(perm => perm.PermissionText)
-            .ToListAsync();
-
-        var groups = permissions
-            .Where(perm => perm.StartsWith("group."))
-            .ToList();
-
-        var groupPerms = await context.Permissions
-            .Where(perm => groups.Contains(perm.UserId))
-            .Select(perm => perm.PermissionText)
-            .ToListAsync();
-        
-        permissions.AddRange(groupPerms);
-        
+        var permissions = await perms.GetFullPermissions(tokenEntry.UserId);
         claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
 
         var principal = new ClaimsPrincipal();

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace HopFrame.Api;
+namespace HopFrame.Security;
 
 public static class EncryptionManager {
 

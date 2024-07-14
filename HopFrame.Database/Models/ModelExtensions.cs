@@ -20,10 +20,37 @@ public static class ModelExtensions {
 
         user.Permissions = contextBase.Permissions
             .Where(perm => perm.UserId == entry.Id)
-            .Select(perm => perm.PermissionText)
+            .Select(perm => perm.ToPermissionModel())
             .ToList();
 
         return user;
+    }
+
+    public static Permission ToPermissionModel(this PermissionEntry entry) {
+        Guid.TryParse(entry.UserId, out var userId);
+
+        return new Permission {
+            Owner = userId,
+            PermissionName = entry.PermissionText,
+            GrantedAt = entry.GrantedAt,
+            Id = entry.RecordId
+        };
+    }
+
+    public static PermissionGroup ToPermissionGroup(this GroupEntry entry, HopDbContextBase contextBase) {
+        var group = new PermissionGroup {
+            Name = entry.Name,
+            IsDefaultGroup = entry.Default,
+            Description = entry.Description,
+            CreatedAt = entry.CreatedAt
+        };
+
+        group.Permissions = contextBase.Permissions
+            .Where(perm => perm.UserId == group.Name)
+            .Select(perm => perm.ToPermissionModel())
+            .ToList();
+
+        return group;
     }
     
 }

@@ -1,4 +1,4 @@
-namespace HopFrame.Api.Models;
+namespace HopFrame.Security.Models;
 
 public struct UserRegister {
     public string Username { get; set; }
