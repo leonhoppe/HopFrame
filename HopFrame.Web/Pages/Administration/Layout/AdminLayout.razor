@@ -1,7 +1,7 @@
 ﻿@using HopFrame.Web.Components
 @inherits LayoutComponentBase
 
-<AuthorizedView Permission="HopFrame.Admin" RedirectIfUnauthorized="login" />
+<AuthorizedView Permission="@AdminPermissions.IsAdmin" RedirectIfUnauthorized="login?redirect=/administration" />
 
 <div class="page">
     <div class="sidebar">

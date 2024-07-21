@@ -42,11 +42,18 @@
 @code {
     [SupplyParameterFromForm]
     private UserLogin LoginData { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "redirect")]
+    private string RedirectAfter { get; set; }
 
     private bool _loginError;
 
-    protected override void OnInitialized() {
+    protected override async Task OnInitializedAsync() {
         LoginData ??= new();
+
+        if (await Auth.IsLoggedIn()) {
+            await Auth.Logout();
+        }
     }
 
     private async Task OnLogin() {
@@ -57,6 +64,6 @@
             return;
         }
         
-        Navigator.NavigateTo(Register.RedirectAfterRegister, true);
+        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? Register.RedirectAfterRegister : RedirectAfter, true);
     }
 }

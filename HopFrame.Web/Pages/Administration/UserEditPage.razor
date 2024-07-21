@@ -1,22 +1,25 @@
 @page "/administration/user/{UserId}"
 
+@using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
 @using HopFrame.Security.Services
 @using HopFrame.Web.Pages.Administration.Layout
 @using Microsoft.AspNetCore.Components.Web
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Forms
+@using HopFrame.Web.Components
 
 @layout AdminLayout
 @rendermode InteractiveServer
 
 <PageTitle>Edit @User.Username</PageTitle>
+<AuthorizedView Permission="@AdminPermissions.EditUsers" RedirectIfUnauthorized="@ConstructRedirectUrl()"/>
 
 <h3>Edit @User.Username (@User.Id)</h3>
 
-<EditForm EditContext="_context" OnValidSubmit="OnEdit" FormName="register-form">
+<EditForm EditContext="_context" OnValidSubmit="OnEdit" FormName="register-form" class="edit-form">
     @*<AntiforgeryToken />*@
-    <div class="field-wrapper">
+    <div class="field-wrapper" style="max-width: 750px">
         <div class="mb-3">
             <label for="id" class="form-label">Registered At</label>
             <input type="text" class="form-control" id="id" disabled value="@User.CreatedAt"/>
@@ -31,25 +34,103 @@
             <InputText type="text" class="form-control" id="username" required @bind-Value="User.Username"/>
             <ValidationMessage For="() => User.Username"/>
         </div>
+
+        <div class="mb-3">
+            <label for="groups" class="form-label">Groups</label>
+            <ul class="list-group" id="groups">
+                <li class="list-group-item">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var group in _groups) {
+                            <li class="list-group-item">
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-right: 15px" @onclick="() => RemoveGroup(group)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                    </svg>
+                                </button>
+
+                                <span>@group.Name.Replace("group.", "")</span>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <div style="display: flex; gap: 20px">
+                        <select class="form-select" aria-label="Add group to user" id="add-group" @bind="_selectedGroup">
+                            <option selected>Select group</option>
+
+                            @foreach (var group in _allGroups) {
+                                if (_groups.All(g => g.Name != group.Name)) {
+                                    <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                                }
+                            }
+                        </select>
+                        <button type="button" class="btn btn-secondary" @onclick="AddGroup">Add</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="mb-3">
+            <label for="permissions" class="form-label">Permissions</label>
+            <ul class="list-group" id="permissions">
+                <li class="list-group-item">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var perm in User.Permissions.Where(perm => !perm.PermissionName.StartsWith("group."))) {
+                            <li class="list-group-item">
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-right: 15px" @onclick="() => RemovePermission(perm)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                    </svg>
+                                </button>
+
+                                <span>@perm.PermissionName</span>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <div style="display: flex; gap: 20px">
+                        <input type="text" class="form-control" placeholder="New permission" @bind="_permissionToAdd">
+                        <button type="button" class="btn btn-secondary" @onclick="AddPermission">Add</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
         <button type="submit" class="btn btn-primary">Edit</button>
-        <button type="reset" class="btn btn-secondary">Cancel</button>
+        <button type="reset" class="btn btn-secondary" @onclick="Back">Cancel</button>
     </div>
 </EditForm>
 
 @inject IUserService Users
+@inject IPermissionService Permissions
+@inject NavigationManager Navigator
+@inject SweetAlertService Alerts
 
 @code {
-    [Parameter]
-    public string UserId { get; set; }
+    [Parameter] public string UserId { get; set; }
 
     private EditContext _context;
     private ValidationMessageStore _messages;
 
-    [SupplyParameterFromForm]
-    public User User { get; set; }
+    [SupplyParameterFromForm] public User User { get; set; }
+
+    private IList<PermissionGroup> _groups = new List<PermissionGroup>();
+    private IList<PermissionGroup> _allGroups = new List<PermissionGroup>();
+    private string _selectedGroup;
+    private string _permissionToAdd;
 
     protected override async Task OnInitializedAsync() {
-        User = await Users.GetUser(Guid.Parse(UserId));
+        if (Guid.TryParse(UserId, out var guid)) {
+            User = await Users.GetUser(guid);
+        }
+
+        if (User is null) {
+            Navigator.NavigateTo("/administration/users");
+        }
+
+        _groups = await Permissions.GetUserPermissionGroups(User);
+        _allGroups = await Permissions.GetPermissionGroups();
 
         _context = new EditContext(User);
         _context.OnValidationRequested += ValidateForm;
@@ -58,20 +139,136 @@
 
     private async Task OnEdit() {
         var hasConflict = false;
-        
-        if (await Users.GetUserByEmail(User.Email) is not null) {
+
+        var userByEmail = await Users.GetUserByEmail(User.Email);
+        if (userByEmail is not null && userByEmail.Id != User.Id) {
             _messages.Add(() => User.Email, "Email is already in use");
             hasConflict = true;
         }
-        
-        if (await Users.GetUserByUsername(User.Username) is not null) {
+
+        var userByUsername = await Users.GetUserByUsername(User.Username);
+        if (userByUsername is not null && userByUsername.Id != User.Id) {
             _messages.Add(() => User.Username, "Username is already in use");
             hasConflict = true;
         }
-        
+
         if (hasConflict) return;
 
-        
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Users.UpdateUser(User);
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "User edited!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+
+            Back();
+        }
+    }
+
+    private void Back() {
+        Navigator.NavigateTo("/administration/users");
+    }
+
+    private async Task RemoveGroup(PermissionGroup group) {
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Permissions.RemoveGroupFromUser(User, group);
+            _groups.Remove(group);
+            StateHasChanged();
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Group removed!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+
+    private async Task RemovePermission(Permission perm) {
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Permissions.RemovePermission(perm);
+            User.Permissions.Remove(perm);
+            StateHasChanged();
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Permission removed!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+
+    private async Task AddGroup() {
+        if (string.IsNullOrWhiteSpace(_selectedGroup)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Select a group!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+
+        var group = _allGroups.SingleOrDefault(group => group.Name == _selectedGroup);
+
+        await Permissions.AddPermission(User, group?.Name);
+        _groups.Add(group);
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Group added!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
+    }
+
+    private async Task AddPermission() {
+        if (string.IsNullOrWhiteSpace(_permissionToAdd)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Enter a permission name!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+
+        await Permissions.AddPermission(User, _permissionToAdd);
+        User.Permissions.Add(await Permissions.GetPermission(_permissionToAdd, User));
+        _permissionToAdd = "";
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Permission added!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
     }
 
     private void ValidateForm(object sender, ValidationRequestedEventArgs e) {
@@ -81,4 +278,9 @@
             _messages.Add(() => User.Email, "Please enter a valid email address");
         }
     }
+
+    private string ConstructRedirectUrl() {
+        return "login?redirect=" + Navigator.Uri;
+    }
+
 }

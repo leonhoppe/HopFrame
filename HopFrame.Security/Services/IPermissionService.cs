@@ -12,9 +12,13 @@ public interface IPermissionService {
 
     Task<IList<PermissionGroup>> GetUserPermissionGroups(User user);
 
+    Task RemoveGroupFromUser(User user, PermissionGroup group);
+
     Task CreatePermissionGroup(string name, bool isDefault = false, string description = null);
 
     Task DeletePermissionGroup(PermissionGroup group);
+
+    Task<Permission> GetPermission(string name, IPermissionOwner owner);
 
     /// <summary>
     /// permission system:<br/>
@@ -28,7 +32,7 @@ public interface IPermissionService {
     /// <returns></returns>
     Task AddPermission(IPermissionOwner owner, string permission);
 
-    Task DeletePermission(Permission permission);
+    Task RemovePermission(Permission permission);
 
     Task<string[]> GetFullPermissions(string user);
 

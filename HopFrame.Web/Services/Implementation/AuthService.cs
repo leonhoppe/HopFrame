@@ -101,15 +101,6 @@ public class AuthService<TDbContext>(
     }
 
     public async Task<TokenEntry> RefreshLogin() {
-        if (await IsLoggedIn()) {
-            var oldToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
-            var entry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == oldToken);
-
-            if (entry is not null) {
-                context.Tokens.Remove(entry);
-            }
-        }
-        
         var refreshToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
 
         if (string.IsNullOrWhiteSpace(refreshToken)) return null;
@@ -117,6 +108,27 @@ public class AuthService<TDbContext>(
         var token = await context.Tokens.SingleOrDefaultAsync(token => token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType);
 
         if (token is null) return null;
+
+        var oldAccessTokens = context.Tokens
+            .AsEnumerable()
+            .Where(old => 
+                old.Type == TokenEntry.AccessTokenType &&
+                old.UserId == token.UserId &&
+                old.CreatedAt + HopFrameAuthentication<TDbContext>.AccessTokenTime < DateTime.Now)
+            .ToList();
+        context.Tokens.RemoveRange(oldAccessTokens);
+        
+        var oldRefreshTokens = context.Tokens
+            .AsEnumerable()
+            .Where(old => 
+                old.Type == TokenEntry.RefreshTokenType &&
+                old.UserId == token.UserId &&
+                old.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now)
+            .ToList();
+        context.Tokens.RemoveRange(oldRefreshTokens);
+
+        await context.SaveChangesAsync();
+        
         if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now) return null;
         
         var accessToken = new TokenEntry {

@@ -58,9 +58,20 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         var perms = await GetFullPermissions(user.Id.ToString());
 
         return groups
-            .Where(group => PermissionValidator.IncludesPermission(group.Name, perms))
+            .Where(group => perms.Contains(group.Name))
             .Select(group => group.ToPermissionGroup(context))
             .ToList();
+    }
+
+    public async Task RemoveGroupFromUser(User user, PermissionGroup group) {
+        var entry = await context.Permissions
+            .Where(perm => perm.PermissionText == group.Name && perm.UserId == user.Id.ToString())
+            .SingleOrDefaultAsync();
+        
+        if (entry is null) return;
+
+        context.Permissions.Remove(entry);
+        await context.SaveChangesAsync();
     }
 
     public async Task CreatePermissionGroup(string name, bool isDefault = false, string description = null) {
@@ -81,6 +92,15 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         await context.SaveChangesAsync();
     }
 
+    public async Task<Permission> GetPermission(string name, IPermissionOwner owner) {
+        var ownerId = (owner is User user) ? user.Id.ToString() : ((PermissionGroup)owner).Name;
+
+        return await context.Permissions
+            .Where(perm => perm.PermissionText == name && perm.UserId == ownerId)
+            .Select(perm => perm.ToPermissionModel())
+            .SingleOrDefaultAsync();
+    }
+
     public async Task AddPermission(IPermissionOwner owner, string permission) {
         var userId = owner is User user ? user.Id.ToString() : (owner as PermissionGroup)?.Name;
 
@@ -92,7 +112,7 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         await context.SaveChangesAsync();
     }
 
-    public async Task DeletePermission(Permission permission) {
+    public async Task RemovePermission(Permission permission) {
         var entry = await context.Permissions.SingleOrDefaultAsync(entry => entry.RecordId == permission.Id);
         context.Permissions.Remove(entry);
         await context.SaveChangesAsync();

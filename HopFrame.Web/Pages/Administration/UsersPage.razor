@@ -5,6 +5,7 @@
 @using System.Globalization
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Security.Claims
 @using HopFrame.Security.Services
 @using HopFrame.Web.Pages.Administration.Layout
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
@@ -12,7 +13,7 @@
 @using HopFrame.Web.Components
 
 <PageTitle>Users</PageTitle>
-<AuthorizedView Permission="HopFrame.Admin.Users.View" RedirectIfUnauthorized="login"/>
+<AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
 
 <div class="title">
     <h3 style="user-select: none">
@@ -82,7 +83,10 @@
             }
         </th>
         <th scope="col" style="user-select: none">Primary Group</th>
-        <th scope="col" style="user-select: none">Actions</th>
+        
+        @if (_hasEditPrivileges || _hasDeletePrivileges) {
+            <th scope="col" style="user-select: none">Actions</th>
+        }
     </tr>
     </thead>
     <tbody>
@@ -93,12 +97,20 @@
             <td>@user.Username</td>
             <td>@user.CreatedAt</td>
             <td>@GetFriendlyGroupName(user)</td>
-            <td>
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-warning" @onclick="() => EditUser(user)">Edit</button>
-                    <button type="button" class="btn btn-danger" @onclick="() => Delete(user)">Delete</button>
-                </div>
-            </td>
+            
+            @if (_hasEditPrivileges || _hasDeletePrivileges) {
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @if (_hasEditPrivileges) {
+                            <button type="button" class="btn btn-warning" @onclick="() => EditUser(user)">Edit</button>
+                        }
+                    
+                        @if (_hasDeletePrivileges) {
+                            <button type="button" class="btn btn-danger" @onclick="() => Delete(user)">Delete</button>
+                        }
+                    </div>
+                </td>
+            }
         </tr>
     }
     </tbody>
@@ -108,6 +120,7 @@
 @inject IPermissionService PermissionsService
 @inject NavigationManager Navigator
 @inject SweetAlertService Alerts
+@inject ITokenContext Auth
 
 @code {
     private IList<User> _users = new List<User>();
@@ -118,6 +131,9 @@
 
     private string _searchText;
 
+    private bool _hasEditPrivileges = false;
+    private bool _hasDeletePrivileges = false;
+
     protected override async Task OnInitializedAsync() {
         _users = await UserService.GetUsers();
 
@@ -125,6 +141,9 @@
             var groups = await PermissionsService.GetUserPermissionGroups(user);
             _userGroups.Add(user.Id, groups.FirstOrDefault());
         }
+
+        _hasEditPrivileges = await PermissionsService.HasPermission(AdminPermissions.EditUsers, Auth.User.Id);
+        _hasDeletePrivileges = await PermissionsService.HasPermission(AdminPermissions.DeleteUsers, Auth.User.Id);
     }
 
     private void Reload() {
@@ -177,6 +196,7 @@
             Title = "Are you sure?",
             Text = "You won't be able to revert this!",
             Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
             ShowCancelButton = true,
             ShowConfirmButton = true
         });
