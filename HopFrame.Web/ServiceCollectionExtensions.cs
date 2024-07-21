@@ -1,3 +1,4 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using HopFrame.Database;
 using HopFrame.Security.Authentication;
 using HopFrame.Web.Services;
@@ -12,6 +13,7 @@ public static class ServiceCollectionExtensions {
         services.AddHttpClient();
         services.AddScoped<IAuthService, AuthService<TDbContext>>();
         services.AddTransient<AuthMiddleware>();
+        services.AddSweetAlert2();
 
         services.AddHopFrameAuthentication<TDbContext>();
 
@@ -19,6 +21,9 @@ public static class ServiceCollectionExtensions {
     }
 
     public static RazorComponentsEndpointConventionBuilder AddHopFramePages(this RazorComponentsEndpointConventionBuilder builder) {
-        return builder.AddAdditionalAssemblies(typeof(ServiceCollectionExtensions).Assembly);
+        return builder
+            .AddAdditionalAssemblies(typeof(ServiceCollectionExtensions).Assembly)
+            .AddInteractiveServerRenderMode()
+            .DisableAntiforgery(); //TODO: Make Antiforgery work
     }
 }

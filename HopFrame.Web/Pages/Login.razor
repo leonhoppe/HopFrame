@@ -9,6 +9,7 @@
 
 <div class="login-wrapper">
     <EditForm Model="LoginData" FormName="login-form" OnSubmit="OnLogin">
+        @*<AntiforgeryToken />*@
         <div class="field-wrapper">
             <h2>Login</h2>
             <div class="mb-3">
@@ -25,7 +26,7 @@
                 <span>Don't have an account? <NavLink href="register">Register</NavLink></span>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
-            
+
             @if (_loginError) {
                 <div class="alert alert-danger" role="alert" style="margin-top: 16px; margin-bottom: 0px">
                     Email or password does not match any account!

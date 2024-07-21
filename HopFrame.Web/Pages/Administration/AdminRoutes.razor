@@ -1,0 +1,28 @@
+@page "/administration"
+@using HopFrame.Web.Pages.Administration.Layout
+@inherits LayoutComponentBase
+@layout AdminLayout
+
+@inject NavigationManager Navigator
+
+@code {
+    protected override void OnInitialized() {
+        Navigator.NavigateTo("administration/users");
+    }
+}
+
+<div class="sub-layout">
+    <div class="content">
+        <Switch>
+            <Route Template="administration/users">
+                <UsersPage/>
+            </Route>
+            <Route Template="administration/user/{UserId}">
+                <UserEditPage/>
+            </Route>
+            <Route>
+                <p>No content found in nested layout</p>
+            </Route>
+        </Switch>
+    </div>
+</div>

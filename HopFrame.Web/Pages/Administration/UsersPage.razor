@@ -1,0 +1,215 @@
+@page "/administration/users"
+@rendermode InteractiveServer
+@layout AdminLayout
+
+@using System.Globalization
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Models
+@using HopFrame.Security.Services
+@using HopFrame.Web.Pages.Administration.Layout
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web
+@using HopFrame.Web.Components
+
+<PageTitle>Users</PageTitle>
+<AuthorizedView Permission="HopFrame.Admin.Users.View" RedirectIfUnauthorized="login"/>
+
+<div class="title">
+    <h3 style="user-select: none">
+        Users administration
+        <span style="cursor: pointer" @onclick="Reload">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+        </span>
+    </h3>
+
+    <form class="d-flex" role="search" @onsubmit="Search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
+
+
+<table class="table table-stripped table-hover">
+    <thead>
+    <tr>
+        <th scope="col" style="user-select: none">#</th>
+        <th scope="col" style="user-select: none">
+            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Email)">E-Mail</span>
+            @if (_currentOrder == OrderType.Email) {
+                @if (_currentOrderDirection == OrderDirection.Asc) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                    </svg>
+                }
+                else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                    </svg>
+                }
+            }
+        </th>
+        <th scope="col" style="user-select: none">
+            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Username)">Username</span>
+            @if (_currentOrder == OrderType.Username) {
+                @if (_currentOrderDirection == OrderDirection.Asc) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                    </svg>
+                }
+                else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                    </svg>
+                }
+            }
+        </th>
+        <th scope="col" style="user-select: none">
+            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Registered)">Registered</span>
+            @if (_currentOrder == OrderType.Registered) {
+                @if (_currentOrderDirection == OrderDirection.Asc) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                    </svg>
+                }
+                else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                    </svg>
+                }
+            }
+        </th>
+        <th scope="col" style="user-select: none">Primary Group</th>
+        <th scope="col" style="user-select: none">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in _users) {
+        <tr>
+            <th scope="row">@user.Id</th>
+            <td>@user.Email</td>
+            <td>@user.Username</td>
+            <td>@user.CreatedAt</td>
+            <td>@GetFriendlyGroupName(user)</td>
+            <td>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-warning" @onclick="() => EditUser(user)">Edit</button>
+                    <button type="button" class="btn btn-danger" @onclick="() => Delete(user)">Delete</button>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@inject IUserService UserService
+@inject IPermissionService PermissionsService
+@inject NavigationManager Navigator
+@inject SweetAlertService Alerts
+
+@code {
+    private IList<User> _users = new List<User>();
+    private IDictionary<Guid, PermissionGroup> _userGroups = new Dictionary<Guid, PermissionGroup>();
+
+    private OrderType _currentOrder = OrderType.None;
+    private OrderDirection _currentOrderDirection = OrderDirection.Asc;
+
+    private string _searchText;
+
+    protected override async Task OnInitializedAsync() {
+        _users = await UserService.GetUsers();
+
+        foreach (var user in _users) {
+            var groups = await PermissionsService.GetUserPermissionGroups(user);
+            _userGroups.Add(user.Id, groups.FirstOrDefault());
+        }
+    }
+
+    private void Reload() {
+        Navigator.Refresh(true);
+    }
+
+    private async Task Search() {
+        var users = await UserService.GetUsers();
+
+        if (!string.IsNullOrWhiteSpace(_searchText)) {
+            users = users
+                .Where(user =>
+                    user.Email.Contains(_searchText) ||
+                    user.Username.Contains(_searchText) ||
+                    user.Id.ToString().Contains(_searchText) ||
+                    user.CreatedAt.ToString(CultureInfo.InvariantCulture).Contains(_searchText) ||
+                    _userGroups[user.Id]?.Name.Contains(_searchText) == true)
+                .ToList();
+        }
+
+        _users = users;
+        OrderBy(_currentOrder, false);
+    }
+
+    private string GetFriendlyGroupName(User user) {
+        var group = _userGroups[user.Id];
+        if (group is null) return null;
+
+        return group.Name.Replace("group.", "");
+    }
+
+    private void OrderBy(OrderType type, bool changeDir = true) {
+        if (_currentOrder == type && changeDir) _currentOrderDirection = (OrderDirection)(((byte)_currentOrderDirection + 1) % 2);
+
+        if (type == OrderType.Email) {
+            _users = _currentOrderDirection == OrderDirection.Asc ? _users.OrderBy(user => user.Email).ToList() : _users.OrderByDescending(user => user.Email).ToList();
+        }
+        else if (type == OrderType.Username) {
+            _users = _currentOrderDirection == OrderDirection.Asc ? _users.OrderBy(user => user.Username).ToList() : _users.OrderByDescending(user => user.Username).ToList();
+        }
+        else if (type == OrderType.Registered) {
+            _users = _currentOrderDirection == OrderDirection.Asc ? _users.OrderBy(user => user.CreatedAt).ToList() : _users.OrderByDescending(user => user.CreatedAt).ToList();
+        }
+
+        _currentOrder = type;
+    }
+
+    private async Task Delete(User user) {
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Text = "You won't be able to revert this!",
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await UserService.DeleteUser(user);
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Deleted!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+            
+            Reload();
+        }
+    }
+
+    private void EditUser(User user) {
+        Navigator.NavigateTo("/administration/user/" + user.Id);
+    }
+
+    private enum OrderType {
+        None,
+        Email,
+        Username,
+        Registered,
+        Group
+    }
+
+    private enum OrderDirection : byte {
+        Asc = 0,
+        Desc = 1
+    }
+
+}

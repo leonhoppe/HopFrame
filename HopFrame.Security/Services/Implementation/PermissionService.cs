@@ -40,11 +40,27 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         return PermissionValidator.IncludesPermission(permission, permissions);
     }
 
+    public async Task<IList<PermissionGroup>> GetPermissionGroups() {
+        return await context.Groups
+            .Select(group => group.ToPermissionGroup(context))
+            .ToListAsync();
+    }
+
     public Task<PermissionGroup> GetPermissionGroup(string name) {
         return context.Groups
             .Where(group => group.Name == name)
             .Select(group => group.ToPermissionGroup(context))
             .SingleOrDefaultAsync();
+    }
+
+    public async Task<IList<PermissionGroup>> GetUserPermissionGroups(User user) {
+        var groups = await context.Groups.ToListAsync();
+        var perms = await GetFullPermissions(user.Id.ToString());
+
+        return groups
+            .Where(group => PermissionValidator.IncludesPermission(group.Name, perms))
+            .Select(group => group.ToPermissionGroup(context))
+            .ToList();
     }
 
     public async Task CreatePermissionGroup(string name, bool isDefault = false, string description = null) {

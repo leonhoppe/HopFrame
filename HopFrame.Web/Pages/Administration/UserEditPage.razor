@@ -1,0 +1,84 @@
+@page "/administration/user/{UserId}"
+
+@using HopFrame.Database.Models
+@using HopFrame.Security.Services
+@using HopFrame.Web.Pages.Administration.Layout
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Forms
+
+@layout AdminLayout
+@rendermode InteractiveServer
+
+<PageTitle>Edit @User.Username</PageTitle>
+
+<h3>Edit @User.Username (@User.Id)</h3>
+
+<EditForm EditContext="_context" OnValidSubmit="OnEdit" FormName="register-form">
+    @*<AntiforgeryToken />*@
+    <div class="field-wrapper">
+        <div class="mb-3">
+            <label for="id" class="form-label">Registered At</label>
+            <input type="text" class="form-control" id="id" disabled value="@User.CreatedAt"/>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <InputText type="email" class="form-control" id="email" required @bind-Value="User.Email"/>
+            <ValidationMessage For="() => User.Email"/>
+        </div>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <InputText type="text" class="form-control" id="username" required @bind-Value="User.Username"/>
+            <ValidationMessage For="() => User.Username"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Edit</button>
+        <button type="reset" class="btn btn-secondary">Cancel</button>
+    </div>
+</EditForm>
+
+@inject IUserService Users
+
+@code {
+    [Parameter]
+    public string UserId { get; set; }
+
+    private EditContext _context;
+    private ValidationMessageStore _messages;
+
+    [SupplyParameterFromForm]
+    public User User { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        User = await Users.GetUser(Guid.Parse(UserId));
+
+        _context = new EditContext(User);
+        _context.OnValidationRequested += ValidateForm;
+        _messages = new ValidationMessageStore(_context);
+    }
+
+    private async Task OnEdit() {
+        var hasConflict = false;
+        
+        if (await Users.GetUserByEmail(User.Email) is not null) {
+            _messages.Add(() => User.Email, "Email is already in use");
+            hasConflict = true;
+        }
+        
+        if (await Users.GetUserByUsername(User.Username) is not null) {
+            _messages.Add(() => User.Username, "Username is already in use");
+            hasConflict = true;
+        }
+        
+        if (hasConflict) return;
+
+        
+    }
+
+    private void ValidateForm(object sender, ValidationRequestedEventArgs e) {
+        _messages.Clear();
+
+        if (!User.Email.Contains("@") || !User.Email.Contains(".") || User.Email.EndsWith(".")) {
+            _messages.Add(() => User.Email, "Please enter a valid email address");
+        }
+    }
+}

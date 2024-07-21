@@ -6,7 +6,11 @@ public interface IPermissionService {
 
     Task<bool> HasPermission(string permission, Guid user);
 
+    Task<IList<PermissionGroup>> GetPermissionGroups();
+
     Task<PermissionGroup> GetPermissionGroup(string name);
+
+    Task<IList<PermissionGroup>> GetUserPermissionGroups(User user);
 
     Task CreatePermissionGroup(string name, bool isDefault = false, string description = null);
 

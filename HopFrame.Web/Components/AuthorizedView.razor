@@ -26,8 +26,9 @@
     private bool IsAuthorized() {
         if (!Auth.IsAuthenticated) return false;
         if ((Permissions == null || Permissions.Length == 0) && string.IsNullOrEmpty(Permission)) return true;
-        
-        var perms = new List<string>(Permissions!);
+
+        Permissions ??= [];
+        var perms = new List<string>(Permissions);
         if (!string.IsNullOrEmpty(Permission)) perms.Add(Permission);
         
         var permissions = HttpAccessor.HttpContext?.User.GetPermissions();
