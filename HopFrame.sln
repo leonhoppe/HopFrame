@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Database", "HopFra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{58703056-8DAD-4221-BBE3-42425D2F4929}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseTest", "DatabaseTest\DatabaseTest.csproj", "{921159CE-AF75-44C3-A3F9-6B9B1A4E85CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApiTest", "RestApiTest\RestApiTest.csproj", "{921159CE-AF75-44C3-A3F9-6B9B1A4E85CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Security", "HopFrame.Security\HopFrame.Security.csproj", "{7F82E1C6-4A42-4337-9E03-2EE6429D004F}"
 EndProject

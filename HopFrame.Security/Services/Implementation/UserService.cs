@@ -113,4 +113,16 @@ internal sealed class UserService<TDbContext>(TDbContext context) : IUserService
 
         return entry.Password == hash;
     }
+
+    public async Task ChangePassword(User user, string password) {
+        var entry = await context.Users
+            .Where(entry => entry.Id == user.Id.ToString())
+            .SingleOrDefaultAsync();
+        
+        if (entry is null) return;
+        
+        var hash = EncryptionManager.Hash(password, Encoding.Default.GetBytes(user.CreatedAt.ToString(CultureInfo.InvariantCulture)));
+        entry.Password = hash;
+        await context.SaveChangesAsync();
+    }
 }

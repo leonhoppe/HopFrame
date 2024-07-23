@@ -1,4 +1,4 @@
-using DatabaseTest;
+using RestApiTest;
 using HopFrame.Api.Extensions;
 using Microsoft.OpenApi.Models;
 

@@ -1,0 +1,41 @@
+@startuml DatabaseModels
+set namespaceSeparator none
+
+namespace HopFrame.Database {
+    class UserEntry {
+        +Id: string
+        +Username: string
+        +Email: string
+        +Password: string
+        +CreatedAt: DateTime
+    }
+    
+    class TokenEntry {
+        {static} +RefreshTokenType: int = 0
+        {static} +AccessTokenType: int = 1
+        
+        +Type: int
+        +Token: string
+        +UserId: string
+        +CreatedAt: DateTime
+    }
+    
+    class PermissionEntry {
+        +RecordId: long
+        +PermissionText: string
+        +UserId: string
+        +GrantedAt: DateTime
+    }
+    
+    class GroupEntry {
+        +Name: string
+        +Default: bool
+        +Description: string
+        +CreatedAt: DateTime
+    }
+}
+
+UserEntry *-- TokenEntry
+UserEntry *-- PermissionEntry
+
+@enduml

@@ -3,7 +3,7 @@ using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DatabaseTest.Controllers;
+namespace RestApiTest.Controllers;
 
 [ApiController]
 [Route("test")]

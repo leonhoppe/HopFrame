@@ -1,0 +1,34 @@
+@startuml ApiModels
+
+namespace HopFrame.Security {
+    class UserLogin {
+        +Email: string
+        +Password: string
+    }
+    
+    class UserRegister {
+        +Username: string
+        +Email: string
+        +Password: string
+    }
+}
+
+namespace HopFrame.Web {
+    class RegisterData {
+        +RepeatedPassword: string
+    }
+}
+
+namespace HopFrame.Api {
+    class SingleValueResult<TValue> {
+        +Value: TValue
+    }
+    
+    class UserPasswordValidation {
+        +Password: string
+    }
+}
+
+UserRegister <|-- RegisterData
+
+@enduml

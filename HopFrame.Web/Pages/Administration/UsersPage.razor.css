@@ -3,3 +3,15 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+th, h3 {
+    user-select: none;
+}
+
+.reload, .sorter {
+    cursor: pointer;
+}
+
+.bold {
+    font-weight: bold;
+}

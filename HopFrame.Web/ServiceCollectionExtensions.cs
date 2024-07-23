@@ -13,7 +13,11 @@ public static class ServiceCollectionExtensions {
         services.AddHttpClient();
         services.AddScoped<IAuthService, AuthService<TDbContext>>();
         services.AddTransient<AuthMiddleware>();
+        
+        // Component library's
         services.AddSweetAlert2();
+        
+        //TODO: Use https://blazorstrap.io/V5/V5
 
         services.AddHopFrameAuthentication<TDbContext>();
 

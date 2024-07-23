@@ -16,13 +16,10 @@
 <AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
 
 <div class="title">
-    <h3 style="user-select: none">
+    <h3>
         Users administration
-        <span style="cursor: pointer" @onclick="Reload">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-            </svg>
+        <span class="reload" @onclick="Reload">
+            <HopIconDisplay Type="HopIconDisplay.HopIcon.Reload"/>
         </span>
     </h3>
 
@@ -36,75 +33,48 @@
 <table class="table table-stripped table-hover">
     <thead>
     <tr>
-        <th scope="col" style="user-select: none">#</th>
-        <th scope="col" style="user-select: none">
-            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Email)">E-Mail</span>
+        <th scope="col">#</th>
+        <th scope="col">
+            <span class="sorter" @onclick="() => OrderBy(OrderType.Email)">E-Mail</span>
             @if (_currentOrder == OrderType.Email) {
-                @if (_currentOrderDirection == OrderDirection.Asc) {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                    </svg>
-                }
-                else {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
-                    </svg>
-                }
+                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
             }
         </th>
-        <th scope="col" style="user-select: none">
-            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Username)">Username</span>
+        <th scope="col">
+            <span class="sorter" @onclick="() => OrderBy(OrderType.Username)">Username</span>
             @if (_currentOrder == OrderType.Username) {
-                @if (_currentOrderDirection == OrderDirection.Asc) {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                    </svg>
-                }
-                else {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
-                    </svg>
-                }
+                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
             }
         </th>
-        <th scope="col" style="user-select: none">
-            <span style="cursor: pointer;" @onclick="() => OrderBy(OrderType.Registered)">Registered</span>
+        <th scope="col">
+            <span class="sorter" @onclick="() => OrderBy(OrderType.Registered)">Registered</span>
             @if (_currentOrder == OrderType.Registered) {
-                @if (_currentOrderDirection == OrderDirection.Asc) {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                    </svg>
-                }
-                else {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
-                    </svg>
-                }
+                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
             }
         </th>
-        <th scope="col" style="user-select: none">Primary Group</th>
-        
+        <th scope="col">Primary Group</th>
+
         @if (_hasEditPrivileges || _hasDeletePrivileges) {
-            <th scope="col" style="user-select: none">Actions</th>
+            <th scope="col">Actions</th>
         }
     </tr>
     </thead>
     <tbody>
     @foreach (var user in _users) {
         <tr>
-            <th scope="row">@user.Id</th>
+            <td class="bold">@user.Id</td>
             <td>@user.Email</td>
             <td>@user.Username</td>
             <td>@user.CreatedAt</td>
             <td>@GetFriendlyGroupName(user)</td>
-            
+
             @if (_hasEditPrivileges || _hasDeletePrivileges) {
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         @if (_hasEditPrivileges) {
                             <button type="button" class="btn btn-warning" @onclick="() => EditUser(user)">Edit</button>
                         }
-                    
+
                         @if (_hasDeletePrivileges) {
                             <button type="button" class="btn btn-danger" @onclick="() => Delete(user)">Delete</button>
                         }
@@ -210,7 +180,7 @@
                 Timer = 1500,
                 ShowConfirmButton = false
             });
-            
+
             Reload();
         }
     }

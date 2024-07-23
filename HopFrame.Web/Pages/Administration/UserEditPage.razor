@@ -8,6 +8,7 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Forms
 @using HopFrame.Web.Components
+@using HopFrame.Web.Pages.Administration.Components
 
 @layout AdminLayout
 @rendermode InteractiveServer
@@ -34,6 +35,10 @@
             <InputText type="text" class="form-control" id="username" required @bind-Value="User.Username"/>
             <ValidationMessage For="() => User.Username"/>
         </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <InputText type="password" class="form-control" id="password" required @bind-Value="_password"/>
+        </div>
 
         <div class="mb-3">
             <label for="groups" class="form-label">Groups</label>
@@ -43,9 +48,7 @@
                         @foreach (var group in _groups) {
                             <li class="list-group-item">
                                 <button type="button" class="btn btn-danger btn-sm" style="margin-right: 15px" @onclick="() => RemoveGroup(group)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                                    </svg>
+                                    <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
                                 </button>
 
                                 <span>@group.Name.Replace("group.", "")</span>
@@ -78,9 +81,7 @@
                         @foreach (var perm in User.Permissions.Where(perm => !perm.PermissionName.StartsWith("group."))) {
                             <li class="list-group-item">
                                 <button type="button" class="btn btn-danger btn-sm" style="margin-right: 15px" @onclick="() => RemovePermission(perm)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                                    </svg>
+                                    <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
                                 </button>
 
                                 <span>@perm.PermissionName</span>
@@ -119,6 +120,7 @@
     private IList<PermissionGroup> _allGroups = new List<PermissionGroup>();
     private string _selectedGroup;
     private string _permissionToAdd;
+    private string _password;
 
     protected override async Task OnInitializedAsync() {
         if (Guid.TryParse(UserId, out var guid)) {
@@ -164,6 +166,10 @@
 
         if (result.IsConfirmed) {
             await Users.UpdateUser(User);
+
+            if (!string.IsNullOrWhiteSpace(_password)) {
+                await Users.ChangePassword(User, _password);
+            }
 
             await Alerts.FireAsync(new SweetAlertOptions {
                 Title = "User edited!",
