@@ -17,6 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="BlazorStrap" Version="5.2.100.61524" />
+      <PackageReference Include="BlazorStrap.V5" Version="5.2.100" />
       <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.6.0" />
       <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />

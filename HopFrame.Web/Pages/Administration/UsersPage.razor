@@ -3,6 +3,7 @@
 @layout AdminLayout
 
 @using System.Globalization
+@using BlazorStrap
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
 @using HopFrame.Security.Claims
@@ -11,6 +12,8 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
+@using BlazorStrap.V5
+@using HopFrame.Web.Pages.Administration.Components
 
 <PageTitle>Users</PageTitle>
 <AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
@@ -22,69 +25,69 @@
             <HopIconDisplay Type="HopIconDisplay.HopIcon.Reload"/>
         </span>
     </h3>
-
+    
     <form class="d-flex" role="search" @onsubmit="Search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
+        <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
 </div>
 
-
-<table class="table table-stripped table-hover">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">
-            <span class="sorter" @onclick="() => OrderBy(OrderType.Email)">E-Mail</span>
-            @if (_currentOrder == OrderType.Email) {
-                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
-            }
-        </th>
-        <th scope="col">
-            <span class="sorter" @onclick="() => OrderBy(OrderType.Username)">Username</span>
-            @if (_currentOrder == OrderType.Username) {
-                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
-            }
-        </th>
-        <th scope="col">
-            <span class="sorter" @onclick="() => OrderBy(OrderType.Registered)">Registered</span>
-            @if (_currentOrder == OrderType.Registered) {
-                <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
-            }
-        </th>
-        <th scope="col">Primary Group</th>
-
-        @if (_hasEditPrivileges || _hasDeletePrivileges) {
-            <th scope="col">Actions</th>
-        }
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var user in _users) {
-        <tr>
-            <td class="bold">@user.Id</td>
-            <td>@user.Email</td>
-            <td>@user.Username</td>
-            <td>@user.CreatedAt</td>
-            <td>@GetFriendlyGroupName(user)</td>
+<BSTable IsStriped="true" IsHoverable="true">
+    <BSTHead>
+        <BSTR>
+            <BSTD>#</BSTD>
+            <BSTD>
+                <span class="sorter" @onclick="() => OrderBy(OrderType.Email)">E-Mail</span>
+                @if (_currentOrder == OrderType.Email) {
+                    <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                }
+            </BSTD>
+            <BSTD>
+                <span class="sorter" @onclick="() => OrderBy(OrderType.Username)">Username</span>
+                @if (_currentOrder == OrderType.Username) {
+                    <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                }
+            </BSTD>
+            <BSTD>
+                <span class="sorter" @onclick="() => OrderBy(OrderType.Registered)">Registered</span>
+                @if (_currentOrder == OrderType.Registered) {
+                    <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                }
+            </BSTD>
+            <BSTD>Primary Group</BSTD>
 
             @if (_hasEditPrivileges || _hasDeletePrivileges) {
-                <td>
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        @if (_hasEditPrivileges) {
-                            <button type="button" class="btn btn-warning" @onclick="() => EditUser(user)">Edit</button>
-                        }
-
-                        @if (_hasDeletePrivileges) {
-                            <button type="button" class="btn btn-danger" @onclick="() => Delete(user)">Delete</button>
-                        }
-                    </div>
-                </td>
+                <BSTD>Actions</BSTD>
             }
-        </tr>
-    }
-    </tbody>
-</table>
+        </BSTR>
+    </BSTHead>
+    
+    <BSTBody>
+        @foreach (var user in _users) {
+            <BSTR>
+                <BSTD class="bold">@user.Id</BSTD>
+                <BSTD>@user.Email</BSTD>
+                <BSTD>@user.Username</BSTD>
+                <BSTD>@user.CreatedAt</BSTD>
+                <BSTD>@GetFriendlyGroupName(user)</BSTD>
+
+                @if (_hasEditPrivileges || _hasDeletePrivileges) {
+                    <BSTD>
+                        <BSButtonGroup>
+                            @if (_hasEditPrivileges) {
+                                <BSButton Color="BSColor.Warning" OnClick="() => EditUser(user)">Edit</BSButton>
+                            }
+
+                            @if (_hasDeletePrivileges) {
+                                <BSButton Color="BSColor.Danger" OnClick="() => Delete(user)">Delete</BSButton>
+                            }
+                        </BSButtonGroup>
+                    </BSTD>
+                }
+            </BSTR>
+        }
+    </BSTBody>
+</BSTable>
 
 @inject IUserService UserService
 @inject IPermissionService PermissionsService
@@ -94,7 +97,7 @@
 
 @code {
     private IList<User> _users = new List<User>();
-    private IDictionary<Guid, PermissionGroup> _userGroups = new Dictionary<Guid, PermissionGroup>();
+    private readonly IDictionary<Guid, PermissionGroup> _userGroups = new Dictionary<Guid, PermissionGroup>();
 
     private OrderType _currentOrder = OrderType.None;
     private OrderDirection _currentOrderDirection = OrderDirection.Asc;
@@ -193,8 +196,7 @@
         None,
         Email,
         Username,
-        Registered,
-        Group
+        Registered
     }
 
     private enum OrderDirection : byte {

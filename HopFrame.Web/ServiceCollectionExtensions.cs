@@ -1,3 +1,4 @@
+using BlazorStrap;
 using CurrieTechnologies.Razor.SweetAlert2;
 using HopFrame.Database;
 using HopFrame.Security.Authentication;
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions {
         
         // Component library's
         services.AddSweetAlert2();
+        services.AddBlazorStrap();
         
         //TODO: Use https://blazorstrap.io/V5/V5
 
