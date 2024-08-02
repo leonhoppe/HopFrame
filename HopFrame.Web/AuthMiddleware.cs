@@ -30,6 +30,6 @@ public class AuthMiddleware(IAuthService auth, IPermissionService perms) : IMidd
             context.User.AddIdentity(new ClaimsIdentity(claims, HopFrameAuthentication<HopDbContextBase>.SchemeName));
         }
         
-        await next.Invoke(context);
+        await next?.Invoke(context);
     }
 }

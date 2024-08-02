@@ -116,7 +116,8 @@ public class AuthService<TDbContext>(
                 old.UserId == token.UserId &&
                 old.CreatedAt + HopFrameAuthentication<TDbContext>.AccessTokenTime < DateTime.Now)
             .ToList();
-        context.Tokens.RemoveRange(oldAccessTokens);
+        if (oldAccessTokens.Count != 0)
+            context.Tokens.RemoveRange(oldAccessTokens);
         
         var oldRefreshTokens = context.Tokens
             .AsEnumerable()
@@ -125,7 +126,8 @@ public class AuthService<TDbContext>(
                 old.UserId == token.UserId &&
                 old.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now)
             .ToList();
-        context.Tokens.RemoveRange(oldRefreshTokens);
+        if (oldRefreshTokens.Count != 0)
+            context.Tokens.RemoveRange(oldRefreshTokens);
 
         await context.SaveChangesAsync();
         

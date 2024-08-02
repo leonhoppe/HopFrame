@@ -87,15 +87,15 @@
     private void ValidateForm(object sender, ValidationRequestedEventArgs e) {
         _messages.Clear();
 
-        if (RegisterData.Password != RegisterData.RepeatedPassword) {
+        if (!RegisterData.PasswordsMatch) {
             _messages.Add(() => RegisterData.RepeatedPassword,  "Passwords doesn't mach");
         }
 
-        if (RegisterData.Password.Length < 8) {
+        if (!RegisterData.PasswordIsValid) {
             _messages.Add(() => RegisterData.Password, "Password needs to be at least 8 characters long");
         }
 
-        if (!RegisterData.Email.Contains("@") || !RegisterData.Email.Contains(".") || RegisterData.Email.EndsWith(".")) {
+        if (!RegisterData.EmailIsValid) {
             _messages.Add(() => RegisterData.Email, "Please enter a valid email address");
         }
     }

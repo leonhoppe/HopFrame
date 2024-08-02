@@ -1,0 +1,69 @@
+@rendermode InteractiveServer
+
+@using BlazorStrap
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap.Shared.Components.Modal
+@using BlazorStrap.V5
+@using HopFrame.Database.Models
+@using HopFrame.Security.Services
+@using HopFrame.Web.Model
+
+<BSModal DataId="add-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" OnShow="() => _user = new()" @ref="_modal" ModalColor="BSColor.Dark">
+    <BSForm Model="_user" OnValidSubmit="Submit">
+        <BSModalHeader style="color: white">Add user</BSModalHeader>
+        <BSModalContent>
+            <div class="mb-3">
+                <BSLabel style="color: white">E-Mail</BSLabel>
+                <BSInput InputType="InputType.Email" @bind-Value="_user.Email" />
+            </div>
+            
+            <div class="mb-3">
+                <BSLabel style="color: white">Username</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="_user.Username" />
+            </div>
+            
+            <div class="mb-3">
+                <BSLabel style="color: white">Password</BSLabel>
+                <BSInput InputType="InputType.Password" @bind-Value="_user.Password" />
+            </div>
+            
+            <div class="mb-3">
+                <BSLabel style="color: white">Primary group</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="_user.Group">
+                    <option value="">Select group</option>
+                    
+                    @foreach (var group in _allGroups) {
+                        <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                    }
+                </BSInput>
+            </div>
+        </BSModalContent>
+        <BSModalFooter>
+            <BSButton Target="add-user-modal" Color="BSColor.Dark">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@inject IPermissionService Permissions
+
+@code {
+    [Parameter] public Action<UserAdd> OnSubmit { get; set; }
+
+    private IList<PermissionGroup> _allGroups = new List<PermissionGroup>();
+    private UserAdd _user;
+
+    private BSModalBase _modal;
+
+    protected override async Task OnInitializedAsync() {
+        _allGroups = await Permissions.GetPermissionGroups();
+    }
+
+    public Task ShowAsync() {
+        return _modal.ShowAsync();
+    }
+
+    private void Submit() {
+        OnSubmit.Invoke(_user);
+    }
+}

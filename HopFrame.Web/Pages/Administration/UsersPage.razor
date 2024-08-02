@@ -13,10 +13,13 @@
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
 @using BlazorStrap.V5
+@using HopFrame.Web.Model
 @using HopFrame.Web.Pages.Administration.Components
 
 <PageTitle>Users</PageTitle>
 <AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
+
+<UserAddModal @ref="_userAddModal" OnSubmit="CreateUser"/>
 
 <div class="title">
     <h3>
@@ -26,13 +29,14 @@
         </span>
     </h3>
     
-    <form class="d-flex" role="search" @onsubmit="Search">
+    <form class="d-flex" role="search" @onsubmit="Search" id="search">
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
         <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
+    <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _userAddModal.ShowAsync()">Add User</BSButton>
 </div>
 
-<BSTable IsStriped="true" IsHoverable="true">
+<BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
     <BSTHead>
         <BSTR>
             <BSTD>#</BSTD>
@@ -97,7 +101,7 @@
 
 @code {
     private IList<User> _users = new List<User>();
-    private readonly IDictionary<Guid, PermissionGroup> _userGroups = new Dictionary<Guid, PermissionGroup>();
+    private IDictionary<Guid, PermissionGroup> _userGroups = new Dictionary<Guid, PermissionGroup>();
 
     private OrderType _currentOrder = OrderType.None;
     private OrderDirection _currentOrderDirection = OrderDirection.Asc;
@@ -106,6 +110,8 @@
 
     private bool _hasEditPrivileges = false;
     private bool _hasDeletePrivileges = false;
+
+    private UserAddModal _userAddModal;
 
     protected override async Task OnInitializedAsync() {
         _users = await UserService.GetUsers();
@@ -119,8 +125,16 @@
         _hasDeletePrivileges = await PermissionsService.HasPermission(AdminPermissions.DeleteUsers, Auth.User.Id);
     }
 
-    private void Reload() {
-        Navigator.Refresh(true);
+    private async Task Reload() {
+        _users = new List<User>();
+        _userGroups = new Dictionary<Guid, PermissionGroup>();
+        
+        _users = await UserService.GetUsers();
+        
+        foreach (var user in _users) {
+            var groups = await PermissionsService.GetUserPermissionGroups(user);
+            _userGroups.Add(user.Id, groups.FirstOrDefault());
+        }
     }
 
     private async Task Search() {
@@ -176,6 +190,9 @@
 
         if (result.IsConfirmed) {
             await UserService.DeleteUser(user);
+            await Reload();
+            
+            StateHasChanged();
 
             await Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Deleted!",
@@ -183,8 +200,6 @@
                 Timer = 1500,
                 ShowConfirmButton = false
             });
-
-            Reload();
         }
     }
 
@@ -202,6 +217,53 @@
     private enum OrderDirection : byte {
         Asc = 0,
         Desc = 1
+    }
+
+    private async void CreateUser(UserAdd newUser) {
+        string errorMessage = null;
+        
+        if (_users.Any(user => user.Username == newUser.Username)) {
+            errorMessage = "Username is already taken!";
+        }
+        else if (_users.Any(user => user.Email == newUser.Email)) {
+            errorMessage = "E-Mail is already taken!";
+        }
+        else if (!newUser.PasswordIsValid) {
+            errorMessage = "The password needs to be at least 8 characters long!";
+        }
+        else if (!newUser.EmailIsValid) {
+            errorMessage = "Invalid E-Mail address!";
+        }
+
+        if (!string.IsNullOrWhiteSpace(errorMessage)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Something went wrong!",
+                Text = errorMessage,
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+            
+            return;
+        }
+        
+        var user = await UserService.AddUser(newUser);
+
+        if (!string.IsNullOrWhiteSpace(newUser.Group)) {
+            await PermissionsService.AddPermission(user, newUser.Group);
+        }
+        
+        await Reload();
+        
+        StateHasChanged();
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "New user added!",
+            Icon = SweetAlertIcon.Success,
+            ShowConfirmButton = false,
+            Timer = 1500
+
+        });
     }
 
 }

@@ -1,11 +1,17 @@
-﻿@using BlazorStrap
+﻿@rendermode InteractiveServer
+
+@using BlazorStrap
 @using BlazorStrap.V5
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Pages.Administration.Components
+@using HopFrame.Web.Services
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 
 
-<BSNavbar Color="BSColor.Light">
+<BSNavbar Color="BSColor.Dark" IsDark="true" IsFixedTop="true">
     <BSContainer Container="Container.Fluid">
         <BSNavbarBrand>
-            @*<img src="logo.svg" alt="logo" width="30" class="d-inline-block align-text-top"/>*@
+            <img src="/favicon.png" alt="logo" width="30" class="d-inline-block align-text-top"/>
             HopFrame
         </BSNavbarBrand>
         <BSCollapse IsInNavbar="true">
@@ -18,6 +24,14 @@
                         <BSNavItem IsActive="IsNavItemActive(nav.Key)" Url="@nav.Key">@nav.Value</BSNavItem>
                     }
                 </BSNav>
+                
+                <span style="margin-left: auto; line-height: 100%; color: white">
+                    logged in as @Context?.User.Username
+                </span>
+                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark">
+                    <HopIconDisplay Type="HopIconDisplay.HopIcon.Logout"/>
+                </BSButton>
+                <BSTooltip Placement="Placement.Bottom" Target="logout" ContentAlwaysRendered="false">logout</BSTooltip>
             </Content>
         </BSCollapse>
     </BSContainer>
@@ -25,6 +39,8 @@
 
 
 @inject NavigationManager Navigator
+@inject ITokenContext Context
+@inject IAuthService Auth
 
 @code {
     public static IDictionary<string, string> Subpages = new Dictionary<string, string> {
@@ -34,5 +50,9 @@
 
     public bool IsNavItemActive(string element) {
         return Navigator.Uri.Contains(element);
+    }
+
+    private async void Logout() {
+        Navigator.NavigateTo("login?redirect=/administration", true);
     }
 }

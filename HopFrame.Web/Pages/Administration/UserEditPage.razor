@@ -16,32 +16,32 @@
 <PageTitle>Edit @User.Username</PageTitle>
 <AuthorizedView Permission="@AdminPermissions.EditUsers" RedirectIfUnauthorized="@ConstructRedirectUrl()"/>
 
-<h3>Edit @User.Username (@User.Id)</h3>
+<h3 style="color: white">Edit @User.Username (@User.Id)</h3>
 
 <EditForm EditContext="_context" OnValidSubmit="OnEdit" FormName="register-form" class="edit-form">
     @*<AntiforgeryToken />*@
     <div class="field-wrapper" style="max-width: 750px">
         <div class="mb-3">
-            <label for="id" class="form-label">Registered At</label>
+            <label for="id" class="form-label" style="color: white">Registered At</label>
             <input type="text" class="form-control" id="id" disabled value="@User.CreatedAt"/>
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
+            <label for="email" class="form-label" style="color: white">Email address</label>
             <InputText type="email" class="form-control" id="email" required @bind-Value="User.Email"/>
             <ValidationMessage For="() => User.Email"/>
         </div>
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label" style="color: white">Username</label>
             <InputText type="text" class="form-control" id="username" required @bind-Value="User.Username"/>
             <ValidationMessage For="() => User.Username"/>
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label" style="color: white">Password</label>
             <InputText type="password" class="form-control" id="password" required @bind-Value="_password"/>
         </div>
 
         <div class="mb-3">
-            <label for="groups" class="form-label">Groups</label>
+            <label for="groups" class="form-label" style="color: white">Groups</label>
             <ul class="list-group" id="groups">
                 <li class="list-group-item">
                     <ul class="list-group list-group-flush">
@@ -74,7 +74,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="permissions" class="form-label">Permissions</label>
+            <label for="permissions" class="form-label" style="color: white">Permissions</label>
             <ul class="list-group" id="permissions">
                 <li class="list-group-item">
                     <ul class="list-group list-group-flush">

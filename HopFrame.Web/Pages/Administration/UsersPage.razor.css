@@ -1,11 +1,20 @@
 .title {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#search {
+    margin-left: auto;
 }
 
 th, h3 {
     user-select: none;
+}
+
+h3 {
+    color: white;
 }
 
 .reload, .sorter {
