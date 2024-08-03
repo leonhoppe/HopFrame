@@ -5,4 +5,5 @@ public static class AdminPermissions {
     public const string ViewUsers = "hopframe.admin.users.view";
     public const string EditUsers = "hopframe.admin.users.edit";
     public const string DeleteUsers = "hopframe.admin.users.delete";
+    public const string AddUser = "hopframe.admin.users.add";
 }

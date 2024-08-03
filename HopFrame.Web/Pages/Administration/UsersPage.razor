@@ -13,13 +13,13 @@
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
 @using BlazorStrap.V5
-@using HopFrame.Web.Model
 @using HopFrame.Web.Pages.Administration.Components
 
 <PageTitle>Users</PageTitle>
 <AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
 
-<UserAddModal @ref="_userAddModal" OnSubmit="CreateUser"/>
+<UserAddModal @ref="_userAddModal" ReloadPage="Reload"/>
+<UserEditModal @ref="_userEditModal" ReloadPage="Reload"/>
 
 <div class="title">
     <h3>
@@ -79,7 +79,7 @@
                     <BSTD>
                         <BSButtonGroup>
                             @if (_hasEditPrivileges) {
-                                <BSButton Color="BSColor.Warning" OnClick="() => EditUser(user)">Edit</BSButton>
+                                <BSButton Color="BSColor.Warning" OnClick="() => _userEditModal.ShowAsync(user)">Edit</BSButton>
                             }
 
                             @if (_hasDeletePrivileges) {
@@ -95,7 +95,6 @@
 
 @inject IUserService UserService
 @inject IPermissionService PermissionsService
-@inject NavigationManager Navigator
 @inject SweetAlertService Alerts
 @inject ITokenContext Auth
 
@@ -112,6 +111,7 @@
     private bool _hasDeletePrivileges = false;
 
     private UserAddModal _userAddModal;
+    private UserEditModal _userEditModal;
 
     protected override async Task OnInitializedAsync() {
         _users = await UserService.GetUsers();
@@ -135,6 +135,9 @@
             var groups = await PermissionsService.GetUserPermissionGroups(user);
             _userGroups.Add(user.Id, groups.FirstOrDefault());
         }
+        
+        
+        StateHasChanged();
     }
 
     private async Task Search() {
@@ -191,8 +194,6 @@
         if (result.IsConfirmed) {
             await UserService.DeleteUser(user);
             await Reload();
-            
-            StateHasChanged();
 
             await Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Deleted!",
@@ -201,10 +202,6 @@
                 ShowConfirmButton = false
             });
         }
-    }
-
-    private void EditUser(User user) {
-        Navigator.NavigateTo("/administration/user/" + user.Id);
     }
 
     private enum OrderType {
@@ -218,52 +215,4 @@
         Asc = 0,
         Desc = 1
     }
-
-    private async void CreateUser(UserAdd newUser) {
-        string errorMessage = null;
-        
-        if (_users.Any(user => user.Username == newUser.Username)) {
-            errorMessage = "Username is already taken!";
-        }
-        else if (_users.Any(user => user.Email == newUser.Email)) {
-            errorMessage = "E-Mail is already taken!";
-        }
-        else if (!newUser.PasswordIsValid) {
-            errorMessage = "The password needs to be at least 8 characters long!";
-        }
-        else if (!newUser.EmailIsValid) {
-            errorMessage = "Invalid E-Mail address!";
-        }
-
-        if (!string.IsNullOrWhiteSpace(errorMessage)) {
-            await Alerts.FireAsync(new SweetAlertOptions {
-                Title = "Something went wrong!",
-                Text = errorMessage,
-                Icon = SweetAlertIcon.Error,
-                ShowConfirmButton = false,
-                Timer = 1500
-            });
-            
-            return;
-        }
-        
-        var user = await UserService.AddUser(newUser);
-
-        if (!string.IsNullOrWhiteSpace(newUser.Group)) {
-            await PermissionsService.AddPermission(user, newUser.Group);
-        }
-        
-        await Reload();
-        
-        StateHasChanged();
-
-        await Alerts.FireAsync(new SweetAlertOptions {
-            Title = "New user added!",
-            Icon = SweetAlertIcon.Success,
-            ShowConfirmButton = false,
-            Timer = 1500
-
-        });
-    }
-
 }

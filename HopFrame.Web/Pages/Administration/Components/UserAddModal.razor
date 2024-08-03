@@ -4,31 +4,33 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using BlazorStrap.Shared.Components.Modal
 @using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Security.Claims
 @using HopFrame.Security.Services
 @using HopFrame.Web.Model
 
-<BSModal DataId="add-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" OnShow="() => _user = new()" @ref="_modal" ModalColor="BSColor.Dark">
-    <BSForm Model="_user" OnValidSubmit="Submit">
-        <BSModalHeader style="color: white">Add user</BSModalHeader>
+<BSModal DataId="add-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" OnShow="() => _user = new()" @ref="_modal">
+    <BSForm Model="_user" OnValidSubmit="AddUser">
+        <BSModalHeader>Add user</BSModalHeader>
         <BSModalContent>
             <div class="mb-3">
-                <BSLabel style="color: white">E-Mail</BSLabel>
+                <BSLabel>E-Mail</BSLabel>
                 <BSInput InputType="InputType.Email" @bind-Value="_user.Email" />
             </div>
             
             <div class="mb-3">
-                <BSLabel style="color: white">Username</BSLabel>
+                <BSLabel>Username</BSLabel>
                 <BSInput InputType="InputType.Text" @bind-Value="_user.Username" />
             </div>
             
             <div class="mb-3">
-                <BSLabel style="color: white">Password</BSLabel>
+                <BSLabel>Password</BSLabel>
                 <BSInput InputType="InputType.Password" @bind-Value="_user.Password" />
             </div>
             
             <div class="mb-3">
-                <BSLabel style="color: white">Primary group</BSLabel>
+                <BSLabel>Primary group</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="_user.Group">
                     <option value="">Select group</option>
                     
@@ -39,31 +41,91 @@
             </div>
         </BSModalContent>
         <BSModalFooter>
-            <BSButton Target="add-user-modal" Color="BSColor.Dark">Cancel</BSButton>
+            <BSButton Target="add-user-modal">Cancel</BSButton>
             <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
         </BSModalFooter>
     </BSForm>
 </BSModal>
 
+@inject IUserService Users
 @inject IPermissionService Permissions
+@inject SweetAlertService Alerts
+@inject ITokenContext Auth
 
 @code {
-    [Parameter] public Action<UserAdd> OnSubmit { get; set; }
+    [Parameter] public Func<Task> ReloadPage { get; set; }
 
     private IList<PermissionGroup> _allGroups = new List<PermissionGroup>();
+    private IList<User> _allUsers = new List<User>();
     private UserAdd _user;
 
     private BSModalBase _modal;
 
-    protected override async Task OnInitializedAsync() {
+    public async Task ShowAsync() {
         _allGroups = await Permissions.GetPermissionGroups();
+        _allUsers = await Users.GetUsers();
+        
+        await _modal.ShowAsync();
     }
 
-    public Task ShowAsync() {
-        return _modal.ShowAsync();
-    }
+    private async Task AddUser() {
+        if (!(await Permissions.HasPermission(AdminPermissions.AddUser, Auth.User.Id))) {
+            await NoAddPermissions();
+            return;
+        }
+        
+        string errorMessage = null;
+        
+        if (_allUsers.Any(user => user.Username == _user.Username)) {
+            errorMessage = "Username is already taken!";
+        }
+        else if (_allUsers.Any(user => user.Email == _user.Email)) {
+            errorMessage = "E-Mail is already taken!";
+        }
+        else if (!_user.PasswordIsValid) {
+            errorMessage = "The password needs to be at least 8 characters long!";
+        }
+        else if (!_user.EmailIsValid) {
+            errorMessage = "Invalid E-Mail address!";
+        }
+        else if (string.IsNullOrWhiteSpace(_user.Username)) {
+            errorMessage = "You need to set a username!";
+        }
 
-    private void Submit() {
-        OnSubmit.Invoke(_user);
+        if (!string.IsNullOrWhiteSpace(errorMessage)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Something went wrong!",
+                Text = errorMessage,
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+            
+            return;
+        }
+        
+        var user = await Users.AddUser(_user);
+
+        if (!string.IsNullOrWhiteSpace(_user.Group)) {
+            await Permissions.AddPermission(user, _user.Group);
+        }
+
+        await ReloadPage.Invoke();
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "New user added!",
+            Icon = SweetAlertIcon.Success,
+            ShowConfirmButton = false,
+            Timer = 1500
+
+        });
+    }
+    
+    private async Task NoAddPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required Permissions to edit a user!",
+            Icon = SweetAlertIcon.Error
+        });
     }
 }
