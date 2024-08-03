@@ -21,7 +21,7 @@
             <Content>
                 <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
                     @foreach (var nav in Subpages) {
-                        <BSNavItem IsActive="IsNavItemActive(nav.Key)" Url="@nav.Key">@nav.Value</BSNavItem>
+                        <BSNavItem IsActive="IsNavItemActive(nav.Key)" OnClick="() => Navigate(nav.Key)">@nav.Value</BSNavItem>
                     }
                 </BSNav>
                 
@@ -52,7 +52,11 @@
         return Navigator.Uri.Contains(element);
     }
 
-    private async void Logout() {
+    private void Navigate(string url) {
+        Navigator.NavigateTo(url, true);
+    }
+
+    private void Logout() {
         Navigator.NavigateTo("login?redirect=/administration", true);
     }
 }

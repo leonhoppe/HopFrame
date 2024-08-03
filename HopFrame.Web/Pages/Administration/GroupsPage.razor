@@ -1,0 +1,133 @@
+@page "/administration/groups"
+@rendermode InteractiveServer
+@layout AdminLayout
+
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap
+@using Microsoft.AspNetCore.Components.Web
+@using HopFrame.Web.Components
+@using HopFrame.Web.Pages.Administration.Components
+@using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Models
+@using HopFrame.Security.Claims
+@using HopFrame.Security.Services
+@using HopFrame.Web.Pages.Administration.Layout
+
+<PageTitle>Groups</PageTitle>
+<AuthorizedView Permission="@AdminPermissions.ViewGroups" RedirectIfUnauthorized="login?redirect=/administration/groups"/>
+
+<GroupAddModal ReloadPage="Reload" @ref="_groupAddModal"/>
+
+<div class="title">
+    <h3>
+        Groups administration
+        <span class="reload" @onclick="Reload">
+            <HopIconDisplay Type="HopIconDisplay.HopIcon.Reload"/>
+        </span>
+    </h3>
+
+    <form class="d-flex" role="search" id="search">
+        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search">
+        <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
+    </form>
+    <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _groupAddModal.ShowAsync()">Add Group</BSButton>
+</div>
+
+<BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
+    <BSTHead>
+        <BSTR>
+            <BSTD>Name</BSTD>
+            <BSTD>Description</BSTD>
+            <BSTD>Default</BSTD>
+            <BSTD>Created</BSTD>
+            
+            @if (_hasEditPrivileges || _hasDeletePrivileges) {
+                <BSTD>Actions</BSTD>
+            }
+        </BSTR>
+    </BSTHead>
+    
+    <BSTBody>
+        @foreach (var group in _groups) {
+            <BSTR>
+                <BSTD Class="bold">@group.Name.Replace("group.", "")</BSTD>
+                <BSTD>@group.Description</BSTD>
+                <BSTD>
+                    @if (group.IsDefaultGroup) {
+                        <span>Yes</span>
+                    }
+                    else {
+                        <span>No</span>
+                    }
+                </BSTD>
+                <BSTD>@group.CreatedAt</BSTD>
+
+                @if (_hasEditPrivileges || _hasDeletePrivileges) {
+                    <BSTD>
+                        <BSButtonGroup>
+                            @if (_hasEditPrivileges) {
+                                <BSButton Color="BSColor.Warning" OnClick="() => _groupAddModal.ShowAsync(group)">Edit</BSButton>
+                            }
+                            
+                            @if (_hasDeletePrivileges) {
+                                <BSButton Color="BSColor.Danger" OnClick="() => Delete(group)">Delete</BSButton>
+                            }
+                        </BSButtonGroup>
+                    </BSTD>
+                }
+            </BSTR>
+        }
+    </BSTBody>
+</BSTable>
+
+@inject IPermissionService Permissions
+@inject ITokenContext Auth
+@inject SweetAlertService Alerts
+
+@code {
+    private IList<PermissionGroup> _groups = new List<PermissionGroup>();
+    
+    private bool _hasEditPrivileges = false;
+    private bool _hasDeletePrivileges = false;
+
+    private GroupAddModal _groupAddModal;
+
+    protected override async Task OnInitializedAsync() {
+        _groups = await Permissions.GetPermissionGroups();
+        
+        _hasEditPrivileges = await Permissions.HasPermission(AdminPermissions.EditGroup, Auth.User.Id);
+        _hasDeletePrivileges = await Permissions.HasPermission(AdminPermissions.DeleteGroup, Auth.User.Id);
+    }
+
+    private async Task Reload() {
+        _groups = new List<PermissionGroup>();
+
+        _groups = await Permissions.GetPermissionGroups();
+        
+        StateHasChanged();
+    }
+    
+    private async Task Delete(PermissionGroup group) {
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Text = "You won't be able to revert this!",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Permissions.DeletePermissionGroup(group);
+            await Reload();
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Deleted!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+}

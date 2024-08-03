@@ -53,6 +53,19 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
             .SingleOrDefaultAsync();
     }
 
+    public async Task EditPermissionGroup(PermissionGroup group) {
+        var orig = await context.Groups.SingleOrDefaultAsync(g => g.Name == group.Name);
+        
+        if (orig is null) return;
+
+        var entity = context.Groups.Update(orig);
+
+        entity.Entity.Default = group.IsDefaultGroup;
+        entity.Entity.Description = group.Description;
+
+        await context.SaveChangesAsync();
+    }
+
     public async Task<IList<PermissionGroup>> GetUserPermissionGroups(User user) {
         var groups = await context.Groups.ToListAsync();
         var perms = await GetFullPermissions(user.Id.ToString());
@@ -74,7 +87,7 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         await context.SaveChangesAsync();
     }
 
-    public async Task CreatePermissionGroup(string name, bool isDefault = false, string description = null) {
+    public async Task<PermissionGroup> CreatePermissionGroup(string name, bool isDefault = false, string description = null) {
         var group = new GroupEntry {
             Name = name,
             Description = description,
@@ -83,12 +96,36 @@ internal sealed class PermissionService<TDbContext>(TDbContext context, ITokenCo
         };
 
         await context.Groups.AddAsync(group);
+
+        if (isDefault) {
+            var users = await context.Users.ToListAsync();
+
+            foreach (var user in users) {
+                await context.Permissions.AddAsync(new PermissionEntry {
+                    GrantedAt = DateTime.Now,
+                    PermissionText = group.Name,
+                    UserId = user.Id
+                });
+            }
+        }
+        
         await context.SaveChangesAsync();
+
+        return group.ToPermissionGroup(context);
     }
 
     public async Task DeletePermissionGroup(PermissionGroup group) {
         var entry = await context.Groups.SingleOrDefaultAsync(entry => entry.Name == group.Name);
         context.Groups.Remove(entry);
+
+        var permissions = await context.Permissions
+            .Where(perm => perm.UserId == group.Name || perm.PermissionText == group.Name)
+            .ToListAsync();
+
+        if (permissions.Count > 0) {
+            context.Permissions.RemoveRange(permissions);
+        }
+        
         await context.SaveChangesAsync();
     }
 

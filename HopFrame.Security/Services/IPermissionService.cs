@@ -10,11 +10,13 @@ public interface IPermissionService {
 
     Task<PermissionGroup> GetPermissionGroup(string name);
 
+    Task EditPermissionGroup(PermissionGroup group);
+
     Task<IList<PermissionGroup>> GetUserPermissionGroups(User user);
 
     Task RemoveGroupFromUser(User user, PermissionGroup group);
 
-    Task CreatePermissionGroup(string name, bool isDefault = false, string description = null);
+    Task<PermissionGroup> CreatePermissionGroup(string name, bool isDefault = false, string description = null);
 
     Task DeletePermissionGroup(PermissionGroup group);
 

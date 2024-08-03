@@ -121,8 +121,8 @@
             _userGroups.Add(user.Id, groups.FirstOrDefault());
         }
 
-        _hasEditPrivileges = await PermissionsService.HasPermission(AdminPermissions.EditUsers, Auth.User.Id);
-        _hasDeletePrivileges = await PermissionsService.HasPermission(AdminPermissions.DeleteUsers, Auth.User.Id);
+        _hasEditPrivileges = await PermissionsService.HasPermission(AdminPermissions.EditUser, Auth.User.Id);
+        _hasDeletePrivileges = await PermissionsService.HasPermission(AdminPermissions.DeleteUser, Auth.User.Id);
     }
 
     private async Task Reload() {
