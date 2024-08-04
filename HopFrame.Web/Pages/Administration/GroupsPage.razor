@@ -2,11 +2,12 @@
 @rendermode InteractiveServer
 @layout AdminLayout
 
+@using System.Globalization
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using BlazorStrap
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
-@using HopFrame.Web.Pages.Administration.Components
+@using HopFrame.Web.Components.Administration
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
@@ -15,7 +16,7 @@
 @using HopFrame.Web.Pages.Administration.Layout
 
 <PageTitle>Groups</PageTitle>
-<AuthorizedView Permission="@AdminPermissions.ViewGroups" RedirectIfUnauthorized="login?redirect=/administration/groups"/>
+<AuthorizedView Permission="@AdminPermissions.ViewGroups" RedirectIfUnauthorized="administration/login?redirect=/administration/groups"/>
 
 <GroupAddModal ReloadPage="Reload" @ref="_groupAddModal"/>
 
@@ -27,20 +28,32 @@
         </span>
     </h3>
 
-    <form class="d-flex" role="search" id="search">
-        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search">
+    <form class="d-flex" role="search" id="search" @onsubmit="Search">
+        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
         <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
-    <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _groupAddModal.ShowAsync()">Add Group</BSButton>
+    <AuthorizedView Permission="@AdminPermissions.AddGroup">
+        <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _groupAddModal.ShowAsync()">Add Group</BSButton>
+    </AuthorizedView>
 </div>
 
 <BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
     <BSTHead>
         <BSTR>
-            <BSTD>Name</BSTD>
+            <BSTD>
+                <span class="sorter" @onclick="() => OrderBy(OrderType.Name)">Name</span>
+                @if (_currentOrder == OrderType.Name) {
+                    <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                }
+            </BSTD>
             <BSTD>Description</BSTD>
             <BSTD>Default</BSTD>
-            <BSTD>Created</BSTD>
+            <BSTD>
+                <span class="sorter" @onclick="() => OrderBy(OrderType.Created)">Created</span>
+                @if (_currentOrder == OrderType.Created) {
+                    <HopIconDisplay Type="_currentOrderDirection == OrderDirection.Desc ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                }
+            </BSTD>
             
             @if (_hasEditPrivileges || _hasDeletePrivileges) {
                 <BSTD>Actions</BSTD>
@@ -90,6 +103,9 @@
     
     private bool _hasEditPrivileges = false;
     private bool _hasDeletePrivileges = false;
+    private string _searchText;
+    private OrderType _currentOrder = OrderType.None;
+    private OrderDirection _currentOrderDirection = OrderDirection.Asc;
 
     private GroupAddModal _groupAddModal;
 
@@ -105,7 +121,38 @@
 
         _groups = await Permissions.GetPermissionGroups();
         
+        OrderBy(_currentOrder, false);
         StateHasChanged();
+    }
+
+    private async Task Search() {
+        var groups = await Permissions.GetPermissionGroups();
+
+        if (!string.IsNullOrWhiteSpace(_searchText)) {
+            groups = groups
+                .Where(group => group.Name.Contains(_searchText) ||
+                    group.Description?.Contains(_searchText) == true ||
+                    group.CreatedAt.ToString(CultureInfo.InvariantCulture).Contains(_searchText) ||
+                    group.Permissions.Any(perm => perm.PermissionName.Contains(_searchText)))
+                .ToList();
+        }
+
+        _groups = groups;
+        OrderBy(_currentOrder, false);
+    }
+
+    private void OrderBy(OrderType type, bool changeDir = true) {
+        if (_currentOrder == type && changeDir) _currentOrderDirection = (OrderDirection)(((byte)_currentOrderDirection + 1) % 2);
+        if (_currentOrder != type) _currentOrderDirection = OrderDirection.Asc;
+
+        if (type == OrderType.Name) {
+            _groups = _currentOrderDirection == OrderDirection.Asc ? _groups.OrderBy(group => group.Name).ToList() : _groups.OrderByDescending(group => group.Name).ToList();
+        }
+        else if (type == OrderType.Created) {
+            _groups = _currentOrderDirection == OrderDirection.Asc ? _groups.OrderBy(group => group.CreatedAt).ToList() : _groups.OrderByDescending(group => group.CreatedAt).ToList();
+        }
+
+        _currentOrder = type;
     }
     
     private async Task Delete(PermissionGroup group) {
@@ -129,5 +176,16 @@
                 ShowConfirmButton = false
             });
         }
+    }
+    
+    private enum OrderType {
+        None,
+        Name,
+        Created
+    }
+
+    private enum OrderDirection : byte {
+        Asc = 0,
+        Desc = 1
     }
 }

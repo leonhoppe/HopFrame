@@ -26,10 +26,10 @@ public static class ServiceCollectionExtensions {
         return services;
     }
 
-    public static RazorComponentsEndpointConventionBuilder AddHopFramePages(this RazorComponentsEndpointConventionBuilder builder) {
+    public static RazorComponentsEndpointConventionBuilder AddHopFrameAdminPages(this RazorComponentsEndpointConventionBuilder builder) {
         return builder
+            .DisableAntiforgery()
             .AddAdditionalAssemblies(typeof(ServiceCollectionExtensions).Assembly)
-            .AddInteractiveServerRenderMode()
-            .DisableAntiforgery(); //TODO: Make Antiforgery work
+            .AddInteractiveServerRenderMode();
     }
 }

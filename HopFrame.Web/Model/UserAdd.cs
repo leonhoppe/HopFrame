@@ -1,5 +1,5 @@
 namespace HopFrame.Web.Model;
 
-public class UserAdd : RegisterData {
+internal sealed class UserAdd : RegisterData {
     public string Group { get; set; }
 }

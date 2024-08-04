@@ -3,15 +3,16 @@
 @using BlazorStrap
 @using BlazorStrap.V5
 @using HopFrame.Security.Claims
-@using HopFrame.Web.Pages.Administration.Components
 @using HopFrame.Web.Services
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using HopFrame.Web.Components.Administration
+@using HopFrame.Web.Model
+@using HopFrame.Web.Components
 
 
 <BSNavbar Color="BSColor.Dark" IsDark="true" IsFixedTop="true">
     <BSContainer Container="Container.Fluid">
         <BSNavbarBrand>
-            <img src="/favicon.png" alt="logo" width="30" class="d-inline-block align-text-top"/>
             HopFrame
         </BSNavbarBrand>
         <BSCollapse IsInNavbar="true">
@@ -20,8 +21,12 @@
             </Toggler>
             <Content>
                 <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+                    <BSNavItem IsActive="IsDashboardActive()" OnClick="NavigateToDashboard">Dashboard</BSNavItem>
+                    
                     @foreach (var nav in Subpages) {
-                        <BSNavItem IsActive="IsNavItemActive(nav.Key)" OnClick="() => Navigate(nav.Key)">@nav.Value</BSNavItem>
+                        <AuthorizedView Permission="@nav.Permission">
+                            <BSNavItem IsActive="IsNavItemActive(nav.Url)" OnClick="() => Navigate(nav.Url)">@nav.Name</BSNavItem>
+                        </AuthorizedView>
                     }
                 </BSNav>
                 
@@ -43,13 +48,31 @@
 @inject IAuthService Auth
 
 @code {
-    public static IDictionary<string, string> Subpages = new Dictionary<string, string> {
-        { "administration/users", "Users" },
-        { "administration/groups", "Groups" }
+    public static IList<NavigationItem> Subpages = new List<NavigationItem> {
+        new () {
+            Name = "Users",
+            Url = "administration/users",
+            Description = "On this page you can manage all user accounts.",
+            Permission = AdminPermissions.ViewUsers
+        },
+        new () {
+            Name = "Groups",
+            Url = "administration/groups",
+            Description = "On this page you can view, create, edit and delete permission groups.",
+            Permission = AdminPermissions.ViewGroups
+        }
     };
 
-    public bool IsNavItemActive(string element) {
+    private bool IsNavItemActive(string element) {
         return Navigator.Uri.Contains(element);
+    }
+
+    private bool IsDashboardActive() {
+        return Navigator.Uri.TrimEnd('/').EndsWith("administration");
+    }
+
+    private void NavigateToDashboard() {
+        Navigate("administration");
     }
 
     private void Navigate(string url) {
@@ -57,6 +80,6 @@
     }
 
     private void Logout() {
-        Navigator.NavigateTo("login?redirect=/administration", true);
+        Navigator.NavigateTo("administration/login", true);
     }
 }

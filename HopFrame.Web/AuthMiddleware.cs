@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Web;
 
-public class AuthMiddleware(IAuthService auth, IPermissionService perms) : IMiddleware {
+public sealed class AuthMiddleware(IAuthService auth, IPermissionService perms) : IMiddleware {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next) {
         var loggedIn = await auth.IsLoggedIn();
 

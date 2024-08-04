@@ -16,17 +16,17 @@
         <BSModalContent>
             <div class="mb-3">
                 <BSLabel>E-Mail</BSLabel>
-                <BSInput InputType="InputType.Email" @bind-Value="_user.Email" />
+                <BSInput InputType="InputType.Email" @bind-Value="_user.Email" required/>
             </div>
             
             <div class="mb-3">
                 <BSLabel>Username</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="_user.Username" />
+                <BSInput InputType="InputType.Text" @bind-Value="_user.Username" required/>
             </div>
             
             <div class="mb-3">
                 <BSLabel>Password</BSLabel>
-                <BSInput InputType="InputType.Password" @bind-Value="_user.Password" />
+                <BSInput InputType="InputType.Password" @bind-Value="_user.Password" required/>
             </div>
             
             <div class="mb-3">
@@ -124,7 +124,7 @@
     private async Task NoAddPermissions() {
         await Alerts.FireAsync(new SweetAlertOptions {
             Title = "Unauthorized!",
-            Text = "You don't have the required Permissions to edit a user!",
+            Text = "You don't have the required permissions to add a user!",
             Icon = SweetAlertIcon.Error
         });
     }

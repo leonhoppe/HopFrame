@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Security.Claims;
 
-internal class TokenContextImplementor<TDbContext>(IHttpContextAccessor accessor, TDbContext context) : ITokenContext where TDbContext : HopDbContextBase {
+internal sealed class TokenContextImplementor<TDbContext>(IHttpContextAccessor accessor, TDbContext context) : ITokenContext where TDbContext : HopDbContextBase {
     public bool IsAuthenticated => !string.IsNullOrEmpty(accessor.HttpContext?.User.GetAccessTokenId());
 
     public User User => context.Users

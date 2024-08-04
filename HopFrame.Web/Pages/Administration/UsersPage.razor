@@ -13,10 +13,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
 @using BlazorStrap.V5
-@using HopFrame.Web.Pages.Administration.Components
+@using HopFrame.Web.Components.Administration
 
 <PageTitle>Users</PageTitle>
-<AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="login?redirect=/administration/users"/>
+<AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="administration/login?redirect=/administration/users"/>
 
 <UserAddModal @ref="_userAddModal" ReloadPage="Reload"/>
 <UserEditModal @ref="_userEditModal" ReloadPage="Reload"/>
@@ -33,7 +33,9 @@
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
         <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
-    <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _userAddModal.ShowAsync()">Add User</BSButton>
+    <AuthorizedView Permission="@AdminPermissions.AddUser">
+        <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _userAddModal.ShowAsync()">Add User</BSButton>
+    </AuthorizedView>
 </div>
 
 <BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
@@ -118,7 +120,7 @@
 
         foreach (var user in _users) {
             var groups = await PermissionsService.GetUserPermissionGroups(user);
-            _userGroups.Add(user.Id, groups.FirstOrDefault());
+            _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 
         _hasEditPrivileges = await PermissionsService.HasPermission(AdminPermissions.EditUser, Auth.User.Id);
@@ -133,10 +135,10 @@
         
         foreach (var user in _users) {
             var groups = await PermissionsService.GetUserPermissionGroups(user);
-            _userGroups.Add(user.Id, groups.FirstOrDefault());
+            _userGroups.Add(user.Id, groups.LastOrDefault());
         }
-        
-        
+
+        OrderBy(_currentOrder, false);
         StateHasChanged();
     }
 
@@ -167,6 +169,7 @@
 
     private void OrderBy(OrderType type, bool changeDir = true) {
         if (_currentOrder == type && changeDir) _currentOrderDirection = (OrderDirection)(((byte)_currentOrderDirection + 1) % 2);
+        if (_currentOrder != type) _currentOrderDirection = OrderDirection.Asc;
 
         if (type == OrderType.Email) {
             _users = _currentOrderDirection == OrderDirection.Asc ? _users.OrderBy(user => user.Email).ToList() : _users.OrderByDescending(user => user.Email).ToList();

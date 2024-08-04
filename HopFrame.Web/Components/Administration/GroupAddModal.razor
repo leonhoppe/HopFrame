@@ -6,6 +6,7 @@
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Security.Claims
 @using HopFrame.Security.Services
 @using HopFrame.Web.Model
 
@@ -23,7 +24,7 @@
                 @if (!_isEdit) {
                     <BSInputGroup>
                         <span class="@BS.Input_Group_Text">group.</span>
-                        <BSInput InputType="InputType.Text" @bind-Value="_group.GroupName"/>
+                        <BSInput InputType="InputType.Text" @bind-Value="_group.GroupName" required/>
                     </BSInputGroup>
                 }
                 else {
@@ -116,6 +117,7 @@
 
 @inject IPermissionService Permissions
 @inject SweetAlertService Alerts
+@inject ITokenContext Context
 
 @code {
     [Parameter] public Func<Task> ReloadPage { get; set; }
@@ -165,6 +167,11 @@
         }
 
         if (_isEdit) {
+            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
             await Permissions.AddPermission(_group, _permissionToAdd);
         }
         
@@ -195,6 +202,11 @@
         }
         
         if (_isEdit) {
+            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
             await Permissions.AddPermission(_group, _groupToAdd);
         }
         
@@ -207,6 +219,11 @@
 
     private async Task AddGroup() {
         if (_isEdit) {
+            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
             await Permissions.EditPermissionGroup(_group);
             
             if (ReloadPage is not null)
@@ -219,6 +236,11 @@
                 ShowConfirmButton = false
             });
             
+            return;
+        }
+        
+        if (!(await Permissions.HasPermission(AdminPermissions.AddGroup, Context.User.Id))) {
+            await NoAddPermissions();
             return;
         }
         
@@ -247,6 +269,22 @@
             Icon = SweetAlertIcon.Success,
             Timer = 1500,
             ShowConfirmButton = false
+        });
+    }
+    
+    private async Task NoEditPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required permissions to edit a group!",
+            Icon = SweetAlertIcon.Error
+        });
+    }
+    
+    private async Task NoAddPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required permissions to add a group!",
+            Icon = SweetAlertIcon.Error
         });
     }
 }

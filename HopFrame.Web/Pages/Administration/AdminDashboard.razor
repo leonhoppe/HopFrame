@@ -1,0 +1,33 @@
+@page "/administration"
+@rendermode InteractiveServer
+
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap
+@using HopFrame.Web.Pages.Administration.Layout
+@using BlazorStrap.V5
+@using HopFrame.Web.Components
+@using Microsoft.AspNetCore.Components.Web
+@layout AdminLayout
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<BSContainer>
+    <BSRow Justify="Justify.Center">
+        @foreach (var view in AdminMenu.Subpages) {
+            <AuthorizedView Permission="@view.Permission">
+                <BSCol Column="4" style="margin-bottom: 10px">
+                    <BSCard CardType="CardType.Card" Color="BSColor.Dark" style="min-height: 200px">
+                        <BSCard CardType="CardType.Body" style="display: flex; flex-direction: column">
+                            <BSCard CardType="CardType.Title">@view.Name</BSCard>
+                            <BSCard CardType="CardType.Subtitle"><span style="color: gray">@view.Permission</span></BSCard>
+                            <BSCard CardType="CardType.Text">@view.Description</BSCard>
+                            <BSButton IsOutlined="true" MarginTop="Margins.Auto" style="width: max-content; align-self: center" OnClick="() => Navigator.NavigateTo(view.Url, true)" Color="BSColor.Light">Open</BSButton>
+                        </BSCard>
+                    </BSCard>
+                </BSCol>
+            </AuthorizedView>
+        }
+    </BSRow>
+</BSContainer>
+
+@inject NavigationManager Navigator

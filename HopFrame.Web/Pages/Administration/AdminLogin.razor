@@ -1,0 +1,67 @@
+@page "/administration/login"
+@layout EmptyLayout
+
+@using BlazorStrap
+@using BlazorStrap.V5
+@using HopFrame.Security.Models
+@using HopFrame.Web.Pages.Administration.Layout
+@using HopFrame.Web.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-wrapper">
+    <EditForm Model="UserLogin" OnValidSubmit="Login" FormName="login-form">
+        <div class="field-wrapper">
+            <h3>Login</h3>
+            <div class="mb-3">
+                <BSLabel>E-Mail address</BSLabel>
+                <InputText type="email" class="form-control" required @bind-Value="UserLogin.Email"/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>Password</BSLabel>
+                <InputText type="password" class="form-control" required @bind-Value="UserLogin.Password"/>
+            </div>
+            <BSButton Color="BSColor.Primary" IsSubmit="true">Login</BSButton>
+
+            @if (_hasError) {
+                <BSAlert Color="BSColor.Danger" style="margin-top: 16px; margin-bottom: 0">Email or password does not match any account!</BSAlert>
+            }
+        </div>
+    </EditForm>
+</div>
+
+@inject IAuthService Auth
+@inject NavigationManager Navigator
+
+@code {
+    [SupplyParameterFromForm]
+    private UserLogin UserLogin { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "redirect")]
+    private string RedirectAfter { get; set; }
+
+    private const string DefaultRedirect = "/administration";
+
+    private bool _hasError = false;
+
+    protected override async Task OnInitializedAsync() {
+        UserLogin ??= new();
+
+        if (await Auth.IsLoggedIn()) {
+            await Auth.Logout();
+        }
+    }
+
+    private async Task Login() {
+        var result = await Auth.Login(UserLogin);
+
+        if (!result) {
+            _hasError = true;
+            return;
+        }
+        
+        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? DefaultRedirect : RedirectAfter, true);
+    }
+}

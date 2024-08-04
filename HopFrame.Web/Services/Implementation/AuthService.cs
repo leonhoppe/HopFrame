@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Web.Services.Implementation;
 
-public class AuthService<TDbContext>(
+internal class AuthService<TDbContext>(
     IUserService userService,
     IHttpContextAccessor httpAccessor,
     TDbContext context)

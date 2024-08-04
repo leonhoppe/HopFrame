@@ -23,13 +23,13 @@ if (!app.Environment.IsDevelopment()) {
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-//app.UseAntiforgery();
+app.UseAntiforgery();
 app.UseAuthorization();
 app.UseAuthentication();
 app.UseMiddleware<AuthMiddleware>();
 
 app.MapRazorComponents<App>()
-    .AddHopFramePages()
+    .AddHopFrameAdminPages()
     .AddInteractiveServerRenderMode();
 
 app.Run();
