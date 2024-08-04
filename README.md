@@ -5,4 +5,4 @@ A simple backend management api for ASP.NET Core Web APIs
 - [x] Database management
 - [x] User authentication
 - [x] Permission management
-- [ ] Frontend dashboards
+- [x] Frontend dashboards
