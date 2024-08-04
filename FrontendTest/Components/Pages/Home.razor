@@ -1,0 +1,13 @@
+﻿@page "/"
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Components
+
+<AuthorizedView RedirectIfUnauthorized="login"/>
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app. @Context.User?.Username
+
+@inject ITokenContext Context

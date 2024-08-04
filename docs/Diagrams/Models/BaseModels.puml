@@ -1,0 +1,37 @@
+@startuml BaseModels
+set namespaceSeparator none
+
+namespace HopFrame.Database {
+    class User {
+        +Id: Guid
+        +Username: string
+        +Email: string
+        +CreatedAt: DateTime
+        +Permissions: IList<Permission>
+    }
+    
+    class Permission {
+        +Id: long
+        +PermissionName: string
+        +Owner: Guid
+        +GrantedAt: DateTime
+    }
+    
+    class PermissionGroup {
+        +Name: string
+        +IsDefaultGroup: bool
+        +Description: string
+        +CreatedAt: DateTime
+        +Permissions: IList<Permission>
+    }
+    
+    interface IPermissionOwner {}
+}
+
+IPermissionOwner <|-- User
+IPermissionOwner <|-- PermissionGroup
+
+User .. Permission
+PermissionGroup .. Permission
+
+@enduml

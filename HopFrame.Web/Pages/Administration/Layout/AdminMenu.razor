@@ -1,0 +1,85 @@
+﻿@rendermode InteractiveServer
+
+@using BlazorStrap
+@using BlazorStrap.V5
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Services
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using HopFrame.Web.Components.Administration
+@using HopFrame.Web.Model
+@using HopFrame.Web.Components
+
+
+<BSNavbar Color="BSColor.Dark" IsDark="true" IsFixedTop="true">
+    <BSContainer Container="Container.Fluid">
+        <BSNavbarBrand>
+            HopFrame
+        </BSNavbarBrand>
+        <BSCollapse IsInNavbar="true">
+            <Toggler>
+                <BSNavbarToggle/>
+            </Toggler>
+            <Content>
+                <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+                    <BSNavItem IsActive="IsDashboardActive()" OnClick="NavigateToDashboard">Dashboard</BSNavItem>
+                    
+                    @foreach (var nav in Subpages) {
+                        <AuthorizedView Permission="@nav.Permission">
+                            <BSNavItem IsActive="IsNavItemActive(nav.Url)" OnClick="() => Navigate(nav.Url)">@nav.Name</BSNavItem>
+                        </AuthorizedView>
+                    }
+                </BSNav>
+                
+                <span style="margin-left: auto; line-height: 100%; color: white">
+                    logged in as @Context?.User.Username
+                </span>
+                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark">
+                    <HopIconDisplay Type="HopIconDisplay.HopIcon.Logout"/>
+                </BSButton>
+                <BSTooltip Placement="Placement.Bottom" Target="logout" ContentAlwaysRendered="false">logout</BSTooltip>
+            </Content>
+        </BSCollapse>
+    </BSContainer>
+</BSNavbar>
+
+
+@inject NavigationManager Navigator
+@inject ITokenContext Context
+@inject IAuthService Auth
+
+@code {
+    public static IList<NavigationItem> Subpages = new List<NavigationItem> {
+        new () {
+            Name = "Users",
+            Url = "administration/users",
+            Description = "On this page you can manage all user accounts.",
+            Permission = AdminPermissions.ViewUsers
+        },
+        new () {
+            Name = "Groups",
+            Url = "administration/groups",
+            Description = "On this page you can view, create, edit and delete permission groups.",
+            Permission = AdminPermissions.ViewGroups
+        }
+    };
+
+    private bool IsNavItemActive(string element) {
+        return Navigator.Uri.Contains(element);
+    }
+
+    private bool IsDashboardActive() {
+        return Navigator.Uri.TrimEnd('/').EndsWith("administration");
+    }
+
+    private void NavigateToDashboard() {
+        Navigate("administration");
+    }
+
+    private void Navigate(string url) {
+        Navigator.NavigateTo(url, true);
+    }
+
+    private void Logout() {
+        Navigator.NavigateTo("administration/login", true);
+    }
+}

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HopFrame.Database\HopFrame.Database.csproj" />
+      <ProjectReference Include="..\HopFrame.Security\HopFrame.Security.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BlazorStrap" Version="5.2.100.61524" />
+      <PackageReference Include="BlazorStrap.V5" Version="5.2.100" />
+      <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.6.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+</Project>

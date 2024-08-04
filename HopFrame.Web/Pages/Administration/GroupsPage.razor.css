@@ -1,0 +1,26 @@
+.title {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#search {
+    margin-left: auto;
+}
+
+th, h3 {
+    user-select: none;
+}
+
+h3 {
+    color: white;
+}
+
+.reload, .sorter {
+    cursor: pointer;
+}
+
+.bold {
+    font-weight: bold;
+}
