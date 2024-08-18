@@ -16,7 +16,7 @@
 @using HopFrame.Web.Pages.Administration.Layout
 
 <PageTitle>Groups</PageTitle>
-<AuthorizedView Permission="@AdminPermissions.ViewGroups" RedirectIfUnauthorized="administration/login?redirect=/administration/groups"/>
+<AuthorizedView Permission="@Security.AdminPermissions.ViewGroups" RedirectIfUnauthorized="administration/login?redirect=/administration/groups"/>
 
 <GroupAddModal ReloadPage="Reload" @ref="_groupAddModal"/>
 
@@ -32,7 +32,7 @@
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
         <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
-    <AuthorizedView Permission="@AdminPermissions.AddGroup">
+    <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
         <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _groupAddModal.ShowAsync()">Add Group</BSButton>
     </AuthorizedView>
 </div>
@@ -112,8 +112,8 @@
     protected override async Task OnInitializedAsync() {
         _groups = await Permissions.GetPermissionGroups();
         
-        _hasEditPrivileges = await Permissions.HasPermission(AdminPermissions.EditGroup, Auth.User.Id);
-        _hasDeletePrivileges = await Permissions.HasPermission(AdminPermissions.DeleteGroup, Auth.User.Id);
+        _hasEditPrivileges = await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Auth.User.Id);
+        _hasDeletePrivileges = await Permissions.HasPermission(Security.AdminPermissions.DeleteGroup, Auth.User.Id);
     }
 
     private async Task Reload() {

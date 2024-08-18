@@ -1,15 +1,16 @@
 namespace HopFrame.Web;
 
+[Obsolete("Use HopFrame.Security.AdminPermissions instead")]
 public static class AdminPermissions {
-    public const string IsAdmin = "hopframe.admin";
+    public const string IsAdmin = Security.AdminPermissions.IsAdmin;
     
-    public const string ViewUsers = "hopframe.admin.users.view";
-    public const string EditUser = "hopframe.admin.users.edit";
-    public const string DeleteUser = "hopframe.admin.users.delete";
-    public const string AddUser = "hopframe.admin.users.add";
+    public const string ViewUsers = Security.AdminPermissions.ViewUsers;
+    public const string EditUser = Security.AdminPermissions.EditUser;
+    public const string DeleteUser = Security.AdminPermissions.DeleteUser;
+    public const string AddUser = Security.AdminPermissions.AddUser;
     
-    public const string ViewGroups = "hopframe.admin.groups.view";
-    public const string EditGroup = "hopframe.admin.groups.edit";
-    public const string DeleteGroup = "hopframe.admin.groups.delete";
-    public const string AddGroup = "hopframe.admin.groups.add";
+    public const string ViewGroups = Security.AdminPermissions.ViewGroups;
+    public const string EditGroup = Security.AdminPermissions.EditGroup;
+    public const string DeleteGroup = Security.AdminPermissions.DeleteGroup;
+    public const string AddGroup = Security.AdminPermissions.AddGroup;
 }

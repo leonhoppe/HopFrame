@@ -167,7 +167,7 @@
         }
 
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
                 await NoEditPermissions();
                 return;
             }
@@ -202,7 +202,7 @@
         }
         
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
                 await NoEditPermissions();
                 return;
             }
@@ -219,7 +219,7 @@
 
     private async Task AddGroup() {
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
                 await NoEditPermissions();
                 return;
             }
@@ -239,7 +239,7 @@
             return;
         }
         
-        if (!(await Permissions.HasPermission(AdminPermissions.AddGroup, Context.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.AddGroup, Context.User.Id))) {
             await NoAddPermissions();
             return;
         }

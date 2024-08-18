@@ -5,7 +5,7 @@ using HopFrame.Web;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddHopFrameServices<DatabaseContext>();
+builder.Services.AddHopFrame<DatabaseContext>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

@@ -69,7 +69,7 @@
     }
 
     private async Task AddUser() {
-        if (!(await Permissions.HasPermission(AdminPermissions.AddUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.AddUser, Auth.User.Id))) {
             await NoAddPermissions();
             return;
         }

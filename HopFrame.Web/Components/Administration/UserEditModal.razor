@@ -118,7 +118,7 @@
     private string _permissionToAdd;
 
     public async Task ShowAsync(User user) {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }
@@ -130,7 +130,7 @@
     }
 
     private async Task AddGroup() {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }
@@ -158,7 +158,7 @@
     }
     
     private async Task RemoveGroup(PermissionGroup group) {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }
@@ -186,7 +186,7 @@
     }
 
     private async Task AddPermission() {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }
@@ -213,7 +213,7 @@
     }
     
     private async Task RemovePermission(Permission perm) {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }
@@ -241,7 +241,7 @@
     }
     
     private async void EditUser() {
-        if (!(await Permissions.HasPermission(AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
             await NoEditPermissions();
             return;
         }

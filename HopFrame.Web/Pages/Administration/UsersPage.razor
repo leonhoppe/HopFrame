@@ -16,7 +16,7 @@
 @using HopFrame.Web.Components.Administration
 
 <PageTitle>Users</PageTitle>
-<AuthorizedView Permission="@AdminPermissions.ViewUsers" RedirectIfUnauthorized="administration/login?redirect=/administration/users"/>
+<AuthorizedView Permission="@Security.AdminPermissions.ViewUsers" RedirectIfUnauthorized="administration/login?redirect=/administration/users"/>
 
 <UserAddModal @ref="_userAddModal" ReloadPage="Reload"/>
 <UserEditModal @ref="_userEditModal" ReloadPage="Reload"/>
@@ -33,7 +33,7 @@
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @bind="_searchText">
         <BSButton Color="BSColor.Success" IsOutlined="true" type="submit">Search</BSButton>
     </form>
-    <AuthorizedView Permission="@AdminPermissions.AddUser">
+    <AuthorizedView Permission="@Security.AdminPermissions.AddUser">
         <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user" OnClick="() => _userAddModal.ShowAsync()">Add User</BSButton>
     </AuthorizedView>
 </div>
@@ -123,8 +123,8 @@
             _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 
-        _hasEditPrivileges = await PermissionsService.HasPermission(AdminPermissions.EditUser, Auth.User.Id);
-        _hasDeletePrivileges = await PermissionsService.HasPermission(AdminPermissions.DeleteUser, Auth.User.Id);
+        _hasEditPrivileges = await PermissionsService.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id);
+        _hasDeletePrivileges = await PermissionsService.HasPermission(Security.AdminPermissions.DeleteUser, Auth.User.Id);
     }
 
     private async Task Reload() {

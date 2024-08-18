@@ -6,12 +6,16 @@ public static class PermissionValidator {
         var permLow = permission.ToLower();
         var permsLow = permissions.Select(perm => perm.ToLower()).ToArray();
         
-        if (permsLow.Any(perm => perm == permLow || perm == "*")) return true;
+        if (permsLow.Any(perm => 
+                perm == permLow ||
+                (perm.Length > permLow.Length && perm.StartsWith(permLow) && perm.ToCharArray()[permLow.Length] == '.') ||
+                perm == "*")) 
+            return true;
         
         foreach (var perm in permsLow) {
             if (!perm.EndsWith(".*")) continue;
 
-            var permissionGroup = perm.Replace(".*", "");
+            var permissionGroup = perm.Substring(0, perm.Length - 1);
             if (permLow.StartsWith(permissionGroup)) return true;
         }
 

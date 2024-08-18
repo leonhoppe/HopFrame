@@ -2,6 +2,13 @@ using HopFrame.Database.Models;
 
 namespace HopFrame.Security.Services;
 
+/// <summary>
+/// permission system:<br/>
+/// - "*" -> all rights<br/>
+/// - "group.[name]" -> group member<br/>
+/// - "[namespace].[name]" -> single permission<br/>
+/// - "[namespace].*" -> all permissions in the namespace
+/// </summary>
 public interface IPermissionService {
 
     Task<bool> HasPermission(string permission, Guid user);
