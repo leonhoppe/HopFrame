@@ -45,6 +45,11 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
             HttpOnly = true,
             Secure = true
         });
+        HttpContext.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
+            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+            HttpOnly = true,
+            Secure = true
+        });
 
         await context.Tokens.AddRangeAsync(refreshToken, accessToken);
         await context.SaveChangesAsync();
