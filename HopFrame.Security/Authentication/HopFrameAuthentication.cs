@@ -29,6 +29,8 @@ public class HopFrameAuthentication<TDbContext>(
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync() {
         var accessToken = Request.Cookies[ITokenContext.AccessTokenType];
+        if (string.IsNullOrEmpty(accessToken)) accessToken = Request.Headers[SchemeName];
+        if (string.IsNullOrEmpty(accessToken)) accessToken = Request.Headers["Token"];
         if (string.IsNullOrEmpty(accessToken)) return AuthenticateResult.Fail("No Access Token provided");
         
         var tokenEntry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == accessToken);
