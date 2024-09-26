@@ -11,9 +11,6 @@ namespace HopFrame.Database {
     }
     
     class TokenEntry {
-        {static} +RefreshTokenType: int = 0
-        {static} +AccessTokenType: int = 1
-        
         +Type: int
         +Token: string
         +UserId: string
