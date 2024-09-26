@@ -18,8 +18,6 @@ public static class ServiceCollectionExtensions {
         // Component library's
         services.AddSweetAlert2();
         services.AddBlazorStrap();
-        
-        //TODO: Use https://blazorstrap.io/V5/V5
 
         services.AddHopFrameAuthentication<TDbContext>();
 

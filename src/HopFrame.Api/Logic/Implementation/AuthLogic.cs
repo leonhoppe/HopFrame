@@ -1,30 +1,24 @@
-using HopFrame.Api.Logic;
 using HopFrame.Api.Models;
 using HopFrame.Database;
 using HopFrame.Database.Models.Entries;
 using HopFrame.Security.Authentication;
-using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using HopFrame.Security.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace HopFrame.Api.Controller;
+namespace HopFrame.Api.Logic.Implementation;
 
-[ApiController]
-[Route("authentication")]
-public class SecurityController<TDbContext>(TDbContext context, IUserService users, ITokenContext tokenContext) : ControllerBase where TDbContext : HopDbContextBase {
-
-    [HttpPut("login")]
-    public async Task<ActionResult<SingleValueResult<string>>> Login([FromBody] UserLogin login) {
+public class AuthLogic<TDbContext>(TDbContext context, IUserService users, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic where TDbContext : HopDbContextBase {
+    
+    public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
         var user = await users.GetUserByEmail(login.Email);
 
         if (user is null)
             return LogicResult<SingleValueResult<string>>.NotFound("The provided email address was not found");
 
-        if (await users.CheckUserPassword(user, login.Password))
+        if (!await users.CheckUserPassword(user, login.Password))
             return LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct");
 
         var refreshToken = new TokenEntry {
@@ -40,12 +34,12 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
             UserId = user.Id.ToString()
         };
         
-        HttpContext.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
             MaxAge = HopFrameAuthentication<TDbContext>.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        HttpContext.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
             MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
             HttpOnly = true,
             Secure = true
@@ -57,8 +51,7 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
-    [HttpPost("register")]
-    public async Task<ActionResult<SingleValueResult<string>>> Register([FromBody] UserRegister register) {
+    public async Task<LogicResult<SingleValueResult<string>>> Register(UserRegister register) {
         if (register.Password.Length < 8)
             return LogicResult<SingleValueResult<string>>.Conflict("Password needs to be at least 8 characters long");
 
@@ -84,12 +77,12 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         await context.Tokens.AddRangeAsync(refreshToken, accessToken);
         await context.SaveChangesAsync();
         
-        HttpContext.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
             MaxAge = HopFrameAuthentication<TDbContext>.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        HttpContext.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
             MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
             HttpOnly = false,
             Secure = true
@@ -98,9 +91,8 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
-    [HttpGet("authenticate")]
-    public async Task<ActionResult<SingleValueResult<string>>> Authenticate() {
-        var refreshToken = HttpContext.Request.Cookies[ITokenContext.RefreshTokenType];
+    public async Task<LogicResult<SingleValueResult<string>>> Authenticate() {
+        var refreshToken = accessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
         
         if (string.IsNullOrEmpty(refreshToken))
             return LogicResult<SingleValueResult<string>>.Conflict("Refresh token not provided");
@@ -123,7 +115,7 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         await context.Tokens.AddAsync(accessToken);
         await context.SaveChangesAsync();
         
-        HttpContext.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
             MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
             HttpOnly = false,
             Secure = true
@@ -132,10 +124,9 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
     }
 
-    [HttpDelete("logout"), Authorized]
-    public async Task<ActionResult> Logout() {
-        var accessToken = HttpContext.User.GetAccessTokenId();
-        var refreshToken = HttpContext.Request.Cookies[ITokenContext.RefreshTokenType];
+    public async Task<LogicResult> Logout() {
+        var accessToken = accessor.HttpContext?.User.GetAccessTokenId();
+        var refreshToken = accessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
         
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
             return LogicResult.Conflict("access or refresh token not provided");
@@ -152,22 +143,22 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         context.Tokens.Remove(tokenEntries[1]);
         await context.SaveChangesAsync();
         
-        HttpContext.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
-        HttpContext.Response.Cookies.Delete(ITokenContext.AccessTokenType);
+        accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);
         
         return LogicResult.Ok();
     }
 
-    [HttpDelete("delete"), Authorized]
-    public async Task<ActionResult> Delete([FromBody] UserPasswordValidation validation) {
+    public async Task<LogicResult> Delete(UserPasswordValidation validation) {
         var user = tokenContext.User;
         
-        if (await users.CheckUserPassword(user, validation.Password))
+        if (!await users.CheckUserPassword(user, validation.Password))
             return LogicResult.Forbidden("The provided password is not correct");
 
         await users.DeleteUser(user);
         
-        HttpContext.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);
 
         return LogicResult.Ok();
     }

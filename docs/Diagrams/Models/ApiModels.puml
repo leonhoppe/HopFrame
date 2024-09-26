@@ -13,12 +13,6 @@ namespace HopFrame.Security {
     }
 }
 
-namespace HopFrame.Web {
-    class RegisterData {
-        +RepeatedPassword: string
-    }
-}
-
 namespace HopFrame.Api {
     class SingleValueResult<TValue> {
         +Value: TValue
@@ -28,7 +22,5 @@ namespace HopFrame.Api {
         +Password: string
     }
 }
-
-UserRegister <|-- RegisterData
 
 @enduml

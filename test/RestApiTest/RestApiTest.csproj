@@ -17,9 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HopFrame.Api\HopFrame.Api.csproj" />
-      <ProjectReference Include="..\HopFrame.Security\HopFrame.Security.csproj" />
-      <ProjectReference Include="..\HopFrame.Database\HopFrame.Database.csproj" />
+      <ProjectReference Include="..\..\src\HopFrame.Api\HopFrame.Api.csproj" />
     </ItemGroup>
 
 </Project>

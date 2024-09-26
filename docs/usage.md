@@ -1,5 +1,32 @@
-# HopFrame Web module
-This module contains useful helpers for Blazor Apps and an Admin Dashboard.
+# HopFrame Usage
+There are two different versions of HopFrame, either the Web API version or the full Blazor web version.
+
+## Ho to use the Web API version
+
+1. Add the HopFrame.Api library to your project:
+
+   ```
+   dotnet add package HopFrame.Api
+   ```
+
+2. Create a DbContext that inherits the ``HopDbContext`` and add a data source
+
+   ```csharp
+   public class DatabaseContext : HopDbContextBase {
+       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+           base.OnConfiguring(optionsBuilder);
+
+           optionsBuilder.UseSqlite("...");
+       }
+   }
+   ```
+
+3. Add the DbContext and HopFrame to your services
+
+   ```csharp
+   builder.Services.AddDbContext<DatabaseContext>();
+   builder.Services.AddHopFrame<DatabaseContext>();
+   ```
 
 ## How to use the Blazor API
 
