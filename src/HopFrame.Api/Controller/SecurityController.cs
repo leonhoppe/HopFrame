@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HopFrame.Api.Controller;
 
 [ApiController]
-[Route("api/v1/authentication")]
+[Route("authentication")]
 public class SecurityController(IAuthLogic auth) : ControllerBase {
 
     [HttpPut("login")]
