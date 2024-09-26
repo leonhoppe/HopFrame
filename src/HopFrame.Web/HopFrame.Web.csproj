@@ -5,8 +5,12 @@
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+
+        <PackageId>HopFrame.Web</PackageId>
+        <Version>1.1.0</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
