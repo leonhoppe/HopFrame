@@ -1,0 +1,290 @@
+@rendermode InteractiveServer
+
+@using BlazorStrap
+@using BlazorStrap.Shared.Components.Modal
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Models
+@using HopFrame.Security.Claims
+@using HopFrame.Security.Services
+@using HopFrame.Web.Model
+
+<BSModal DataId="add-group-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
+    <BSForm Model="_group" OnValidSubmit="AddGroup">
+        @if (_isEdit) {
+            <BSModalHeader>Edit group</BSModalHeader>
+        }
+        else {
+            <BSModalHeader>Add group</BSModalHeader>
+        }
+        <BSModalContent>
+            <div class="mb-3">
+                <BSLabel>Name</BSLabel>
+                @if (!_isEdit) {
+                    <BSInputGroup>
+                        <span class="@BS.Input_Group_Text">group.</span>
+                        <BSInput InputType="InputType.Text" @bind-Value="_group.GroupName" required/>
+                    </BSInputGroup>
+                }
+                else {
+                    <input type="text" class="form-control" disabled value="@_group.Name"/>
+                }
+            </div>
+            
+            @if (_isEdit) {
+                <div class="mb-3">
+                    <BSLabel>Created at</BSLabel>
+                    <input type="text" class="form-control" disabled value="@_group.CreatedAt"/>
+                </div>
+            }
+            
+            <div class="mb-3">
+                <BSLabel>Description</BSLabel>
+                <BSInput InputType="InputType.TextArea" @bind-Value="_group.Description"/>
+            </div>
+            
+            <div class="mb-3">
+                <BSInputSwitch @bind-Value="_group.IsDefaultGroup" CheckedValue="true" UnCheckedValue="false">
+                    Default group
+                </BSInputSwitch>
+            </div>
+
+            <div class="mb-3">
+                <BSLabel>Inherits from</BSLabel>
+                <BSListGroup>
+                    <BSListGroupItem>
+                        <BSListGroup IsFlush="true">
+                            @foreach (var group in _group.Permissions.Where(g => g.PermissionName.StartsWith("group."))) {
+                                <BSListGroupItem>
+                                    <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => RemovePermission(group)">
+                                        <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                    </BSButton>
+
+                                    <span>@group.PermissionName.Replace("group.", "")</span>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSListGroupItem>
+                    <BSListGroupItem>
+                        <div style="display: flex; gap: 20px">
+                            <BSInput InputType="InputType.Select" @bind-Value="_groupToAdd">
+                                <option selected>Select group</option>
+
+                                @foreach (var group in _allGroups) {
+                                    @if (_group.Permissions.All(g => g.PermissionName != group.Name) && group.Name != _group.Name) {
+                                        <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                                    }
+                                }
+                            </BSInput>
+                            <BSButton Color="BSColor.Secondary" OnClick="AddInheritanceGroup">Add</BSButton>
+                        </div>
+                    </BSListGroupItem>
+                </BSListGroup>
+            </div>
+
+            <div class="mb-3">
+                <BSLabel>Permissions</BSLabel>
+                <BSListGroup>
+                    <BSListGroupItem>
+                        <BSListGroup IsFlush="true">
+                            @foreach (var perm in _group.Permissions.Where(perm => !perm.PermissionName.StartsWith("group."))) {
+                                <BSListGroupItem>
+                                    <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => RemovePermission(perm)">
+                                        <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                    </BSButton>
+
+                                    <span>@perm.PermissionName</span>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSListGroupItem>
+                    <BSListGroupItem>
+                        <div style="display: flex; gap: 20px">
+                            <BSInput InputType="InputType.Text" @bind-Value="_permissionToAdd"/>
+                            <BSButton Color="BSColor.Secondary" OnClick="AddPermission">Add</BSButton>
+                        </div>
+                    </BSListGroupItem>
+                </BSListGroup>
+            </div>
+        </BSModalContent>
+        <BSModalFooter>
+            <BSButton Target="add-group-modal">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@inject IPermissionService Permissions
+@inject SweetAlertService Alerts
+@inject ITokenContext Context
+
+@code {
+    [Parameter] public Func<Task> ReloadPage { get; set; }
+    
+    private PermissionGroupAdd _group;
+
+    private BSModalBase _modal;
+    private string _permissionToAdd;
+    private string _groupToAdd;
+
+    private IList<PermissionGroup> _allGroups;
+
+    private bool _isEdit;
+
+    public async Task ShowAsync(PermissionGroup group = null) {
+        _allGroups = await Permissions.GetPermissionGroups();
+
+        if (group is not null) {
+            _group = new PermissionGroupAdd {
+                CreatedAt = group.CreatedAt,
+                Description = group.Description,
+                Name = group.Name,
+                IsDefaultGroup = group.IsDefaultGroup,
+                Permissions = group.Permissions
+            };
+            _isEdit = true;
+        }
+        else {
+            _group = new PermissionGroupAdd {
+                Permissions = new List<Permission>(),
+                IsDefaultGroup = false
+            };
+            _isEdit = false;
+        }
+
+        await _modal.ShowAsync();
+    }
+
+    private async Task AddPermission() {
+        if (string.IsNullOrWhiteSpace(_permissionToAdd)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Enter a permission name!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+
+        if (_isEdit) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
+            await Permissions.AddPermission(_group, _permissionToAdd);
+        }
+        
+        _group.Permissions.Add(new Permission {
+            PermissionName = _permissionToAdd
+        });
+
+        _permissionToAdd = null;
+    }
+
+    private async Task RemovePermission(Permission permission) {
+        if (_isEdit) {
+            var perm = await Permissions.GetPermission(permission.PermissionName, _group);
+            await Permissions.RemovePermission(perm);
+        }
+        
+        _group.Permissions.Remove(permission);
+    }
+
+    private async Task AddInheritanceGroup() {
+        if (string.IsNullOrWhiteSpace(_groupToAdd)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Select a group!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+        
+        if (_isEdit) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
+            await Permissions.AddPermission(_group, _groupToAdd);
+        }
+        
+        _group.Permissions.Add(new Permission {
+            PermissionName = _groupToAdd
+        });
+
+        _groupToAdd = null;
+    }
+
+    private async Task AddGroup() {
+        if (_isEdit) {
+            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+                await NoEditPermissions();
+                return;
+            }
+            
+            await Permissions.EditPermissionGroup(_group);
+            
+            if (ReloadPage is not null)
+                await ReloadPage.Invoke();
+            
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Group edited!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+            
+            return;
+        }
+        
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.AddGroup, Context.User.Id))) {
+            await NoAddPermissions();
+            return;
+        }
+        
+        if (_allGroups.Any(group => group.Name == _group.Name)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Something went wrong!",
+                Text = "This group already exists!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+            return;
+        }
+
+        var dbGroup = await Permissions.CreatePermissionGroup("group." + _group.GroupName, _group.IsDefaultGroup, _group.Description);
+
+        foreach (var permission in _group.Permissions) {
+            await Permissions.AddPermission(dbGroup, permission.PermissionName);
+        }
+        
+        if (ReloadPage is not null)
+            await ReloadPage.Invoke();
+        
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Group added!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
+    }
+    
+    private async Task NoEditPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required permissions to edit a group!",
+            Icon = SweetAlertIcon.Error
+        });
+    }
+    
+    private async Task NoAddPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required permissions to add a group!",
+            Icon = SweetAlertIcon.Error
+        });
+    }
+}

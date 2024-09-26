@@ -1,0 +1,306 @@
+@rendermode InteractiveServer
+
+@using BlazorStrap
+@using BlazorStrap.Shared.Components.Modal
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Models
+@using HopFrame.Security.Claims
+@using HopFrame.Security.Services
+@using HopFrame.Web.Model
+
+<BSModal DataId="edit-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
+    <BSForm Model="_user" OnValidSubmit="EditUser">
+        <BSModalHeader>Edit @_user.Username</BSModalHeader>
+        <BSModalContent>
+            <div class="mb-3">
+                <BSLabel>User id</BSLabel>
+                <input type="text" class="form-control" disabled value="@_user.Id"/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>Created at</BSLabel>
+                <input type="text" class="form-control" disabled value="@_user.CreatedAt"/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>E-Mail</BSLabel>
+                <BSInput InputType="InputType.Email" @bind-Value="_user.Email" required/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>Username</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="_user.Username" required/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>Password</BSLabel>
+                <BSInput InputType="InputType.Password" @bind-Value="_newPassword"/>
+            </div>
+            
+            <div class="mb-3">
+                <BSLabel>Groups</BSLabel>
+                <BSListGroup>
+                    <BSListGroupItem>
+                        <BSListGroup IsFlush="true">
+                            @foreach (var group in _userGroups) {
+                                <BSListGroupItem>
+                                    <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => RemoveGroup(group)">
+                                        <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                    </BSButton>
+
+                                    <span>@group.Name.Replace("group.", "")</span>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSListGroupItem>
+                    <BSListGroupItem>
+                        <div style="display: flex; gap: 20px">
+                            <BSInput InputType="InputType.Select" @bind-Value="_selectedGroup">
+                                <option selected>Select group</option>
+
+                                @foreach (var group in _allGroups) {
+                                    @if (_userGroups.All(g => g.Name != group.Name)) {
+                                        <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                                    }
+                                }
+                            </BSInput>
+                            <BSButton Color="BSColor.Secondary" OnClick="AddGroup">Add</BSButton>
+                        </div>
+                    </BSListGroupItem>
+                </BSListGroup>
+            </div>
+            
+            <div class="mb-3">
+                <BSLabel>Permissions</BSLabel>
+                <BSListGroup>
+                    <BSListGroupItem>
+                        <BSListGroup IsFlush="true">
+                            @foreach (var perm in _user.Permissions.Where(perm => !perm.PermissionName.StartsWith("group."))) {
+                                <BSListGroupItem>
+                                    <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => RemovePermission(perm)">
+                                        <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                    </BSButton>
+
+                                    <span>@perm.PermissionName</span>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSListGroupItem>
+                    <BSListGroupItem>
+                        <div style="display: flex; gap: 20px">
+                            <BSInput InputType="InputType.Text" @bind-Value="_permissionToAdd"/>
+                            <BSButton Color="BSColor.Secondary" OnClick="AddPermission">Add</BSButton>
+                        </div>
+                    </BSListGroupItem>
+                </BSListGroup>
+            </div>
+        </BSModalContent>
+        <BSModalFooter>
+            <BSButton Target="edit-user-modal">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@inject IUserService Users
+@inject IPermissionService Permissions
+@inject SweetAlertService Alerts
+@inject ITokenContext Auth
+
+@code {
+    [Parameter] public Func<Task> ReloadPage { get; set; }
+
+    private BSModalBase _modal;
+    private User _user;
+    private string _newPassword;
+
+    private IList<PermissionGroup> _userGroups;
+    private IList<PermissionGroup> _allGroups;
+    private string _selectedGroup;
+    private string _permissionToAdd;
+
+    public async Task ShowAsync(User user) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        _user = user;
+        _userGroups = await Permissions.GetUserPermissionGroups(_user);
+        _allGroups = await Permissions.GetPermissionGroups();
+        await _modal.ShowAsync();
+    }
+
+    private async Task AddGroup() {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(_selectedGroup)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Select a group!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+
+        var group = _allGroups.SingleOrDefault(group => group.Name == _selectedGroup);
+
+        await Permissions.AddPermission(_user, group?.Name);
+        _userGroups.Add(group);
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Group added!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
+    }
+    
+    private async Task RemoveGroup(PermissionGroup group) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Permissions.RemoveGroupFromUser(_user, group);
+            _userGroups.Remove(group);
+            StateHasChanged();
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Group removed!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+
+    private async Task AddPermission() {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(_permissionToAdd)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Enter a permission name!",
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = true
+            });
+            return;
+        }
+
+        await Permissions.AddPermission(_user, _permissionToAdd);
+        _user.Permissions.Add(await Permissions.GetPermission(_permissionToAdd, _user));
+        _permissionToAdd = "";
+
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Permission added!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
+    }
+    
+    private async Task RemovePermission(Permission perm) {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await Permissions.RemovePermission(perm);
+            _user.Permissions.Remove(perm);
+            StateHasChanged();
+
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Permission removed!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+    
+    private async void EditUser() {
+        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+            await NoEditPermissions();
+            return;
+        }
+        
+        string errorMessage = null;
+        var validator = new RegisterData {
+            Password = _newPassword,
+            Email = _user.Email
+        };
+        
+        var allUsers = await Users.GetUsers();
+        
+        if (allUsers.Any(user => user.Username == _user.Username && user.Id != _user.Id)) {
+            errorMessage = "Username is already taken!";
+        }
+        else if (allUsers.Any(user => user.Email == _user.Email && user.Id != _user.Id)) {
+            errorMessage = "E-Mail is already taken!";
+        }
+        else if (!string.IsNullOrWhiteSpace(_newPassword) && !validator.PasswordIsValid) {
+            errorMessage = "The password needs to be at least 8 characters long!";
+        }
+        else if (!validator.EmailIsValid) {
+            errorMessage = "Invalid E-Mail address!";
+        }
+
+        if (!string.IsNullOrWhiteSpace(errorMessage)) {
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Something went wrong!",
+                Text = errorMessage,
+                Icon = SweetAlertIcon.Error,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+            
+            return;
+        }
+
+        await Users.UpdateUser(_user);
+
+        if (!string.IsNullOrWhiteSpace(_newPassword)) {
+            await Users.ChangePassword(_user, _newPassword);
+        }
+
+        if (ReloadPage is not null)
+            await ReloadPage.Invoke();
+        
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "User edited!",
+            Icon = SweetAlertIcon.Success,
+            Timer = 1500,
+            ShowConfirmButton = false
+        });
+    }
+
+    private async Task NoEditPermissions() {
+        await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Unauthorized!",
+            Text = "You don't have the required permissions to edit a user!",
+            Icon = SweetAlertIcon.Error
+        });
+    }
+}

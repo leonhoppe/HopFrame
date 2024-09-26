@@ -1,13 +1,4 @@
-# HopFrame
-A simple backend management api for ASP.NET Core Web APIs
-
-# Features
-- [x] Database management
-- [x] User authentication
-- [x] Permission management
-- [x] Frontend dashboards
-
-# Usage
+# HopFrame Usage
 There are two different versions of HopFrame, either the Web API version or the full Blazor web version.
 
 ## Ho to use the Web API version
@@ -29,7 +20,7 @@ There are two different versions of HopFrame, either the Web API version or the 
        }
    }
    ```
-   
+
 3. Add the DbContext and HopFrame to your services
 
    ```csharp
@@ -63,13 +54,13 @@ There are two different versions of HopFrame, either the Web API version or the 
    builder.Services.AddDbContext<DatabaseContext>();
    builder.Services.AddHopFrame<DatabaseContext>();
    ```
-   
+
 4. Add the authentication middleware to your app
 
    ```csharp
    app.UseMiddleware<AuthMiddleware>();
    ```
-   
+
 5. Add the HopFrame pages to your Razor components
 
    ```csharp
