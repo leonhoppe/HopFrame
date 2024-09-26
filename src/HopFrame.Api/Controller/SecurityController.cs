@@ -24,7 +24,7 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
         if (user is null)
             return LogicResult<SingleValueResult<string>>.NotFound("The provided email address was not found");
 
-        if (await users.CheckUserPassword(user, login.Password))
+        if (!await users.CheckUserPassword(user, login.Password))
             return LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct");
 
         var refreshToken = new TokenEntry {
@@ -162,12 +162,13 @@ public class SecurityController<TDbContext>(TDbContext context, IUserService use
     public async Task<ActionResult> Delete([FromBody] UserPasswordValidation validation) {
         var user = tokenContext.User;
         
-        if (await users.CheckUserPassword(user, validation.Password))
+        if (!await users.CheckUserPassword(user, validation.Password))
             return LogicResult.Forbidden("The provided password is not correct");
 
         await users.DeleteUser(user);
         
         HttpContext.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        HttpContext.Response.Cookies.Delete(ITokenContext.AccessTokenType);
 
         return LogicResult.Ok();
     }
