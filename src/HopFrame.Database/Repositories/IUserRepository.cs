@@ -1,9 +1,8 @@
 using HopFrame.Database.Models;
-using HopFrame.Security.Models;
 
-namespace HopFrame.Security.Services;
+namespace HopFrame.Database.Repositories;
 
-public interface IUserService {
+public interface IUserRepository {
     Task<IList<User>> GetUsers();
 
     Task<User> GetUser(Guid userId);
@@ -12,12 +11,12 @@ public interface IUserService {
 
     Task<User> GetUserByUsername(string username);
     
-    Task<User> AddUser(UserRegister user);
+    Task<User> AddUser(User user);
 
     /// <summary>
     /// IMPORTANT:<br/>
     /// This function does not add or remove any permissions to the user.
-    /// For that please use <see cref="IPermissionService"/>
+    /// For that please use <see cref="IPermissionRepository"/>
     /// </summary>
     Task UpdateUser(User user);
 

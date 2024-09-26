@@ -11,8 +11,8 @@
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Database.Repositories
 @using HopFrame.Security.Claims
-@using HopFrame.Security.Services
 @using HopFrame.Web.Pages.Administration.Layout
 
 <PageTitle>Groups</PageTitle>
@@ -94,7 +94,8 @@
     </BSTBody>
 </BSTable>
 
-@inject IPermissionService Permissions
+@inject IGroupRepository Groups
+@inject IPermissionRepository Permissions
 @inject ITokenContext Auth
 @inject SweetAlertService Alerts
 
@@ -110,23 +111,23 @@
     private GroupAddModal _groupAddModal;
 
     protected override async Task OnInitializedAsync() {
-        _groups = await Permissions.GetPermissionGroups();
+        _groups = await Groups.GetPermissionGroups();
         
-        _hasEditPrivileges = await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Auth.User.Id);
-        _hasDeletePrivileges = await Permissions.HasPermission(Security.AdminPermissions.DeleteGroup, Auth.User.Id);
+        _hasEditPrivileges = await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditGroup);
+        _hasDeletePrivileges = await Permissions.HasPermission(Auth.User, Security.AdminPermissions.DeleteGroup);
     }
 
     private async Task Reload() {
         _groups = new List<PermissionGroup>();
 
-        _groups = await Permissions.GetPermissionGroups();
+        _groups = await Groups.GetPermissionGroups();
         
         OrderBy(_currentOrder, false);
         StateHasChanged();
     }
 
     private async Task Search() {
-        var groups = await Permissions.GetPermissionGroups();
+        var groups = await Groups.GetPermissionGroups();
 
         if (!string.IsNullOrWhiteSpace(_searchText)) {
             groups = groups
@@ -166,7 +167,7 @@
         });
 
         if (result.IsConfirmed) {
-            await Permissions.DeletePermissionGroup(group);
+            await Groups.DeletePermissionGroup(group);
             await Reload();
 
             await Alerts.FireAsync(new SweetAlertOptions {

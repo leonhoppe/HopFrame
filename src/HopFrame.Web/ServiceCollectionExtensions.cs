@@ -12,14 +12,15 @@ namespace HopFrame.Web;
 public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services) where TDbContext : HopDbContextBase {
         services.AddHttpClient();
-        services.AddScoped<IAuthService, AuthService<TDbContext>>();
+        services.AddHopFrameRepositories<TDbContext>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddTransient<AuthMiddleware>();
         
         // Component library's
         services.AddSweetAlert2();
         services.AddBlazorStrap();
 
-        services.AddHopFrameAuthentication<TDbContext>();
+        services.AddHopFrameAuthentication();
 
         return services;
     }

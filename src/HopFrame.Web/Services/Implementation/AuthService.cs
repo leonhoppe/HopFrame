@@ -1,47 +1,38 @@
-using HopFrame.Database;
-using HopFrame.Database.Models.Entries;
+using HopFrame.Database.Models;
+using HopFrame.Database.Repositories;
 using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
-using HopFrame.Security.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Web.Services.Implementation;
 
-internal class AuthService<TDbContext>(
-    IUserService userService,
+internal class AuthService(
+    IUserRepository userService,
     IHttpContextAccessor httpAccessor,
-    TDbContext context)
-    : IAuthService where TDbContext : HopDbContextBase {
+    ITokenRepository tokens,
+    ITokenContext context)
+    : IAuthService {
     
     public async Task Register(UserRegister register) {
-        var user = await userService.AddUser(register);
+        var user = await userService.AddUser(new User {
+            Username = register.Username,
+            Email = register.Email,
+            Password = register.Password
+        });
+        
         if (user is null) return;
+
+        var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        var refreshToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id.ToString()
-        };
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = user.Id.ToString()
-        };
-        
-        context.Tokens.AddRange(refreshToken, accessToken);
-        await context.SaveChangesAsync();
-        
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<HopDbContextBase>.RefreshTokenTime,
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -53,29 +44,16 @@ internal class AuthService<TDbContext>(
         if (user == null) return false;
         if (await userService.CheckUserPassword(user, login.Password) == false) return false;
         
-        var refreshToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id.ToString()
-        };
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = user.Id.ToString()
-        };
+        var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        context.Tokens.AddRange(refreshToken, accessToken);
-        await context.SaveChangesAsync();
-        
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<HopDbContextBase>.RefreshTokenTime,
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -84,67 +62,27 @@ internal class AuthService<TDbContext>(
     }
 
     public async Task Logout() {
-        var accessToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
-        var refreshToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
-        
-        var tokenEntries = await context.Tokens.Where(token =>
-                (token.Token == accessToken && token.Type == TokenEntry.AccessTokenType) ||
-                (token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType))
-            .ToArrayAsync();
-        
-        context.Tokens.Remove(tokenEntries[0]);
-        context.Tokens.Remove(tokenEntries[1]);
-        await context.SaveChangesAsync();
+        await tokens.DeleteUserTokens(context.User);
         
         httpAccessor.HttpContext?.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
         httpAccessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);
     }
 
-    public async Task<TokenEntry> RefreshLogin() {
+    public async Task<Token> RefreshLogin() {
         var refreshToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
 
         if (string.IsNullOrWhiteSpace(refreshToken)) return null;
-        
-        var token = await context.Tokens.SingleOrDefaultAsync(token => token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType);
 
-        if (token is null) return null;
+        var token = await tokens.GetToken(refreshToken);
 
-        var oldAccessTokens = context.Tokens
-            .AsEnumerable()
-            .Where(old => 
-                old.Type == TokenEntry.AccessTokenType &&
-                old.UserId == token.UserId &&
-                old.CreatedAt + HopFrameAuthentication<TDbContext>.AccessTokenTime < DateTime.Now)
-            .ToList();
-        if (oldAccessTokens.Count != 0)
-            context.Tokens.RemoveRange(oldAccessTokens);
+        if (token is null || token.Type != Token.RefreshTokenType) return null;
         
-        var oldRefreshTokens = context.Tokens
-            .AsEnumerable()
-            .Where(old => 
-                old.Type == TokenEntry.RefreshTokenType &&
-                old.UserId == token.UserId &&
-                old.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now)
-            .ToList();
-        if (oldRefreshTokens.Count != 0)
-            context.Tokens.RemoveRange(oldRefreshTokens);
+        if (token.CreatedAt + HopFrameAuthentication.RefreshTokenTime < DateTime.Now) return null;
 
-        await context.SaveChangesAsync();
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
-        if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now) return null;
-        
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = token.UserId
-        };
-
-        await context.Tokens.AddAsync(accessToken);
-        await context.SaveChangesAsync();
-        
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -155,12 +93,13 @@ internal class AuthService<TDbContext>(
     public async Task<bool> IsLoggedIn() {
         var accessToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
         if (string.IsNullOrEmpty(accessToken)) return false;
-        
-        var tokenEntry = await context.Tokens.SingleOrDefaultAsync(token => token.Token == accessToken);
+
+        var tokenEntry = await tokens.GetToken(accessToken);
         
         if (tokenEntry is null) return false;
-        if (tokenEntry.CreatedAt + HopFrameAuthentication<TDbContext>.AccessTokenTime < DateTime.Now) return false;
-        if (!await context.Users.AnyAsync(user => user.Id == tokenEntry.UserId)) return false;
+        if (tokenEntry.Type != Token.AccessTokenType) return false;
+        if (tokenEntry.CreatedAt + HopFrameAuthentication.AccessTokenTime < DateTime.Now) return false;
+        if (tokenEntry.Owner is null) return false;
 
         return true;
     }

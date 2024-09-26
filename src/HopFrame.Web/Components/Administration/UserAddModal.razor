@@ -6,8 +6,8 @@
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Database.Repositories
 @using HopFrame.Security.Claims
-@using HopFrame.Security.Services
 @using HopFrame.Web.Model
 
 <BSModal DataId="add-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" OnShow="() => _user = new()" @ref="_modal">
@@ -47,8 +47,9 @@
     </BSForm>
 </BSModal>
 
-@inject IUserService Users
-@inject IPermissionService Permissions
+@inject IUserRepository Users
+@inject IPermissionRepository Permissions
+@inject IGroupRepository Groups
 @inject SweetAlertService Alerts
 @inject ITokenContext Auth
 
@@ -62,14 +63,14 @@
     private BSModalBase _modal;
 
     public async Task ShowAsync() {
-        _allGroups = await Permissions.GetPermissionGroups();
+        _allGroups = await Groups.GetPermissionGroups();
         _allUsers = await Users.GetUsers();
         
         await _modal.ShowAsync();
     }
 
     private async Task AddUser() {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.AddUser, Auth.User.Id))) {
+        if (!(await Permissions.HasPermission(Auth.User, Security.AdminPermissions.AddUser))) {
             await NoAddPermissions();
             return;
         }
@@ -104,7 +105,11 @@
             return;
         }
         
-        var user = await Users.AddUser(_user);
+        var user = await Users.AddUser(new User {
+            Username = _user.Username,
+            Email = _user.Email,
+            Password = _user.Password
+        });
 
         if (!string.IsNullOrWhiteSpace(_user.Group)) {
             await Permissions.AddPermission(user, _user.Group);

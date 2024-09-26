@@ -1,4 +1,4 @@
-namespace HopFrame.Security.Authorization;
+namespace HopFrame.Database;
 
 public static class PermissionValidator {
     

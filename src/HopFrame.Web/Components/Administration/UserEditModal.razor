@@ -6,8 +6,8 @@
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Database.Repositories
 @using HopFrame.Security.Claims
-@using HopFrame.Security.Services
 @using HopFrame.Web.Model
 
 <BSModal DataId="edit-user-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
@@ -100,8 +100,9 @@
     </BSForm>
 </BSModal>
 
-@inject IUserService Users
-@inject IPermissionService Permissions
+@inject IUserRepository Users
+@inject IPermissionRepository Permissions
+@inject IGroupRepository Groups
 @inject SweetAlertService Alerts
 @inject ITokenContext Auth
 
@@ -118,19 +119,19 @@
     private string _permissionToAdd;
 
     public async Task ShowAsync(User user) {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
         
         _user = user;
-        _userGroups = await Permissions.GetUserPermissionGroups(_user);
-        _allGroups = await Permissions.GetPermissionGroups();
+        _userGroups = _user.Permissions.Where(p => p.PermissionName.StartsWith("group.")).Select(p => p.Group).ToList();
+        _allGroups = await Groups.GetPermissionGroups();
         await _modal.ShowAsync();
     }
 
     private async Task AddGroup() {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
@@ -158,7 +159,7 @@
     }
     
     private async Task RemoveGroup(PermissionGroup group) {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
@@ -172,7 +173,7 @@
         });
 
         if (result.IsConfirmed) {
-            await Permissions.RemoveGroupFromUser(_user, group);
+            await Permissions.RemovePermission(_user, group.Name);
             _userGroups.Remove(group);
             StateHasChanged();
 
@@ -186,7 +187,7 @@
     }
 
     private async Task AddPermission() {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
@@ -200,8 +201,7 @@
             return;
         }
 
-        await Permissions.AddPermission(_user, _permissionToAdd);
-        _user.Permissions.Add(await Permissions.GetPermission(_permissionToAdd, _user));
+        _user.Permissions.Add(await Permissions.AddPermission(_user, _permissionToAdd));
         _permissionToAdd = "";
 
         await Alerts.FireAsync(new SweetAlertOptions {
@@ -213,7 +213,7 @@
     }
     
     private async Task RemovePermission(Permission perm) {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
@@ -227,7 +227,7 @@
         });
 
         if (result.IsConfirmed) {
-            await Permissions.RemovePermission(perm);
+            await Permissions.RemovePermission(perm.User, perm.PermissionName);
             _user.Permissions.Remove(perm);
             StateHasChanged();
 
@@ -241,7 +241,7 @@
     }
     
     private async void EditUser() {
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id))) {
+        if (!await Permissions.HasPermission(Auth.User, Security.AdminPermissions.EditUser)) {
             await NoEditPermissions();
             return;
         }
