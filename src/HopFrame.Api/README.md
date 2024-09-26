@@ -28,3 +28,14 @@ This module contains some useful endpoints for user login / register management.
    builder.Services.AddHopFrame<DatabaseContext>();
    ```
 
+# Endpoints
+By default, the module provides a controller for handling authentication based requests by the user.
+You can explore the contoller by the build in swagger site from ASP .NET.
+
+## Disable the Endpoints
+If you don't want to include these endpoints you need to comment out the AddHopFrame line and only add the Auth middleware:
+```csharp
+builder.Services.AddDbContext<DatabaseContext>();
+//builder.Services.AddHopFrame<DatabaseContext>();
+services.AddHopFrameAuthentication<TDbContext>();
+```

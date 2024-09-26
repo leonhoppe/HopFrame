@@ -41,3 +41,20 @@ This module contains useful helpers for Blazor Apps and an Admin Dashboard.
     .AddHopFrameAdminPages()
     .AddInteractiveServerRenderMode();
    ```
+
+# Services added in this module
+You can use these services by specifying them as a dependency. All of them are scoped dependencies.
+
+## IAuthService
+This service handles all the authentication like login or register. It properly creates all tokens so the user can be identified
+
+```csharp
+public interface IAuthService {
+    Task Register(UserRegister register);
+    Task<bool> Login(UserLogin login);
+    Task Logout();
+
+    Task<TokenEntry> RefreshLogin();
+    Task<bool> IsLoggedIn();
+}
+```
