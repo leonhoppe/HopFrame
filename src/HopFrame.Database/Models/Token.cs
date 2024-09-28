@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace HopFrame.Database.Models.Entries;
+namespace HopFrame.Database.Models;
 
-public class TokenEntry {
+public class Token {
     public const int RefreshTokenType = 0;
     public const int AccessTokenType = 1;
 
@@ -15,11 +17,11 @@ public class TokenEntry {
     public int Type { get; set; }
 
     [Key, Required, MinLength(36), MaxLength(36)]
-    public string Token { get; set; }
-
-    [Required, MinLength(36), MaxLength(36)]
-    public string UserId { get; set; }
+    public Guid Content { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }
+    
+    [ForeignKey("UserId"), JsonIgnore]
+    public virtual User Owner { get; set; }
 }

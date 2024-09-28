@@ -1,4 +1,4 @@
-using HopFrame.Database.Models.Entries;
+using HopFrame.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Database;
@@ -8,25 +8,27 @@ namespace HopFrame.Database;
 /// </summary>
 public abstract class HopDbContextBase : DbContext {
 
-    public virtual DbSet<UserEntry> Users { get; set; }
-    public virtual DbSet<PermissionEntry> Permissions { get; set; }
-    public virtual DbSet<TokenEntry> Tokens { get; set; }
-    public virtual DbSet<GroupEntry> Groups { get; set; }
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Permission> Permissions { get; set; }
+    public virtual DbSet<Token> Tokens { get; set; }
+    public virtual DbSet<PermissionGroup> Groups { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<UserEntry>();
-        modelBuilder.Entity<PermissionEntry>();
-        modelBuilder.Entity<TokenEntry>();
-        modelBuilder.Entity<GroupEntry>();
-    }
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Tokens)
+            .WithOne(t => t.Owner)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    /// <summary>
-    /// Gets executed when a user is deleted through the IUserService from the
-    /// HopFrame.Security package. You can override this method to also delete
-    /// related user specific entries in the database
-    /// </summary>
-    /// <param name="user"></param>
-    public virtual void OnUserDelete(UserEntry user) {}
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Permissions)
+            .WithOne(p => p.User)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PermissionGroup>()
+            .HasMany(g => g.Permissions)
+            .WithOne(p => p.Group)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

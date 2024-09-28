@@ -7,12 +7,12 @@
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
 @using HopFrame.Security.Claims
-@using HopFrame.Security.Services
 @using HopFrame.Web.Pages.Administration.Layout
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web
 @using HopFrame.Web.Components
 @using BlazorStrap.V5
+@using HopFrame.Database.Repositories
 @using HopFrame.Web.Components.Administration
 
 <PageTitle>Users</PageTitle>
@@ -95,8 +95,9 @@
     </BSTBody>
 </BSTable>
 
-@inject IUserService UserService
-@inject IPermissionService PermissionsService
+@inject IUserRepository UserService
+@inject IPermissionRepository PermissionsService
+@inject IGroupRepository Groups
 @inject SweetAlertService Alerts
 @inject ITokenContext Auth
 
@@ -119,12 +120,12 @@
         _users = await UserService.GetUsers();
 
         foreach (var user in _users) {
-            var groups = await PermissionsService.GetUserPermissionGroups(user);
+            var groups = await Groups.GetUserGroups(user);
             _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 
-        _hasEditPrivileges = await PermissionsService.HasPermission(Security.AdminPermissions.EditUser, Auth.User.Id);
-        _hasDeletePrivileges = await PermissionsService.HasPermission(Security.AdminPermissions.DeleteUser, Auth.User.Id);
+        _hasEditPrivileges = await PermissionsService.HasPermission(Auth.User, Security.AdminPermissions.EditUser);
+        _hasDeletePrivileges = await PermissionsService.HasPermission(Auth.User, Security.AdminPermissions.DeleteUser);
     }
 
     private async Task Reload() {
@@ -134,7 +135,7 @@
         _users = await UserService.GetUsers();
         
         foreach (var user in _users) {
-            var groups = await PermissionsService.GetUserPermissionGroups(user);
+            var groups = await Groups.GetUserGroups(user);
             _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 

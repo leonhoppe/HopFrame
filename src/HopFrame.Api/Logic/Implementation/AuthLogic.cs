@@ -1,16 +1,14 @@
 using HopFrame.Api.Models;
-using HopFrame.Database;
-using HopFrame.Database.Models.Entries;
+using HopFrame.Database.Models;
+using HopFrame.Database.Repositories;
 using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
-using HopFrame.Security.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Api.Logic.Implementation;
 
-public class AuthLogic<TDbContext>(TDbContext context, IUserService users, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic where TDbContext : HopDbContextBase {
+public class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic {
     
     public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
         var user = await users.GetUserByEmail(login.Email);
@@ -21,34 +19,21 @@ public class AuthLogic<TDbContext>(TDbContext context, IUserService users, IToke
         if (!await users.CheckUserPassword(user, login.Password))
             return LogicResult<SingleValueResult<string>>.Forbidden("The provided password is not correct");
 
-        var refreshToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id.ToString()
-        };
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = user.Id.ToString()
-        };
+        var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.RefreshTokenTime,
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = true,
             Secure = true
         });
 
-        await context.Tokens.AddRangeAsync(refreshToken, accessToken);
-        await context.SaveChangesAsync();
-
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Register(UserRegister register) {
@@ -59,36 +44,27 @@ public class AuthLogic<TDbContext>(TDbContext context, IUserService users, IToke
         if (allUsers.Any(user => user.Username == register.Username || user.Email == register.Email))
             return LogicResult<SingleValueResult<string>>.Conflict("Username or Email is already registered");
 
-        var user = await users.AddUser(register);
+        var user = await users.AddUser(new User {
+            Username = register.Username,
+            Email = register.Email,
+            Password = register.Password
+        });
         
-        var refreshToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.RefreshTokenType,
-            UserId = user.Id.ToString()
-        };
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = user.Id.ToString()
-        };
+        var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        await context.Tokens.AddRangeAsync(refreshToken, accessToken);
-        await context.SaveChangesAsync();
-        
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.RefreshTokenTime,
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
 
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Authenticate() {
@@ -97,31 +73,26 @@ public class AuthLogic<TDbContext>(TDbContext context, IUserService users, IToke
         if (string.IsNullOrEmpty(refreshToken))
             return LogicResult<SingleValueResult<string>>.Conflict("Refresh token not provided");
 
-        var token = await context.Tokens.SingleOrDefaultAsync(token => token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType);
-        
+        var token = await tokens.GetToken(refreshToken);
+
+        if (token.Type != Token.RefreshTokenType)
+            return LogicResult<SingleValueResult<string>>.BadRequest("The provided token is not a refresh token");
+
         if (token is null)
             return LogicResult<SingleValueResult<string>>.NotFound("Refresh token not valid");
 
-        if (token.CreatedAt + HopFrameAuthentication<TDbContext>.RefreshTokenTime < DateTime.Now)
+        if (token.CreatedAt + HopFrameAuthentication.RefreshTokenTime < DateTime.Now)
             return LogicResult<SingleValueResult<string>>.Conflict("Refresh token is expired");
 
-        var accessToken = new TokenEntry {
-            CreatedAt = DateTime.Now,
-            Token = Guid.NewGuid().ToString(),
-            Type = TokenEntry.AccessTokenType,
-            UserId = token.UserId
-        };
-
-        await context.Tokens.AddAsync(accessToken);
-        await context.SaveChangesAsync();
+        var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Token, new CookieOptions {
-            MaxAge = HopFrameAuthentication<TDbContext>.AccessTokenTime,
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+            MaxAge = HopFrameAuthentication.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
         
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Token);
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
     }
 
     public async Task<LogicResult> Logout() {
@@ -131,17 +102,7 @@ public class AuthLogic<TDbContext>(TDbContext context, IUserService users, IToke
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
             return LogicResult.Conflict("access or refresh token not provided");
 
-        var tokenEntries = await context.Tokens.Where(token =>
-                (token.Token == accessToken && token.Type == TokenEntry.AccessTokenType) ||
-                (token.Token == refreshToken && token.Type == TokenEntry.RefreshTokenType))
-            .ToArrayAsync();
-        
-        if (tokenEntries.Length != 2)
-            return LogicResult.NotFound("One or more of the provided tokens was not found");
-
-        context.Tokens.Remove(tokenEntries[0]);
-        context.Tokens.Remove(tokenEntries[1]);
-        await context.SaveChangesAsync();
+        await tokens.DeleteUserTokens(tokenContext.User);
         
         accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
         accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);

@@ -6,8 +6,8 @@
 @using BlazorStrap.V5
 @using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Models
+@using HopFrame.Database.Repositories
 @using HopFrame.Security.Claims
-@using HopFrame.Security.Services
 @using HopFrame.Web.Model
 
 <BSModal DataId="add-group-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
@@ -115,7 +115,8 @@
     </BSForm>
 </BSModal>
 
-@inject IPermissionService Permissions
+@inject IGroupRepository Groups
+@inject IPermissionRepository Permissions
 @inject SweetAlertService Alerts
 @inject ITokenContext Context
 
@@ -133,7 +134,7 @@
     private bool _isEdit;
 
     public async Task ShowAsync(PermissionGroup group = null) {
-        _allGroups = await Permissions.GetPermissionGroups();
+        _allGroups = await Groups.GetPermissionGroups();
 
         if (group is not null) {
             _group = new PermissionGroupAdd {
@@ -167,7 +168,7 @@
         }
 
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!await Permissions.HasPermission(Context.User, Security.AdminPermissions.EditGroup)) {
                 await NoEditPermissions();
                 return;
             }
@@ -176,7 +177,8 @@
         }
         
         _group.Permissions.Add(new Permission {
-            PermissionName = _permissionToAdd
+            PermissionName = _permissionToAdd,
+            GrantedAt = DateTime.Now
         });
 
         _permissionToAdd = null;
@@ -184,8 +186,7 @@
 
     private async Task RemovePermission(Permission permission) {
         if (_isEdit) {
-            var perm = await Permissions.GetPermission(permission.PermissionName, _group);
-            await Permissions.RemovePermission(perm);
+            await Permissions.RemovePermission(_group, permission.PermissionName);
         }
         
         _group.Permissions.Remove(permission);
@@ -202,7 +203,7 @@
         }
         
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!await Permissions.HasPermission(Context.User, Security.AdminPermissions.EditGroup)) {
                 await NoEditPermissions();
                 return;
             }
@@ -219,12 +220,12 @@
 
     private async Task AddGroup() {
         if (_isEdit) {
-            if (!(await Permissions.HasPermission(Security.AdminPermissions.EditGroup, Context.User.Id))) {
+            if (!await Permissions.HasPermission(Context.User, Security.AdminPermissions.EditGroup)) {
                 await NoEditPermissions();
                 return;
             }
             
-            await Permissions.EditPermissionGroup(_group);
+            await Groups.EditPermissionGroup(_group);
             
             if (ReloadPage is not null)
                 await ReloadPage.Invoke();
@@ -239,7 +240,7 @@
             return;
         }
         
-        if (!(await Permissions.HasPermission(Security.AdminPermissions.AddGroup, Context.User.Id))) {
+        if (!await Permissions.HasPermission(Context.User, Security.AdminPermissions.AddGroup)) {
             await NoAddPermissions();
             return;
         }
@@ -255,11 +256,12 @@
             return;
         }
 
-        var dbGroup = await Permissions.CreatePermissionGroup("group." + _group.GroupName, _group.IsDefaultGroup, _group.Description);
-
-        foreach (var permission in _group.Permissions) {
-            await Permissions.AddPermission(dbGroup, permission.PermissionName);
-        }
+        await Groups.CreatePermissionGroup(new PermissionGroup {
+            Description = _group.Description,
+            IsDefaultGroup = _group.IsDefaultGroup,
+            Permissions = _group.Permissions,
+            Name = "group." + _group.GroupName
+        });
         
         if (ReloadPage is not null)
             await ReloadPage.Invoke();
