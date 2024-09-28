@@ -7,6 +7,8 @@ public interface IGroupRepository {
 
     Task<IList<PermissionGroup>> GetDefaultGroups();
 
+    Task<IList<PermissionGroup>> GetUserGroups(User user);
+
     Task<PermissionGroup> GetPermissionGroup(string name);
 
     Task EditPermissionGroup(PermissionGroup group);

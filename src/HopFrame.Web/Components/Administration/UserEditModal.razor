@@ -57,7 +57,7 @@
                                 <option selected>Select group</option>
 
                                 @foreach (var group in _allGroups) {
-                                    @if (_userGroups.All(g => g.Name != group.Name)) {
+                                    @if (_userGroups?.All(g => g.Name != group.Name) == true) {
                                         <option value="@group.Name">@group.Name.Replace("group.", "")</option>
                                     }
                                 }
@@ -125,7 +125,7 @@
         }
         
         _user = user;
-        _userGroups = _user.Permissions.Where(p => p.PermissionName.StartsWith("group.")).Select(p => p.Group).ToList();
+        _userGroups = await Groups.GetUserGroups(user);
         _allGroups = await Groups.GetPermissionGroups();
         await _modal.ShowAsync();
     }

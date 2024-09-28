@@ -17,6 +17,14 @@ internal sealed class GroupRepository<TDbContext>(TDbContext context) : IGroupRe
             .ToListAsync();
     }
 
+    public Task<IList<PermissionGroup>> GetUserGroups(User user) {
+        return Task.FromResult((IList<PermissionGroup>) context.Groups
+            .Include(g => g.Permissions)
+            .AsEnumerable()
+            .Where(g => user.Permissions.Any(p => p.PermissionName == g.Name))
+            .ToList());
+    }
+
     public async Task<PermissionGroup> GetPermissionGroup(string name) {
         return await context.Groups
             .Include(g => g.Permissions)

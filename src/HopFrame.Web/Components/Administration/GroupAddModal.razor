@@ -177,7 +177,8 @@
         }
         
         _group.Permissions.Add(new Permission {
-            PermissionName = _permissionToAdd
+            PermissionName = _permissionToAdd,
+            GrantedAt = DateTime.Now
         });
 
         _permissionToAdd = null;
@@ -255,7 +256,12 @@
             return;
         }
 
-        await Groups.CreatePermissionGroup(_group);
+        await Groups.CreatePermissionGroup(new PermissionGroup {
+            Description = _group.Description,
+            IsDefaultGroup = _group.IsDefaultGroup,
+            Permissions = _group.Permissions,
+            Name = "group." + _group.GroupName
+        });
         
         if (ReloadPage is not null)
             await ReloadPage.Invoke();

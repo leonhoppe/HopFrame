@@ -97,6 +97,7 @@
 
 @inject IUserRepository UserService
 @inject IPermissionRepository PermissionsService
+@inject IGroupRepository Groups
 @inject SweetAlertService Alerts
 @inject ITokenContext Auth
 
@@ -119,7 +120,7 @@
         _users = await UserService.GetUsers();
 
         foreach (var user in _users) {
-            var groups = user.Permissions.Where(p => p.PermissionName.StartsWith("group.")).Select(p => p.Group).ToList();
+            var groups = await Groups.GetUserGroups(user);
             _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 
@@ -134,7 +135,7 @@
         _users = await UserService.GetUsers();
         
         foreach (var user in _users) {
-            var groups = user.Permissions.Where(p => p.PermissionName.StartsWith("group.")).Select(p => p.Group).ToList();
+            var groups = await Groups.GetUserGroups(user);
             _userGroups.Add(user.Id, groups.LastOrDefault());
         }
 

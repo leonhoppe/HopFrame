@@ -11,7 +11,6 @@ internal sealed class UserRepository<TDbContext>(TDbContext context, IGroupRepos
     private IIncludableQueryable<User, IList<Token>> IncludeReferences() {
         return context.Users
             .Include(u => u.Permissions)
-            .ThenInclude(p => p.Group)
             .Include(u => u.Tokens);
     }
     
@@ -47,7 +46,7 @@ internal sealed class UserRepository<TDbContext>(TDbContext context, IGroupRepos
             Email = user.Email,
             Username = user.Username,
             CreatedAt = DateTime.Now,
-            Permissions = user.Permissions,
+            Permissions = user.Permissions ?? new List<Permission>(),
             Tokens = user.Tokens
         };
         entry.Password = EncryptionManager.Hash(user.Password, Encoding.Default.GetBytes(entry.CreatedAt.ToString(CultureInfo.InvariantCulture)));
@@ -56,13 +55,11 @@ internal sealed class UserRepository<TDbContext>(TDbContext context, IGroupRepos
         foreach (var group in defaultGroups) {
             entry.Permissions.Add(new Permission {
                 PermissionName = group.Name,
-                //TODO: Check if user needs to be set
+                GrantedAt = DateTime.Now
             });
         }
 
         await context.Users.AddAsync(entry);
-
-        
         await context.SaveChangesAsync();
         return entry;
     }
