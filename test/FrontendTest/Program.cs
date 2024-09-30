@@ -1,6 +1,7 @@
 using FrontendTest;
 using FrontendTest.Components;
 using HopFrame.Web;
+using HopFrame.Web.Admin;
 
 var builder = WebApplication.CreateBuilder(args);
 
