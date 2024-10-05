@@ -24,9 +24,6 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         
         foreach (var property in properties) {
             var attributes = property.GetCustomAttributes(false);
-            var ignoreProperty = attributes
-                .SingleOrDefault(a => a is AdminIgnoreAttribute) as AdminIgnoreAttribute;
-            if (ignoreProperty?.OnlyForListing == false) continue;
             
             var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator), [property.Name, property.PropertyType]) as AdminPropertyGenerator;
 
@@ -139,8 +136,12 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         if (attributes.Any(a => a is AdminBoldAttribute))
             generator.Bold();
         
-        if (attributes.Any(a => a is AdminIgnoreAttribute))
+        if (attributes.Any(a => a is AdminIgnoreAttribute)) {
+            var attribute = attributes.Single(a => a is AdminIgnoreAttribute) as AdminIgnoreAttribute;
             generator.DisplayInListing(false);
+            generator.Sortable(false);
+            generator.Ignore(attribute?.OnlyForListing == false);
+        }
 
         if (attributes.Any(a => a is AdminHideValueAttribute))
             generator.DisplayValueWhileEditing(false);
@@ -153,6 +154,11 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         if (attributes.Any(a => a is AdminDescriptionAttribute)) {
             var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
             generator.Description(attribute?.Description);
+        }
+
+        if (attributes.Any(a => a is AdminPrefixAttribute)) {
+            var attribute = attributes.Single(a => a is AdminPrefixAttribute) as AdminPrefixAttribute;
+            generator.Prefix(attribute?.Prefix);
         }
     }
 

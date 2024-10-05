@@ -10,7 +10,7 @@ namespace RestApiTest.Controllers;
 
 [ApiController]
 [Route("test")]
-public class TestController(ITokenContext userContext, DatabaseContext context, AdminContext adminContext) : ControllerBase {
+public class TestController(ITokenContext userContext, DatabaseContext context) : ControllerBase {
 
     [HttpGet("permissions"), Authorized]
     public ActionResult<IList<Permission>> Permissions() {
@@ -49,11 +49,6 @@ public class TestController(ITokenContext userContext, DatabaseContext context, 
     [HttpGet("addresses")]
     public async Task<ActionResult<IList<Address>>> GetAddresses() {
         return LogicResult<IList<Address>>.Ok(await context.Addresses.Include(e => e.Employee).ToListAsync());
-    }
-
-    [HttpGet("adminContext")]
-    public ActionResult<AdminContext> GetAdminContext() {
-        return LogicResult<AdminContext>.Ok(adminContext);
     }
     
 }

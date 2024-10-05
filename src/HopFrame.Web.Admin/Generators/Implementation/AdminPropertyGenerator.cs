@@ -26,11 +26,17 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
 
     public IAdminPropertyGenerator DisplayInListing(bool display = true) {
         _property.DisplayInListing = display;
+        _property.Sortable = false;
         return this;
     }
 
     public IAdminPropertyGenerator Bold(bool isBold = true) {
         _property.Bold = isBold;
+        return this;
+    }
+
+    public IAdminPropertyGenerator Ignore(bool ignore = false) {
+        _property.Ignore = ignore;
         return this;
     }
 
@@ -41,6 +47,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
 
     public IAdminPropertyGenerator Description(string description) {
         _property.Description = description;
+        return this;
+    }
+
+    public IAdminPropertyGenerator Prefix(string prefix) {
+        _property.Prefix = prefix;
         return this;
     }
 

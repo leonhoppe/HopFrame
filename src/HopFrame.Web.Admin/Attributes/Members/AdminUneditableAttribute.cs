@@ -1,4 +1,4 @@
 namespace HopFrame.Web.Admin.Attributes.Members;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AdminUneditableAttribute : Attribute;
+public sealed class AdminUneditableAttribute : Attribute;

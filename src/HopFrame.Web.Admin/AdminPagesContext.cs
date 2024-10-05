@@ -4,6 +4,6 @@ namespace HopFrame.Web.Admin;
 
 public abstract class AdminPagesContext {
 
-    public abstract void OnModelCreating(IAdminContextGenerator generator);
+    public virtual void OnModelCreating(IAdminContextGenerator generator) {}
 
 }

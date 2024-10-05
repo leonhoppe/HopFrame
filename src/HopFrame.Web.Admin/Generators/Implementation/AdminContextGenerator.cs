@@ -2,6 +2,7 @@ using System.Reflection;
 using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Attributes.Classes;
 using HopFrame.Web.Admin.Models;
+using HopFrame.Web.Admin.Providers;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
 
@@ -40,7 +41,7 @@ internal class AdminContextGenerator : IAdminContextGenerator {
         foreach (var property in properties) {
             var propertyType = property.PropertyType.GenericTypeArguments[0];
             var pageGeneratorType = typeof(AdminPageGenerator<>).MakeGenericType(propertyType);
-            var generatorInstance = Activator.CreateInstance(pageGeneratorType, [propertyType.Name]);
+            var generatorInstance = Activator.CreateInstance(pageGeneratorType, [property.Name]); // Calls constructor with title attribute
 
             var populatorMethod = typeof(AdminContextGenerator)
                 .GetMethod(nameof(ApplyConfigurationFromAttributes))?
@@ -85,6 +86,17 @@ internal class AdminContextGenerator : IAdminContextGenerator {
             generator.ShowCreateButton(attribute?.ShowCreateButton == true);
             generator.ShowUpdateButton(attribute?.ShowUpdateButton == true);
             generator.ShowDeleteButton(attribute?.ShowDeleteButton == true);
+        }
+    }
+
+    public static void RegisterPages(AdminPagesContext context, IAdminPagesProvider provider) {
+        var properties = context.GetType().GetProperties();
+
+        foreach (var property in properties) {
+            var page = property.GetValue(context) as AdminPage;
+            if (page is null) continue;
+            
+            provider.RegisterAdminPage(page.Title.ToLower(), page);
         }
     }
 

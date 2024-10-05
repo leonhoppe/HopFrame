@@ -1,6 +1,5 @@
 using RestApiTest;
 using HopFrame.Api.Extensions;
-using HopFrame.Web.Admin;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddAdminContext<AdminContext>();
 
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
