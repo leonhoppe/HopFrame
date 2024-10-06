@@ -73,6 +73,11 @@ internal class AdminContextGenerator : IAdminContextGenerator {
             generator.Description(attribute?.Description);
         }
 
+        if (attributes.Any(a => a is AdminUrlAttribute)) {
+            var attribute = attributes.Single(a => a is AdminUrlAttribute) as AdminUrlAttribute;
+            generator.Url(attribute?.Url);
+        }
+
         if (attributes.Any(a => a is AdminPermissionsAttribute)) {
             var attribute = attributes.Single(a => a is AdminPermissionsAttribute) as AdminPermissionsAttribute;
             generator.CreatePermission(attribute?.Permissions.Create);

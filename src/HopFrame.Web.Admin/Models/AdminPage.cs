@@ -8,6 +8,7 @@ public sealed class AdminPage<TModel> : AdminPage;
 public class AdminPage {
     public string Title { get; set; }
     public string Description { get; set; }
+    public string Url { get; set; }
     public AdminPagePermissions Permissions { get; set; }
     public IList<AdminPageProperty> Properties { get; set; }
     

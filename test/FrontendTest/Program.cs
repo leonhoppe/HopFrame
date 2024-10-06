@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddHopFrame<DatabaseContext>();
+builder.Services.AddAdminContext<AdminContext>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

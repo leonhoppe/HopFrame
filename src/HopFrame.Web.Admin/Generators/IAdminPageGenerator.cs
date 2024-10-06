@@ -7,6 +7,7 @@ public interface IAdminPageGenerator<TModel> {
 
     IAdminPageGenerator<TModel> Title(string title);
     IAdminPageGenerator<TModel> Description(string description);
+    IAdminPageGenerator<TModel> Url(string url);
 
     IAdminPageGenerator<TModel> ViewPermission(string permission);
     IAdminPageGenerator<TModel> CreatePermission(string permission);

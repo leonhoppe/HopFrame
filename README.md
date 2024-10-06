@@ -7,6 +7,14 @@ A simple backend management api for ASP.NET Core Web APIs
 - [x] Permission management
 - [x] Frontend dashboards
 
+## 2.0 Todo list
+- [x] 1.0 bug fixes
+- [x] Code cleanup
+- [x] Relations in database
+- [ ] Generated Admin pages
+- [ ] Pretty Login page for administration
+- [ ] Clean documentation
+
 # Usage
 There are two different versions of HopFrame, either the Web API version or the full Blazor web version.
 

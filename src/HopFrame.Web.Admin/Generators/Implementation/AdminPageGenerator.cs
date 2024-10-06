@@ -39,11 +39,17 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
 
     public IAdminPageGenerator<TModel> Title(string title) {
         _page.Title = title;
+        _page.Url ??= title.ToLower();
         return this;
     }
 
     public IAdminPageGenerator<TModel> Description(string description) {
         _page.Description = description;
+        return this;
+    }
+
+    public IAdminPageGenerator<TModel> Url(string url) {
+        _page.Url = url;
         return this;
     }
 
