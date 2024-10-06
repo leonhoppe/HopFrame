@@ -1,6 +1,3 @@
-using System.Reflection;
-using HopFrame.Web.Admin.Attributes;
-using HopFrame.Web.Admin.Attributes.Classes;
 using HopFrame.Web.Admin.Models;
 using HopFrame.Web.Admin.Providers;
 
@@ -14,9 +11,8 @@ internal class AdminContextGenerator : IAdminContextGenerator {
         if (_adminPages.TryGetValue(typeof(TModel), out var pageGenerator))
             return pageGenerator as IAdminPageGenerator<TModel>;
 
-        var generator = Activator.CreateInstance(typeof(IAdminPageGenerator<TModel>)) as IAdminPageGenerator<TModel>;
-        
-        ApplyConfigurationFromAttributes(generator, typeof(TModel).GetCustomAttributes(false));
+        var generator = Activator.CreateInstance(typeof(IAdminPageGenerator<TModel>)) as AdminPageGenerator<TModel>;
+        generator?.ApplyConfigurationFromAttributes(typeof(TModel).GetCustomAttributes(false));
         
         _adminPages.Add(typeof(TModel), generator);
 
@@ -43,10 +39,8 @@ internal class AdminContextGenerator : IAdminContextGenerator {
             var pageGeneratorType = typeof(AdminPageGenerator<>).MakeGenericType(propertyType);
             var generatorInstance = Activator.CreateInstance(pageGeneratorType, [property.Name]); // Calls constructor with title attribute
 
-            var populatorMethod = typeof(AdminContextGenerator)
-                .GetMethod(nameof(ApplyConfigurationFromAttributes))?
-                .MakeGenericMethod(propertyType);
-            populatorMethod?.Invoke(this, [generatorInstance, propertyType.GetCustomAttributes()]);
+            var populatorMethod = pageGeneratorType.GetMethod(nameof(AdminPageGenerator<TContext>.ApplyConfigurationFromAttributes));
+            populatorMethod?.Invoke(generatorInstance, [propertyType.GetCustomAttributes(false)]);
             
             _adminPages.Add(propertyType, generatorInstance);
         }
@@ -62,37 +56,7 @@ internal class AdminContextGenerator : IAdminContextGenerator {
         return context;
     }
 
-    public void ApplyConfigurationFromAttributes<TModel>(IAdminPageGenerator<TModel> generator, object[] attributes) {
-        if (attributes.Any(a => a is AdminNameAttribute)) {
-            var attribute = attributes.Single(a => a is AdminNameAttribute) as AdminNameAttribute;
-            generator.Title(attribute?.Name);
-        }
-            
-        if (attributes.Any(a => a is AdminDescriptionAttribute)) {
-            var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
-            generator.Description(attribute?.Description);
-        }
 
-        if (attributes.Any(a => a is AdminUrlAttribute)) {
-            var attribute = attributes.Single(a => a is AdminUrlAttribute) as AdminUrlAttribute;
-            generator.Url(attribute?.Url);
-        }
-
-        if (attributes.Any(a => a is AdminPermissionsAttribute)) {
-            var attribute = attributes.Single(a => a is AdminPermissionsAttribute) as AdminPermissionsAttribute;
-            generator.CreatePermission(attribute?.Permissions.Create);
-            generator.UpdatePermission(attribute?.Permissions.Update);
-            generator.ViewPermission(attribute?.Permissions.View);
-            generator.DeletePermission(attribute?.Permissions.Delete);
-        }
-
-        if (attributes.Any(a => a is AdminButtonConfigAttribute)) {
-            var attribute = attributes.Single(a => a is AdminButtonConfigAttribute) as AdminButtonConfigAttribute;
-            generator.ShowCreateButton(attribute?.ShowCreateButton == true);
-            generator.ShowUpdateButton(attribute?.ShowUpdateButton == true);
-            generator.ShowDeleteButton(attribute?.ShowDeleteButton == true);
-        }
-    }
 
     public static void RegisterPages(AdminPagesContext context, IAdminPagesProvider provider) {
         var properties = context.GetType().GetProperties();

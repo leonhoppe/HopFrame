@@ -1,3 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using HopFrame.Web.Admin.Attributes;
+using HopFrame.Web.Admin.Attributes.Members;
 using HopFrame.Web.Admin.Models;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
@@ -40,6 +45,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         return this;
     }
 
+    public IAdminPropertyGenerator Generated(bool generated = true) {
+        _property.Generated = generated;
+        return this;
+    }
+
     public IAdminPropertyGenerator DisplayName(string displayName) {
         _property.DisplayName = displayName;
         return this;
@@ -57,7 +67,51 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
 
     public AdminPageProperty Compile() {
         _property.DisplayName ??= _property.Name;
-
         return _property;
+    }
+    
+    public void ApplyConfigurationFromAttributes<T>(AdminPageGenerator<T> pageGenerator, object[] attributes, PropertyInfo property) {
+        if (attributes.Any(a => a is KeyAttribute)) {
+            pageGenerator.Page.DefaultSortPropertyName = property.Name;
+            Bold();
+            Editable(false);
+        }
+
+        if (attributes.Any(a => a is AdminUnsortableAttribute))
+            Sortable(false);
+
+        if (attributes.Any(a => a is AdminUneditableAttribute))
+            Editable(false);
+
+        if (attributes.Any(a => a is AdminBoldAttribute))
+            Bold();
+        
+        if (attributes.Any(a => a is AdminIgnoreAttribute)) {
+            var attribute = attributes.Single(a => a is AdminIgnoreAttribute) as AdminIgnoreAttribute;
+            DisplayInListing(false);
+            Sortable(false);
+            Ignore(attribute?.OnlyForListing == false);
+        }
+
+        if (attributes.Any(a => a is AdminHideValueAttribute))
+            DisplayValueWhileEditing(false);
+
+        if (attributes.Any(a => a is DatabaseGeneratedAttribute))
+            Generated();
+
+        if (attributes.Any(a => a is AdminNameAttribute)) {
+            var attribute = attributes.Single(a => a is AdminNameAttribute) as AdminNameAttribute;
+            DisplayName(attribute?.Name);
+        }
+            
+        if (attributes.Any(a => a is AdminDescriptionAttribute)) {
+            var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
+            Description(attribute?.Description);
+        }
+
+        if (attributes.Any(a => a is AdminPrefixAttribute)) {
+            var attribute = attributes.Single(a => a is AdminPrefixAttribute) as AdminPrefixAttribute;
+            Prefix(attribute?.Prefix);
+        }
     }
 }

@@ -12,6 +12,7 @@ public sealed class AdminPageProperty {
     public bool Sortable { get; set; } = true;
     public bool Editable { get; set; } = true;
     public bool EditDisplayValue { get; set; } = true;
+    public bool Generated { get; set; }
     public bool Bold { get; set; }
     public bool Ignore { get; set; }
     [JsonIgnore]
