@@ -35,11 +35,6 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         return this;
     }
 
-    public IAdminPropertyGenerator Bold(bool isBold = true) {
-        _property.Bold = isBold;
-        return this;
-    }
-
     public IAdminPropertyGenerator Ignore(bool ignore = false) {
         _property.Ignore = ignore;
         return this;
@@ -73,7 +68,6 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
     public void ApplyConfigurationFromAttributes<T>(AdminPageGenerator<T> pageGenerator, object[] attributes, PropertyInfo property) {
         if (attributes.Any(a => a is KeyAttribute)) {
             pageGenerator.Page.DefaultSortPropertyName = property.Name;
-            Bold();
             Editable(false);
         }
 
@@ -82,9 +76,6 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
 
         if (attributes.Any(a => a is AdminUneditableAttribute))
             Editable(false);
-
-        if (attributes.Any(a => a is AdminBoldAttribute))
-            Bold();
         
         if (attributes.Any(a => a is AdminIgnoreAttribute)) {
             var attribute = attributes.Single(a => a is AdminIgnoreAttribute) as AdminIgnoreAttribute;

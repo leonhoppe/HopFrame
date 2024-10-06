@@ -1,0 +1,114 @@
+@page "/administration/{url}"
+@layout AdminLayout
+@rendermode InteractiveServer
+
+@using System.ComponentModel
+@using BlazorStrap
+@using Microsoft.AspNetCore.Components.Web
+@using HopFrame.Web.Admin.Models
+@using HopFrame.Web.Admin.Providers
+@using HopFrame.Web.Pages.Administration.Layout
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using HopFrame.Web.Components.Administration
+@using BlazorStrap.V5
+@using HopFrame.Web.Components
+
+<PageTitle>@_pageData.Title</PageTitle>
+<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="administration/login" />
+
+<div class="title">
+    <h3>
+        @_pageData.Title administration
+        <span class="reload" @onclick="Reload">
+            <HopIconDisplay Type="HopIconDisplay.HopIcon.Reload"/>
+        </span>
+    </h3>
+
+    <div class="d-flex" role="search" id="search">
+        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @oninput="TriggerSearch">
+    </div>
+    <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
+        <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user">Add Group</BSButton>
+    </AuthorizedView>
+</div>
+
+<BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
+    <BSTHead>
+        <BSTR>
+            @foreach (var prop in GetListingProperties()) {
+                <BSTD>
+                    @if (prop.Sortable) {
+                        <span class="sorter" @onclick="() => OrderBy(prop.Name)">@prop.DisplayName</span>
+                        @if (_currentSortProperty == prop.Name) {
+                            <HopIconDisplay Type="_currentSortDirection == ListSortDirection.Descending ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                        }
+                    }
+                    else {
+                        @prop.DisplayName
+                    }
+                </BSTD>
+            }
+        </BSTR>
+    </BSTHead>
+
+    <BSTBody>
+        
+    </BSTBody>
+</BSTable>
+
+@inject IAdminPagesProvider Pages
+
+@code {
+    [Parameter]
+    public string Url { get; set; }
+
+    private AdminPage _pageData;
+
+    private string _currentSortProperty;
+    private ListSortDirection _currentSortDirection;
+    private DateTime _lastSearch;
+
+    protected override void OnInitialized() {
+        _pageData = Pages.LoadAdminPage(Url);
+
+        _currentSortProperty = _pageData.DefaultSortPropertyName;
+        _currentSortDirection = _pageData.DefaultSortDirection;
+    }
+
+    private IList<AdminPageProperty> GetListingProperties() {
+        return _pageData.Properties
+            .Where(p => p.Ignore == false)
+            .Where(p => p.DisplayInListing)
+            .ToList();
+    }
+
+    private void Reload() {
+        
+    }
+
+    private void OrderBy(string property, bool changeDir = true) {
+        if (_currentSortProperty == property && changeDir)
+            _currentSortDirection = (ListSortDirection)(((int)_currentSortDirection + 1) % 2);
+        if (_currentSortProperty != property)
+            _currentSortDirection = ListSortDirection.Ascending;
+        
+        //TODO: Handle ordering
+
+        _currentSortProperty = property;
+    }
+
+    private void TriggerSearch(ChangeEventArgs e) {
+        var search = ((string)e.Value)?.Trim();
+        Search(search);
+    }
+
+    private async void Search(string search) {
+        _lastSearch = DateTime.Now;
+        await Task.Delay(500);
+        var timeSinceLastKeyPress = DateTime.Now - _lastSearch;
+        if (timeSinceLastKeyPress < TimeSpan.FromMilliseconds(500)) return;
+
+        //TODO: Handle searching
+        Console.WriteLine(search);
+    }
+}
