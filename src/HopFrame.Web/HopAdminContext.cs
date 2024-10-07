@@ -3,6 +3,7 @@ using HopFrame.Security;
 using HopFrame.Web.Admin;
 using HopFrame.Web.Admin.Generators;
 using HopFrame.Web.Admin.Models;
+using HopFrame.Web.Repositories;
 
 namespace HopFrame.Web;
 
@@ -14,6 +15,7 @@ public class HopAdminContext : AdminPagesContext {
     public override void OnModelCreating(IAdminContextGenerator generator) {
         generator.Page<User>()
             .Description("On this page you can manage all user accounts.")
+            .ConfigureRepository<UserProvider>()
             .ViewPermission(AdminPermissions.ViewUsers)
             .CreatePermission(AdminPermissions.AddUser)
             .UpdatePermission(AdminPermissions.EditUser)
@@ -35,6 +37,7 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<PermissionGroup>()
             .Description("On this page you can view, create, edit and delete permission groups.")
+            .ConfigureRepository<GroupProvider>()
             .ViewPermission(AdminPermissions.ViewGroups)
             .CreatePermission(AdminPermissions.AddGroup)
             .UpdatePermission(AdminPermissions.EditGroup)

@@ -1,5 +1,6 @@
 using HopFrame.Web.Admin.Models;
 using HopFrame.Web.Admin.Providers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
 
@@ -58,7 +59,7 @@ internal class AdminContextGenerator : IAdminContextGenerator {
 
 
 
-    public static void RegisterPages(AdminPagesContext context, IAdminPagesProvider provider) {
+    public static void RegisterPages(AdminPagesContext context, IAdminPagesProvider provider, IServiceCollection services) {
         var properties = context.GetType().GetProperties();
 
         foreach (var property in properties) {
@@ -66,6 +67,9 @@ internal class AdminContextGenerator : IAdminContextGenerator {
             if (page is null) continue;
             
             provider.RegisterAdminPage(page.Title.ToLower(), page);
+
+            if (page.RepositoryProvider is not null)
+                services.AddScoped(page.RepositoryProvider);
         }
     }
 

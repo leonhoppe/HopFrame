@@ -8,6 +8,7 @@ public interface IAdminPropertyGenerator {
     IAdminPropertyGenerator DisplayInListing(bool display = true);
     IAdminPropertyGenerator Ignore(bool ignore = true);
     IAdminPropertyGenerator Generated(bool generated = true);
+    IAdminPropertyGenerator Bold(bool bold = true);
     
     IAdminPropertyGenerator DisplayName(string displayName);
     IAdminPropertyGenerator Description(string description);

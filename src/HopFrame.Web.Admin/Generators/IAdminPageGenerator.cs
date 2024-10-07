@@ -20,7 +20,7 @@ public interface IAdminPageGenerator<TModel> {
 
     IAdminPageGenerator<TModel> DefaultSort<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression, ListSortDirection direction);
 
-    IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : IModelRepository<TModel>;
+    IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : ModelRepository<TModel>;
     
     IAdminPropertyGenerator Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression);
 

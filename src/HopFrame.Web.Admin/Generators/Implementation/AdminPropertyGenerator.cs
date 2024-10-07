@@ -45,6 +45,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         return this;
     }
 
+    public IAdminPropertyGenerator Bold(bool bold = true) {
+        _property.Bold = bold;
+        return this;
+    }
+
     public IAdminPropertyGenerator DisplayName(string displayName) {
         _property.DisplayName = displayName;
         return this;
@@ -69,6 +74,7 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         if (attributes.Any(a => a is KeyAttribute)) {
             pageGenerator.Page.DefaultSortPropertyName = property.Name;
             Editable(false);
+            Bold();
         }
 
         if (attributes.Any(a => a is AdminUnsortableAttribute))
@@ -98,6 +104,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         if (attributes.Any(a => a is AdminDescriptionAttribute)) {
             var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
             Description(attribute?.Description);
+        }
+        
+        if (attributes.Any(a => a is AdminBoldAttribute)) {
+            var attribute = attributes.Single(a => a is AdminBoldAttribute) as AdminBoldAttribute;
+            Bold(attribute?.Bold == true);
         }
 
         if (attributes.Any(a => a is AdminPrefixAttribute)) {

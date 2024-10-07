@@ -11,6 +11,9 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using HopFrame.Web.Components.Administration
 @using BlazorStrap.V5
+@using HopFrame.Database.Repositories
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Admin
 @using HopFrame.Web.Components
 
 <PageTitle>@_pageData.Title</PageTitle>
@@ -48,31 +51,83 @@
                     }
                 </BSTD>
             }
+            
+            @if (_hasEditPermission || _hasDeletePermission) {
+                <BSTD>Actions</BSTD>
+            }
         </BSTR>
     </BSTHead>
 
     <BSTBody>
-        
+        @foreach (var entry in _displayedModels) {
+            <BSTR>
+                @foreach (var prop in GetListingProperties()) {
+                    <BSTD Class="@GetClass(prop)">
+                        @GetValue(entry, prop).GetAwaiter().GetResult()
+                    </BSTD>
+                }
+
+                @if (_hasEditPermission || _hasDeletePermission) {
+                    <BSTD>
+                        <BSButtonGroup>
+                            @if (_hasEditPermission) {
+                                <BSButton Color="BSColor.Warning" OnClick="() => Edit(entry)">Edit</BSButton>
+                            }
+
+                            @if (_hasDeletePermission) {
+                                <BSButton Color="BSColor.Danger" OnClick="() => Delete(entry)">Delete</BSButton>
+                            }
+                        </BSButtonGroup>
+                    </BSTD>
+                }
+            </BSTR>
+        }
     </BSTBody>
 </BSTable>
 
+<style>
+    .bold {
+        font-weight: bold;
+    }
+</style>
+
 @inject IAdminPagesProvider Pages
+@inject IServiceProvider Provider
+@inject ITokenContext Auth
+@inject IPermissionRepository Permissions
 
 @code {
     [Parameter]
     public string Url { get; set; }
 
     private AdminPage _pageData;
+    private IModelRepository _modelRepository;
+    private IEnumerable<object> _modelBuffer;
+
+    private bool _hasEditPermission;
+    private bool _hasDeletePermission;
 
     private string _currentSortProperty;
     private ListSortDirection _currentSortDirection;
     private DateTime _lastSearch;
+    private IList<object> _displayedModels;
 
     protected override void OnInitialized() {
         _pageData = Pages.LoadAdminPage(Url);
 
         _currentSortProperty = _pageData.DefaultSortPropertyName;
         _currentSortDirection = _pageData.DefaultSortDirection;
+    }
+
+    protected override async Task OnInitializedAsync() {
+        _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
+        if (_modelRepository is null)
+            throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
+
+        _hasEditPermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
+        _hasDeletePermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
+        
+        Reload();
     }
 
     private IList<AdminPageProperty> GetListingProperties() {
@@ -82,8 +137,11 @@
             .ToList();
     }
 
-    private void Reload() {
+    private async void Reload() {
+        _modelBuffer = await _modelRepository.ReadAllO();
         
+        _currentSortDirection = _pageData.DefaultSortDirection;
+        OrderBy(_pageData.DefaultSortPropertyName, false);
     }
 
     private void OrderBy(string property, bool changeDir = true) {
@@ -93,6 +151,7 @@
             _currentSortDirection = ListSortDirection.Ascending;
         
         //TODO: Handle ordering
+        _displayedModels = _modelBuffer.ToList();
 
         _currentSortProperty = property;
     }
@@ -109,6 +168,26 @@
         if (timeSinceLastKeyPress < TimeSpan.FromMilliseconds(500)) return;
 
         //TODO: Handle searching
-        Console.WriteLine(search);
+        OrderBy(_currentSortProperty, false);
+    }
+
+    private async Task<string> GetValue(object entry, AdminPageProperty property) {
+        object propValue = entry.GetType().GetProperty(property.Name)?.GetValue(entry);
+
+        return propValue?.ToString();
+    }
+
+    private string GetClass(AdminPageProperty property) {
+        if (property.Bold)
+            return "bold";
+        return "";
+    }
+
+    private async void Edit(object entry) {
+        
+    }
+
+    private async void Delete(object entry) {
+        
     }
 }

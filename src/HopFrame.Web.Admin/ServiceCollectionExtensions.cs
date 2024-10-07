@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions {
         
         var generator = new AdminContextGenerator();
         var context = generator.CompileContext<TContext>();
-        AdminContextGenerator.RegisterPages(context, provider);
+        AdminContextGenerator.RegisterPages(context, provider, services);
         services.AddSingleton(context);
 
         return services;

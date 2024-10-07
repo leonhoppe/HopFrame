@@ -94,7 +94,7 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return this;
     }
 
-    public IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : IModelRepository<TModel> {
+    public IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : ModelRepository<TModel> {
         Page.RepositoryProvider = typeof(TRepository);
         return this;
     }
