@@ -11,6 +11,7 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using HopFrame.Web.Components.Administration
 @using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
 @using HopFrame.Database.Repositories
 @using HopFrame.Security.Claims
 @using HopFrame.Web.Admin
@@ -31,7 +32,7 @@
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @oninput="TriggerSearch">
     </div>
     <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
-        <BSButton IsSubmit="false" Color="BSColor.Success" Target="add-user">Add Group</BSButton>
+        <BSButton IsSubmit="false" Color="BSColor.Success" @onclick="Create">Add Entry</BSButton>
     </AuthorizedView>
 </div>
 
@@ -63,7 +64,7 @@
             <BSTR>
                 @foreach (var prop in GetListingProperties()) {
                     <BSTD Class="@GetClass(prop)">
-                        @GetValue(entry, prop).GetAwaiter().GetResult()
+                        @GetValue(entry, prop)
                     </BSTD>
                 }
 
@@ -95,6 +96,7 @@
 @inject IServiceProvider Provider
 @inject ITokenContext Auth
 @inject IPermissionRepository Permissions
+@inject SweetAlertService Alerts
 
 @code {
     [Parameter]
@@ -139,9 +141,11 @@
 
     private async void Reload() {
         _modelBuffer = await _modelRepository.ReadAllO();
+        _displayedModels = _modelBuffer.ToList();
         
         _currentSortDirection = _pageData.DefaultSortDirection;
         OrderBy(_pageData.DefaultSortPropertyName, false);
+        StateHasChanged();
     }
 
     private void OrderBy(string property, bool changeDir = true) {
@@ -150,9 +154,29 @@
         if (_currentSortProperty != property)
             _currentSortDirection = ListSortDirection.Ascending;
         
-        //TODO: Handle ordering
-        _displayedModels = _modelBuffer.ToList();
+        var prop = GetListingProperties()
+            .SingleOrDefault(p => p.Name == property);
+        var comparer = Comparer<object>.Create((x, y) => {
+            if (prop.Type == typeof(DateTime)) {
+                DateTime dateX = (DateTime) x.GetType().GetProperty(prop.Name)?.GetValue(x)!;
+                DateTime dateY = (DateTime) y.GetType().GetProperty(prop.Name)?.GetValue(y)!;
 
+                return DateTime.Compare(dateX, dateY);
+            }
+            
+            var propX = GetValue(x, prop);
+            var propY = GetValue(y, prop);
+
+            return String.CompareOrdinal(propX, propY);
+        });
+
+        if (_currentSortDirection == ListSortDirection.Ascending) {
+            _displayedModels = _displayedModels.Order(comparer).ToList();
+        }
+        else {
+            _displayedModels = _displayedModels.OrderDescending(comparer).ToList();
+        }
+        
         _currentSortProperty = property;
     }
 
@@ -167,11 +191,22 @@
         var timeSinceLastKeyPress = DateTime.Now - _lastSearch;
         if (timeSinceLastKeyPress < TimeSpan.FromMilliseconds(500)) return;
 
-        //TODO: Handle searching
+        if (string.IsNullOrWhiteSpace(search)) {
+            _displayedModels = _modelBuffer.ToList();
+        }
+        else {
+            var props = GetListingProperties();
+
+            _displayedModels = _modelBuffer
+                .Where(model => props.Any(prop => GetValue(model, prop).Contains(search)))
+                .ToList();
+        }
+        
         OrderBy(_currentSortProperty, false);
+        StateHasChanged();
     }
 
-    private async Task<string> GetValue(object entry, AdminPageProperty property) {
+    private string GetValue(object entry, AdminPageProperty property) {
         object propValue = entry.GetType().GetProperty(property.Name)?.GetValue(entry);
 
         return propValue?.ToString();
@@ -183,11 +218,34 @@
         return "";
     }
 
+    private async void Create() {
+        //TODO: Open create modal
+    }
+
     private async void Edit(object entry) {
-        
+        //TODO: Open edit modal
     }
 
     private async void Delete(object entry) {
-        
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Do you really want to delete this entry?",
+            Text = "You won't be able to revert this!",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await _modelRepository.DeleteO(entry);
+            Reload();
+            
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Deleted!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
     }
 }
