@@ -20,6 +20,8 @@
 <PageTitle>@_pageData.Title</PageTitle>
 <AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="administration/login" />
 
+<AdminPageModal ReloadDelegate="Reload" @ref="_modal"/>
+
 <div class="title">
     <h3>
         @_pageData.Title administration
@@ -63,9 +65,16 @@
         @foreach (var entry in _displayedModels) {
             <BSTR>
                 @foreach (var prop in GetListingProperties()) {
-                    <BSTD Class="@GetClass(prop)">
-                        @GetValue(entry, prop)
-                    </BSTD>
+                    @if (prop.Bold) {
+                        <BSTD Class="bold">
+                            @GetPrintableValue(entry, prop)
+                        </BSTD>
+                    }
+                    else {
+                        <BSTD>
+                            @GetPrintableValue(entry, prop)
+                        </BSTD>
+                    }
                 }
 
                 @if (_hasEditPermission || _hasDeletePermission) {
@@ -105,6 +114,7 @@
     private AdminPage _pageData;
     private IModelRepository _modelRepository;
     private IEnumerable<object> _modelBuffer;
+    private AdminPageModal _modal;
 
     private bool _hasEditPermission;
     private bool _hasDeletePermission;
@@ -114,14 +124,12 @@
     private DateTime _lastSearch;
     private IList<object> _displayedModels;
 
-    protected override void OnInitialized() {
+    protected override async Task OnInitializedAsync() {
         _pageData = Pages.LoadAdminPage(Url);
 
         _currentSortProperty = _pageData.DefaultSortPropertyName;
         _currentSortDirection = _pageData.DefaultSortDirection;
-    }
-
-    protected override async Task OnInitializedAsync() {
+        
         _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
         if (_modelRepository is null)
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
@@ -129,7 +137,7 @@
         _hasEditPermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
         _hasDeletePermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
         
-        Reload();
+        await Reload();
     }
 
     private IList<AdminPageProperty> GetListingProperties() {
@@ -139,7 +147,7 @@
             .ToList();
     }
 
-    private async void Reload() {
+    private async Task Reload() {
         _modelBuffer = await _modelRepository.ReadAllO();
         _displayedModels = _modelBuffer.ToList();
         
@@ -157,15 +165,15 @@
         var prop = GetListingProperties()
             .SingleOrDefault(p => p.Name == property);
         var comparer = Comparer<object>.Create((x, y) => {
-            if (prop.Type == typeof(DateTime)) {
+            if (prop?.Type == typeof(DateTime)) {
                 DateTime dateX = (DateTime) x.GetType().GetProperty(prop.Name)?.GetValue(x)!;
                 DateTime dateY = (DateTime) y.GetType().GetProperty(prop.Name)?.GetValue(y)!;
 
                 return DateTime.Compare(dateX, dateY);
             }
-            
-            var propX = GetValue(x, prop);
-            var propY = GetValue(y, prop);
+
+            var propX = GetPrintableValue(x, prop);
+            var propY = GetPrintableValue(y, prop);
 
             return String.CompareOrdinal(propX, propY);
         });
@@ -198,7 +206,7 @@
             var props = GetListingProperties();
 
             _displayedModels = _modelBuffer
-                .Where(model => props.Any(prop => GetValue(model, prop).Contains(search)))
+                .Where(model => props.Any(prop => GetPrintableValue(model, prop).Contains(search)))
                 .ToList();
         }
         
@@ -206,29 +214,25 @@
         StateHasChanged();
     }
 
-    private string GetValue(object entry, AdminPageProperty property) {
-        object propValue = entry.GetType().GetProperty(property.Name)?.GetValue(entry);
+    private static string GetPrintableValue(object element, AdminPageProperty prop) {
+        var entry = prop.GetValue(element);
+        
+        //TODO: convert relational types
 
-        return propValue?.ToString();
-    }
-
-    private string GetClass(AdminPageProperty property) {
-        if (property.Bold)
-            return "bold";
-        return "";
+        return entry?.ToString();
     }
 
     private async void Create() {
-        //TODO: Open create modal
+        await _modal.Show(_pageData);
     }
 
     private async void Edit(object entry) {
-        //TODO: Open edit modal
+        await _modal.Show(_pageData, entry);
     }
 
     private async void Delete(object entry) {
         var result = await Alerts.FireAsync(new SweetAlertOptions {
-            Title = "Do you really want to delete this entry?",
+            Title = "Are you sure?",
             Text = "You won't be able to revert this!",
             Icon = SweetAlertIcon.Warning,
             ConfirmButtonText = "Yes",
@@ -238,7 +242,7 @@
 
         if (result.IsConfirmed) {
             await _modelRepository.DeleteO(entry);
-            Reload();
+            await Reload();
             
             await Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Deleted!",

@@ -13,5 +13,6 @@ public interface IAdminPropertyGenerator {
     IAdminPropertyGenerator DisplayName(string displayName);
     IAdminPropertyGenerator Description(string description);
     IAdminPropertyGenerator Prefix(string prefix);
+    IAdminPropertyGenerator Validator(Func<object, bool> validator);
 
 }

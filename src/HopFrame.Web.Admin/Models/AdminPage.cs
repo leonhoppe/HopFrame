@@ -14,6 +14,8 @@ public class AdminPage {
     
     [JsonIgnore]
     public Type RepositoryProvider { get; set; }
+
+    public Type ModelType { get; set; }
     
     public string DefaultSortPropertyName { get; set; }
     public ListSortDirection DefaultSortDirection { get; set; }

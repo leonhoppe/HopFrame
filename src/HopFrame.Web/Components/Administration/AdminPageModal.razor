@@ -1,0 +1,119 @@
+@rendermode InteractiveServer
+
+@using BlazorStrap
+@using BlazorStrap.Shared.Components.Modal
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap.V5
+@using HopFrame.Web.Admin
+@using HopFrame.Web.Admin.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+
+<BSModal DataId="admin-page-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
+    <BSForm TValue="object" EditContext="_context" OnValidSubmit="Save">
+        @if (!_isEdit) {
+            <BSModalHeader>Create entry</BSModalHeader>
+        }
+        else {
+            <BSModalHeader>Edit entry</BSModalHeader>
+        }
+        
+        <BSModalContent>
+            @foreach (var prop in GetEditableProperties()) {
+                @if (!_isEdit && !prop.Editable) continue;
+                
+                <div class="mb-3">
+                    <BSLabel>@prop.DisplayName</BSLabel>
+                    
+                    <input type="@GetInputType(prop)" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                </div>
+            }
+        </BSModalContent>
+        
+        <BSModalFooter>
+            <BSButton Target="admin-page-modal">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@inject IServiceProvider Provider
+
+@code {
+    [Parameter]
+    public Func<Task> ReloadDelegate { get; set; }
+    
+    private BSModalBase _modal;
+    private EditContext _context;
+    private IDictionary<AdminPageProperty, object> _values;
+    private IModelRepository _repository;
+
+    private AdminPage _currentPage;
+    private object _entry;
+    private bool _isEdit;
+
+    public async Task Show(AdminPage page, object entryToEdit = null) {
+        _entry = null;
+        
+        _currentPage = page;
+        _entry = entryToEdit;
+        _isEdit = entryToEdit is not null;
+        _repository = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
+
+        _entry ??= Activator.CreateInstance(_currentPage.ModelType);
+        _context = new EditContext(_entry);
+        _context.OnValidationRequested += Validate;
+
+        _values = new Dictionary<AdminPageProperty, object>();
+        foreach (var property in _currentPage.Properties) {
+            _values.Add(property, property.GetValue(_entry));
+        }
+
+        await _modal.ShowAsync();
+    }
+
+    private IList<AdminPageProperty> GetEditableProperties() {
+        return _currentPage.Properties
+            .Where(p => !p.Ignore)
+            .OrderBy(p => p.Editable)
+            .ToList();
+    }
+
+    private bool IsDisabled(AdminPageProperty prop) => !prop.Editable;
+    private bool IsRequired(AdminPageProperty prop) => !_isEdit ? prop.Required : prop.Required && prop.EditDisplayValue;
+
+    private string GetPropertyValue(AdminPageProperty property) {
+        if (!_isEdit) return "";
+        if (!property.EditDisplayValue) return "";
+        return property.GetValue(_entry)?.ToString();
+    }
+
+    private string GetInputType(AdminPageProperty property) {
+        if (!property.EditDisplayValue)
+            return "password";
+
+        return "text";
+    }
+
+    private void Validate(object sender, ValidationRequestedEventArgs e) {
+        foreach (var value in _values) {
+            if (value.Key.Validator?.Invoke(value.Value) == true) continue;
+            Console.WriteLine("INVALID");
+        }
+    }
+
+    private async void Save() {
+        foreach (var value in _values) {
+            value.Key.SetValue(_entry, value.Value);
+        }
+
+        if (!_isEdit) {
+            await _repository.CreateO(_entry);
+        }
+        else {
+            await _repository.UpdateO(_entry);
+        }
+
+        await ReloadDelegate.Invoke();
+    }
+}

@@ -14,7 +14,8 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
 
     public AdminPageGenerator() {
         Page = new AdminPage<TModel> {
-            Permissions = new AdminPagePermissions()
+            Permissions = new AdminPagePermissions(),
+            ModelType = typeof(TModel)
         };
         _propertyGenerators = new Dictionary<string, AdminPropertyGenerator>();
 

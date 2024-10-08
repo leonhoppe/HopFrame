@@ -65,6 +65,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         return this;
     }
 
+    public IAdminPropertyGenerator Validator(Func<object, bool> validator) {
+        _property.Validator = validator;
+        return this;
+    }
+
     public AdminPageProperty Compile() {
         _property.DisplayName ??= _property.Name;
         return _property;
@@ -109,6 +114,10 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         if (attributes.Any(a => a is AdminBoldAttribute)) {
             var attribute = attributes.Single(a => a is AdminBoldAttribute) as AdminBoldAttribute;
             Bold(attribute?.Bold == true);
+        }
+
+        if (attributes.Any(a => a is RequiredAttribute)) {
+            _property.Required = true;
         }
 
         if (attributes.Any(a => a is AdminPrefixAttribute)) {
