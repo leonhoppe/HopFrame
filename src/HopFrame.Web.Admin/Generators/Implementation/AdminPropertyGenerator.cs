@@ -70,6 +70,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         return this;
     }
 
+    public IAdminPropertyGenerator IsSelector<TSelector>() {
+        _property.SelectorType = typeof(TSelector);
+        return this;
+    }
+
     public AdminPageProperty Compile() {
         _property.DisplayName ??= _property.Name;
         return _property;

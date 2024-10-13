@@ -113,6 +113,12 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return generator;
     }
 
+    public IAdminPageGenerator<TModel> ListingProperty<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression) {
+        var property = GetPropertyInfo(propertyExpression);
+        Page.ListingProperty = property.Name;
+        return this;
+    }
+
     public AdminPage<TModel> Compile() {
         var properties = new List<AdminPageProperty>();
         

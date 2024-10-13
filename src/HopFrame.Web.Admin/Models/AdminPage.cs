@@ -11,6 +11,7 @@ public class AdminPage {
     public string Url { get; set; }
     public AdminPagePermissions Permissions { get; set; }
     public IList<AdminPageProperty> Properties { get; set; }
+    public string ListingProperty { get; set; }
     
     [JsonIgnore]
     public Type RepositoryProvider { get; set; }

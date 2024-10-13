@@ -1,11 +1,15 @@
 @rendermode InteractiveServer
 
+@using System.Collections
+@using System.ComponentModel.DataAnnotations
 @using BlazorStrap
 @using BlazorStrap.Shared.Components.Modal
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using BlazorStrap.V5
+@using HopFrame.Database.Attributes
 @using HopFrame.Web.Admin
 @using HopFrame.Web.Admin.Models
+@using HopFrame.Web.Admin.Providers
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
@@ -23,9 +27,54 @@
                 @if (!_isEdit && !prop.Editable) continue;
                 
                 <div class="mb-3">
-                    <BSLabel>@prop.DisplayName</BSLabel>
-                    
-                    <input type="@GetInputType(prop)" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                    @if (IsListType(prop)) {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <BSListGroup>
+                            <BSListGroupItem>
+                                <BSListGroup IsFlush="true">
+                                    @foreach (var element in GetListPropertyValues(prop).Select((e, i) => new {e, i})) {
+                                        <BSListGroupItem>
+                                            <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => DeleteListItem(prop, element.i)">
+                                                <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                            </BSButton>
+
+                                            <span>@element.e</span>
+                                        </BSListGroupItem>
+                                    }
+                                </BSListGroup>
+                            </BSListGroupItem>
+                            <BSListGroupItem>
+                                <div style="display: flex; gap: 20px">
+                                    @if (prop.SelectorType is null) {
+                                        <input type="text" class="form-control" @onchange="v => _inputValues[prop] = (string)v.Value"/>
+                                        <BSButton Color="BSColor.Secondary">Add</BSButton>
+                                    }
+                                    else {
+                                        @*<BSInput InputType="InputType.Select"> TODO: implement selector
+                                            <option selected>Select group</option>
+
+                                            @foreach (var group in _allGroups) {
+                                                @if (_group.Permissions.All(g => g.PermissionName != group.Name) && group.Name != _group.Name) {
+                                                    <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                                                }
+                                            }
+                                        </BSInput>
+                                        <BSButton Color="BSColor.Secondary">Add</BSButton>*@
+                                    }
+                                </div>
+                            </BSListGroupItem>
+                        </BSListGroup>
+                    }
+                    else if (IsSwitch(prop)) {
+                        <div class="form-check form-switch">
+                            <BSLabel>@prop.DisplayName</BSLabel>
+                            <input class="form-check-input" type="checkbox" checked="@_values[prop]" @onchange="e => _values[prop] = Convert.ToBoolean(e.Value)">
+                        </div>
+                    }
+                    else {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <input type="@GetInputType(prop)" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                    }
                 </div>
             }
         </BSModalContent>
@@ -38,6 +87,7 @@
 </BSModal>
 
 @inject IServiceProvider Provider
+@inject IAdminPagesProvider PageProvider
 
 @code {
     [Parameter]
@@ -51,9 +101,11 @@
     private AdminPage _currentPage;
     private object _entry;
     private bool _isEdit;
+    private IDictionary<AdminPageProperty, string> _inputValues;
 
     public async Task Show(AdminPage page, object entryToEdit = null) {
         _entry = null;
+        _inputValues = new Dictionary<AdminPageProperty, string>();
         
         _currentPage = page;
         _entry = entryToEdit;
@@ -81,11 +133,67 @@
 
     private bool IsDisabled(AdminPageProperty prop) => !prop.Editable;
     private bool IsRequired(AdminPageProperty prop) => !_isEdit ? prop.Required : prop.Required && prop.EditDisplayValue;
+    private bool IsSwitch(AdminPageProperty prop) => prop.Type == typeof(bool);
+    
+    private bool IsListType(AdminPageProperty prop) {
+        if (!prop.Type.IsGenericType) return false;
+        var generic = prop.Type.GenericTypeArguments[0];
+        var listType = typeof(IList<>).MakeGenericType(generic);
+        return prop.Type.IsAssignableFrom(listType);
+    }
+
+    private IList<string> GetListPropertyValues(AdminPageProperty prop) {
+        if (!IsListType(prop)) return new List<string>();
+        var list = new List<string>();
+
+        var values = prop.GetValue(_entry);
+        
+        if (values is null) {
+            prop.SetValue(_entry, Activator.CreateInstance(prop.Type));
+            return list;
+        }
+        
+        foreach (var value in (IEnumerable)values) {
+            list.Add(MapPropertyValue(value, prop));
+        }
+
+        return list;
+    }
 
     private string GetPropertyValue(AdminPageProperty property) {
         if (!_isEdit) return "";
         if (!property.EditDisplayValue) return "";
-        return property.GetValue(_entry)?.ToString();
+        return MapPropertyValue(property.GetValue(_entry), property);
+    }
+
+    public string MapPropertyValue(object value, AdminPageProperty property) {
+        if (value is null) return string.Empty;
+        var type = value.GetType();
+
+        var page = PageProvider.HasPageFor(type);
+        if (page is not null && !string.IsNullOrWhiteSpace(page.ListingProperty)) {
+            var prop = page.Properties
+                .SingleOrDefault(p => p.Name == page.ListingProperty);
+
+            if (prop is not null) {
+                return MapPropertyValue(prop.GetValue(value), prop);
+            }
+        }
+
+        if (type.GetProperties().Any(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute))) {
+            var prop = type.GetProperties()
+                .SingleOrDefault(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute));
+
+            return MapPropertyValue(prop?.GetValue(value), property);
+        }
+        
+        var stringValue = value.ToString();
+
+        if (!string.IsNullOrWhiteSpace(property.Prefix)) {
+            return stringValue?.Replace(property.Prefix, "");
+        }
+
+        return stringValue;
     }
 
     private string GetInputType(AdminPageProperty property) {
@@ -97,9 +205,16 @@
 
     private void Validate(object sender, ValidationRequestedEventArgs e) {
         foreach (var value in _values) {
+            if (value.Key.Validator is null) continue;
             if (value.Key.Validator?.Invoke(value.Value) == true) continue;
             Console.WriteLine("INVALID");
         }
+    }
+
+    private void DeleteListItem(AdminPageProperty prop, int index) {
+        Console.WriteLine(index);
+        var list = prop.GetValue<IList>(_entry);
+        list.RemoveAt(index);
     }
 
     private async void Save() {

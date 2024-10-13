@@ -16,4 +16,11 @@ public class AdminPagesProvider : IAdminPagesProvider {
     public IList<AdminPage> LoadRegisteredAdminPages() {
         return _pages.Values.ToList();
     }
+
+    public AdminPage HasPageFor(Type type) {
+        return _pages
+            .Where(p => p.Value.ModelType == type)
+            .Select(p => p.Value)
+            .SingleOrDefault();
+    }
 }

@@ -214,12 +214,8 @@
         StateHasChanged();
     }
 
-    private static string GetPrintableValue(object element, AdminPageProperty prop) {
-        var entry = prop.GetValue(element);
-        
-        //TODO: convert relational types
-
-        return entry?.ToString();
+    private string GetPrintableValue(object element, AdminPageProperty prop) {
+        return _modal?.MapPropertyValue(prop.GetValue(element), prop);
     }
 
     private async void Create() {

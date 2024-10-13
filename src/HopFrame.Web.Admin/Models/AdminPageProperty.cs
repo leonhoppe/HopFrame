@@ -19,6 +19,8 @@ public sealed class AdminPageProperty {
     [JsonIgnore]
     public Type Type { get; set; }
 
+    public Type SelectorType { get; set; }
+
     public Func<object, bool> Validator { get; set; }
     
     public object GetValue(object entry) {

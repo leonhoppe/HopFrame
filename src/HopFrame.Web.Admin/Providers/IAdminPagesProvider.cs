@@ -7,5 +7,6 @@ public interface IAdminPagesProvider {
     internal void RegisterAdminPage(string url, AdminPage page);
     AdminPage LoadAdminPage(string url);
     IList<AdminPage> LoadRegisteredAdminPages();
+    AdminPage HasPageFor(Type type);
 
 }

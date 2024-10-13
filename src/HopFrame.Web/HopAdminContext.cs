@@ -29,7 +29,8 @@ public class HopAdminContext : AdminPagesContext {
             .Editable(false);
 
         generator.Page<User>().Property(u => u.Permissions)
-            .DisplayInListing(false);
+            .DisplayInListing(false)
+            .IsSelector<PermissionGroup>();
 
         generator.Page<User>().Property(u => u.Tokens)
             .Ignore();

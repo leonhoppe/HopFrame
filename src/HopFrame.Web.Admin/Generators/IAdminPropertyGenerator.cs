@@ -14,5 +14,6 @@ public interface IAdminPropertyGenerator {
     IAdminPropertyGenerator Description(string description);
     IAdminPropertyGenerator Prefix(string prefix);
     IAdminPropertyGenerator Validator(Func<object, bool> validator);
+    IAdminPropertyGenerator IsSelector<TSelector>();
 
 }
