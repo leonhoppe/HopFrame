@@ -7,6 +7,7 @@ public sealed class AdminPageProperty {
     public string DisplayName { get; set; }
     public string Description { get; set; }
     public string Prefix { get; set; }
+    public string DisplayPropertyName { get; set; }
 
     public bool DisplayInListing { get; set; } = true;
     public bool Sortable { get; set; } = true;

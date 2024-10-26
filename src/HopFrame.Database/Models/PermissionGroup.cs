@@ -1,12 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using HopFrame.Database.Attributes;
 
 namespace HopFrame.Database.Models;
 
 public class PermissionGroup : IPermissionOwner {
     
-    [Key, Required, MaxLength(50), ListingProperty]
+    [Key, Required, MaxLength(50)]
     public string Name { get; init; }
     
     [Required, DefaultValue(false)]

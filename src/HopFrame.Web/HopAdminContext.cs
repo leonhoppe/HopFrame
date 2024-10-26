@@ -30,7 +30,8 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<User>().Property(u => u.Permissions)
             .DisplayInListing(false)
-            .IsSelector<PermissionGroup>();
+            .IsSelector<PermissionGroup>()
+            .DisplayPropertyForListType<Permission>(p => p.PermissionName);
 
         generator.Page<User>().Property(u => u.Tokens)
             .Ignore();
@@ -54,6 +55,7 @@ public class HopAdminContext : AdminPagesContext {
             .Editable(false);
 
         generator.Page<PermissionGroup>().Property(g => g.Permissions)
-            .DisplayInListing(false);
+            .DisplayInListing(false)
+            .DisplayPropertyForListType<Permission>(p => p.PermissionName);
     }
 }

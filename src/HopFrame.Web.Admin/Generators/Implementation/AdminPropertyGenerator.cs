@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 using System.Reflection;
 using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Attributes.Members;
@@ -7,71 +8,83 @@ using HopFrame.Web.Admin.Models;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
 
-internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPropertyGenerator, IGenerator<AdminPageProperty> {
+internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) : IAdminPropertyGenerator<TProperty>, IGenerator<AdminPageProperty> {
     
     private readonly AdminPageProperty _property = new() {
         Name = name,
         Type = type
     };
 
-    public IAdminPropertyGenerator Sortable(bool sortable) {
+    public IAdminPropertyGenerator<TProperty> Sortable(bool sortable) {
         _property.Sortable = sortable;
         return this;
     }
 
-    public IAdminPropertyGenerator Editable(bool editable) {
+    public IAdminPropertyGenerator<TProperty> Editable(bool editable) {
         _property.Editable = editable;
         return this;
     }
 
-    public IAdminPropertyGenerator DisplayValueWhileEditing(bool display) {
+    public IAdminPropertyGenerator<TProperty> DisplayValueWhileEditing(bool display) {
         _property.EditDisplayValue = display;
         return this;
     }
 
-    public IAdminPropertyGenerator DisplayInListing(bool display = true) {
+    public IAdminPropertyGenerator<TProperty> DisplayInListing(bool display = true) {
         _property.DisplayInListing = display;
         _property.Sortable = false;
         return this;
     }
 
-    public IAdminPropertyGenerator Ignore(bool ignore = false) {
+    public IAdminPropertyGenerator<TProperty> Ignore(bool ignore = false) {
         _property.Ignore = ignore;
         return this;
     }
 
-    public IAdminPropertyGenerator Generated(bool generated = true) {
+    public IAdminPropertyGenerator<TProperty> Generated(bool generated = true) {
         _property.Generated = generated;
         return this;
     }
 
-    public IAdminPropertyGenerator Bold(bool bold = true) {
+    public IAdminPropertyGenerator<TProperty> Bold(bool bold = true) {
         _property.Bold = bold;
         return this;
     }
 
-    public IAdminPropertyGenerator DisplayName(string displayName) {
+    public IAdminPropertyGenerator<TProperty> DisplayName(string displayName) {
         _property.DisplayName = displayName;
         return this;
     }
 
-    public IAdminPropertyGenerator Description(string description) {
+    public IAdminPropertyGenerator<TProperty> Description(string description) {
         _property.Description = description;
         return this;
     }
 
-    public IAdminPropertyGenerator Prefix(string prefix) {
+    public IAdminPropertyGenerator<TProperty> Prefix(string prefix) {
         _property.Prefix = prefix;
         return this;
     }
 
-    public IAdminPropertyGenerator Validator(Func<object, bool> validator) {
+    public IAdminPropertyGenerator<TProperty> Validator(Func<object, bool> validator) {
         _property.Validator = validator;
         return this;
     }
 
-    public IAdminPropertyGenerator IsSelector<TSelector>() {
+    public IAdminPropertyGenerator<TProperty> IsSelector<TSelector>() {
         _property.SelectorType = typeof(TSelector);
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression) {
+        var property = AdminPageGenerator<object>.GetPropertyInfo(propertyExpression);
+        _property.DisplayPropertyName = property.Name;
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> DisplayPropertyForListType<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression) {
+        var property = AdminPageGenerator<object>.GetPropertyInfo(propertyExpression);
+        _property.DisplayPropertyName = property.Name;
         return this;
     }
 
@@ -128,6 +141,11 @@ internal sealed class AdminPropertyGenerator(string name, Type type) : IAdminPro
         if (attributes.Any(a => a is AdminPrefixAttribute)) {
             var attribute = attributes.Single(a => a is AdminPrefixAttribute) as AdminPrefixAttribute;
             Prefix(attribute?.Prefix);
+        }
+
+        if (attributes.Any(a => a is ListingPropertyAttribute)) {
+            var attribute = attributes.Single(a => a is ListingPropertyAttribute) as ListingPropertyAttribute;
+            _property.DisplayPropertyName = property.Name;
         }
     }
 }

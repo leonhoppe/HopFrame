@@ -178,12 +178,7 @@
             return String.CompareOrdinal(propX, propY);
         });
 
-        if (_currentSortDirection == ListSortDirection.Ascending) {
-            _displayedModels = _displayedModels.Order(comparer).ToList();
-        }
-        else {
-            _displayedModels = _displayedModels.OrderDescending(comparer).ToList();
-        }
+        _displayedModels = _currentSortDirection == ListSortDirection.Ascending ? _displayedModels.Order(comparer).ToList() : _displayedModels.OrderDescending(comparer).ToList();
         
         _currentSortProperty = property;
     }

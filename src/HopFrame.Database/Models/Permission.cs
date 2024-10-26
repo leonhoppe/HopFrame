@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using HopFrame.Database.Attributes;
 
 namespace HopFrame.Database.Models;
 
@@ -10,7 +9,7 @@ public class Permission {
     [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; init; }
     
-    [Required, MaxLength(255), ListingProperty]
+    [Required, MaxLength(255)]
     public string PermissionName { get; set; }
     
     [Required]

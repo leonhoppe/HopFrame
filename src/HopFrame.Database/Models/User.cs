@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using HopFrame.Database.Attributes;
 
 namespace HopFrame.Database.Models;
 
@@ -9,7 +8,7 @@ public class User : IPermissionOwner {
     [Key, Required, MinLength(36), MaxLength(36)]
     public Guid Id { get; init; }
     
-    [MaxLength(50), ListingProperty]
+    [MaxLength(50)]
     public string Username { get; set; }
     
     [Required, MaxLength(50), EmailAddress]

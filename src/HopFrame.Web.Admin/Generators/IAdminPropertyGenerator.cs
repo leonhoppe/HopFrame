@@ -1,19 +1,23 @@
+using System.Linq.Expressions;
+
 namespace HopFrame.Web.Admin.Generators;
 
-public interface IAdminPropertyGenerator {
+public interface IAdminPropertyGenerator<TProperty> {
 
-    IAdminPropertyGenerator Sortable(bool sortable);
-    IAdminPropertyGenerator Editable(bool editable);
-    IAdminPropertyGenerator DisplayValueWhileEditing(bool display);
-    IAdminPropertyGenerator DisplayInListing(bool display = true);
-    IAdminPropertyGenerator Ignore(bool ignore = true);
-    IAdminPropertyGenerator Generated(bool generated = true);
-    IAdminPropertyGenerator Bold(bool bold = true);
+    IAdminPropertyGenerator<TProperty> Sortable(bool sortable);
+    IAdminPropertyGenerator<TProperty> Editable(bool editable);
+    IAdminPropertyGenerator<TProperty> DisplayValueWhileEditing(bool display);
+    IAdminPropertyGenerator<TProperty> DisplayInListing(bool display = true);
+    IAdminPropertyGenerator<TProperty> Ignore(bool ignore = true);
+    IAdminPropertyGenerator<TProperty> Generated(bool generated = true);
+    IAdminPropertyGenerator<TProperty> Bold(bool bold = true);
     
-    IAdminPropertyGenerator DisplayName(string displayName);
-    IAdminPropertyGenerator Description(string description);
-    IAdminPropertyGenerator Prefix(string prefix);
-    IAdminPropertyGenerator Validator(Func<object, bool> validator);
-    IAdminPropertyGenerator IsSelector<TSelector>();
+    IAdminPropertyGenerator<TProperty> DisplayName(string displayName);
+    IAdminPropertyGenerator<TProperty> Description(string description);
+    IAdminPropertyGenerator<TProperty> Prefix(string prefix);
+    IAdminPropertyGenerator<TProperty> Validator(Func<object, bool> validator);
+    IAdminPropertyGenerator<TProperty> IsSelector<TSelector>();
+    IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression);
+    IAdminPropertyGenerator<TProperty> DisplayPropertyForListType<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression);
 
 }

@@ -38,10 +38,13 @@ internal class AdminContextGenerator : IAdminContextGenerator {
         foreach (var property in properties) {
             var propertyType = property.PropertyType.GenericTypeArguments[0];
             var pageGeneratorType = typeof(AdminPageGenerator<>).MakeGenericType(propertyType);
-            var generatorInstance = Activator.CreateInstance(pageGeneratorType, [property.Name]); // Calls constructor with title attribute
+            var generatorInstance = Activator.CreateInstance(pageGeneratorType);
 
-            var populatorMethod = pageGeneratorType.GetMethod(nameof(AdminPageGenerator<TContext>.ApplyConfigurationFromAttributes));
-            populatorMethod?.Invoke(generatorInstance, [propertyType.GetCustomAttributes(false)]);
+            var titleMethod = pageGeneratorType.GetMethod(nameof(AdminPageGenerator<TContext>.Title));
+            titleMethod?.Invoke(generatorInstance, [property.Name]);
+
+            var populateMethod = pageGeneratorType.GetMethod(nameof(AdminPageGenerator<TContext>.ApplyConfigurationFromAttributes));
+            populateMethod?.Invoke(generatorInstance, [propertyType.GetCustomAttributes(false)]);
             
             _adminPages.Add(propertyType, generatorInstance);
         }

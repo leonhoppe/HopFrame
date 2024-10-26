@@ -1,12 +1,10 @@
 @rendermode InteractiveServer
 
 @using System.Collections
-@using System.ComponentModel.DataAnnotations
 @using BlazorStrap
 @using BlazorStrap.Shared.Components.Modal
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using BlazorStrap.V5
-@using HopFrame.Database.Attributes
 @using HopFrame.Web.Admin
 @using HopFrame.Web.Admin.Models
 @using HopFrame.Web.Admin.Providers
@@ -166,7 +164,7 @@
         return MapPropertyValue(property.GetValue(_entry), property);
     }
 
-    public string MapPropertyValue(object value, AdminPageProperty property) {
+    public string MapPropertyValue(object value, AdminPageProperty property, bool isSubProperty = false) {
         if (value is null) return string.Empty;
         var type = value.GetType();
 
@@ -180,11 +178,18 @@
             }
         }
 
-        if (type.GetProperties().Any(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute))) {
+        /*if (type.GetProperties().Any(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute))) {
             var prop = type.GetProperties()
                 .SingleOrDefault(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute));
 
             return MapPropertyValue(prop?.GetValue(value), property);
+        }*/
+
+        if (!string.IsNullOrEmpty(property.DisplayPropertyName) && !isSubProperty) {
+            var prop = type.GetProperties()
+                .SingleOrDefault(p => p.Name == property.DisplayPropertyName);
+
+            return MapPropertyValue(prop?.GetValue(value), property, true);
         }
         
         var stringValue = value.ToString();

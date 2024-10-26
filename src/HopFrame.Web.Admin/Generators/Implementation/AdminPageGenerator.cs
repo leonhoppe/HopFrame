@@ -10,30 +10,32 @@ namespace HopFrame.Web.Admin.Generators.Implementation;
 internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, IGenerator<AdminPage<TModel>> {
 
     public readonly AdminPage<TModel> Page;
-    private readonly IDictionary<string, AdminPropertyGenerator> _propertyGenerators;
+    private readonly Dictionary<string, object> _propertyGenerators;
 
     public AdminPageGenerator() {
         Page = new AdminPage<TModel> {
             Permissions = new AdminPagePermissions(),
             ModelType = typeof(TModel)
         };
-        _propertyGenerators = new Dictionary<string, AdminPropertyGenerator>();
+        _propertyGenerators = new Dictionary<string, object>();
 
         var type = typeof(TModel);
         var properties = type.GetProperties();
+        var generatorType = typeof(AdminPropertyGenerator<>);
         
         foreach (var property in properties) {
             var attributes = property.GetCustomAttributes(false);
+            var genericType = generatorType.MakeGenericType(property.PropertyType);
             
-            var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator), [property.Name, property.PropertyType]) as AdminPropertyGenerator;
-            generator?.ApplyConfigurationFromAttributes(this, attributes, property);
+            var generator = Activator.CreateInstance(genericType, [property.Name, property.PropertyType]);
+
+            var method = genericType
+                .GetMethod(nameof(AdminPropertyGenerator<object>.ApplyConfigurationFromAttributes))?
+                .MakeGenericMethod(type);
+            method?.Invoke(generator, [this, attributes, property]);
             
             _propertyGenerators.Add(property.Name, generator);
         }
-    }
-
-    public AdminPageGenerator(string title) : this() {
-        Title(title);
     }
 
     public IAdminPageGenerator<TModel> Title(string title) {
@@ -100,13 +102,13 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return this;
     }
 
-    public IAdminPropertyGenerator Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression) {
+    public IAdminPropertyGenerator<TProperty> Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression) {
         var property = GetPropertyInfo(propertyExpression);
 
         if (_propertyGenerators.TryGetValue(property.Name, out var propertyGenerator))
-            return propertyGenerator;
+            return propertyGenerator as AdminPropertyGenerator<TProperty>;
         
-        var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator), new { property.Name, property.PropertyType }) as AdminPropertyGenerator;
+        var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator<TProperty>), new { property.Name, property.PropertyType }) as AdminPropertyGenerator<TProperty>;
         generator?.ApplyConfigurationFromAttributes(this, property.GetCustomAttributes(false), property);
         _propertyGenerators.Add(property.Name, generator);
         
@@ -122,8 +124,10 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
     public AdminPage<TModel> Compile() {
         var properties = new List<AdminPageProperty>();
         
-        foreach (var generator in _propertyGenerators.Values){
-            properties.Add(generator.Compile());
+        foreach (var generator in _propertyGenerators.Values) {
+            var method = generator.GetType().GetMethod(nameof(AdminPropertyGenerator<object>.Compile));
+            var prop = method?.Invoke(generator, []) as AdminPageProperty;
+            properties.Add(prop);
         }
 
         Page.Properties = properties;
@@ -131,7 +135,7 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return Page;
     }
 
-    private static PropertyInfo GetPropertyInfo<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda) {
+    public static PropertyInfo GetPropertyInfo<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda) {
         if (propertyLambda.Body is not MemberExpression member) {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
         }
