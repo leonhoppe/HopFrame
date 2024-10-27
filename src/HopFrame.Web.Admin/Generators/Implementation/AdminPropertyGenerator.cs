@@ -76,6 +76,16 @@ internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) 
         return this;
     }
 
+    public IAdminPropertyGenerator<TProperty> Parser<TModel>(Func<TModel, string, TProperty> parser) {
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, s);
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty>(Func<TModel, string, TInnerProperty> parser) {
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, s);
+        return this;
+    }
+
     public IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression) {
         var property = AdminPageGenerator<object>.GetPropertyInfo(propertyExpression);
         _property.DisplayPropertyName = property.Name;

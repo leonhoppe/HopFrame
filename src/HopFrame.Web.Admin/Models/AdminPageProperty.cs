@@ -23,6 +23,7 @@ public sealed class AdminPageProperty {
     public Type SelectorType { get; set; }
 
     public Func<object, bool> Validator { get; set; }
+    public Func<object, string, object> Parser { get; set; }
     
     public object GetValue(object entry) {
         return entry.GetType().GetProperty(Name)?.GetValue(entry);

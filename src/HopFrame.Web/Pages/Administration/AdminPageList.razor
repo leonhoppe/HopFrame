@@ -130,9 +130,9 @@
         _currentSortProperty = _pageData.DefaultSortPropertyName;
         _currentSortDirection = _pageData.DefaultSortDirection;
         
-        _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
-        if (_modelRepository is null)
+        if (_pageData.RepositoryProvider is null)
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
+        _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
 
         _hasEditPermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
         _hasDeletePermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);

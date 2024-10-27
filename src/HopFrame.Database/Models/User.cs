@@ -20,9 +20,9 @@ public class User : IPermissionOwner {
     [Required]
     public DateTime CreatedAt { get; set; }
     
-    public virtual IList<Permission> Permissions { get; set; }
+    public virtual List<Permission> Permissions { get; set; }
     
     [JsonIgnore]
-    public virtual IList<Token> Tokens { get; set; }
+    public virtual List<Token> Tokens { get; set; }
     
 }

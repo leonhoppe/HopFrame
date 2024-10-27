@@ -5,6 +5,9 @@
 @using BlazorStrap.Shared.Components.Modal
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Repositories
+@using HopFrame.Security.Claims
 @using HopFrame.Web.Admin
 @using HopFrame.Web.Admin.Models
 @using HopFrame.Web.Admin.Providers
@@ -22,7 +25,7 @@
         
         <BSModalContent>
             @foreach (var prop in GetEditableProperties()) {
-                @if (!_isEdit && !prop.Editable) continue;
+                @if (!_isEdit && prop.Generated) continue;
                 
                 <div class="mb-3">
                     @if (IsListType(prop)) {
@@ -42,10 +45,12 @@
                                 </BSListGroup>
                             </BSListGroupItem>
                             <BSListGroupItem>
-                                <div style="display: flex; gap: 20px">
+                                <div>
                                     @if (prop.SelectorType is null) {
-                                        <input type="text" class="form-control" @onchange="v => _inputValues[prop] = (string)v.Value"/>
-                                        <BSButton Color="BSColor.Secondary">Add</BSButton>
+                                        <form style="display: flex; gap: 20px" @onsubmit="() => AddListItem(prop)">
+                                            <input type="text" class="form-control" @onchange="v => _inputValues[prop] = (string)v.Value" required/>
+                                            <BSButton Color="BSColor.Secondary" IsSubmit="true">Add</BSButton>
+                                        </form>
                                     }
                                     else {
                                         @*<BSInput InputType="InputType.Select"> TODO: implement selector
@@ -69,6 +74,12 @@
                             <input class="form-check-input" type="checkbox" checked="@_values[prop]" @onchange="e => _values[prop] = Convert.ToBoolean(e.Value)">
                         </div>
                     }
+                    else if (prop.Prefix is not null && !_isEdit) {
+                        <BSInputGroup>
+                            <span class="@BS.Input_Group_Text">@prop.Prefix</span>
+                            <input type="text" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = prop.Prefix + e.Value"/>
+                        </BSInputGroup>
+                    }
                     else {
                         <BSLabel>@prop.DisplayName</BSLabel>
                         <input type="@GetInputType(prop)" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
@@ -86,6 +97,9 @@
 
 @inject IServiceProvider Provider
 @inject IAdminPagesProvider PageProvider
+@inject SweetAlertService Alerts
+@inject IPermissionRepository Permissions
+@inject ITokenContext Auth
 
 @code {
     [Parameter]
@@ -129,15 +143,16 @@
             .ToList();
     }
 
-    private bool IsDisabled(AdminPageProperty prop) => !prop.Editable;
+    private bool IsDisabled(AdminPageProperty prop) => (_isEdit && !prop.Editable) || prop.Generated;
     private bool IsRequired(AdminPageProperty prop) => !_isEdit ? prop.Required : prop.Required && prop.EditDisplayValue;
     private bool IsSwitch(AdminPageProperty prop) => prop.Type == typeof(bool);
     
     private bool IsListType(AdminPageProperty prop) {
         if (!prop.Type.IsGenericType) return false;
         var generic = prop.Type.GenericTypeArguments[0];
-        var listType = typeof(IList<>).MakeGenericType(generic);
-        return prop.Type.IsAssignableFrom(listType);
+        var gListType = typeof(IList<>).MakeGenericType(generic);
+        var iListType = typeof(List<>).MakeGenericType(generic);
+        return prop.Type.IsAssignableFrom(gListType) || prop.Type.IsAssignableFrom(iListType);
     }
 
     private IList<string> GetListPropertyValues(AdminPageProperty prop) {
@@ -178,13 +193,6 @@
             }
         }
 
-        /*if (type.GetProperties().Any(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute))) {
-            var prop = type.GetProperties()
-                .SingleOrDefault(p => p.GetCustomAttributes(false).Any(a => a is ListingPropertyAttribute));
-
-            return MapPropertyValue(prop?.GetValue(value), property);
-        }*/
-
         if (!string.IsNullOrEmpty(property.DisplayPropertyName) && !isSubProperty) {
             var prop = type.GetProperties()
                 .SingleOrDefault(p => p.Name == property.DisplayPropertyName);
@@ -213,25 +221,76 @@
             if (value.Key.Validator is null) continue;
             if (value.Key.Validator?.Invoke(value.Value) == true) continue;
             Console.WriteLine("INVALID");
+            //TODO: implement validation
         }
     }
 
     private void DeleteListItem(AdminPageProperty prop, int index) {
-        Console.WriteLine(index);
         var list = prop.GetValue<IList>(_entry);
         list.RemoveAt(index);
     }
 
+    private void AddListItem(AdminPageProperty prop) {
+        if (!_inputValues.TryGetValue(prop, out var input)) {
+            Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Error!",
+                Text = "Please enter a value!",
+                Icon = SweetAlertIcon.Error
+            });
+            return;
+        }
+        
+        var list = prop.GetValue<IList>(_entry);
+        var value = prop.Parser?.Invoke(_entry, input) ?? input;
+        list?.Add(value);
+    }
+
     private async void Save() {
+        if (_isEdit && _currentPage.Permissions.Update is not null) {
+            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Update)) {
+                await Alerts.FireAsync(new SweetAlertOptions {
+                    Title = "Unauthorized!",
+                    Text = "You don't have the required permissions to edit an entry!",
+                    Icon = SweetAlertIcon.Error
+                });
+                return;
+            }
+        }else if (_currentPage.Permissions.Create is not null) {
+            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Create)) {
+                await Alerts.FireAsync(new SweetAlertOptions {
+                    Title = "Unauthorized!",
+                    Text = "You don't have the required permissions to add an entry!",
+                    Icon = SweetAlertIcon.Error
+                });
+                return;
+            }
+        }
+        
         foreach (var value in _values) {
-            value.Key.SetValue(_entry, value.Value);
+            if (IsListType(value.Key)) continue;
+            value.Key.SetValue(_entry, value.Key.Parser?.Invoke(_entry, (string)value.Value) ?? value.Value);
         }
 
         if (!_isEdit) {
             await _repository.CreateO(_entry);
+            
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "New entry added!",
+                Icon = SweetAlertIcon.Success,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
         }
         else {
             await _repository.UpdateO(_entry);
+            
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Entry updated!",
+                Icon = SweetAlertIcon.Success,
+                ShowConfirmButton = false,
+                Timer = 1500
+
+            });
         }
 
         await ReloadDelegate.Invoke();

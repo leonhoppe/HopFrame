@@ -30,8 +30,18 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<User>().Property(u => u.Permissions)
             .DisplayInListing(false)
-            .IsSelector<PermissionGroup>()
-            .DisplayPropertyForListType<Permission>(p => p.PermissionName);
+            .DisplayPropertyForListType<Permission>(p => p.PermissionName)
+            .ParserForListType<User, Permission>((user, perm) => new Permission {
+                GrantedAt = DateTime.Now,
+                PermissionName = perm,
+                User = user
+            });
+
+        generator.Page<User>().Property(u => u.CreatedAt)
+            .Generated();
+
+        generator.Page<User>().Property(u => u.Id)
+            .Generated();
 
         generator.Page<User>().Property(u => u.Tokens)
             .Ignore();
@@ -49,13 +59,19 @@ public class HopAdminContext : AdminPagesContext {
             .Prefix("group.");
 
         generator.Page<PermissionGroup>().Property(g => g.IsDefaultGroup)
+            .DisplayName("Default Group")
             .Sortable(false);
 
         generator.Page<PermissionGroup>().Property(g => g.CreatedAt)
-            .Editable(false);
+            .Generated();
 
         generator.Page<PermissionGroup>().Property(g => g.Permissions)
             .DisplayInListing(false)
-            .DisplayPropertyForListType<Permission>(p => p.PermissionName);
+            .DisplayPropertyForListType<Permission>(p => p.PermissionName)
+            .ParserForListType<PermissionGroup, Permission>((group, perm) => new Permission {
+                GrantedAt = DateTime.Now,
+                PermissionName = perm,
+                Group = group
+            });
     }
 }
