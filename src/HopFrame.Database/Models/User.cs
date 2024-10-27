@@ -8,7 +8,7 @@ public class User : IPermissionOwner {
     [Key, Required, MinLength(36), MaxLength(36)]
     public Guid Id { get; init; }
     
-    [MaxLength(50)]
+    [Required, MaxLength(50)]
     public string Username { get; set; }
     
     [Required, MaxLength(50), EmailAddress]

@@ -17,12 +17,14 @@ public sealed class AdminPageProperty {
     public bool Bold { get; set; }
     public bool Required { get; set; }
     public bool Ignore { get; set; }
+    public bool Unique { get; set; }
+    
     [JsonIgnore]
     public Type Type { get; set; }
 
     public Type SelectorType { get; set; }
 
-    public Func<object, bool> Validator { get; set; }
+    public Func<object, string> Validator { get; set; }
     public Func<object, string, object> Parser { get; set; }
     
     public object GetValue(object entry) {

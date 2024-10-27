@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using HopFrame.Database.Models;
 using HopFrame.Security;
 using HopFrame.Web.Admin;
@@ -23,7 +24,16 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<User>().Property(u => u.Password)
             .DisplayInListing(false)
-            .DisplayValueWhileEditing(false);
+            .DisplayValueWhileEditing(false)
+            .Validator(passwd => passwd.Length >= 8 ? null : "The password needs to be at least 8 characters long!");
+        
+        generator.Page<User>().Property(u => u.Email)
+            .Validator(email => Regex.Match(email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").Success ? null : "Invalid E-Mail address!")
+            .Unique();
+
+        generator.Page<User>().Property(u => u.Username)
+            .Validator(uname => uname.Length >= 4 ? null : "The username needs to be at least 4 characters long!")
+            .Unique();
 
         generator.Page<User>().Property(u => u.CreatedAt)
             .Editable(false);

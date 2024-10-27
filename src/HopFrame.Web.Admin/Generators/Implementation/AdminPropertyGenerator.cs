@@ -51,6 +51,11 @@ internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) 
         return this;
     }
 
+    public IAdminPropertyGenerator<TProperty> Unique(bool unique = true) {
+        _property.Unique = unique;
+        return this;
+    }
+
     public IAdminPropertyGenerator<TProperty> DisplayName(string displayName) {
         _property.DisplayName = displayName;
         return this;
@@ -66,8 +71,8 @@ internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) 
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Validator(Func<object, bool> validator) {
-        _property.Validator = validator;
+    public IAdminPropertyGenerator<TProperty> Validator(Func<TProperty, string> validator) {
+        _property.Validator = o => validator.Invoke((TProperty)o);
         return this;
     }
 
@@ -115,6 +120,9 @@ internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) 
 
         if (attributes.Any(a => a is AdminUneditableAttribute))
             Editable(false);
+
+        if (attributes.Any(a => a is AdminUniqueAttribute))
+            Unique();
         
         if (attributes.Any(a => a is AdminIgnoreAttribute)) {
             var attribute = attributes.Single(a => a is AdminIgnoreAttribute) as AdminIgnoreAttribute;

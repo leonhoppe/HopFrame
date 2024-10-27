@@ -26,14 +26,14 @@
         <BSModalContent>
             @foreach (var prop in GetEditableProperties()) {
                 @if (!_isEdit && prop.Generated) continue;
-                
+
                 <div class="mb-3">
                     @if (IsListType(prop)) {
                         <BSLabel>@prop.DisplayName</BSLabel>
                         <BSListGroup>
                             <BSListGroupItem>
                                 <BSListGroup IsFlush="true">
-                                    @foreach (var element in GetListPropertyValues(prop).Select((e, i) => new {e, i})) {
+                                    @foreach (var element in GetListPropertyValues(prop).Select((e, i) => new { e, i })) {
                                         <BSListGroupItem>
                                             <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => DeleteListItem(prop, element.i)">
                                                 <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
@@ -77,12 +77,17 @@
                     else if (prop.Prefix is not null && !_isEdit) {
                         <BSInputGroup>
                             <span class="@BS.Input_Group_Text">@prop.Prefix</span>
-                            <input type="text" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = prop.Prefix + e.Value"/>
+                            <input type="text" class="form-control" required="@IsRequired(prop)" disabled="@IsDisabled(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = prop.Prefix + e.Value"/>
                         </BSInputGroup>
                     }
                     else {
                         <BSLabel>@prop.DisplayName</BSLabel>
-                        <input type="@GetInputType(prop)" class="form-control" disabled="@IsDisabled(prop)" required="@IsRequired(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                        <input type="@GetInputType(prop)" class="form-control" required="@IsRequired(prop)" disabled="@IsDisabled(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                        @if (_validation[_validationIdentifiers[prop]].Any()) {
+                            <div class="invalid-feedback" style="display: block">
+                                @_validation[_validationIdentifiers[prop]].First()
+                            </div>
+                        }
                     }
                 </div>
             }
@@ -102,11 +107,15 @@
 @inject ITokenContext Auth
 
 @code {
+    #pragma warning disable CS4014
+    
     [Parameter]
     public Func<Task> ReloadDelegate { get; set; }
     
     private BSModalBase _modal;
     private EditContext _context;
+    private ValidationMessageStore _validation;
+    private Dictionary<AdminPageProperty, FieldIdentifier> _validationIdentifiers;
     private IDictionary<AdminPageProperty, object> _values;
     private IModelRepository _repository;
 
@@ -126,11 +135,14 @@
 
         _entry ??= Activator.CreateInstance(_currentPage.ModelType);
         _context = new EditContext(_entry);
+        _validation = new ValidationMessageStore(_context);
+        _validationIdentifiers = new Dictionary<AdminPageProperty, FieldIdentifier>();
         _context.OnValidationRequested += Validate;
 
         _values = new Dictionary<AdminPageProperty, object>();
         foreach (var property in _currentPage.Properties) {
             _values.Add(property, property.GetValue(_entry));
+            _validationIdentifiers.Add(property, new FieldIdentifier(_entry, property.Name));
         }
 
         await _modal.ShowAsync();
@@ -217,11 +229,23 @@
     }
 
     private void Validate(object sender, ValidationRequestedEventArgs e) {
+        _validation.Clear();
         foreach (var value in _values) {
+            if (value.Key.Unique) {
+                var repo = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
+                var data = repo!.ReadAllO().GetAwaiter().GetResult();
+                foreach (var entry in data) {
+                    var other = value.Key.GetValue(entry);
+                    if (!other.Equals(value.Value)) continue;
+                    _validation.Add(_validationIdentifiers[value.Key], $"This {value.Key.DisplayName ?? value.Key.Name} already exists!");
+                    break;
+                }
+            }
+            
             if (value.Key.Validator is null) continue;
-            if (value.Key.Validator?.Invoke(value.Value) == true) continue;
-            Console.WriteLine("INVALID");
-            //TODO: implement validation
+            var error = value.Key.Validator?.Invoke(value.Value);
+            if (string.IsNullOrEmpty(error)) continue;
+            _validation.Add(_validationIdentifiers[value.Key], error);
         }
     }
 
@@ -274,7 +298,7 @@
         if (!_isEdit) {
             await _repository.CreateO(_entry);
             
-            await Alerts.FireAsync(new SweetAlertOptions {
+            Alerts.FireAsync(new SweetAlertOptions {
                 Title = "New entry added!",
                 Icon = SweetAlertIcon.Success,
                 ShowConfirmButton = false,
@@ -284,12 +308,11 @@
         else {
             await _repository.UpdateO(_entry);
             
-            await Alerts.FireAsync(new SweetAlertOptions {
+            Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Entry updated!",
                 Icon = SweetAlertIcon.Success,
                 ShowConfirmButton = false,
                 Timer = 1500
-
             });
         }
 
