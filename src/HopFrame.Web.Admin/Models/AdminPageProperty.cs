@@ -18,14 +18,14 @@ public sealed class AdminPageProperty {
     public bool Required { get; set; }
     public bool Ignore { get; set; }
     public bool Unique { get; set; }
+    public bool Selector { get; set; }
+    public Type SelectorType { get; set; }
     
     [JsonIgnore]
     public Type Type { get; set; }
 
-    public Type SelectorType { get; set; }
-
     public Func<object, string> Validator { get; set; }
-    public Func<object, string, object> Parser { get; set; }
+    public Func<object, object, object> Parser { get; set; }
     
     public object GetValue(object entry) {
         return entry.GetType().GetProperty(Name)?.GetValue(entry);

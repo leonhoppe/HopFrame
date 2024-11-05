@@ -1,6 +1,7 @@
 @rendermode InteractiveServer
 
 @using System.Collections
+@using System.Globalization
 @using BlazorStrap
 @using BlazorStrap.Shared.Components.Modal
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
@@ -46,23 +47,23 @@
                             </BSListGroupItem>
                             <BSListGroupItem>
                                 <div>
-                                    @if (prop.SelectorType is null) {
+                                    @if (!prop.Selector) {
                                         <form style="display: flex; gap: 20px" @onsubmit="() => AddListItem(prop)">
                                             <input type="text" class="form-control" @onchange="v => _inputValues[prop] = (string)v.Value" required/>
                                             <BSButton Color="BSColor.Secondary" IsSubmit="true">Add</BSButton>
                                         </form>
                                     }
                                     else {
-                                        @*<BSInput InputType="InputType.Select"> TODO: implement selector
-                                            <option selected>Select group</option>
+                                        <form style="display: flex; gap: 20px" @onsubmit="() => AddListItem(prop)">
+                                            <select class="form-select" @onchange="e => _inputValues[prop] = ReadSelectorValue(prop, e.Value)">
+                                                <option selected>Select</option>
 
-                                            @foreach (var group in _allGroups) {
-                                                @if (_group.Permissions.All(g => g.PermissionName != group.Name) && group.Name != _group.Name) {
-                                                    <option value="@group.Name">@group.Name.Replace("group.", "")</option>
+                                                @foreach (var element in SetupSelectorProperty(prop).GetAwaiter().GetResult()) {
+                                                    <option value="@element.Item2">@element.Item1</option>
                                                 }
-                                            }
-                                        </BSInput>
-                                        <BSButton Color="BSColor.Secondary">Add</BSButton>*@
+                                            </select>
+                                            <BSButton Color="BSColor.Secondary" IsSubmit="true">Add</BSButton>
+                                        </form>
                                     }
                                 </div>
                             </BSListGroupItem>
@@ -79,6 +80,16 @@
                             <span class="@BS.Input_Group_Text">@prop.Prefix</span>
                             <input type="text" class="form-control" required="@IsRequired(prop)" disabled="@IsDisabled(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = prop.Prefix + e.Value"/>
                         </BSInputGroup>
+                    }
+                    else if (prop.Selector) {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <select class="form-select" @onchange="e => _values[prop] = ReadSelectorValue(prop, e.Value)">
+                            <option>Select</option>
+                            
+                            @foreach (var element in SetupSelectorProperty(prop).GetAwaiter().GetResult()) {
+                                <option value="@element.Item2" selected="@IsIndexSelected(prop, element.Item2)">@element.Item1</option>
+                            }
+                        </select>
                     }
                     else {
                         <BSLabel>@prop.DisplayName</BSLabel>
@@ -117,16 +128,18 @@
     private ValidationMessageStore _validation;
     private Dictionary<AdminPageProperty, FieldIdentifier> _validationIdentifiers;
     private IDictionary<AdminPageProperty, object> _values;
+    private Dictionary<AdminPageProperty, object[]> _selectorValues;
     private IModelRepository _repository;
 
     private AdminPage _currentPage;
     private object _entry;
     private bool _isEdit;
-    private IDictionary<AdminPageProperty, string> _inputValues;
+    private IDictionary<AdminPageProperty, object> _inputValues;
 
     public async Task Show(AdminPage page, object entryToEdit = null) {
         _entry = null;
-        _inputValues = new Dictionary<AdminPageProperty, string>();
+        _inputValues = new Dictionary<AdminPageProperty, object>();
+        _selectorValues = new Dictionary<AdminPageProperty, object[]>();
         
         _currentPage = page;
         _entry = entryToEdit;
@@ -158,13 +171,14 @@
     private bool IsDisabled(AdminPageProperty prop) => (_isEdit && !prop.Editable) || prop.Generated;
     private bool IsRequired(AdminPageProperty prop) => !_isEdit ? prop.Required : prop.Required && prop.EditDisplayValue;
     private bool IsSwitch(AdminPageProperty prop) => prop.Type == typeof(bool);
+    private bool IsListType(AdminPageProperty prop) => IsListType(prop.Type);
     
-    private bool IsListType(AdminPageProperty prop) {
-        if (!prop.Type.IsGenericType) return false;
-        var generic = prop.Type.GenericTypeArguments[0];
+    private bool IsListType(Type type) {
+        if (!type.IsGenericType) return false;
+        var generic = type.GenericTypeArguments[0];
         var gListType = typeof(IList<>).MakeGenericType(generic);
         var iListType = typeof(List<>).MakeGenericType(generic);
-        return prop.Type.IsAssignableFrom(gListType) || prop.Type.IsAssignableFrom(iListType);
+        return type.IsAssignableFrom(gListType) || type.IsAssignableFrom(iListType);
     }
 
     private IList<string> GetListPropertyValues(AdminPageProperty prop) {
@@ -232,6 +246,7 @@
         _validation.Clear();
         foreach (var value in _values) {
             if (value.Key.Unique) {
+                if (value.Value == value.Key.GetValue(_entry)) continue;
                 var repo = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
                 var data = repo!.ReadAllO().GetAwaiter().GetResult();
                 foreach (var entry in data) {
@@ -255,7 +270,7 @@
     }
 
     private void AddListItem(AdminPageProperty prop) {
-        if (!_inputValues.TryGetValue(prop, out var input)) {
+        if (!_inputValues.TryGetValue(prop, out var input) || input is null) {
             Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Error!",
                 Text = "Please enter a value!",
@@ -267,6 +282,43 @@
         var list = prop.GetValue<IList>(_entry);
         var value = prop.Parser?.Invoke(_entry, input) ?? input;
         list?.Add(value);
+    }
+
+    private async Task<(string, int)[]> SetupSelectorProperty(AdminPageProperty property) {
+        var type = property.SelectorType ?? property.Type;
+        if (IsListType(type)) {
+            type = type.GenericTypeArguments[0];
+        }
+
+        var page = PageProvider.HasPageFor(type);
+        if (page is null) {
+            throw new ArgumentException($"'{property.Name}' cannot be a selector because a admin page for '{type.Name}' does not exist!");
+        }
+
+        var repo = Provider.GetService(page.RepositoryProvider) as IModelRepository;
+        var objects = (await repo!.ReadAllO()).ToArray();
+        _selectorValues[property] = objects;
+
+        var data = new List<(string, int)>();
+        for (var i = 0; i < objects.Length; i++) {
+            data.Add((MapPropertyValue(objects[i], property), i));
+        }
+
+        return data.ToArray();
+    }
+
+    private bool IsIndexSelected(AdminPageProperty property, int index) {
+        var value = property.GetValue(_entry);
+        if (value is null) return false;
+        return _selectorValues[property][index] == value;
+    }
+
+    private object ReadSelectorValue(AdminPageProperty property, object value) {
+        if (!int.TryParse(value.ToString(), out int result)) {
+            return null;
+        }
+        
+        return _selectorValues[property][result];
     }
 
     private async void Save() {
@@ -292,7 +344,7 @@
         
         foreach (var value in _values) {
             if (IsListType(value.Key)) continue;
-            value.Key.SetValue(_entry, value.Key.Parser?.Invoke(_entry, (string)value.Value) ?? value.Value);
+            value.Key.SetValue(_entry, value.Key.Parser?.Invoke(_entry, value.Value) ?? Convert.ChangeType(value.Value, value.Key.Type));
         }
 
         if (!_isEdit) {

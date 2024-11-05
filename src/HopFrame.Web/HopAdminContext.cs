@@ -63,7 +63,8 @@ public class HopAdminContext : AdminPagesContext {
             .ViewPermission(AdminPermissions.ViewGroups)
             .CreatePermission(AdminPermissions.AddGroup)
             .UpdatePermission(AdminPermissions.EditGroup)
-            .DeletePermission(AdminPermissions.DeleteGroup);
+            .DeletePermission(AdminPermissions.DeleteGroup)
+            .ListingProperty(g => g.Name);
 
         generator.Page<PermissionGroup>().Property(g => g.Name)
             .Prefix("group.");

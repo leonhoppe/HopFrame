@@ -134,8 +134,8 @@
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
         _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
 
-        _hasEditPermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
-        _hasDeletePermission = await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
+        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
+        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
         
         await Reload();
     }

@@ -76,18 +76,34 @@ internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) 
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> IsSelector<TSelector>() {
-        _property.SelectorType = typeof(TSelector);
+    public IAdminPropertyGenerator<TProperty> IsSelector(bool selector = true) {
+        _property.Selector = selector;
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> IsSelector<TSelectorType>(bool selector = true) {
+        _property.Selector = true;
+        _property.SelectorType = typeof(TSelectorType);
         return this;
     }
 
     public IAdminPropertyGenerator<TProperty> Parser<TModel>(Func<TModel, string, TProperty> parser) {
-        _property.Parser = (o, s) => parser.Invoke((TModel)o, s);
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, s.ToString());
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> Parser<TModel, TInput>(Func<TModel, TInput, TProperty> parser) {
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, (TInput)s);
         return this;
     }
 
     public IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty>(Func<TModel, string, TInnerProperty> parser) {
-        _property.Parser = (o, s) => parser.Invoke((TModel)o, s);
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, s.ToString());
+        return this;
+    }
+
+    public IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty, TInput>(Func<TModel, TInput, TInnerProperty> parser) {
+        _property.Parser = (o, s) => parser.Invoke((TModel)o, (TInput)s);
         return this;
     }
 

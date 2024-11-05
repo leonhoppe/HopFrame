@@ -17,9 +17,12 @@ public interface IAdminPropertyGenerator<TProperty> {
     IAdminPropertyGenerator<TProperty> Description(string description);
     IAdminPropertyGenerator<TProperty> Prefix(string prefix);
     IAdminPropertyGenerator<TProperty> Validator(Func<TProperty, string> validator);
-    IAdminPropertyGenerator<TProperty> IsSelector<TSelector>();
+    IAdminPropertyGenerator<TProperty> IsSelector(bool selector = true);
+    IAdminPropertyGenerator<TProperty> IsSelector<TSelectorType>(bool selector = true);
     IAdminPropertyGenerator<TProperty> Parser<TModel>(Func<TModel, string, TProperty> parser);
+    IAdminPropertyGenerator<TProperty> Parser<TModel, TInput>(Func<TModel, TInput, TProperty> parser);
     IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty>(Func<TModel, string, TInnerProperty> parser);
+    IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty, TInput>(Func<TModel, TInput, TInnerProperty> parser);
     IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression);
     IAdminPropertyGenerator<TProperty> DisplayPropertyForListType<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression);
 
