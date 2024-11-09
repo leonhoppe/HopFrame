@@ -9,7 +9,7 @@
     margin-left: auto;
 }
 
-th, h3 {
+th, h3, .sorter {
     user-select: none;
 }
 
@@ -19,8 +19,4 @@ h3 {
 
 .reload, .sorter {
     cursor: pointer;
-}
-
-.bold {
-    font-weight: bold;
 }

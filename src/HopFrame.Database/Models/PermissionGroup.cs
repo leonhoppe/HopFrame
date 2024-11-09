@@ -17,6 +17,6 @@ public class PermissionGroup : IPermissionOwner {
     [Required]
     public DateTime CreatedAt { get; set; }
     
-    public virtual IList<Permission> Permissions { get; set; }
+    public virtual List<Permission> Permissions { get; set; }
     
 }

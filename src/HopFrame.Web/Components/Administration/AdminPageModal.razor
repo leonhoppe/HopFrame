@@ -1,0 +1,373 @@
+@rendermode InteractiveServer
+
+@using System.Collections
+@using System.Globalization
+@using BlazorStrap
+@using BlazorStrap.Shared.Components.Modal
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Repositories
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Admin
+@using HopFrame.Web.Admin.Models
+@using HopFrame.Web.Admin.Providers
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+
+<BSModal DataId="admin-page-modal" HideOnValidSubmit="true" IsStaticBackdrop="true" @ref="_modal">
+    <BSForm TValue="object" EditContext="_context" OnValidSubmit="Save">
+        @if (!_isEdit) {
+            <BSModalHeader>Create entry</BSModalHeader>
+        }
+        else {
+            <BSModalHeader>Edit entry</BSModalHeader>
+        }
+        
+        <BSModalContent>
+            @foreach (var prop in GetEditableProperties()) {
+                @if (!_isEdit && prop.Generated) continue;
+
+                <div class="mb-3">
+                    @if (IsListType(prop)) {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <BSListGroup>
+                            <BSListGroupItem>
+                                <BSListGroup IsFlush="true">
+                                    @foreach (var element in GetListPropertyValues(prop).Select((e, i) => new { e, i })) {
+                                        <BSListGroupItem>
+                                            <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" MarginEnd="Margins.Small" OnClick="() => DeleteListItem(prop, element.i)">
+                                                <HopIconDisplay Type="HopIconDisplay.HopIcon.Cross"/>
+                                            </BSButton>
+
+                                            <span>@element.e</span>
+                                        </BSListGroupItem>
+                                    }
+                                </BSListGroup>
+                            </BSListGroupItem>
+                            <BSListGroupItem>
+                                <div>
+                                    @if (!prop.Selector) {
+                                        <form style="display: flex; gap: 20px" @onsubmit="() => AddListItem(prop)">
+                                            <input type="text" class="form-control" @onchange="v => _inputValues[prop] = (string)v.Value" required/>
+                                            <BSButton Color="BSColor.Secondary" IsSubmit="true">Add</BSButton>
+                                        </form>
+                                    }
+                                    else {
+                                        <form style="display: flex; gap: 20px" @onsubmit="() => AddListItem(prop)">
+                                            <select class="form-select" @onchange="e => _inputValues[prop] = ReadSelectorValue(prop, e.Value)">
+                                                <option selected>Select</option>
+
+                                                @foreach (var element in SetupSelectorProperty(prop).GetAwaiter().GetResult()) {
+                                                    <option value="@element.Item2">@element.Item1</option>
+                                                }
+                                            </select>
+                                            <BSButton Color="BSColor.Secondary" IsSubmit="true">Add</BSButton>
+                                        </form>
+                                    }
+                                </div>
+                            </BSListGroupItem>
+                        </BSListGroup>
+                    }
+                    else if (IsSwitch(prop)) {
+                        <div class="form-check form-switch">
+                            <BSLabel>@prop.DisplayName</BSLabel>
+                            <input class="form-check-input" type="checkbox" checked="@_values[prop]" @onchange="e => _values[prop] = Convert.ToBoolean(e.Value)">
+                        </div>
+                    }
+                    else if (prop.Prefix is not null && !_isEdit) {
+                        <BSInputGroup>
+                            <span class="@BS.Input_Group_Text">@prop.Prefix</span>
+                            <input type="text" class="form-control" required="@IsRequired(prop)" disabled="@IsDisabled(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = prop.Prefix + e.Value"/>
+                        </BSInputGroup>
+                    }
+                    else if (prop.Selector) {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <select class="form-select" @onchange="e => _values[prop] = ReadSelectorValue(prop, e.Value)">
+                            <option>Select</option>
+                            
+                            @foreach (var element in SetupSelectorProperty(prop).GetAwaiter().GetResult()) {
+                                <option value="@element.Item2" selected="@IsIndexSelected(prop, element.Item2)">@element.Item1</option>
+                            }
+                        </select>
+                    }
+                    else {
+                        <BSLabel>@prop.DisplayName</BSLabel>
+                        <input type="@GetInputType(prop)" class="form-control" required="@IsRequired(prop)" disabled="@IsDisabled(prop)" value="@GetPropertyValue(prop)" @onchange="e => _values[prop] = e.Value"/>
+                        @if (_validation[_validationIdentifiers[prop]].Any()) {
+                            <div class="invalid-feedback" style="display: block">
+                                @_validation[_validationIdentifiers[prop]].First()
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </BSModalContent>
+        
+        <BSModalFooter>
+            <BSButton Target="admin-page-modal">Cancel</BSButton>
+            <BSButton IsSubmit="true" Color="BSColor.Primary">Save</BSButton>
+        </BSModalFooter>
+    </BSForm>
+</BSModal>
+
+@inject IServiceProvider Provider
+@inject IAdminPagesProvider PageProvider
+@inject SweetAlertService Alerts
+@inject IPermissionRepository Permissions
+@inject ITokenContext Auth
+
+@code {
+    #pragma warning disable CS4014
+    
+    [Parameter]
+    public Func<Task> ReloadDelegate { get; set; }
+    
+    private BSModalBase _modal;
+    private EditContext _context;
+    private ValidationMessageStore _validation;
+    private Dictionary<AdminPageProperty, FieldIdentifier> _validationIdentifiers;
+    private IDictionary<AdminPageProperty, object> _values;
+    private Dictionary<AdminPageProperty, object[]> _selectorValues;
+    private IModelRepository _repository;
+
+    private AdminPage _currentPage;
+    private object _entry;
+    private bool _isEdit;
+    private IDictionary<AdminPageProperty, object> _inputValues;
+
+    public async Task Show(AdminPage page, object entryToEdit = null) {
+        _entry = null;
+        _inputValues = new Dictionary<AdminPageProperty, object>();
+        _selectorValues = new Dictionary<AdminPageProperty, object[]>();
+        
+        _currentPage = page;
+        _entry = entryToEdit;
+        _isEdit = entryToEdit is not null;
+        _repository = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
+
+        _entry ??= Activator.CreateInstance(_currentPage.ModelType);
+        _context = new EditContext(_entry);
+        _validation = new ValidationMessageStore(_context);
+        _validationIdentifiers = new Dictionary<AdminPageProperty, FieldIdentifier>();
+        _context.OnValidationRequested += Validate;
+
+        _values = new Dictionary<AdminPageProperty, object>();
+        foreach (var property in _currentPage.Properties) {
+            _values.Add(property, property.GetValue(_entry));
+            _validationIdentifiers.Add(property, new FieldIdentifier(_entry, property.Name));
+        }
+
+        await _modal.ShowAsync();
+    }
+
+    private IList<AdminPageProperty> GetEditableProperties() {
+        return _currentPage.Properties
+            .Where(p => !p.Ignore)
+            .OrderBy(p => p.Editable)
+            .ToList();
+    }
+
+    private bool IsDisabled(AdminPageProperty prop) => (_isEdit && !prop.Editable) || prop.Generated;
+    private bool IsRequired(AdminPageProperty prop) => !_isEdit ? prop.Required : prop.Required && prop.EditDisplayValue;
+    private bool IsSwitch(AdminPageProperty prop) => prop.Type == typeof(bool);
+    private bool IsListType(AdminPageProperty prop) => IsListType(prop.Type);
+    
+    private bool IsListType(Type type) {
+        if (!type.IsGenericType) return false;
+        var generic = type.GenericTypeArguments[0];
+        var gListType = typeof(IList<>).MakeGenericType(generic);
+        var iListType = typeof(List<>).MakeGenericType(generic);
+        return type.IsAssignableFrom(gListType) || type.IsAssignableFrom(iListType);
+    }
+
+    private IList<string> GetListPropertyValues(AdminPageProperty prop) {
+        if (!IsListType(prop)) return new List<string>();
+        var list = new List<string>();
+
+        var values = prop.GetValue(_entry);
+        
+        if (values is null) {
+            prop.SetValue(_entry, Activator.CreateInstance(prop.Type));
+            return list;
+        }
+        
+        foreach (var value in (IEnumerable)values) {
+            list.Add(MapPropertyValue(value, prop));
+        }
+
+        return list;
+    }
+
+    private string GetPropertyValue(AdminPageProperty property) {
+        if (!_isEdit) return "";
+        if (!property.EditDisplayValue) return "";
+        return MapPropertyValue(property.GetValue(_entry), property);
+    }
+
+    public string MapPropertyValue(object value, AdminPageProperty property, bool isSubProperty = false) {
+        if (value is null) return string.Empty;
+        var type = value.GetType();
+
+        var page = PageProvider.HasPageFor(type);
+        if (page is not null && !string.IsNullOrWhiteSpace(page.ListingProperty)) {
+            var prop = page.Properties
+                .SingleOrDefault(p => p.Name == page.ListingProperty);
+
+            if (prop is not null) {
+                return MapPropertyValue(prop.GetValue(value), prop);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(property.DisplayPropertyName) && !isSubProperty) {
+            var prop = type.GetProperties()
+                .SingleOrDefault(p => p.Name == property.DisplayPropertyName);
+
+            return MapPropertyValue(prop?.GetValue(value), property, true);
+        }
+        
+        var stringValue = value.ToString();
+
+        if (!string.IsNullOrWhiteSpace(property.Prefix)) {
+            return stringValue?.Replace(property.Prefix, "");
+        }
+
+        return stringValue;
+    }
+
+    private string GetInputType(AdminPageProperty property) {
+        if (!property.EditDisplayValue)
+            return "password";
+
+        return "text";
+    }
+
+    private void Validate(object sender, ValidationRequestedEventArgs e) {
+        _validation.Clear();
+        foreach (var value in _values) {
+            if (value.Key.Unique) {
+                if (value.Value == value.Key.GetValue(_entry)) continue;
+                var repo = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
+                var data = repo!.ReadAllO().GetAwaiter().GetResult();
+                foreach (var entry in data) {
+                    var other = value.Key.GetValue(entry);
+                    if (!other.Equals(value.Value)) continue;
+                    _validation.Add(_validationIdentifiers[value.Key], $"This {value.Key.DisplayName ?? value.Key.Name} already exists!");
+                    break;
+                }
+            }
+            
+            if (value.Key.Validator is null) continue;
+            var error = value.Key.Validator?.Invoke(value.Value);
+            if (string.IsNullOrEmpty(error)) continue;
+            _validation.Add(_validationIdentifiers[value.Key], error);
+        }
+    }
+
+    private void DeleteListItem(AdminPageProperty prop, int index) {
+        var list = prop.GetValue<IList>(_entry);
+        list.RemoveAt(index);
+    }
+
+    private void AddListItem(AdminPageProperty prop) {
+        if (!_inputValues.TryGetValue(prop, out var input) || input is null) {
+            Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Error!",
+                Text = "Please enter a value!",
+                Icon = SweetAlertIcon.Error
+            });
+            return;
+        }
+        
+        var list = prop.GetValue<IList>(_entry);
+        var value = prop.Parser?.Invoke(_entry, input) ?? input;
+        list?.Add(value);
+    }
+
+    private async Task<(string, int)[]> SetupSelectorProperty(AdminPageProperty property) {
+        var type = property.SelectorType ?? property.Type;
+        if (IsListType(type)) {
+            type = type.GenericTypeArguments[0];
+        }
+
+        var page = PageProvider.HasPageFor(type);
+        if (page is null) {
+            throw new ArgumentException($"'{property.Name}' cannot be a selector because a admin page for '{type.Name}' does not exist!");
+        }
+
+        var repo = Provider.GetService(page.RepositoryProvider) as IModelRepository;
+        var objects = (await repo!.ReadAllO()).ToArray();
+        _selectorValues[property] = objects;
+
+        var data = new List<(string, int)>();
+        for (var i = 0; i < objects.Length; i++) {
+            data.Add((MapPropertyValue(objects[i], property), i));
+        }
+
+        return data.ToArray();
+    }
+
+    private bool IsIndexSelected(AdminPageProperty property, int index) {
+        var value = property.GetValue(_entry);
+        if (value is null) return false;
+        return _selectorValues[property][index] == value;
+    }
+
+    private object ReadSelectorValue(AdminPageProperty property, object value) {
+        if (!int.TryParse(value.ToString(), out int result)) {
+            return null;
+        }
+        
+        return _selectorValues[property][result];
+    }
+
+    private async void Save() {
+        if (_isEdit && _currentPage.Permissions.Update is not null) {
+            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Update)) {
+                await Alerts.FireAsync(new SweetAlertOptions {
+                    Title = "Unauthorized!",
+                    Text = "You don't have the required permissions to edit an entry!",
+                    Icon = SweetAlertIcon.Error
+                });
+                return;
+            }
+        }else if (_currentPage.Permissions.Create is not null) {
+            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Create)) {
+                await Alerts.FireAsync(new SweetAlertOptions {
+                    Title = "Unauthorized!",
+                    Text = "You don't have the required permissions to add an entry!",
+                    Icon = SweetAlertIcon.Error
+                });
+                return;
+            }
+        }
+        
+        foreach (var value in _values) {
+            if (IsListType(value.Key)) continue;
+            value.Key.SetValue(_entry, value.Key.Parser?.Invoke(_entry, value.Value) ?? Convert.ChangeType(value.Value, value.Key.Type));
+        }
+
+        if (!_isEdit) {
+            await _repository.CreateO(_entry);
+            
+            Alerts.FireAsync(new SweetAlertOptions {
+                Title = "New entry added!",
+                Icon = SweetAlertIcon.Success,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+        }
+        else {
+            await _repository.UpdateO(_entry);
+            
+            Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Entry updated!",
+                Icon = SweetAlertIcon.Success,
+                ShowConfirmButton = false,
+                Timer = 1500
+            });
+        }
+
+        await ReloadDelegate.Invoke();
+    }
+}

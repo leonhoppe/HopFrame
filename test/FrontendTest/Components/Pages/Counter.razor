@@ -1,4 +1,7 @@
 ﻿@page "/counter"
+@using System.Text.Json
+@using HopFrame.Web
+@using HopFrame.Web.Admin.Providers
 @rendermode InteractiveServer
 
 <PageTitle>Counter</PageTitle>
@@ -9,12 +12,20 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+@inject IAdminPagesProvider Provider
+
 @code {
     private int currentCount = 0;
     private string[] permissions = ["web.counter"];
 
     private void IncrementCount() {
         currentCount++;
+        
+        string json = JsonSerializer.Serialize(Provider.LoadRegisteredAdminPages(), new JsonSerializerOptions {
+            WriteIndented = true
+        });
+
+        Console.WriteLine(json);
     }
 
 }

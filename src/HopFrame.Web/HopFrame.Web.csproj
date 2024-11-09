@@ -20,6 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\HopFrame.Database\HopFrame.Database.csproj" />
       <ProjectReference Include="..\HopFrame.Security\HopFrame.Security.csproj" />
+      <ProjectReference Include="..\HopFrame.Web.Admin\HopFrame.Web.Admin.csproj" />
     </ItemGroup>
 
     <ItemGroup>
