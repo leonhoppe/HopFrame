@@ -13,9 +13,8 @@ public class AdminPage {
     public IList<AdminPageProperty> Properties { get; set; }
     public string ListingProperty { get; set; }
     
-    [JsonIgnore]
     public Type RepositoryProvider { get; set; }
-
+    
     public Type ModelType { get; set; }
     
     public string DefaultSortPropertyName { get; set; }

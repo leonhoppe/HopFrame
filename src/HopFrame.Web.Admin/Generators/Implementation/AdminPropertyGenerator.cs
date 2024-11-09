@@ -61,11 +61,6 @@ internal sealed class AdminPropertyGenerator<TProperty, TModel>(string name, Typ
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty, TModel> Description(string description) {
-        _property.Description = description;
-        return this;
-    }
-
     public IAdminPropertyGenerator<TProperty, TModel> Prefix(string prefix) {
         _property.Prefix = prefix;
         return this;
@@ -151,11 +146,6 @@ internal sealed class AdminPropertyGenerator<TProperty, TModel>(string name, Typ
         if (attributes.Any(a => a is AdminNameAttribute)) {
             var attribute = attributes.Single(a => a is AdminNameAttribute) as AdminNameAttribute;
             DisplayName(attribute?.Name);
-        }
-            
-        if (attributes.Any(a => a is AdminDescriptionAttribute)) {
-            var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
-            Description(attribute?.Description);
         }
         
         if (attributes.Any(a => a is AdminBoldAttribute)) {

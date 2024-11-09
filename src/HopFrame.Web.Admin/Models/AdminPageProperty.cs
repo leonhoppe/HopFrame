@@ -5,7 +5,6 @@ namespace HopFrame.Web.Admin.Models;
 public sealed class AdminPageProperty {
     public string Name { get; set; }
     public string DisplayName { get; set; }
-    public string Description { get; set; }
     public string Prefix { get; set; }
     public string DisplayPropertyName { get; set; }
 
@@ -21,7 +20,6 @@ public sealed class AdminPageProperty {
     public bool Selector { get; set; }
     public Type SelectorType { get; set; }
     
-    [JsonIgnore]
     public Type Type { get; set; }
 
     public Func<object, string> Validator { get; set; }
