@@ -11,7 +11,7 @@ A simple backend management api for ASP.NET Core Web APIs
 - [x] 1.0 bug fixes
 - [x] Code cleanup
 - [x] Relations in database
-- [ ] Generated Admin pages
+- [x] Generated Admin pages
 - [ ] Pretty Login page for administration
 - [ ] Clean documentation
 
