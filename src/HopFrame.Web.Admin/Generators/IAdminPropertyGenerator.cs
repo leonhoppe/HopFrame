@@ -2,28 +2,27 @@ using System.Linq.Expressions;
 
 namespace HopFrame.Web.Admin.Generators;
 
-public interface IAdminPropertyGenerator<TProperty> {
+public interface IAdminPropertyGenerator<TProperty, TModel> {
 
-    IAdminPropertyGenerator<TProperty> Sortable(bool sortable);
-    IAdminPropertyGenerator<TProperty> Editable(bool editable);
-    IAdminPropertyGenerator<TProperty> DisplayValueWhileEditing(bool display);
-    IAdminPropertyGenerator<TProperty> DisplayInListing(bool display = true);
-    IAdminPropertyGenerator<TProperty> Ignore(bool ignore = true);
-    IAdminPropertyGenerator<TProperty> Generated(bool generated = true);
-    IAdminPropertyGenerator<TProperty> Bold(bool bold = true);
-    IAdminPropertyGenerator<TProperty> Unique(bool unique = true);
+    IAdminPropertyGenerator<TProperty, TModel> Sortable(bool sortable);
+    IAdminPropertyGenerator<TProperty, TModel> Editable(bool editable);
+    IAdminPropertyGenerator<TProperty, TModel> DisplayValueWhileEditing(bool display);
+    IAdminPropertyGenerator<TProperty, TModel> DisplayInListing(bool display = true);
+    IAdminPropertyGenerator<TProperty, TModel> Ignore(bool ignore = true);
+    IAdminPropertyGenerator<TProperty, TModel> Generated(bool generated = true);
+    IAdminPropertyGenerator<TProperty, TModel> Bold(bool bold = true);
+    IAdminPropertyGenerator<TProperty, TModel> Unique(bool unique = true);
     
-    IAdminPropertyGenerator<TProperty> DisplayName(string displayName);
-    IAdminPropertyGenerator<TProperty> Description(string description);
-    IAdminPropertyGenerator<TProperty> Prefix(string prefix);
-    IAdminPropertyGenerator<TProperty> Validator(Func<TProperty, string> validator);
-    IAdminPropertyGenerator<TProperty> IsSelector(bool selector = true);
-    IAdminPropertyGenerator<TProperty> IsSelector<TSelectorType>(bool selector = true);
-    IAdminPropertyGenerator<TProperty> Parser<TModel>(Func<TModel, string, TProperty> parser);
-    IAdminPropertyGenerator<TProperty> Parser<TModel, TInput>(Func<TModel, TInput, TProperty> parser);
-    IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty>(Func<TModel, string, TInnerProperty> parser);
-    IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty, TInput>(Func<TModel, TInput, TInnerProperty> parser);
-    IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression);
-    IAdminPropertyGenerator<TProperty> DisplayPropertyForListType<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression);
+    IAdminPropertyGenerator<TProperty, TModel> DisplayName(string displayName);
+    IAdminPropertyGenerator<TProperty, TModel> Description(string description);
+    IAdminPropertyGenerator<TProperty, TModel> Prefix(string prefix);
+    IAdminPropertyGenerator<TProperty, TModel> Validator(Func<TProperty, string> validator);
+    IAdminPropertyGenerator<TProperty, TModel> IsSelector(bool selector = true);
+    IAdminPropertyGenerator<TProperty, TModel> IsSelector<TSelectorType>(bool selector = true);
+    IAdminPropertyGenerator<TProperty, TModel> Parser(Func<TModel, string, TProperty> parser);
+    IAdminPropertyGenerator<TProperty, TModel> Parser<TInput>(Func<TModel, TInput, TProperty> parser);
+    IAdminPropertyGenerator<TProperty, TModel> Parser<TInput, TInnerProperty>(Func<TModel, TInput, TInnerProperty> parser);
+    IAdminPropertyGenerator<TProperty, TModel> DisplayProperty(Expression<Func<TProperty, object>> propertyExpression);
+    IAdminPropertyGenerator<TProperty, TModel> DisplayProperty<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression);
 
 }

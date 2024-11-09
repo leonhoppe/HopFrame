@@ -40,8 +40,8 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<User>().Property(u => u.Permissions)
             .DisplayInListing(false)
-            .DisplayPropertyForListType<Permission>(p => p.PermissionName)
-            .ParserForListType<User, Permission>((user, perm) => new Permission {
+            .DisplayProperty<Permission>(p => p.PermissionName)
+            .Parser<string, Permission>((user, perm) => new Permission {
                 GrantedAt = DateTime.Now,
                 PermissionName = perm,
                 User = user
@@ -78,8 +78,8 @@ public class HopAdminContext : AdminPagesContext {
 
         generator.Page<PermissionGroup>().Property(g => g.Permissions)
             .DisplayInListing(false)
-            .DisplayPropertyForListType<Permission>(p => p.PermissionName)
-            .ParserForListType<PermissionGroup, Permission>((group, perm) => new Permission {
+            .DisplayProperty<Permission>(p => p.PermissionName)
+            .Parser<string, Permission>((group, perm) => new Permission {
                 GrantedAt = DateTime.Now,
                 PermissionName = perm,
                 Group = group

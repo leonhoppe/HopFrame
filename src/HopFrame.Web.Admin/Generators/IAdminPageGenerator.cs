@@ -22,7 +22,7 @@ public interface IAdminPageGenerator<TModel> {
 
     IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : ModelRepository<TModel>;
     
-    IAdminPropertyGenerator<TProperty> Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression);
+    IAdminPropertyGenerator<TProperty, TModel> Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression);
     IAdminPageGenerator<TModel> ListingProperty<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression);
 
 }

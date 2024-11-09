@@ -21,16 +21,16 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
 
         var type = typeof(TModel);
         var properties = type.GetProperties();
-        var generatorType = typeof(AdminPropertyGenerator<>);
+        var generatorType = typeof(AdminPropertyGenerator<,>);
         
         foreach (var property in properties) {
             var attributes = property.GetCustomAttributes(false);
-            var genericType = generatorType.MakeGenericType(property.PropertyType);
+            var genericType = generatorType.MakeGenericType(property.PropertyType, type);
             
             var generator = Activator.CreateInstance(genericType, [property.Name, property.PropertyType]);
 
             var method = genericType
-                .GetMethod(nameof(AdminPropertyGenerator<object>.ApplyConfigurationFromAttributes))?
+                .GetMethod(nameof(AdminPropertyGenerator<object, object>.ApplyConfigurationFromAttributes))?
                 .MakeGenericMethod(type);
             method?.Invoke(generator, [this, attributes, property]);
             
@@ -102,13 +102,13 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression) {
+    public IAdminPropertyGenerator<TProperty, TModel> Property<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression) {
         var property = GetPropertyInfo(propertyExpression);
 
         if (_propertyGenerators.TryGetValue(property.Name, out var propertyGenerator))
-            return propertyGenerator as AdminPropertyGenerator<TProperty>;
+            return propertyGenerator as AdminPropertyGenerator<TProperty, TModel>;
         
-        var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator<TProperty>), new { property.Name, property.PropertyType }) as AdminPropertyGenerator<TProperty>;
+        var generator = Activator.CreateInstance(typeof(AdminPropertyGenerator<TProperty, TModel>), new { property.Name, property.PropertyType }) as AdminPropertyGenerator<TProperty, TModel>;
         generator?.ApplyConfigurationFromAttributes(this, property.GetCustomAttributes(false), property);
         _propertyGenerators.Add(property.Name, generator);
         
@@ -125,7 +125,7 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         var properties = new List<AdminPageProperty>();
         
         foreach (var generator in _propertyGenerators.Values) {
-            var method = generator.GetType().GetMethod(nameof(AdminPropertyGenerator<object>.Compile));
+            var method = generator.GetType().GetMethod(nameof(AdminPropertyGenerator<object, object>.Compile));
             var prop = method?.Invoke(generator, []) as AdminPageProperty;
             properties.Add(prop);
         }

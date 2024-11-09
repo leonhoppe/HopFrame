@@ -25,7 +25,7 @@ public class AdminContext : AdminPagesContext {
         generator.Page<Address>()
             .Property(a => a.AddressId)
             .IsSelector<Employee>()
-            .Parser<Address, Employee>((model, e) => model.AddressId = e.EmployeeId);
+            .Parser<Employee>((model, e) => model.AddressId = e.EmployeeId);
 
         generator.Page<Employee>()
             .ConfigureRepository<EmployeeProvider>()

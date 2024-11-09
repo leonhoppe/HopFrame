@@ -8,112 +8,107 @@ using HopFrame.Web.Admin.Models;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
 
-internal sealed class AdminPropertyGenerator<TProperty>(string name, Type type) : IAdminPropertyGenerator<TProperty>, IGenerator<AdminPageProperty> {
+internal sealed class AdminPropertyGenerator<TProperty, TModel>(string name, Type type) : IAdminPropertyGenerator<TProperty, TModel>, IGenerator<AdminPageProperty> {
     
     private readonly AdminPageProperty _property = new() {
         Name = name,
         Type = type
     };
 
-    public IAdminPropertyGenerator<TProperty> Sortable(bool sortable) {
+    public IAdminPropertyGenerator<TProperty, TModel> Sortable(bool sortable) {
         _property.Sortable = sortable;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Editable(bool editable) {
+    public IAdminPropertyGenerator<TProperty, TModel> Editable(bool editable) {
         _property.Editable = editable;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> DisplayValueWhileEditing(bool display) {
+    public IAdminPropertyGenerator<TProperty, TModel> DisplayValueWhileEditing(bool display) {
         _property.EditDisplayValue = display;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> DisplayInListing(bool display = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> DisplayInListing(bool display = true) {
         _property.DisplayInListing = display;
         _property.Sortable = false;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Ignore(bool ignore = false) {
+    public IAdminPropertyGenerator<TProperty, TModel> Ignore(bool ignore = false) {
         _property.Ignore = ignore;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Generated(bool generated = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> Generated(bool generated = true) {
         _property.Generated = generated;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Bold(bool bold = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> Bold(bool bold = true) {
         _property.Bold = bold;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Unique(bool unique = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> Unique(bool unique = true) {
         _property.Unique = unique;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> DisplayName(string displayName) {
+    public IAdminPropertyGenerator<TProperty, TModel> DisplayName(string displayName) {
         _property.DisplayName = displayName;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Description(string description) {
+    public IAdminPropertyGenerator<TProperty, TModel> Description(string description) {
         _property.Description = description;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Prefix(string prefix) {
+    public IAdminPropertyGenerator<TProperty, TModel> Prefix(string prefix) {
         _property.Prefix = prefix;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Validator(Func<TProperty, string> validator) {
+    public IAdminPropertyGenerator<TProperty, TModel> Validator(Func<TProperty, string> validator) {
         _property.Validator = o => validator.Invoke((TProperty)o);
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> IsSelector(bool selector = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> IsSelector(bool selector = true) {
         _property.Selector = selector;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> IsSelector<TSelectorType>(bool selector = true) {
+    public IAdminPropertyGenerator<TProperty, TModel> IsSelector<TSelectorType>(bool selector = true) {
         _property.Selector = true;
         _property.SelectorType = typeof(TSelectorType);
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Parser<TModel>(Func<TModel, string, TProperty> parser) {
+    public IAdminPropertyGenerator<TProperty, TModel> Parser(Func<TModel, string, TProperty> parser) {
         _property.Parser = (o, s) => parser.Invoke((TModel)o, s.ToString());
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> Parser<TModel, TInput>(Func<TModel, TInput, TProperty> parser) {
+    public IAdminPropertyGenerator<TProperty, TModel> Parser<TInput>(Func<TModel, TInput, TProperty> parser) {
         _property.Parser = (o, s) => parser.Invoke((TModel)o, (TInput)s);
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty>(Func<TModel, string, TInnerProperty> parser) {
-        _property.Parser = (o, s) => parser.Invoke((TModel)o, s.ToString());
-        return this;
-    }
-
-    public IAdminPropertyGenerator<TProperty> ParserForListType<TModel, TInnerProperty, TInput>(Func<TModel, TInput, TInnerProperty> parser) {
+    public IAdminPropertyGenerator<TProperty, TModel> Parser<TInput, TInnerProperty>(Func<TModel, TInput, TInnerProperty> parser) {
         _property.Parser = (o, s) => parser.Invoke((TModel)o, (TInput)s);
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> DisplayProperty<TListingProperty>(Expression<Func<TProperty, TListingProperty>> propertyExpression) {
+    public IAdminPropertyGenerator<TProperty, TModel> DisplayProperty(Expression<Func<TProperty, object>> propertyExpression) {
         var property = AdminPageGenerator<object>.GetPropertyInfo(propertyExpression);
         _property.DisplayPropertyName = property.Name;
         return this;
     }
 
-    public IAdminPropertyGenerator<TProperty> DisplayPropertyForListType<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression) {
+    public IAdminPropertyGenerator<TProperty, TModel> DisplayProperty<TInnerProperty>(Expression<Func<TInnerProperty, object>> propertyExpression) {
         var property = AdminPageGenerator<object>.GetPropertyInfo(propertyExpression);
         _property.DisplayPropertyName = property.Name;
         return this;
