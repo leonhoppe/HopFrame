@@ -12,7 +12,7 @@
 <PageTitle>Login</PageTitle>
 
 <div class="login-wrapper">
-    <EditForm Model="UserLogin" OnValidSubmit="Login" FormName="login-form">
+    @*<EditForm Model="UserLogin" OnValidSubmit="Login" FormName="login-form">
         <div class="field-wrapper">
             <h3>Login</h3>
             <div class="mb-3">
@@ -29,7 +29,29 @@
                 <BSAlert Color="BSColor.Danger" style="margin-top: 16px; margin-bottom: 0">Email or password does not match any account!</BSAlert>
             }
         </div>
-    </EditForm>
+    </EditForm>*@
+    
+    <div id="login-card">
+        <span id="login-title">HopFrame Administration</span>
+        <span id="login-subtitle">Login to proceed</span>
+        <EditForm Model="UserLogin" OnInvalidSubmit="Login" FormName="login-form" style="display: flex; flex-grow: 1; flex-direction: column">
+            <div class="mb-3">
+                <BSLabel>E-Mail address</BSLabel>
+                <InputText type="email" class="form-control" required @bind-Value="UserLogin.Email"/>
+            </div>
+            <div class="mb-3">
+                <BSLabel>Password</BSLabel>
+                <InputText type="password" class="form-control" required @bind-Value="UserLogin.Password"/>
+            </div>
+            
+            @if (_hasError) {
+                <BSAlert Color="BSColor.Danger" style="margin-top: 16px; margin-bottom: 0">Email or password does not match any account!</BSAlert>
+            }
+            
+            <BSButton Color="BSColor.Primary" IsSubmit="true" MarginTop="Margins.Auto" MarginLeftAndRight="Margins.Auto" style="width: 100px">Login</BSButton>
+
+        </EditForm>
+    </div>
 </div>
 
 @inject IAuthService Auth
@@ -44,7 +66,7 @@
 
     private const string DefaultRedirect = "/administration";
 
-    private bool _hasError = false;
+    private bool _hasError;
 
     protected override async Task OnInitializedAsync() {
         UserLogin ??= new();
@@ -54,7 +76,7 @@
         }
     }
 
-    private async Task Login() {
+    private async Task Login() { //TODO: Login does not work
         var result = await Auth.Login(UserLogin);
 
         if (!result) {
