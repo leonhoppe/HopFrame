@@ -17,7 +17,7 @@
         @foreach (var adminPage in Pages.LoadRegisteredAdminPages()) {
             <AuthorizedView Permission="@adminPage.Permissions.View">
                 <BSCol Column="4" style="margin-bottom: 10px">
-                    <BSCard CardType="CardType.Card" Color="BSColor.Dark" style="min-height: 200px">
+                    <BSCard CardType="CardType.Card" Color="BSColor.Dark" style="min-height: 200px; min-width: 200px">
                         <BSCard CardType="CardType.Body" style="display: flex; flex-direction: column">
                             <BSCard CardType="CardType.Title">@adminPage.Title</BSCard>
                             <BSCard CardType="CardType.Subtitle"><span style="color: gray">@adminPage.Permissions.View</span></BSCard>
