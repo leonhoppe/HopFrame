@@ -12,7 +12,7 @@ A simple backend management api for ASP.NET Core Web APIs
 - [x] Code cleanup
 - [x] Relations in database
 - [x] Generated Admin pages
-- [ ] Pretty Login page for administration
+- [x] Pretty Login page for administration
 - [ ] Clean documentation
 
 # Usage

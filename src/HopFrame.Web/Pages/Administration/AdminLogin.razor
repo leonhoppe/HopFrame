@@ -12,9 +12,10 @@
 <PageTitle>Login</PageTitle>
 
 <div class="login-wrapper">
-    <EditForm Model="UserLogin" OnValidSubmit="Login" FormName="login-form">
-        <div class="field-wrapper">
-            <h3>Login</h3>
+    <div id="login-card">
+        <span id="login-title">HopFrame Administration</span>
+        <span id="login-subtitle">Login to proceed</span>
+        <EditForm Model="UserLogin" OnValidSubmit="Login" FormName="login-form" style="display: flex; flex-grow: 1; flex-direction: column">
             <div class="mb-3">
                 <BSLabel>E-Mail address</BSLabel>
                 <InputText type="email" class="form-control" required @bind-Value="UserLogin.Email"/>
@@ -23,13 +24,15 @@
                 <BSLabel>Password</BSLabel>
                 <InputText type="password" class="form-control" required @bind-Value="UserLogin.Password"/>
             </div>
-            <BSButton Color="BSColor.Primary" IsSubmit="true">Login</BSButton>
-
+            
             @if (_hasError) {
                 <BSAlert Color="BSColor.Danger" style="margin-top: 16px; margin-bottom: 0">Email or password does not match any account!</BSAlert>
             }
-        </div>
-    </EditForm>
+            
+            <BSButton Color="BSColor.Primary" IsSubmit="true" MarginTop="Margins.Auto" MarginLeftAndRight="Margins.Auto" style="width: 100px">Login</BSButton>
+
+        </EditForm>
+    </div>
 </div>
 
 @inject IAuthService Auth
@@ -44,7 +47,7 @@
 
     private const string DefaultRedirect = "/administration";
 
-    private bool _hasError = false;
+    private bool _hasError;
 
     protected override async Task OnInitializedAsync() {
         UserLogin ??= new();
@@ -62,6 +65,6 @@
             return;
         }
 
-        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? DefaultRedirect : RedirectAfter, true);
+        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? DefaultRedirect : "/administration/" + RedirectAfter, true);
     }
 }

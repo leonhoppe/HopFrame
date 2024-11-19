@@ -18,7 +18,7 @@
 @using HopFrame.Web.Components
 
 <PageTitle>@_pageData.Title</PageTitle>
-<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="administration/login" />
+<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="@GenerateRedirectString()" />
 
 <AdminPageModal ReloadDelegate="Reload" @ref="_modal"/>
 
@@ -242,5 +242,9 @@
                 ShowConfirmButton = false
             });
         }
+    }
+
+    private string GenerateRedirectString() {
+        return "/administration/login?redirect=" + _pageData?.Url;
     }
 }

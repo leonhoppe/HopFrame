@@ -66,6 +66,13 @@
     }
 
     private void Logout() {
-        Navigator.NavigateTo("administration/login", true);
+        var redirectString = "";
+
+        if (!Navigator.Uri.EndsWith("administration") && !Navigator.Uri.EndsWith("administration/")) {
+            var parts = Navigator.Uri.Split("administration/");
+            redirectString = "?redirect=" + parts.Last();
+        }
+        
+        Navigator.NavigateTo("administration/login" + redirectString, true);
     }
 }
