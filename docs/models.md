@@ -7,6 +7,7 @@ This page shows all models that HopFrame uses.
 These are the models used by the various database services.
 
 ```plantuml
+@startuml
 set namespaceSeparator none
 
 namespace HopFrame.Database {
@@ -41,6 +42,7 @@ IPermissionOwner <|-- PermissionGroup
 
 User .. Permission
 PermissionGroup .. Permission
+@enduml
 ```
 
 
@@ -48,6 +50,7 @@ PermissionGroup .. Permission
 These are the models used by the REST API and the Blazor API.
 
 ```plantuml
+@startuml
 namespace HopFrame.Security {
     class UserLogin {
         +Email: string
@@ -70,6 +73,7 @@ namespace HopFrame.Api {
         +Password: string
     }
 }
+@enduml
 ```
 
 
@@ -77,6 +81,7 @@ namespace HopFrame.Api {
 These are the models that correspond to the scheme in the Database
 
 ```plantuml
+@startuml
 set namespaceSeparator none
 
 namespace HopFrame.Database {
@@ -112,4 +117,5 @@ namespace HopFrame.Database {
 
 UserEntry *-- TokenEntry
 UserEntry *-- PermissionEntry
+@enduml
 ```
