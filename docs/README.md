@@ -1,9 +1,9 @@
 # HopFrame Documentation
 
 - [x] In code documentation
-- [ ] Installation
-- [ ] Database usage
-- [ ] Authentication usage
+- [x] Installation
+- [x] Database usage
+- [x] Authentication usage
 - [ ] LogicResult usage
 - [ ] Repositories usage
 - [ ] AuthService usage
