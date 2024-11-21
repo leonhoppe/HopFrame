@@ -8,7 +8,7 @@ using HopFrame.Web.Repositories;
 
 namespace HopFrame.Web;
 
-public class HopAdminContext : AdminPagesContext {
+internal class HopAdminContext : AdminPagesContext {
 
     public AdminPage<User> Users { get; set; }
     public AdminPage<PermissionGroup> Groups { get; set; }

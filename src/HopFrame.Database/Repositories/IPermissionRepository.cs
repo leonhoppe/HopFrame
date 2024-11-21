@@ -19,5 +19,5 @@ public interface IPermissionRepository {
     
     Task RemovePermission(IPermissionOwner owner, string permission);
 
-    public Task<IList<string>> GetFullPermissions(IPermissionOwner owner);
+    Task<IList<string>> GetFullPermissions(IPermissionOwner owner);
 }

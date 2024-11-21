@@ -30,13 +30,12 @@
                     }
                 </BSNav>
                 
-                <span style="margin-left: auto; line-height: 100%; color: white">
+                <span style="margin-left: auto; line-height: 100%; color: white; margin-right: 10px">
                     logged in as @Context?.User.Username
                 </span>
-                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark">
+                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark" style="display: grid; align-items: center">
                     <HopIconDisplay Type="HopIconDisplay.HopIcon.Logout"/>
                 </BSButton>
-                <BSTooltip Placement="Placement.Bottom" Target="logout" ContentAlwaysRendered="false">logout</BSTooltip>
             </Content>
         </BSCollapse>
     </BSContainer>

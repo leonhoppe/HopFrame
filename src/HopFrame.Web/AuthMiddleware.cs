@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Web;
 
+/// <summary>
+/// Assures that the user stays logged in even if the access token is expired
+/// </summary>
 public sealed class AuthMiddleware(IAuthService auth, IPermissionRepository perms) : IMiddleware {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next) {
         var loggedIn = await auth.IsLoggedIn();
@@ -14,7 +17,7 @@ public sealed class AuthMiddleware(IAuthService auth, IPermissionRepository perm
         if (!loggedIn) {
             var token = await auth.RefreshLogin();
             if (token is null) {
-                await next.Invoke(context);
+                next?.Invoke(context);
                 return;
             }
             
