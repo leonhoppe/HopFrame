@@ -1,9 +1,10 @@
 # Database initialization
-You also need to initialize the data source with the tables from HopFrame
+You also need to initialize the data source with the tables from HopFrame.
 
 ## Create a DbContext
 
-1. Create a c# class that inherits from the `HopDbContextBase` and add a data source (In the example Sqlite is used)
+1. Create a c# class that inherits from the `HopDbContextBase` and add a data source (In the example Sqlite is used)\
+   **IMPORTANT:** You need to leave the `base.OnConfiguring(optionsBuilder)` in place so the HopFrame model relations are set correctly.
 
     ```csharp
     public class DatabaseContext : HopDbContextBase {
@@ -14,9 +15,6 @@ You also need to initialize the data source with the tables from HopFrame
        }
     }
     ```
-   
-    **IMPORTANT:** You need to leave the `base.OnConfiguring(optionsBuilder)` in place so the HopFrame model relations are set correctly.
-   <p>&nbsp;</p>
 
 2. Register the `DatabaseContext` as a service
 

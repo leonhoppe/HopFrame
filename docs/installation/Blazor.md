@@ -8,7 +8,6 @@ This Installation adds all HopFrame [pages](../pages) and [services](../services
    ```
 
 2. Create a [DbContext](./Database.md) that inherits the ``HopDbContext`` and add a data source
-   <p>&nbsp;</p>
 
 3. Add the HopFrame services to your application, provide the previously created `DatabaseContext` that inherits from `HopDbContextBase`
 
