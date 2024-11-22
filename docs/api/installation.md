@@ -1,5 +1,5 @@
 # Ho to use the Web API version
-This Installation adds all HopFrame [endpoints](../endpoints) and [services](../services) to the application.
+This Installation adds all HopFrame [endpoints](./endpoints.md) and [services](./services.md) to the application.
 
 1. Add the HopFrame.Api library to your project:
 
@@ -7,7 +7,7 @@ This Installation adds all HopFrame [endpoints](../endpoints) and [services](../
    dotnet add package HopFrame.Api
    ```
 
-2. Create a [DbContext](./Database.md) that inherits the ``HopDbContext`` and add a data source
+2. Create a [DbContext](../database.md) that inherits the ``HopDbContext`` and add a data source
 
 3. Add the HopFrame services to your application, provide the previously created `DatabaseContext` that inherits from `HopDbContextBase`
 
