@@ -1,6 +1,5 @@
+using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Models;
-using HopFrame.Web.Admin.Providers;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Web.Admin.Generators.Implementation;
 
@@ -27,13 +26,14 @@ internal class AdminContextGenerator : IAdminContextGenerator {
         return (generator as AdminPageGenerator<TModel>)?.Compile();
     }
 
-    public TContext CompileContext<TContext>() where TContext : AdminPagesContext {
+    public TContext CompileContext<TContext>(IServiceProvider provider) where TContext : AdminPagesContext {
         var type = typeof(TContext);
         var compileMethod = typeof(AdminContextGenerator).GetMethod(nameof(CompilePage));
         
         var properties = type.GetProperties();
 
-        var context = Activator.CreateInstance<TContext>();
+        var dependencies = ResolveDependencies<TContext>(provider);
+        var context = Activator.CreateInstance(type, dependencies) as TContext;
         
         foreach (var property in properties) {
             var propertyType = property.PropertyType.GenericTypeArguments[0];
@@ -49,31 +49,48 @@ internal class AdminContextGenerator : IAdminContextGenerator {
             _adminPages.Add(propertyType, generatorInstance);
         }
         
-        context.OnModelCreating(this);
+        context?.OnModelCreating(this);
         
         foreach (var property in properties) {
             var modelType = property.PropertyType.GenericTypeArguments[0];
             var method = compileMethod?.MakeGenericMethod(modelType);
-            property.SetValue(context, method?.Invoke(this, []));
+            var compiledPage = method?.Invoke(this, []) as AdminPage;
+            
+            var url = property.Name;
+            if (property.GetCustomAttributes(false).Any(a => a is AdminPageUrlAttribute)) {
+                var attribute = property.GetCustomAttributes(false)
+                    .Single(a => a is AdminPageUrlAttribute) as AdminPageUrlAttribute;
+
+                url = attribute?.Url;
+            }
+            compiledPage!.Url = url;
+            
+            property.SetValue(context, compiledPage);
         }
 
         return context;
     }
 
+    private object[] ResolveDependencies<TContext>(IServiceProvider provider) {
+        return ResolveDependencies(typeof(TContext), provider);
+    }
+    
+    public static object[] ResolveDependencies(Type type, IServiceProvider provider) {
+        var ctors = type.GetConstructors();
 
+        if (ctors.Length == 0) return [];
+        if (ctors.Length > 1)
+            throw new ArgumentException($"Dependencies of {type.Name} could not be resolved (multiple constructors)!");
 
-    public static void RegisterPages(AdminPagesContext context, IAdminPagesProvider provider, IServiceCollection services) {
-        var properties = context.GetType().GetProperties();
-
-        foreach (var property in properties) {
-            var page = property.GetValue(context) as AdminPage;
-            if (page is null) continue;
-            
-            provider.RegisterAdminPage(page.Title.ToLower(), page);
-
-            if (page.RepositoryProvider is not null)
-                services.AddScoped(page.RepositoryProvider);
+        var ctor = ctors[0];
+        var depTypes = ctor.GetParameters();
+        var dependencies = new object[depTypes.Length];
+        
+        for (var i = 0; i < depTypes.Length; i++) {
+            dependencies[i] = provider.GetService(depTypes[i].ParameterType);
         }
+
+        return dependencies;
     }
 
 }

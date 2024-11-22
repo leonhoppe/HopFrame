@@ -106,6 +106,7 @@
 @inject ITokenContext Auth
 @inject IPermissionRepository Permissions
 @inject SweetAlertService Alerts
+@inject NavigationManager Navigator
 
 @code {
     [Parameter]
@@ -127,12 +128,17 @@
     protected override async Task OnInitializedAsync() {
         _pageData = Pages.LoadAdminPage(Url);
 
+        if (_pageData is null) {
+            Navigator.NavigateTo("/administration", true);
+            return;
+        }
+
         _currentSortProperty = _pageData.DefaultSortPropertyName;
         _currentSortDirection = _pageData.DefaultSortDirection;
         
         if (_pageData.RepositoryProvider is null)
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
-        _modelRepository = Provider.GetService(_pageData.RepositoryProvider) as IModelRepository;
+        _modelRepository = _pageData.LoadModelRepository(Provider);
 
         _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
         _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);

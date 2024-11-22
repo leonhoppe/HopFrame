@@ -40,17 +40,11 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
 
     public IAdminPageGenerator<TModel> Title(string title) {
         Page.Title = title;
-        Page.Url ??= title.ToLower();
         return this;
     }
 
     public IAdminPageGenerator<TModel> Description(string description) {
         Page.Description = description;
-        return this;
-    }
-
-    public IAdminPageGenerator<TModel> Url(string url) {
-        Page.Url = url;
         return this;
     }
 
@@ -165,11 +159,6 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         if (attributes.Any(a => a is AdminDescriptionAttribute)) {
             var attribute = attributes.Single(a => a is AdminDescriptionAttribute) as AdminDescriptionAttribute;
             Description(attribute?.Description);
-        }
-
-        if (attributes.Any(a => a is AdminUrlAttribute)) {
-            var attribute = attributes.Single(a => a is AdminUrlAttribute) as AdminUrlAttribute;
-            Url(attribute?.Url);
         }
 
         if (attributes.Any(a => a is AdminPermissionsAttribute)) {

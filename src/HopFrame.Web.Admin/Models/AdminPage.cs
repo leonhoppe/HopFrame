@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using System.Text.Json.Serialization;
+using HopFrame.Web.Admin.Generators.Implementation;
 
 namespace HopFrame.Web.Admin.Models;
 
@@ -23,4 +23,11 @@ public class AdminPage {
     public bool ShowCreateButton { get; set; } = true;
     public bool ShowDeleteButton { get; set; } = true;
     public bool ShowUpdateButton { get; set; } = true;
+
+    public IModelRepository LoadModelRepository(IServiceProvider provider) {
+        if (RepositoryProvider is null) return null;
+
+        var dependencies = AdminContextGenerator.ResolveDependencies(RepositoryProvider, provider);
+        return Activator.CreateInstance(RepositoryProvider, dependencies) as IModelRepository;
+    }
 }

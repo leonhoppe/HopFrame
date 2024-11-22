@@ -1,7 +1,6 @@
 @rendermode InteractiveServer
 
 @using System.Collections
-@using System.Globalization
 @using BlazorStrap
 @using BlazorStrap.Shared.Components.Modal
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
@@ -144,7 +143,7 @@
         _currentPage = page;
         _entry = entryToEdit;
         _isEdit = entryToEdit is not null;
-        _repository = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
+        _repository = _currentPage.LoadModelRepository(Provider);
 
         _entry ??= Activator.CreateInstance(_currentPage.ModelType);
         _context = new EditContext(_entry);
@@ -247,8 +246,7 @@
         foreach (var value in _values) {
             if (value.Key.Unique) {
                 if (value.Value == value.Key.GetValue(_entry)) continue;
-                var repo = Provider.GetService(_currentPage.RepositoryProvider) as IModelRepository;
-                var data = repo!.ReadAllO().GetAwaiter().GetResult();
+                var data = _repository!.ReadAllO().GetAwaiter().GetResult();
                 foreach (var entry in data) {
                     var other = value.Key.GetValue(entry);
                     if (!other.Equals(value.Value)) continue;
@@ -295,7 +293,7 @@
             throw new ArgumentException($"'{property.Name}' cannot be a selector because a admin page for '{type.Name}' does not exist!");
         }
 
-        var repo = Provider.GetService(page.RepositoryProvider) as IModelRepository;
+        var repo = page.LoadModelRepository(Provider);
         var objects = (await repo!.ReadAllO()).ToArray();
         _selectorValues[property] = objects;
 
