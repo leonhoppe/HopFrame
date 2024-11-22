@@ -5,10 +5,13 @@
 @using BlazorStrap
 @using HopFrame.Web.Pages.Administration.Layout
 @using BlazorStrap.V5
+@using HopFrame.Security
 @using HopFrame.Web.Admin.Providers
 @using HopFrame.Web.Components
 @using Microsoft.AspNetCore.Components.Web
 @layout AdminLayout
+
+<AuthorizedView Permission="@AdminPermissions.IsAdmin" RedirectIfUnauthorized="/administration/login" />
 
 <PageTitle>Admin Dashboard</PageTitle>
 

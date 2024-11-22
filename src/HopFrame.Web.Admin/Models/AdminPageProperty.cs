@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace HopFrame.Web.Admin.Models;
 
 public sealed class AdminPageProperty {
