@@ -14,8 +14,8 @@ Base endpoint: `/api/v1/authentication`\
 
 | Method | Endpoint      | Payload                                                      | Returns               |
 |--------|---------------|--------------------------------------------------------------|-----------------------|
-| PUT    | /login        | [UserLogin](./models.md#UserLogin)                           | access token (string) |
-| POST   | /register     | [UserRegister](./models#UserRegister)                        | access token (string) |
+| PUT    | /login        | [UserLogin](../models.md#UserLogin)                          | access token (string) |
+| POST   | /register     | [UserRegister](../models.md#UserRegister)                    | access token (string) |
 | GET    | /authenticate |                                                              | access token (string) |
 | DELETE | /logout       |                                                              |                       |
 | DELETE | /delete       | [UserPasswordValidation](./models.md#UserPasswordValidation) |                       |
