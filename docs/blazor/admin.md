@@ -25,6 +25,8 @@ simply by reading the structure of the provided model and optionally some additi
    }
    ```
    
+   > **Hint:** you can specify the url of the admin page by adding the `AdminPageUrl` Attribute
+   
 3. **Optionally** you can further configure your pages in the `OnModelCreating` method
 
    ```csharp
@@ -61,6 +63,15 @@ simply by reading the structure of the provided model and optionally some additi
    ```
 4. **Optionally** you can also add some of the following attributes to your classes / properties to further configure the admin pages:\
    \
+   Attributes for classes and properties:
+
+   ```csharp
+   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
+   public sealed class AdminNameAttribute(string name) : Attribute {
+       public string Name { get; set; } = name;
+   }
+   ```
+
    Attributes for classes:
 
    ```csharp
@@ -86,8 +97,8 @@ simply by reading the structure of the provided model and optionally some additi
 
    ```csharp
    [AttributeUsage(AttributeTargets.Class)]
-   public class AdminUrlAttribute(string url) : Attribute {
-       public string Url { get; set; } = url;
+   public sealed class AdminDescriptionAttribute(string description) : Attribute {
+       public string Description { get; set; } = description;
    }
    ```
    

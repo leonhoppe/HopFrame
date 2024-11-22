@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using HopFrame.Database.Models;
 using HopFrame.Security;
 using HopFrame.Web.Admin;
+using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Generators;
 using HopFrame.Web.Admin.Models;
 using HopFrame.Web.Repositories;
@@ -10,7 +11,10 @@ namespace HopFrame.Web;
 
 internal class HopAdminContext : AdminPagesContext {
 
+    [AdminPageUrl("users")]
     public AdminPage<User> Users { get; set; }
+    
+    [AdminPageUrl("groups")]
     public AdminPage<PermissionGroup> Groups { get; set; }
     
     public override void OnModelCreating(IAdminContextGenerator generator) {

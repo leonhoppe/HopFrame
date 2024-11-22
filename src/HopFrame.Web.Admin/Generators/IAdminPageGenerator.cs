@@ -18,13 +18,6 @@ public interface IAdminPageGenerator<TModel> {
     /// <param name="description">the specified description</param>
     /// <returns></returns>
     IAdminPageGenerator<TModel> Description(string description);
-    
-    /// <summary>
-    /// Sets the url for the Admin Page
-    /// </summary>
-    /// <param name="url">the specified url (administration/{url})</param>
-    /// <returns></returns>
-    IAdminPageGenerator<TModel> Url(string url);
 
     /// <summary>
     /// Sets the permission needed to view the Admin Page

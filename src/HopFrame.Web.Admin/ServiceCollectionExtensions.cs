@@ -1,3 +1,4 @@
+using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Generators.Implementation;
 using HopFrame.Web.Admin.Providers;
 using HopFrame.Web.Admin.Providers.Implementation;
@@ -8,22 +9,36 @@ namespace HopFrame.Web.Admin;
 
 public static class ServiceCollectionExtensions {
 
-    private static IAdminPagesProvider _provider;
-
     public static IServiceCollection AddAdminContext<TContext>(this IServiceCollection services) where TContext : AdminPagesContext {
-        var provider = GetProvider();
-        services.TryAddSingleton(provider);
+        services.TryAddSingleton<IAdminPagesProvider, AdminPagesProvider>();
         
-        var generator = new AdminContextGenerator();
-        var context = generator.CompileContext<TContext>();
-        AdminContextGenerator.RegisterPages(context, provider, services);
-        services.AddSingleton(context);
+        services.AddSingleton(provider => {
+            var generator = new AdminContextGenerator();
+            var context = generator.CompileContext<TContext>(provider);
+            return context;
+        });
+        
+        PreregisterPages<TContext>();
 
         return services;
     }
 
-    private static IAdminPagesProvider GetProvider() {
-        return _provider ??= new AdminPagesProvider();
+    private static void PreregisterPages<TContext>() where TContext : AdminPagesContext {
+        var contextType = typeof(TContext);
+        var props = contextType.GetProperties();
+
+        foreach (var property in props) {
+            var url = property.Name;
+
+            if (property.GetCustomAttributes(false).Any(a => a is AdminPageUrlAttribute)) {
+                var attribute = property.GetCustomAttributes(false)
+                    .Single(a => a is AdminPageUrlAttribute) as AdminPageUrlAttribute;
+
+                url = attribute?.Url;
+            }
+            
+            AdminPagesProvider.RegisterAdminPage<TContext>(url, property.PropertyType);
+        }
     }
     
 }
