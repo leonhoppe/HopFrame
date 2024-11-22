@@ -1,5 +1,5 @@
 # Ho to use the Web API version
-This Installation adds all HopFrame [endpoints](./endpoints.md) and [services](./services.md) to the application.
+This Installation adds all HopFrame [endpoints](./endpoints.md) and [repositories](../repositories.md) to the application.
 
 1. Add the HopFrame.Api library to your project:
 

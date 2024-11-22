@@ -4,7 +4,10 @@
 - [x] Installation
 - [x] Database usage
 - [x] Authorization usage
-- [ ] LogicResult usage
-- [ ] Repositories usage
-- [ ] AuthService usage
+- [x] LogicResult usage
+- [x] Repositories usage
+- [x] AuthService usage
+- [x] AuthMiddleware usage
 - [ ] AdminPages usage
+- [ ] Endpoints usage
+- [ ] Blazor pages usage

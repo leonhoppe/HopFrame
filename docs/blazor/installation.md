@@ -1,5 +1,5 @@
 ## How to use the Blazor API
-This Installation adds all HopFrame [pages](./pages.md) and [services](./services.md) to the application.
+This Installation adds all HopFrame [pages](./pages.md) and [repositories](../repositories.md) to the application.
 
 1. Add the HopFrame.Web library to your project
 
