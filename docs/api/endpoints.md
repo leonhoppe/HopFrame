@@ -8,14 +8,14 @@ HopFrame currently only supports endpoints for authentication out of the box.
 > **Hint:** you can use the build-in [swagger](https://swagger.io/) ui to explore and test all endpoints of your application __including__ HopFrame endpoints.
 
 ### SecurityController
-Base endpoint: `api/v1/authentication`\
+Base endpoint: `/api/v1/authentication`\
 **Important:** All primitive data types (including `string`) are return as a [`SingleValueResult`](./models.md#SingleValueResult)
 
 
-| Method | Endpoint | Payload | Returns |
-| ------ | -------- | ------- | ------- |
-| PUT | login | [UserLogin](./models.md#UserLogin) | access token (string) |
-| POST | register | [UserRegister](./models#UserRegister) | access token (string) |
-| GET | authenticate | | access token (string) |
-| DELETE | logout | | |
-| DELETE | delete | [UserPasswordValidation](./models.md#UserPasswordValidation) | |
+| Method | Endpoint      | Payload                                                      | Returns               |
+|--------|---------------|--------------------------------------------------------------|-----------------------|
+| PUT    | /login        | [UserLogin](./models.md#UserLogin)                           | access token (string) |
+| POST   | /register     | [UserRegister](./models#UserRegister)                        | access token (string) |
+| GET    | /authenticate |                                                              | access token (string) |
+| DELETE | /logout       |                                                              |                       |
+| DELETE | /delete       | [UserPasswordValidation](./models.md#UserPasswordValidation) |                       |

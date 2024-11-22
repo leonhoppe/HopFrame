@@ -15,6 +15,6 @@ public interface IAuthService {
 }
 ```
 ## Automatically refresh user sessions
-1. Make sure you have implementented the `AuthMiddleware` how it's described in step 5 of the [installation](./installation.md).
+1. Make sure you have implemented the `AuthMiddleware` how it's described in step 5 of the [installation](./installation.md).
 
 2. After that, the access token of the user gets automatically refreshed as long as the refresh token is valid.

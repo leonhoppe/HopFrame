@@ -8,6 +8,6 @@
 - [x] Repositories usage
 - [x] AuthService usage
 - [x] AuthMiddleware usage
-- [ ] AdminPages usage
+- [x] AdminPages usage
 - [x] Endpoints usage
-- [ ] Blazor pages usage
+- [x] Blazor pages usage
