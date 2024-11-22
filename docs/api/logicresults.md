@@ -30,4 +30,4 @@ They help you sending the right `HttpStatusCode` with the right data.
         return LogicResult<string>.Ok("Hello, World!");
     }
     ```
-    **Hint:** You can also provide an error message for status codes that are not in the 200 range.
+    > **Hint:** You can also provide an error message for status codes that are not in the 200 range.

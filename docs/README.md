@@ -9,5 +9,5 @@
 - [x] AuthService usage
 - [x] AuthMiddleware usage
 - [ ] AdminPages usage
-- [ ] Endpoints usage
+- [x] Endpoints usage
 - [ ] Blazor pages usage
