@@ -78,11 +78,11 @@ public interface IAdminPageGenerator<TModel> {
     IAdminPageGenerator<TModel> DefaultSort<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression, ListSortDirection direction);
 
     /// <summary>
-    /// Specifies the repository for the page
+    /// Specifies the repository provider for the page
     /// </summary>
-    /// <typeparam name="TRepository">The specified repository</typeparam>
+    /// <typeparam name="TRepository">The specified provider</typeparam>
     /// <returns></returns>
-    IAdminPageGenerator<TModel> ConfigureRepository<TRepository>() where TRepository : ModelRepository<TModel>;
+    IAdminPageGenerator<TModel> ConfigureProvider<TRepository>() where TRepository : ModelProvider<TModel>;
     
     
     /// <summary>

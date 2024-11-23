@@ -24,10 +24,12 @@ public class AdminPage {
     public bool ShowDeleteButton { get; set; } = true;
     public bool ShowUpdateButton { get; set; } = true;
 
-    public IModelRepository LoadModelRepository(IServiceProvider provider) {
+    public IModelProvider LoadModelProvider(IServiceProvider provider) {
         if (RepositoryProvider is null) return null;
+        var repoProvider = provider.GetService(RepositoryProvider);
+        if (repoProvider != null) return repoProvider as IModelProvider;
 
         var dependencies = AdminContextGenerator.ResolveDependencies(RepositoryProvider, provider);
-        return Activator.CreateInstance(RepositoryProvider, dependencies) as IModelRepository;
+        return Activator.CreateInstance(RepositoryProvider, dependencies) as IModelProvider;
     }
 }

@@ -4,7 +4,7 @@ using RestApiTest.Models;
 
 namespace FrontendTest.Providers;
 
-public class AddressProvider(DatabaseContext context) : ModelRepository<Address> {
+public class AddressProvider(DatabaseContext context) : ModelProvider<Address> {
     
     public override async Task<IEnumerable<Address>> ReadAll() {
         return await context.Addresses.ToArrayAsync();

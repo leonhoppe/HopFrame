@@ -2,9 +2,9 @@ using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Web.Admin;
 
-namespace HopFrame.Web.Repositories;
+namespace HopFrame.Web.Provider;
 
-internal sealed class GroupProvider(IGroupRepository repo) : ModelRepository<PermissionGroup> {
+internal sealed class GroupProvider(IGroupRepository repo) : ModelProvider<PermissionGroup> {
     public override async Task<IEnumerable<PermissionGroup>> ReadAll() {
         return await repo.GetPermissionGroups();
     }
