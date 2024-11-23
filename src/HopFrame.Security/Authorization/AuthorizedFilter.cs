@@ -1,3 +1,4 @@
+using HopFrame.Database;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;

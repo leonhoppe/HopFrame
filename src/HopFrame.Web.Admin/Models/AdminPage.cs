@@ -1,0 +1,35 @@
+using System.ComponentModel;
+using HopFrame.Web.Admin.Generators.Implementation;
+
+namespace HopFrame.Web.Admin.Models;
+
+public sealed class AdminPage<TModel> : AdminPage;
+
+public class AdminPage {
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string Url { get; set; }
+    public AdminPagePermissions Permissions { get; set; }
+    public IList<AdminPageProperty> Properties { get; set; }
+    public string ListingProperty { get; set; }
+    
+    public Type RepositoryProvider { get; set; }
+    
+    public Type ModelType { get; set; }
+    
+    public string DefaultSortPropertyName { get; set; }
+    public ListSortDirection DefaultSortDirection { get; set; }
+
+    public bool ShowCreateButton { get; set; } = true;
+    public bool ShowDeleteButton { get; set; } = true;
+    public bool ShowUpdateButton { get; set; } = true;
+
+    public IModelProvider LoadModelProvider(IServiceProvider provider) {
+        if (RepositoryProvider is null) return null;
+        var repoProvider = provider.GetService(RepositoryProvider);
+        if (repoProvider != null) return repoProvider as IModelProvider;
+
+        var dependencies = AdminContextGenerator.ResolveDependencies(RepositoryProvider, provider);
+        return Activator.CreateInstance(RepositoryProvider, dependencies) as IModelProvider;
+    }
+}

@@ -1,21 +1,71 @@
-# Models for HopFrame
+# HopFrame base models
+All models listed below are part of the core HopFrame components and accessible in all installation variations
 
-This page shows all models that HopFrame uses.
+> **Note:** All properties of the models that are `virtual` are relational properties and don't directly correspond to columns in the database.
 
+## User
+```csharp
+public class User : IPermissionOwner {
+    public Guid Id { get; init; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public virtual List<Permission> Permissions { get; set; }
+    public virtual List<Token> Tokens { get; set; }
+}
+```
 
-## Base Models
-These are the models used by the various database services.
+## PermissionGroup
+```csharp
+public class PermissionGroup : IPermissionOwner {
+    public string Name { get; init; }
+    public bool IsDefaultGroup { get; set; }
+    public string Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public virtual List<Permission> Permissions { get; set; }
+}
+```
 
-![](./Diagrams/Models/img/BaseModels.svg)
+## Permission
+```csharp
+public class Permission {
+    public long Id { get; init; }
+    public string PermissionName { get; set; }
+    public DateTime GrantedAt { get; set; }
+    public virtual User User { get; set; }
+    public virtual PermissionGroup Group { get; set; }
+}
+```
 
+## Token
+```csharp
+public class Token {
+    public int Type { get; set; }
+    public Guid Content { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public virtual User Owner { get; set; }
+}
+```
 
-## API Models
-These are the models used by the REST API and the Blazor API.
+## UserLogin
+```csharp
+public class UserLogin {
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
+```
 
-![](./Diagrams/Models/img/ApiModels.svg)
+## UserRegister
+```csharp
+public class UserRegister {
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
+```
 
-
-## Database Models
-These are the models that correspond to the scheme in the Database
-
-![](./Diagrams/Models/img/DatabaseModels.svg)
+## IPermissionOwner
+```csharp
+public interface IPermissionOwner;
+```

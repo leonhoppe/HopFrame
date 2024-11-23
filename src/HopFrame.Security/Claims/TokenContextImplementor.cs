@@ -1,15 +1,13 @@
-using HopFrame.Database;
 using HopFrame.Database.Models;
+using HopFrame.Database.Repositories;
 using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Security.Claims;
 
-internal sealed class TokenContextImplementor<TDbContext>(IHttpContextAccessor accessor, TDbContext context) : ITokenContext where TDbContext : HopDbContextBase {
+internal sealed class TokenContextImplementor(IHttpContextAccessor accessor, IUserRepository users, ITokenRepository tokens) : ITokenContext {
     public bool IsAuthenticated => !string.IsNullOrEmpty(accessor.HttpContext?.User.GetAccessTokenId());
 
-    public User User => context.Users
-        .SingleOrDefault(user => user.Id == accessor.HttpContext.User.GetUserId())?
-        .ToUserModel(context);
-    
-    public Guid AccessToken => Guid.Parse(accessor.HttpContext?.User.GetAccessTokenId() ?? Guid.Empty.ToString());
+    public User User => users.GetUser(Guid.Parse(accessor.HttpContext?.User.GetUserId() ?? Guid.Empty.ToString())).GetAwaiter().GetResult();
+
+    public Token AccessToken => tokens.GetToken(accessor.HttpContext?.User.GetAccessTokenId()).GetAwaiter().GetResult();
 }

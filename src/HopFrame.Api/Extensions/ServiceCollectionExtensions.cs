@@ -27,10 +27,11 @@ public static class ServiceCollectionExtensions {
     /// <param name="services">The service provider to add the services to</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrameNoEndpoints<TDbContext>(this IServiceCollection services) where TDbContext : HopDbContextBase {
+        services.AddHopFrameRepositories<TDbContext>();
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddScoped<IAuthLogic, AuthLogic<TDbContext>>();
+        services.AddScoped<IAuthLogic, AuthLogic>();
         
-        services.AddHopFrameAuthentication<TDbContext>();
+        services.AddHopFrameAuthentication();
     }
     
 }

@@ -20,5 +20,5 @@ public interface ITokenContext {
     /// <summary>
     /// The access token the user provided
     /// </summary>
-    Guid AccessToken { get; }
+    Token AccessToken { get; }
 }

@@ -1,4 +1,4 @@
-using HopFrame.Database.Models.Entries;
+using HopFrame.Database.Models;
 using HopFrame.Security.Models;
 
 namespace HopFrame.Web.Services;
@@ -8,6 +8,6 @@ public interface IAuthService {
     Task<bool> Login(UserLogin login);
     Task Logout();
 
-    Task<TokenEntry> RefreshLogin();
+    Task<Token> RefreshLogin();
     Task<bool> IsLoggedIn();
 }

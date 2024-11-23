@@ -1,0 +1,256 @@
+@page "/administration/{url}"
+@layout AdminLayout
+@rendermode InteractiveServer
+
+@using System.ComponentModel
+@using BlazorStrap
+@using Microsoft.AspNetCore.Components.Web
+@using HopFrame.Web.Admin.Models
+@using HopFrame.Web.Admin.Providers
+@using HopFrame.Web.Pages.Administration.Layout
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using HopFrame.Web.Components.Administration
+@using BlazorStrap.V5
+@using CurrieTechnologies.Razor.SweetAlert2
+@using HopFrame.Database.Repositories
+@using HopFrame.Security.Claims
+@using HopFrame.Web.Admin
+@using HopFrame.Web.Components
+
+<PageTitle>@_pageData.Title</PageTitle>
+<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="@GenerateRedirectString()" />
+
+<AdminPageModal ReloadDelegate="Reload" @ref="_modal"/>
+
+<div class="title">
+    <h3>
+        @_pageData.Title administration
+        <span class="reload" @onclick="Reload">
+            <HopIconDisplay Type="HopIconDisplay.HopIcon.Reload"/>
+        </span>
+    </h3>
+
+    <div class="d-flex" role="search" id="search">
+        <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @oninput="TriggerSearch">
+    </div>
+    <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
+        <BSButton IsSubmit="false" Color="BSColor.Success" @onclick="Create">Add Entry</BSButton>
+    </AuthorizedView>
+</div>
+
+<BSTable IsStriped="true" IsHoverable="true" IsDark="true" Color="BSColor.Dark">
+    <BSTHead>
+        <BSTR>
+            @foreach (var prop in GetListingProperties()) {
+                <BSTD>
+                    @if (prop.Sortable) {
+                        <span class="sorter" @onclick="() => OrderBy(prop.Name)">@prop.DisplayName</span>
+                        @if (_currentSortProperty == prop.Name) {
+                            <HopIconDisplay Type="_currentSortDirection == ListSortDirection.Descending ? HopIconDisplay.HopIcon.ArrowDown : HopIconDisplay.HopIcon.ArrowUp"/>
+                        }
+                    }
+                    else {
+                        @prop.DisplayName
+                    }
+                </BSTD>
+            }
+            
+            @if (_hasEditPermission || _hasDeletePermission) {
+                <BSTD>Actions</BSTD>
+            }
+        </BSTR>
+    </BSTHead>
+
+    <BSTBody>
+        @foreach (var entry in _displayedModels) {
+            <BSTR>
+                @foreach (var prop in GetListingProperties()) {
+                    @if (prop.Bold) {
+                        <BSTD Class="bold">
+                            @GetPrintableValue(entry, prop)
+                        </BSTD>
+                    }
+                    else {
+                        <BSTD>
+                            @GetPrintableValue(entry, prop)
+                        </BSTD>
+                    }
+                }
+
+                @if (_hasEditPermission || _hasDeletePermission) {
+                    <BSTD>
+                        <BSButtonGroup>
+                            @if (_hasEditPermission) {
+                                <BSButton Color="BSColor.Warning" OnClick="() => Edit(entry)">Edit</BSButton>
+                            }
+
+                            @if (_hasDeletePermission) {
+                                <BSButton Color="BSColor.Danger" OnClick="() => Delete(entry)">Delete</BSButton>
+                            }
+                        </BSButtonGroup>
+                    </BSTD>
+                }
+            </BSTR>
+        }
+    </BSTBody>
+</BSTable>
+
+<style>
+    .bold {
+        font-weight: bold;
+    }
+</style>
+
+@inject IAdminPagesProvider Pages
+@inject IServiceProvider Provider
+@inject ITokenContext Auth
+@inject IPermissionRepository Permissions
+@inject SweetAlertService Alerts
+@inject NavigationManager Navigator
+
+@code {
+    [Parameter]
+    public string Url { get; set; }
+
+    private AdminPage _pageData;
+    private IModelProvider _modelProvider;
+    private IEnumerable<object> _modelBuffer;
+    private AdminPageModal _modal;
+
+    private bool _hasEditPermission;
+    private bool _hasDeletePermission;
+
+    private string _currentSortProperty;
+    private ListSortDirection _currentSortDirection;
+    private DateTime _lastSearch;
+    private IList<object> _displayedModels;
+
+    protected override async Task OnInitializedAsync() {
+        _pageData = Pages.LoadAdminPage(Url);
+
+        if (_pageData is null) {
+            Navigator.NavigateTo("/administration", true);
+            return;
+        }
+
+        _currentSortProperty = _pageData.DefaultSortPropertyName;
+        _currentSortDirection = _pageData.DefaultSortDirection;
+        
+        if (_pageData.RepositoryProvider is null)
+            throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
+        _modelProvider = _pageData.LoadModelProvider(Provider);
+
+        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
+        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
+        
+        await Reload();
+    }
+
+    private IList<AdminPageProperty> GetListingProperties() {
+        return _pageData.Properties
+            .Where(p => p.Ignore == false)
+            .Where(p => p.DisplayInListing)
+            .ToList();
+    }
+
+    private async Task Reload() {
+        _modelBuffer = await _modelProvider.ReadAllO();
+        _displayedModels = _modelBuffer.ToList();
+        
+        _currentSortDirection = _pageData.DefaultSortDirection;
+        OrderBy(_pageData.DefaultSortPropertyName, false);
+        StateHasChanged();
+    }
+
+    private void OrderBy(string property, bool changeDir = true) {
+        if (_currentSortProperty == property && changeDir)
+            _currentSortDirection = (ListSortDirection)(((int)_currentSortDirection + 1) % 2);
+        if (_currentSortProperty != property)
+            _currentSortDirection = ListSortDirection.Ascending;
+        
+        var prop = GetListingProperties()
+            .SingleOrDefault(p => p.Name == property);
+        var comparer = Comparer<object>.Create((x, y) => {
+            if (prop?.Type == typeof(DateTime)) {
+                DateTime dateX = (DateTime) x.GetType().GetProperty(prop.Name)?.GetValue(x)!;
+                DateTime dateY = (DateTime) y.GetType().GetProperty(prop.Name)?.GetValue(y)!;
+
+                return DateTime.Compare(dateX, dateY);
+            }
+
+            var propX = GetPrintableValue(x, prop);
+            var propY = GetPrintableValue(y, prop);
+
+            return String.CompareOrdinal(propX, propY);
+        });
+
+        _displayedModels = _currentSortDirection == ListSortDirection.Ascending ? _displayedModels.Order(comparer).ToList() : _displayedModels.OrderDescending(comparer).ToList();
+        
+        _currentSortProperty = property;
+    }
+
+    private void TriggerSearch(ChangeEventArgs e) {
+        var search = ((string)e.Value)?.Trim();
+        Search(search);
+    }
+
+    private async void Search(string search) {
+        _lastSearch = DateTime.Now;
+        await Task.Delay(500);
+        var timeSinceLastKeyPress = DateTime.Now - _lastSearch;
+        if (timeSinceLastKeyPress < TimeSpan.FromMilliseconds(500)) return;
+
+        if (string.IsNullOrWhiteSpace(search)) {
+            _displayedModels = _modelBuffer.ToList();
+        }
+        else {
+            var props = GetListingProperties();
+
+            _displayedModels = _modelBuffer
+                .Where(model => props.Any(prop => GetPrintableValue(model, prop).Contains(search)))
+                .ToList();
+        }
+        
+        OrderBy(_currentSortProperty, false);
+        StateHasChanged();
+    }
+
+    private string GetPrintableValue(object element, AdminPageProperty prop) {
+        return _modal?.MapPropertyValue(prop.GetValue(element), prop);
+    }
+
+    private async void Create() {
+        await _modal.Show(_pageData);
+    }
+
+    private async void Edit(object entry) {
+        await _modal.Show(_pageData, entry);
+    }
+
+    private async void Delete(object entry) {
+        var result = await Alerts.FireAsync(new SweetAlertOptions {
+            Title = "Are you sure?",
+            Text = "You won't be able to revert this!",
+            Icon = SweetAlertIcon.Warning,
+            ConfirmButtonText = "Yes",
+            ShowCancelButton = true,
+            ShowConfirmButton = true
+        });
+
+        if (result.IsConfirmed) {
+            await _modelProvider.DeleteO(entry);
+            await Reload();
+            
+            await Alerts.FireAsync(new SweetAlertOptions {
+                Title = "Deleted!",
+                Icon = SweetAlertIcon.Success,
+                Timer = 1500,
+                ShowConfirmButton = false
+            });
+        }
+    }
+
+    private string GenerateRedirectString() {
+        return "/administration/login?redirect=" + _pageData?.Url;
+    }
+}

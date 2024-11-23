@@ -3,10 +3,10 @@
 @using BlazorStrap
 @using BlazorStrap.V5
 @using HopFrame.Security.Claims
+@using HopFrame.Web.Admin.Providers
 @using HopFrame.Web.Services
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using HopFrame.Web.Components.Administration
-@using HopFrame.Web.Model
 @using HopFrame.Web.Components
 
 
@@ -20,23 +20,22 @@
                 <BSNavbarToggle/>
             </Toggler>
             <Content>
-                <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+                <BSNav MarginEnd="Margins.Auto" Class="mb-lg-0">
                     <BSNavItem IsActive="IsDashboardActive()" OnClick="NavigateToDashboard">Dashboard</BSNavItem>
                     
-                    @foreach (var nav in Subpages) {
-                        <AuthorizedView Permission="@nav.Permission">
-                            <BSNavItem IsActive="IsNavItemActive(nav.Url)" OnClick="() => Navigate(nav.Url)">@nav.Name</BSNavItem>
+                    @foreach (var adminPage in Pages.LoadRegisteredAdminPages()) {
+                        <AuthorizedView Permission="@adminPage.Permissions.View">
+                            <BSNavItem IsActive="IsNavItemActive(adminPage.Url)" OnClick="() => Navigate(adminPage.Url)">@adminPage.Title</BSNavItem>
                         </AuthorizedView>
                     }
                 </BSNav>
                 
-                <span style="margin-left: auto; line-height: 100%; color: white">
+                <span style="margin-left: auto; line-height: 100%; color: white; margin-right: 10px">
                     logged in as @Context?.User.Username
                 </span>
-                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark">
+                <BSButton DataId="logout" Size="Size.ExtraSmall" OnClick="Logout" Color="BSColor.Dark" style="display: grid; align-items: center">
                     <HopIconDisplay Type="HopIconDisplay.HopIcon.Logout"/>
                 </BSButton>
-                <BSTooltip Placement="Placement.Bottom" Target="logout" ContentAlwaysRendered="false">logout</BSTooltip>
             </Content>
         </BSCollapse>
     </BSContainer>
@@ -46,25 +45,11 @@
 @inject NavigationManager Navigator
 @inject ITokenContext Context
 @inject IAuthService Auth
+@inject IAdminPagesProvider Pages
 
 @code {
-    public static IList<NavigationItem> Subpages = new List<NavigationItem> {
-        new () {
-            Name = "Users",
-            Url = "administration/users",
-            Description = "On this page you can manage all user accounts.",
-            Permission = Security.AdminPermissions.ViewUsers
-        },
-        new () {
-            Name = "Groups",
-            Url = "administration/groups",
-            Description = "On this page you can view, create, edit and delete permission groups.",
-            Permission = Security.AdminPermissions.ViewGroups
-        }
-    };
-
     private bool IsNavItemActive(string element) {
-        return Navigator.Uri.Contains(element);
+        return Navigator.Uri.TrimEnd('/').EndsWith(element);
     }
 
     private bool IsDashboardActive() {
@@ -72,14 +57,21 @@
     }
 
     private void NavigateToDashboard() {
-        Navigate("administration");
+        Navigator.NavigateTo("administration", true);
     }
 
     private void Navigate(string url) {
-        Navigator.NavigateTo(url, true);
+        Navigator.NavigateTo("administration/" + url, true);
     }
 
     private void Logout() {
-        Navigator.NavigateTo("administration/login", true);
+        var redirectString = "";
+
+        if (!Navigator.Uri.EndsWith("administration") && !Navigator.Uri.EndsWith("administration/")) {
+            var parts = Navigator.Uri.Split("administration/");
+            redirectString = "?redirect=" + parts.Last();
+        }
+        
+        Navigator.NavigateTo("administration/login" + redirectString, true);
     }
 }
