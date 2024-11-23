@@ -28,11 +28,11 @@ public class AdminContext : AdminPagesContext {
             .Parser<Employee>((model, e) => model.AddressId = e.EmployeeId);
 
         generator.Page<Employee>()
-            .ConfigureRepository<EmployeeProvider>()
+            .ConfigureProvider<EmployeeProvider>()
             .ListingProperty(e => e.Name);
 
         generator.Page<Address>()
-            .ConfigureRepository<AddressProvider>()
+            .ConfigureProvider<AddressProvider>()
             .ListingProperty(a => a.City);
     }
 }

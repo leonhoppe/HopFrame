@@ -2,9 +2,9 @@ using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Web.Admin;
 
-namespace HopFrame.Web.Repositories;
+namespace HopFrame.Web.Provider;
 
-internal sealed class UserProvider(IUserRepository repo) : ModelRepository<User> {
+internal sealed class UserProvider(IUserRepository repo) : ModelProvider<User> {
     public override async Task<IEnumerable<User>> ReadAll() {
         return await repo.GetUsers();
     }

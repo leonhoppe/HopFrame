@@ -1,6 +1,6 @@
 namespace HopFrame.Web.Admin;
 
-public abstract class ModelRepository<TModel> : IModelRepository {
+public abstract class ModelProvider<TModel> : IModelProvider {
     public abstract Task<IEnumerable<TModel>> ReadAll();
     public abstract Task<TModel> Create(TModel model);
     public abstract Task<TModel> Update(TModel model);
@@ -25,7 +25,7 @@ public abstract class ModelRepository<TModel> : IModelRepository {
     }
 }
 
-public interface IModelRepository {
+public interface IModelProvider {
     Task<IEnumerable<object>> ReadAllO();
     Task<object> CreateO(object model);
     Task<object> UpdateO(object model);

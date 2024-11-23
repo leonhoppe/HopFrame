@@ -4,7 +4,7 @@ using RestApiTest.Models;
 
 namespace FrontendTest.Providers;
 
-public class EmployeeProvider(DatabaseContext context) : ModelRepository<Employee> {
+public class EmployeeProvider(DatabaseContext context) : ModelProvider<Employee> {
     
     public override async Task<IEnumerable<Employee>> ReadAll() {
         return await context.Employees

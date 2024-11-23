@@ -113,7 +113,7 @@
     public string Url { get; set; }
 
     private AdminPage _pageData;
-    private IModelRepository _modelRepository;
+    private IModelProvider _modelProvider;
     private IEnumerable<object> _modelBuffer;
     private AdminPageModal _modal;
 
@@ -138,7 +138,7 @@
         
         if (_pageData.RepositoryProvider is null)
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
-        _modelRepository = _pageData.LoadModelRepository(Provider);
+        _modelProvider = _pageData.LoadModelProvider(Provider);
 
         _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
         _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
@@ -154,7 +154,7 @@
     }
 
     private async Task Reload() {
-        _modelBuffer = await _modelRepository.ReadAllO();
+        _modelBuffer = await _modelProvider.ReadAllO();
         _displayedModels = _modelBuffer.ToList();
         
         _currentSortDirection = _pageData.DefaultSortDirection;
@@ -238,7 +238,7 @@
         });
 
         if (result.IsConfirmed) {
-            await _modelRepository.DeleteO(entry);
+            await _modelProvider.DeleteO(entry);
             await Reload();
             
             await Alerts.FireAsync(new SweetAlertOptions {

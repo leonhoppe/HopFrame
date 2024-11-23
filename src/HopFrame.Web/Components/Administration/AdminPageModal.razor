@@ -128,7 +128,7 @@
     private Dictionary<AdminPageProperty, FieldIdentifier> _validationIdentifiers;
     private IDictionary<AdminPageProperty, object> _values;
     private Dictionary<AdminPageProperty, object[]> _selectorValues;
-    private IModelRepository _repository;
+    private IModelProvider _provider;
 
     private AdminPage _currentPage;
     private object _entry;
@@ -143,7 +143,7 @@
         _currentPage = page;
         _entry = entryToEdit;
         _isEdit = entryToEdit is not null;
-        _repository = _currentPage.LoadModelRepository(Provider);
+        _provider = _currentPage.LoadModelProvider(Provider);
 
         _entry ??= Activator.CreateInstance(_currentPage.ModelType);
         _context = new EditContext(_entry);
@@ -246,7 +246,7 @@
         foreach (var value in _values) {
             if (value.Key.Unique) {
                 if (value.Value == value.Key.GetValue(_entry)) continue;
-                var data = _repository!.ReadAllO().GetAwaiter().GetResult();
+                var data = _provider!.ReadAllO().GetAwaiter().GetResult();
                 foreach (var entry in data) {
                     var other = value.Key.GetValue(entry);
                     if (!other.Equals(value.Value)) continue;
@@ -293,7 +293,7 @@
             throw new ArgumentException($"'{property.Name}' cannot be a selector because a admin page for '{type.Name}' does not exist!");
         }
 
-        var repo = page.LoadModelRepository(Provider);
+        var repo = page.LoadModelProvider(Provider);
         var objects = (await repo!.ReadAllO()).ToArray();
         _selectorValues[property] = objects;
 
@@ -346,7 +346,7 @@
         }
 
         if (!_isEdit) {
-            await _repository.CreateO(_entry);
+            await _provider.CreateO(_entry);
             
             Alerts.FireAsync(new SweetAlertOptions {
                 Title = "New entry added!",
@@ -356,7 +356,7 @@
             });
         }
         else {
-            await _repository.UpdateO(_entry);
+            await _provider.UpdateO(_entry);
             
             Alerts.FireAsync(new SweetAlertOptions {
                 Title = "Entry updated!",
