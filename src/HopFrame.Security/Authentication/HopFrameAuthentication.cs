@@ -17,7 +17,6 @@ public class HopFrameAuthentication(
     UrlEncoder encoder,
     ISystemClock clock,
     ITokenRepository tokens,
-    IUserRepository users,
     IPermissionRepository perms)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock) {
 
