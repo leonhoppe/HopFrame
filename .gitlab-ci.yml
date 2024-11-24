@@ -21,7 +21,7 @@ build:
 test:
   stage: test
   script:
-    - dotnet test --no-restore --verbosity normal
+    - dotnet test --verbosity normal
 
 publish:
   stage: publish
