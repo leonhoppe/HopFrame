@@ -2,17 +2,16 @@ using HopFrame.Database;
 using Microsoft.EntityFrameworkCore;
 using RestApiTest.Models;
 
-namespace RestApiTest;
+namespace FrontendTest;
 
 public class DatabaseContext : HopDbContextBase {
-
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Address> Addresses { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder.UseSqlite(@"Data Source=C:\Users\leon\Documents\Projekte\HopFrame\test\RestApiTest\bin\Debug\net8.0\test.db;Mode=ReadWrite;");
+        optionsBuilder.UseSqlite(@"Data Source=C:\Users\leon\Documents\Projekte\HopFrame\testing\RestApiTest\bin\Debug\net8.0\test.db;Mode=ReadWrite;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
