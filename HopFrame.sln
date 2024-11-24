@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{EEA2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1D98E5DE-CB8B-4C1C-A319-D49AC137441A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Database.Tests", "HopFrame.Database.Tests\HopFrame.Database.Tests.csproj", "{1CAAC943-B8FE-48DD-9712-92699647DE18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Database.Tests", "tests\HopFrame.Database.Tests\HopFrame.Database.Tests.csproj", "{1CAAC943-B8FE-48DD-9712-92699647DE18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

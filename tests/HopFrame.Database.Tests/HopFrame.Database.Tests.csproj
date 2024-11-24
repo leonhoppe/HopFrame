@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\HopFrame.Database\HopFrame.Database.csproj" />
       <ProjectReference Include="..\src\HopFrame.Database\HopFrame.Database.csproj" />
     </ItemGroup>
 
