@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HopFrame.Api.Logic.Implementation;
 
-public class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic {
+internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic {
     
     public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
         var user = await users.GetUserByEmail(login.Email);
@@ -38,7 +38,7 @@ public class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenCon
 
     public async Task<LogicResult<SingleValueResult<string>>> Register(UserRegister register) {
         if (register.Password.Length < 8)
-            return LogicResult<SingleValueResult<string>>.Conflict("Password needs to be at least 8 characters long");
+            return LogicResult<SingleValueResult<string>>.BadRequest("Password needs to be at least 8 characters long");
 
         var allUsers = await users.GetUsers();
         if (allUsers.Any(user => user.Username == register.Username || user.Email == register.Email))
@@ -71,18 +71,18 @@ public class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenCon
         var refreshToken = accessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
         
         if (string.IsNullOrEmpty(refreshToken))
-            return LogicResult<SingleValueResult<string>>.Conflict("Refresh token not provided");
+            return LogicResult<SingleValueResult<string>>.BadRequest("Refresh token not provided");
 
         var token = await tokens.GetToken(refreshToken);
-
-        if (token.Type != Token.RefreshTokenType)
-            return LogicResult<SingleValueResult<string>>.BadRequest("The provided token is not a refresh token");
 
         if (token is null)
             return LogicResult<SingleValueResult<string>>.NotFound("Refresh token not valid");
 
+        if (token.Type != Token.RefreshTokenType)
+            return LogicResult<SingleValueResult<string>>.Conflict("The provided token is not a refresh token");
+
         if (token.CreatedAt + HopFrameAuthentication.RefreshTokenTime < DateTime.Now)
-            return LogicResult<SingleValueResult<string>>.Conflict("Refresh token is expired");
+            return LogicResult<SingleValueResult<string>>.Forbidden("Refresh token is expired");
 
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
