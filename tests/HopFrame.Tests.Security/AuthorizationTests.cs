@@ -2,14 +2,14 @@ using System.Security.Claims;
 using HopFrame.Security.Authentication;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 
-namespace HopFrame.Security.Tests;
+namespace HopFrame.Tests.Security;
 
 public class AuthorizationTests {
 

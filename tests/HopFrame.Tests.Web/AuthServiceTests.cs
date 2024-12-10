@@ -1,14 +1,14 @@
-using HopFrame.Api.Tests.Extensions;
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
+using HopFrame.Tests.Web.Extensions;
 using HopFrame.Web.Services;
 using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace HopFrame.Web.Tests;
+namespace HopFrame.Tests.Web;
 
 public class AuthServiceTests {
     private readonly Guid _refreshToken = Guid.NewGuid();

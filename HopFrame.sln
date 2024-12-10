@@ -20,13 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{EEA2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1D98E5DE-CB8B-4C1C-A319-D49AC137441A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Database.Tests", "tests\HopFrame.Database.Tests\HopFrame.Database.Tests.csproj", "{1CAAC943-B8FE-48DD-9712-92699647DE18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Tests.Database", "tests\HopFrame.Tests.Database\HopFrame.Tests.Database.csproj", "{1CAAC943-B8FE-48DD-9712-92699647DE18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Security.Tests", "tests\HopFrame.Security.Tests\HopFrame.Security.Tests.csproj", "{6747753A-6059-48F1-B779-D73765A373A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Tests.Security", "tests\HopFrame.Tests.Security\HopFrame.Tests.Security.csproj", "{6747753A-6059-48F1-B779-D73765A373A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Api.Tests", "tests\HopFrame.Api.Tests\HopFrame.Api.Tests.csproj", "{25DE1510-47E5-46FF-89A4-B9F99542218E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Tests.Api", "tests\HopFrame.Tests.Api\HopFrame.Tests.Api.csproj", "{25DE1510-47E5-46FF-89A4-B9F99542218E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Web.Tests", "tests\HopFrame.Web.Tests\HopFrame.Web.Tests.csproj", "{566C13B9-4ECA-48C4-8D02-FEB6CDF523E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Tests.Web", "tests\HopFrame.Tests.Web\HopFrame.Tests.Web.csproj", "{566C13B9-4ECA-48C4-8D02-FEB6CDF523E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

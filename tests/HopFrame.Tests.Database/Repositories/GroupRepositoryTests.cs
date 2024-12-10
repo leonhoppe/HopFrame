@@ -1,9 +1,9 @@
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Database.Repositories.Implementation;
-using HopFrame.Database.Tests.Data;
+using HopFrame.Tests.Database.Data;
 
-namespace HopFrame.Database.Tests.Repositories;
+namespace HopFrame.Tests.Database.Repositories;
 
 public class GroupRepositoryTests {
 

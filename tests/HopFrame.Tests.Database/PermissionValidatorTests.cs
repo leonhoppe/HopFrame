@@ -1,4 +1,6 @@
-namespace HopFrame.Database.Tests;
+using HopFrame.Database;
+
+namespace HopFrame.Tests.Database;
 
 public class PermissionValidatorTests {
 

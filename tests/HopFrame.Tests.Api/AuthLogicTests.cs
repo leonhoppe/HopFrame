@@ -3,7 +3,7 @@ using System.Security.Claims;
 using HopFrame.Api.Logic;
 using HopFrame.Api.Logic.Implementation;
 using HopFrame.Api.Models;
-using HopFrame.Api.Tests.Extensions;
+using HopFrame.Tests.Api.Extensions;
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Authentication;
@@ -12,7 +12,7 @@ using HopFrame.Security.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace HopFrame.Api.Tests;
+namespace HopFrame.Tests.Api;
 
 public class AuthLogicTests {
 

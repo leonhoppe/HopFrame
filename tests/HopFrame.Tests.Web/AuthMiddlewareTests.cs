@@ -2,11 +2,12 @@ using System.Security.Claims;
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Claims;
+using HopFrame.Web;
 using HopFrame.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace HopFrame.Web.Tests;
+namespace HopFrame.Tests.Web;
 
 public class AuthMiddlewareTests {
     private readonly RequestDelegate _delegate = _ => Task.CompletedTask;

@@ -1,6 +1,7 @@
+using HopFrame.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace HopFrame.Database.Tests.Data;
+namespace HopFrame.Tests.Database.Data;
 
 public class DatabaseContext : HopDbContextBase {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

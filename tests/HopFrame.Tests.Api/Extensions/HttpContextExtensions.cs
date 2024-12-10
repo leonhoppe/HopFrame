@@ -1,7 +1,7 @@
 using System.Web;
 using Microsoft.AspNetCore.Http;
 
-namespace HopFrame.Api.Tests.Extensions;
+namespace HopFrame.Tests.Api.Extensions;
 
 internal static class HttpContextExtensions {
     /// <summary>Extracts the partial cookie value from the header section.</summary>

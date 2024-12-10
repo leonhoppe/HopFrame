@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace HopFrame.Security.Tests;
+namespace HopFrame.Tests.Security;
 
 public class AuthenticationTests {
 
