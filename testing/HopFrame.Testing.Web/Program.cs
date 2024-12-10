@@ -1,5 +1,5 @@
-using FrontendTest;
-using FrontendTest.Components;
+using HopFrame.Testing.Web;
+using HopFrame.Testing.Web.Components;
 using HopFrame.Web;
 using HopFrame.Web.Admin;
 

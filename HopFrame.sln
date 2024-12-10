@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Database", "src\HopFrame.Database\HopFrame.Database.csproj", "{003120AE-F38B-4632-8497-BE4505189627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApiTest", "testing\RestApiTest\RestApiTest.csproj", "{921159CE-AF75-44C3-A3F9-6B9B1A4E85CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Testing.Api", "testing\HopFrame.Testing.Api\HopFrame.Testing.Api.csproj", "{921159CE-AF75-44C3-A3F9-6B9B1A4E85CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Security", "src\HopFrame.Security\HopFrame.Security.csproj", "{7F82E1C6-4A42-4337-9E03-2EE6429D004F}"
 EndProject
@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Api", "src\HopFram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Web", "src\HopFrame.Web\HopFrame.Web.csproj", "{3BE585BC-13A5-4BE4-A806-E9EC2D825956}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontendTest", "testing\FrontendTest\FrontendTest.csproj", "{8F983A37-63CF-48D5-988D-58B78EF8AECD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Testing.Web", "testing\HopFrame.Testing.Web\HopFrame.Testing.Web.csproj", "{8F983A37-63CF-48D5-988D-58B78EF8AECD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopFrame.Web.Admin", "src\HopFrame.Web.Admin\HopFrame.Web.Admin.csproj", "{02D9F10A-664A-4EF7-BF19-310C26FF4DEB}"
 EndProject

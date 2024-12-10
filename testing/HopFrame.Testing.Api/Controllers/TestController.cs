@@ -2,11 +2,11 @@ using HopFrame.Api.Logic;
 using HopFrame.Database.Models;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
+using HopFrame.Testing.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RestApiTest.Models;
 
-namespace RestApiTest.Controllers;
+namespace HopFrame.Testing.Api.Controllers;
 
 [ApiController]
 [Route("test")]

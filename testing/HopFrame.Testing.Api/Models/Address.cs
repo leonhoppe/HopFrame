@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace RestApiTest.Models;
+namespace HopFrame.Testing.Api.Models;
 
 public class Address {
     [ForeignKey("Employee")]

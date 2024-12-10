@@ -1,8 +1,8 @@
 using HopFrame.Web.Admin;
 using Microsoft.EntityFrameworkCore;
-using RestApiTest.Models;
+using HopFrame.Testing.Api.Models;
 
-namespace FrontendTest.Providers;
+namespace HopFrame.Testing.Web.Providers;
 
 public class EmployeeProvider(DatabaseContext context) : ModelProvider<Employee> {
     

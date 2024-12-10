@@ -1,10 +1,10 @@
-using FrontendTest.Providers;
 using HopFrame.Web.Admin;
 using HopFrame.Web.Admin.Generators;
 using HopFrame.Web.Admin.Models;
-using RestApiTest.Models;
+using HopFrame.Testing.Api.Models;
+using HopFrame.Testing.Web.Providers;
 
-namespace FrontendTest;
+namespace HopFrame.Testing.Web;
 
 public class AdminContext : AdminPagesContext {
 
