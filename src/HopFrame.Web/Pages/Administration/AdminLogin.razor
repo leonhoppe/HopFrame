@@ -43,7 +43,7 @@
     private UserLogin UserLogin { get; set; }
     
     [SupplyParameterFromQuery(Name = "redirect")]
-    private string RedirectAfter { get; set; }
+    public string RedirectAfter { get; set; }
 
     private const string DefaultRedirect = "/administration";
 
