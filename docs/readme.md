@@ -8,6 +8,7 @@ The HopFrame comes in two variations, you can eiter only use the backend with so
 - [Repositories](./repositories.md)
 - [Base Models](./models.md)
 - [Authentication](./authentication.md)
+- [Permissions](./permissions.md)
 
 ## HopFrame Web API
 

@@ -24,7 +24,7 @@
                     <BSNavItem IsActive="IsDashboardActive()" OnClick="NavigateToDashboard">Dashboard</BSNavItem>
                     
                     @foreach (var adminPage in Pages.LoadRegisteredAdminPages()) {
-                        <AuthorizedView Permission="@adminPage.Permissions.View">
+                        <AuthorizedView Permission="@adminPage.Permissions.Read">
                             <BSNavItem IsActive="IsNavItemActive(adminPage.Url)" OnClick="() => Navigate(adminPage.Url)">@adminPage.Title</BSNavItem>
                         </AuthorizedView>
                     }

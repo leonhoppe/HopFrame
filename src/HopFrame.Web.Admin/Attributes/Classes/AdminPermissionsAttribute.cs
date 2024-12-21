@@ -8,6 +8,6 @@ public sealed class AdminPermissionsAttribute(string view = null, string create 
         Create = create,
         Update = update,
         Delete = delete,
-        View = view
+        Read = view
     };
 }

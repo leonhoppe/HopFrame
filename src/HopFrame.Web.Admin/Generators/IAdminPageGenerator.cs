@@ -24,7 +24,7 @@ public interface IAdminPageGenerator<TModel> {
     /// </summary>
     /// <param name="permission">the specified permission</param>
     /// <returns></returns>
-    IAdminPageGenerator<TModel> ViewPermission(string permission);
+    IAdminPageGenerator<TModel> ReadPermission(string permission);
     
     /// <summary>
     /// Sets the permission needed to create a new Entry

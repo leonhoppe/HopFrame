@@ -1,3 +1,4 @@
+using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Options;
 using Microsoft.AspNetCore.Authentication;
@@ -20,6 +21,7 @@ public static class HopFrameAuthenticationExtensions {
         service.AddScoped<ITokenContext, TokenContextImplementor>();
         
         service.AddOptionsFromConfiguration<HopFrameAuthenticationOptions>(configuration);
+        service.AddOptionsFromConfiguration<AdminPermissionOptions>(configuration);
         
         service.AddAuthentication(HopFrameAuthentication.SchemeName).AddScheme<AuthenticationSchemeOptions, HopFrameAuthentication>(HopFrameAuthentication.SchemeName, _ => {});
         service.AddAuthorization();

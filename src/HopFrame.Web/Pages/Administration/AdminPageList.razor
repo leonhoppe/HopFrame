@@ -18,7 +18,7 @@
 @using HopFrame.Web.Components
 
 <PageTitle>@_pageData.Title</PageTitle>
-<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="@GenerateRedirectString()" />
+<AuthorizedView Permission="@_pageData.Permissions.Read" RedirectIfUnauthorized="@GenerateRedirectString()" />
 
 <AdminPageModal ReloadDelegate="Reload" @ref="_modal"/>
 
