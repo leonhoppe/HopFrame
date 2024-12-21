@@ -22,11 +22,11 @@ public sealed class AuthMiddleware(IAuthService auth, IPermissionRepository perm
             }
             
             var claims = new List<Claim> {
-                new(HopFrameClaimTypes.AccessTokenId, token.Content.ToString()),
+                new(HopFrameClaimTypes.AccessTokenId, token.TokenId.ToString()),
                 new(HopFrameClaimTypes.UserId, token.Owner.Id.ToString())
             };
 
-            var permissions = await perms.GetFullPermissions(token.Owner);
+            var permissions = await perms.GetFullPermissions(token);
             claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
             
             context.User.AddIdentity(new ClaimsIdentity(claims, HopFrameAuthentication.SchemeName));

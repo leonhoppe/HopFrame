@@ -47,13 +47,13 @@ public class AuthServiceTests {
         tokens
             .Setup(t => t.CreateToken(It.Is<int>(t => t == Token.RefreshTokenType), It.IsAny<User>()))
             .ReturnsAsync(new Token {
-                Content = _refreshToken,
+                TokenId = _refreshToken,
                 Type = Token.RefreshTokenType
             });
         tokens
             .Setup(t => t.CreateToken(It.Is<int>(t => t == Token.AccessTokenType), It.IsAny<User>()))
             .ReturnsAsync(new Token {
-                Content = _accessToken,
+                TokenId = _accessToken,
                 Type = Token.AccessTokenType
             });
         tokens
@@ -171,18 +171,18 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.RefreshTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
-        var (service, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (service, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await service.RefreshLogin();
         
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(_accessToken, result.Content);
+        Assert.Equal(_accessToken, result.TokenId);
         Assert.Equal(_accessToken.ToString(), context.Response.Headers.FindCookie(ITokenContext.AccessTokenType));
     }
     
@@ -217,11 +217,11 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.AccessTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
-        var (service, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (service, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await service.RefreshLogin();
@@ -236,11 +236,11 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.RefreshTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.MinValue,
             Owner = CreateDummyUser()
         };
-        var (service, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (service, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await service.RefreshLogin();
@@ -255,7 +255,7 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.AccessTokenType,
-            Content = _accessToken,
+            TokenId = _accessToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
@@ -285,7 +285,7 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.RefreshTokenType,
-            Content = _accessToken,
+            TokenId = _accessToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
@@ -303,7 +303,7 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.AccessTokenType,
-            Content = _accessToken,
+            TokenId = _accessToken,
             CreatedAt = DateTime.MinValue,
             Owner = CreateDummyUser()
         };
@@ -321,7 +321,7 @@ public class AuthServiceTests {
         // Arrange
         var token = new Token {
             Type = Token.AccessTokenType,
-            Content = _accessToken,
+            TokenId = _accessToken,
             CreatedAt = DateTime.Now,
             Owner = null
         };

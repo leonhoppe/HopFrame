@@ -140,8 +140,8 @@
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
         _modelProvider = _pageData.LoadModelProvider(Provider);
 
-        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
-        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
+        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.AccessToken, _pageData.Permissions.Update);
+        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.AccessToken, _pageData.Permissions.Delete);
         
         await Reload();
     }

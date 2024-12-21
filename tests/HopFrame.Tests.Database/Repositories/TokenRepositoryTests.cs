@@ -14,7 +14,7 @@ public class TokenRepositoryTests {
 
         for (int i = 0; i < count; i++) {
             await context.Tokens.AddAsync(new() {
-                Content = Guid.NewGuid(),
+                TokenId = Guid.NewGuid(),
                 Owner = CreateTestUser(),
                 Type = Token.AccessTokenType
             });
@@ -37,7 +37,7 @@ public class TokenRepositoryTests {
         var token = context.Tokens.First();
         
         // Act
-        var result = await repo.GetToken(token.Content.ToString());
+        var result = await repo.GetToken(token.TokenId.ToString());
         
         // Assert
         Assert.Equal(token, result);
@@ -64,12 +64,12 @@ public class TokenRepositoryTests {
         var user = CreateTestUser();
         await context.Tokens.AddRangeAsync(new List<Token> {
             new() {
-                Content = Guid.NewGuid(),
+                TokenId = Guid.NewGuid(),
                 Owner = user,
                 Type = Token.AccessTokenType
             },
             new() {
-                Content = Guid.NewGuid(),
+                TokenId = Guid.NewGuid(),
                 Owner = user,
                 Type = Token.RefreshTokenType
             }

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -33,7 +34,10 @@ public class HopFrameAuthentication(
         var tokenEntry = await tokens.GetToken(accessToken);
         
         if (tokenEntry is null) return AuthenticateResult.Fail("The provided Access Token does not exist");
-        if (tokenEntry.CreatedAt + tokenOptions.Value.AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
+
+        if (tokenEntry.Type == Token.ApiTokenType) {
+            if (tokenEntry.CreatedAt < DateTime.Now) return AuthenticateResult.Fail("The provided API Token is expired");
+        }else if (tokenEntry.CreatedAt + tokenOptions.Value.AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
         
         if (tokenEntry.Owner is null)
             return AuthenticateResult.Fail("The provided Access Token does not match any user");
@@ -43,7 +47,7 @@ public class HopFrameAuthentication(
             new(HopFrameClaimTypes.UserId, tokenEntry.Owner.Id.ToString())
         };
 
-        var permissions = await perms.GetFullPermissions(tokenEntry.Owner);
+        var permissions  = await perms.GetFullPermissions(tokenEntry);
         claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
 
         var principal = new ClaimsPrincipal();

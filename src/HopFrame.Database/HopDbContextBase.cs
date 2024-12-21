@@ -30,5 +30,10 @@ public abstract class HopDbContextBase : DbContext {
             .HasMany(g => g.Permissions)
             .WithOne(p => p.Group)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Token>()
+            .HasMany(t => t.Permissions)
+            .WithOne(t => t.Token)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

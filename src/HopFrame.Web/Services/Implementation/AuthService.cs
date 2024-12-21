@@ -28,12 +28,12 @@ internal class AuthService(
         var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
@@ -49,12 +49,12 @@ internal class AuthService(
         var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
@@ -83,7 +83,7 @@ internal class AuthService(
 
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
-        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true

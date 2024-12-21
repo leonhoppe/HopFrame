@@ -23,7 +23,7 @@ public class AuthMiddlewareTests {
 
         var perms = new Mock<IPermissionRepository>();
         perms
-            .Setup(p => p.GetFullPermissions(It.Is<User>(u => newToken.Owner.Id == u.Id)))
+            .Setup(p => p.GetFullPermissions(It.Is<Token>(u => newToken.Owner.Id == u.Owner.Id)))
             .ReturnsAsync(CreateDummyUser().Permissions.Select(p => p.PermissionName).ToList);
 
         return new AuthMiddleware(auth.Object, perms.Object);
@@ -61,7 +61,7 @@ public class AuthMiddlewareTests {
     public async Task InvokeAsync_With_InvalidLoginValidToken_Should_Succeed() {
         // Arrange
         var token = new Token {
-            Content = Guid.NewGuid(),
+            TokenId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
             Type = Token.AccessTokenType,
             Owner = CreateDummyUser()
@@ -74,7 +74,7 @@ public class AuthMiddlewareTests {
         
         // Assert
         Assert.Equal(token.Owner.Id.ToString(), context.User.FindFirstValue(HopFrameClaimTypes.UserId));
-        Assert.Equal(token.Content.ToString(), context.User.FindFirstValue(HopFrameClaimTypes.AccessTokenId));
+        Assert.Equal(token.TokenId.ToString(), context.User.FindFirstValue(HopFrameClaimTypes.AccessTokenId));
         Assert.Equal(token.Owner.Permissions.First().PermissionName, context.User.FindFirstValue(HopFrameClaimTypes.Permission));
     }
     
