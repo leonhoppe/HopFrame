@@ -28,6 +28,7 @@ by configuring your configuration to load these.
 You can specify `Seconds`, `Minutes`, `Hours` and `Days` for either of the two token types.
 These get combined to a single time span.
 
+#### Configuration example
 ```json
   "HopFrame": {
     "Authentication": {
@@ -40,4 +41,11 @@ These get combined to a single time span.
       }
     }
   }
+```
+
+#### Environment variables example
+```dotenv
+HOPFRAME__AUTHENTICATION__ACCESSTOKEN__MINUTES=30
+HOPFRAME__AUTHENTICATION__REFRESHTOKEN__DAYS=10
+HOPFRAME__AUTHENTICATION__REFRESHTOKEN__HOURS=5
 ```
