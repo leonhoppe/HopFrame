@@ -1,5 +1,6 @@
 using HopFrame.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace HopFrame.Database.Repositories.Implementation;
 

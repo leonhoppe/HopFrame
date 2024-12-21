@@ -1,3 +1,6 @@
+using HopFrame.Security.Authentication.OpenID;
+using HopFrame.Security.Authentication.OpenID.Implementation;
+using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Options;
@@ -20,8 +23,12 @@ public static class HopFrameAuthenticationExtensions {
         service.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         service.AddScoped<ITokenContext, TokenContextImplementor>();
         
+        service.AddHttpClient();
+        service.AddScoped<IOpenIdAccessor, OpenIdAccessor>();
+        
         service.AddOptionsFromConfiguration<HopFrameAuthenticationOptions>(configuration);
         service.AddOptionsFromConfiguration<AdminPermissionOptions>(configuration);
+        service.AddOptionsFromConfiguration<OpenIdOptions>(configuration);
         
         service.AddAuthentication(HopFrameAuthentication.SchemeName).AddScheme<AuthenticationSchemeOptions, HopFrameAuthentication>(HopFrameAuthentication.SchemeName, _ => {});
         service.AddAuthorization();

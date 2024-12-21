@@ -15,8 +15,8 @@ namespace HopFrame.Testing.Api.Controllers;
 public class TestController(ITokenContext userContext, DatabaseContext context, ITokenRepository tokens, IPermissionRepository permissions) : ControllerBase {
 
     [HttpGet("permissions"), Authorized]
-    public ActionResult<IList<string>> Permissions() {
-        return new ActionResult<IList<string>>(userContext.ContextualPermissions);
+    public async Task<ActionResult<IList<string>>> Permissions() {
+        return new ActionResult<IList<string>>(await permissions.GetFullPermissions(userContext.AccessToken));
     }
 
     [HttpGet("generate")]
