@@ -69,6 +69,10 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
     
     public async Task<IList<string>> GetFullPermissions(IPermissionOwner owner) {
         var permissions = new List<string>();
+
+        if (owner is Token token && token.Type != Token.ApiTokenType) {
+            owner = token.Owner;
+        }
         
         if (owner is User user) {
             var perms = await context.Permissions
@@ -86,11 +90,11 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
                 .ToListAsync();
             
             permissions.AddRange(perms.Select(p => p.PermissionName));
-        }else if (owner is Token token) {
+        }else if (owner is Token apiToken) {
             var perms = await context.Permissions
                 .Include(p => p.Token)
                 .Where(p => p.Token != null)
-                .Where(p =>p.Token.TokenId == token.TokenId)
+                .Where(p =>p.Token.TokenId == apiToken.TokenId)
                 .ToListAsync();
             
             permissions.AddRange(perms.Select(p => p.PermissionName));

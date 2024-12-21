@@ -321,7 +321,7 @@
 
     private async void Save() {
         if (_isEdit && _currentPage.Permissions.Update is not null) {
-            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Update)) {
+            if (!await Permissions.HasPermission(Auth.AccessToken, _currentPage.Permissions.Update)) {
                 await Alerts.FireAsync(new SweetAlertOptions {
                     Title = "Unauthorized!",
                     Text = "You don't have the required permissions to edit an entry!",
@@ -330,7 +330,7 @@
                 return;
             }
         }else if (_currentPage.Permissions.Create is not null) {
-            if (!await Permissions.HasPermission(Auth.User, _currentPage.Permissions.Create)) {
+            if (!await Permissions.HasPermission(Auth.AccessToken, _currentPage.Permissions.Create)) {
                 await Alerts.FireAsync(new SweetAlertOptions {
                     Title = "Unauthorized!",
                     Text = "You don't have the required permissions to add an entry!",

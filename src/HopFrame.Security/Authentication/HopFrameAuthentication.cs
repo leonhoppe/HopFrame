@@ -47,15 +47,7 @@ public class HopFrameAuthentication(
             new(HopFrameClaimTypes.UserId, tokenEntry.Owner.Id.ToString())
         };
 
-        IList<string> permissions;
-
-        if (tokenEntry.Type == Token.ApiTokenType) {
-            permissions = await perms.GetFullPermissions(tokenEntry);
-        }
-        else {
-            permissions = await perms.GetFullPermissions(tokenEntry.Owner);
-        }
-        
+        var permissions  = await perms.GetFullPermissions(tokenEntry);
         claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
 
         var principal = new ClaimsPrincipal();

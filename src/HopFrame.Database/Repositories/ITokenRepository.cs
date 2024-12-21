@@ -6,5 +6,6 @@ public interface ITokenRepository {
     Task<Token> GetToken(string content);
     Task<Token> CreateToken(int type, User owner);
     Task DeleteUserTokens(User owner);
+    Task DeleteToken(Token token);
     Task<Token> CreateApiToken(User owner, DateTime expirationDate);
 }

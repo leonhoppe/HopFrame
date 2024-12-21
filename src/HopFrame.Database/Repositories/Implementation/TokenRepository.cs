@@ -39,6 +39,11 @@ internal sealed class TokenRepository<TDbContext>(TDbContext context) : ITokenRe
         await context.SaveChangesAsync();
     }
 
+    public async Task DeleteToken(Token token) {
+        context.Tokens.Remove(token);
+        await context.SaveChangesAsync();
+    }
+
     public async Task<Token> CreateApiToken(User owner, DateTime expirationDate) {
         var token = new Token {
             CreatedAt = expirationDate,
