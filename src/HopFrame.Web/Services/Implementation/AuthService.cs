@@ -91,15 +91,12 @@ internal class AuthService(
     }
 
     public async Task<bool> IsLoggedIn() {
-        var accessToken = httpAccessor.HttpContext?.Request.Cookies[ITokenContext.AccessTokenType];
-        if (string.IsNullOrEmpty(accessToken)) return false;
-
-        var tokenEntry = await tokens.GetToken(accessToken);
+        var accessToken = context.AccessToken;
         
-        if (tokenEntry is null) return false;
-        if (tokenEntry.Type != Token.AccessTokenType) return false;
-        if (tokenEntry.CreatedAt + HopFrameAuthentication.AccessTokenTime < DateTime.Now) return false;
-        if (tokenEntry.Owner is null) return false;
+        if (accessToken is null) return false;
+        if (accessToken.Type != Token.AccessTokenType) return false;
+        if (accessToken.CreatedAt + HopFrameAuthentication.AccessTokenTime < DateTime.Now) return false;
+        if (accessToken.Owner is null) return false;
 
         return true;
     }

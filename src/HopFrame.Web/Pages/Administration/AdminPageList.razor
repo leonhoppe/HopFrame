@@ -33,7 +33,7 @@
     <div class="d-flex" role="search" id="search">
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @oninput="TriggerSearch">
     </div>
-    <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
+    <AuthorizedView Permission="@_pageData.Permissions.Create">
         <BSButton IsSubmit="false" Color="BSColor.Success" @onclick="Create">Add Entry</BSButton>
     </AuthorizedView>
 </div>
