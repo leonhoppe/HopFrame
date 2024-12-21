@@ -23,8 +23,6 @@ by configuring your configuration to load these.
 > `builder.Configuration.AddEnvironmentVariables();` to your startup configuration before you add the
 > custom configurations / HopFrame services.
 
-### Example
-
 You can specify `Seconds`, `Minutes`, `Hours` and `Days` for either of the two token types.
 These get combined to a single time span.
 
@@ -48,4 +46,29 @@ These get combined to a single time span.
 HOPFRAME__AUTHENTICATION__ACCESSTOKEN__MINUTES=30
 HOPFRAME__AUTHENTICATION__REFRESHTOKEN__DAYS=10
 HOPFRAME__AUTHENTICATION__REFRESHTOKEN__HOURS=5
+```
+
+## API tokens
+
+API tokens are useful to use in automation environments that need to access an endpoint or page of your application.
+The HopFrame supports this natively and no further configuration is required in order to use them.
+
+### Create an api token
+
+You can create an api token via the `ITokenRepository`:
+```csharp
+tokens.CreateApiToken(user, DateTime.MaxValue);
+```
+
+This creates a new api token that is valid until the provided DateTime has passed. Note that in the database and the token
+model the `CreatedAt` property represents the expiration date on an api token. For security reasons the api token by default
+has no permissions. This allows you to create tokens that are just permitted to perform a single action. Note that a token
+associated to a user can also have more permissions than the user itself so make sure to properly secure the creation process.
+
+### Add permissions to an api token
+
+You can add permissions to an api token like you would to a normal user or group:
+
+```csharp
+permissions.AddPermission(apiToken, "token.permission");
 ```

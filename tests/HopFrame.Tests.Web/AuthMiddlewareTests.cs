@@ -23,7 +23,7 @@ public class AuthMiddlewareTests {
 
         var perms = new Mock<IPermissionRepository>();
         perms
-            .Setup(p => p.GetFullPermissions(It.Is<User>(u => newToken.Owner.Id == u.Id)))
+            .Setup(p => p.GetFullPermissions(It.Is<Token>(u => newToken.Owner.Id == u.Owner.Id)))
             .ReturnsAsync(CreateDummyUser().Permissions.Select(p => p.PermissionName).ToList);
 
         return new AuthMiddleware(auth.Object, perms.Object);

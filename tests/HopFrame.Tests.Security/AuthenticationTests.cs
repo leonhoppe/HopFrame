@@ -43,7 +43,7 @@ public class AuthenticationTests {
             .ReturnsAsync(correctToken);
 
         perms
-            .Setup(x => x.GetFullPermissions(It.IsAny<User>()))
+            .Setup(x => x.GetFullPermissions(It.IsAny<Token>()))
             .ReturnsAsync(new List<string>());
 
         var auth = new HopFrameAuthentication(options.Object, logger.Object, encoder.Object, clock.Object, tokens.Object, perms.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()));
