@@ -6,12 +6,13 @@ using HopFrame.Web.Admin;
 using HopFrame.Web.Services;
 using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Web;
 
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services) where TDbContext : HopDbContextBase {
+    public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
         services.AddHttpClient();
         services.AddHopFrameRepositories<TDbContext>();
         services.AddScoped<IAuthService, AuthService>();
@@ -22,7 +23,7 @@ public static class ServiceCollectionExtensions {
         services.AddSweetAlert2();
         services.AddBlazorStrap();
 
-        services.AddHopFrameAuthentication();
+        services.AddHopFrameAuthentication(configuration);
 
         return services;
     }

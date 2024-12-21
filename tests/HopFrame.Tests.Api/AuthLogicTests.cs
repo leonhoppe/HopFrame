@@ -10,6 +10,7 @@ using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace HopFrame.Tests.Api;
@@ -75,7 +76,7 @@ public class AuthLogicTests {
             .Setup(c => c.User)
             .Returns(CreateDummyUser());
 
-        return (new AuthLogic(users.Object, tokens.Object, context.Object, accessor), accessor.HttpContext);
+        return (new AuthLogic(users.Object, tokens.Object, context.Object, accessor, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions())), accessor.HttpContext);
     }
 
     private User CreateDummyUser() => new() {
