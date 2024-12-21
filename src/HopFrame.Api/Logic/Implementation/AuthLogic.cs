@@ -23,18 +23,18 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = true,
             Secure = true
         });
 
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.TokenId.ToString());
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Register(UserRegister register) {
@@ -54,18 +54,18 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         var refreshToken = await tokens.CreateToken(Token.RefreshTokenType, user);
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
 
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.TokenId.ToString());
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Authenticate() {
@@ -87,13 +87,13 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
 
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
-        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
+        accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.TokenId.ToString(), new CookieOptions {
             MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
         
-        return LogicResult<SingleValueResult<string>>.Ok(accessToken.Content.ToString());
+        return LogicResult<SingleValueResult<string>>.Ok(accessToken.TokenId.ToString());
     }
 
     public async Task<LogicResult> Logout() {

@@ -30,7 +30,7 @@ public class AuthenticationTests {
 
         var provideCorrectToken = correctToken is null;
         correctToken ??= new Token {
-            Content = Guid.NewGuid(),
+            TokenId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
             Type = Token.AccessTokenType,
             Owner = new User {
@@ -39,7 +39,7 @@ public class AuthenticationTests {
         };
 
         tokens
-            .Setup(x => x.GetToken(It.Is<string>(t => t == correctToken.Content.ToString())))
+            .Setup(x => x.GetToken(It.Is<string>(t => t == correctToken.TokenId.ToString())))
             .ReturnsAsync(correctToken);
 
         perms
@@ -49,7 +49,7 @@ public class AuthenticationTests {
         var auth = new HopFrameAuthentication(options.Object, logger.Object, encoder.Object, clock.Object, tokens.Object, perms.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()));
         var context = new DefaultHttpContext();
         if (provideCorrectToken)
-            context.HttpContext.Request.Headers.Append(HopFrameAuthentication.SchemeName, correctToken.Content.ToString());
+            context.HttpContext.Request.Headers.Append(HopFrameAuthentication.SchemeName, correctToken.TokenId.ToString());
         if (providedToken is not null)
             context.HttpContext.Request.Headers.Append(HopFrameAuthentication.SchemeName, providedToken);
         
@@ -101,12 +101,12 @@ public class AuthenticationTests {
     public async Task Authentication_With_ExpiredToken_Should_Fail() {
         // Arrange
         var token = new Token {
-            Content = Guid.NewGuid(),
+            TokenId = Guid.NewGuid(),
             CreatedAt = DateTime.MinValue,
             Type = Token.AccessTokenType,
             Owner = new User()
         };
-        var auth = await SetupEnvironment(token, token.Content.ToString());
+        var auth = await SetupEnvironment(token, token.TokenId.ToString());
         
         // Act
         var result = await auth.AuthenticateAsync();
@@ -121,12 +121,12 @@ public class AuthenticationTests {
     public async Task Authentication_With_UnownedToken_Should_Fail() {
         // Arrange
         var token = new Token {
-            Content = Guid.NewGuid(),
+            TokenId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
             Type = Token.AccessTokenType,
             Owner = null
         };
-        var auth = await SetupEnvironment(token, token.Content.ToString());
+        var auth = await SetupEnvironment(token, token.TokenId.ToString());
         
         // Act
         var result = await auth.AuthenticateAsync();

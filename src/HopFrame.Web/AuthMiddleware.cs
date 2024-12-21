@@ -22,7 +22,7 @@ public sealed class AuthMiddleware(IAuthService auth, IPermissionRepository perm
             }
             
             var claims = new List<Claim> {
-                new(HopFrameClaimTypes.AccessTokenId, token.Content.ToString()),
+                new(HopFrameClaimTypes.AccessTokenId, token.TokenId.ToString()),
                 new(HopFrameClaimTypes.UserId, token.Owner.Id.ToString())
             };
 

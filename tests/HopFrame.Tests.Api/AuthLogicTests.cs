@@ -58,13 +58,13 @@ public class AuthLogicTests {
         tokens
             .Setup(t => t.CreateToken(It.Is<int>(t => t == Token.RefreshTokenType), It.IsAny<User>()))
             .ReturnsAsync(new Token {
-                Content = _refreshToken,
+                TokenId = _refreshToken,
                 Type = Token.RefreshTokenType
             });
         tokens
             .Setup(t => t.CreateToken(It.Is<int>(t => t == Token.AccessTokenType), It.IsAny<User>()))
             .ReturnsAsync(new Token {
-                Content = _accessToken,
+                TokenId = _accessToken,
                 Type = Token.AccessTokenType
             });
         tokens
@@ -229,11 +229,11 @@ public class AuthLogicTests {
         // Arrange
         var token = new Token {
             Type = Token.RefreshTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
-        var (auth, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (auth, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await auth.Authenticate();
@@ -277,11 +277,11 @@ public class AuthLogicTests {
         // Arrange
         var token = new Token {
             Type = Token.AccessTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.Now,
             Owner = CreateDummyUser()
         };
-        var (auth, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (auth, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await auth.Authenticate();
@@ -297,11 +297,11 @@ public class AuthLogicTests {
         // Arrange
         var token = new Token {
             Type = Token.RefreshTokenType,
-            Content = _refreshToken,
+            TokenId = _refreshToken,
             CreatedAt = DateTime.MinValue,
             Owner = CreateDummyUser()
         };
-        var (auth, context) = SetupEnvironment(true, token, token.Content.ToString());
+        var (auth, context) = SetupEnvironment(true, token, token.TokenId.ToString());
         
         // Act
         var result = await auth.Authenticate();

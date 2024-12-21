@@ -24,6 +24,10 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
             entry.User = user;
         }else if (owner is PermissionGroup group) {
             entry.Group = group;
+        }else if (owner is Token token) {
+            if (token.Type != Token.ApiTokenType)
+                throw new ArgumentException("Only API tokens can have permissions!");
+            entry.Token = token;
         }
 
         await context.Permissions.AddAsync(entry);
@@ -46,6 +50,13 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
                 .Include(p => p.Group)
                 .Where(p => p.Group != null)
                 .Where(p =>p.Group.Name == group.Name)
+                .Where(p => p.PermissionName == permission)
+                .SingleOrDefaultAsync();
+        }else if (owner is Token token) {
+            entry = await context.Permissions
+                .Include(p => p.Token)
+                .Where(p => p.Token != null)
+                .Where(p => p.Token.TokenId == token.TokenId)
                 .Where(p => p.PermissionName == permission)
                 .SingleOrDefaultAsync();
         }
@@ -72,6 +83,14 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
                 .Include(p => p.Group)
                 .Where(p => p.Group != null)
                 .Where(p =>p.Group.Name == group.Name)
+                .ToListAsync();
+            
+            permissions.AddRange(perms.Select(p => p.PermissionName));
+        }else if (owner is Token token) {
+            var perms = await context.Permissions
+                .Include(p => p.Token)
+                .Where(p => p.Token != null)
+                .Where(p =>p.Token.TokenId == token.TokenId)
                 .ToListAsync();
             
             permissions.AddRange(perms.Select(p => p.PermissionName));
