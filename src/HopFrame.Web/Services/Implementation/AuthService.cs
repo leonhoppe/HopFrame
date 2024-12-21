@@ -4,6 +4,7 @@ using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace HopFrame.Web.Services.Implementation;
 
@@ -11,7 +12,8 @@ internal class AuthService(
     IUserRepository userService,
     IHttpContextAccessor httpAccessor,
     ITokenRepository tokens,
-    ITokenContext context)
+    ITokenContext context,
+    IOptions<HopFrameAuthenticationOptions> options)
     : IAuthService {
     
     public async Task Register(UserRegister register) {
@@ -27,12 +29,12 @@ internal class AuthService(
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
         httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.RefreshTokenTime,
+            MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
         httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -48,12 +50,12 @@ internal class AuthService(
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
         httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.RefreshTokenTime,
+            MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
         httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -77,12 +79,12 @@ internal class AuthService(
 
         if (token is null || token.Type != Token.RefreshTokenType) return null;
         
-        if (token.CreatedAt + HopFrameAuthentication.RefreshTokenTime < DateTime.Now) return null;
+        if (token.CreatedAt + options.Value.RefreshTokenTime < DateTime.Now) return null;
 
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
         httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -95,7 +97,7 @@ internal class AuthService(
         
         if (accessToken is null) return false;
         if (accessToken.Type != Token.AccessTokenType) return false;
-        if (accessToken.CreatedAt + HopFrameAuthentication.AccessTokenTime < DateTime.Now) return false;
+        if (accessToken.CreatedAt + options.Value.AccessTokenTime < DateTime.Now) return false;
         if (accessToken.Owner is null) return false;
 
         return true;

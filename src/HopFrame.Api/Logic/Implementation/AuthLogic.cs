@@ -5,10 +5,11 @@ using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace HopFrame.Api.Logic.Implementation;
 
-internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor) : IAuthLogic {
+internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor, IOptions<HopFrameAuthenticationOptions> options) : IAuthLogic {
     
     public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
         var user = await users.GetUserByEmail(login.Email);
@@ -23,12 +24,12 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
         accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.RefreshTokenTime,
+            MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
         accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = true,
             Secure = true
         });
@@ -54,12 +55,12 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, user);
         
         accessor.HttpContext?.Response.Cookies.Append(ITokenContext.RefreshTokenType, refreshToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.RefreshTokenTime,
+            MaxAge = options.Value.RefreshTokenTime,
             HttpOnly = true,
             Secure = true
         });
         accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });
@@ -81,13 +82,13 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         if (token.Type != Token.RefreshTokenType)
             return LogicResult<SingleValueResult<string>>.Conflict("The provided token is not a refresh token");
 
-        if (token.CreatedAt + HopFrameAuthentication.RefreshTokenTime < DateTime.Now)
+        if (token.CreatedAt + options.Value.RefreshTokenTime < DateTime.Now)
             return LogicResult<SingleValueResult<string>>.Forbidden("Refresh token is expired");
 
         var accessToken = await tokens.CreateToken(Token.AccessTokenType, token.Owner);
         
         accessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, accessToken.Content.ToString(), new CookieOptions {
-            MaxAge = HopFrameAuthentication.AccessTokenTime,
+            MaxAge = options.Value.AccessTokenTime,
             HttpOnly = false,
             Secure = true
         });

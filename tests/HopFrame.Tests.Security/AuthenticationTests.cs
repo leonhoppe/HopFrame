@@ -46,7 +46,7 @@ public class AuthenticationTests {
             .Setup(x => x.GetFullPermissions(It.IsAny<User>()))
             .ReturnsAsync(new List<string>());
 
-        var auth = new HopFrameAuthentication(options.Object, logger.Object, encoder.Object, clock.Object, tokens.Object, perms.Object);
+        var auth = new HopFrameAuthentication(options.Object, logger.Object, encoder.Object, clock.Object, tokens.Object, perms.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()));
         var context = new DefaultHttpContext();
         if (provideCorrectToken)
             context.HttpContext.Request.Headers.Append(HopFrameAuthentication.SchemeName, correctToken.Content.ToString());

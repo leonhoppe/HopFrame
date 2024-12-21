@@ -6,7 +6,7 @@ using HopFrame.Web.Admin;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddHopFrame<DatabaseContext>();
+builder.Services.AddHopFrame<DatabaseContext>(builder.Configuration);
 builder.Services.AddAdminContext<AdminContext>();
 
 // Add services to the container.

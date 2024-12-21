@@ -1,11 +1,13 @@
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
+using HopFrame.Security.Authentication;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using HopFrame.Tests.Web.Extensions;
 using HopFrame.Web.Services;
 using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace HopFrame.Tests.Web;
@@ -66,7 +68,7 @@ public class AuthServiceTests {
             .Setup(c => c.AccessToken)
             .Returns(providedAccessToken);
 
-        return (new AuthService(users.Object, accessor, tokens.Object, context.Object), accessor.HttpContext);
+        return (new AuthService(users.Object, accessor, tokens.Object, context.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions())), accessor.HttpContext);
     }
 
     private User CreateDummyUser() => new() {

@@ -48,8 +48,8 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
         return this;
     }
 
-    public IAdminPageGenerator<TModel> ViewPermission(string permission) {
-        Page.Permissions.View = permission;
+    public IAdminPageGenerator<TModel> ReadPermission(string permission) {
+        Page.Permissions.Read = permission;
         return this;
     }
 
@@ -165,7 +165,7 @@ internal sealed class AdminPageGenerator<TModel> : IAdminPageGenerator<TModel>, 
             var attribute = attributes.Single(a => a is AdminPermissionsAttribute) as AdminPermissionsAttribute;
             CreatePermission(attribute?.Permissions.Create);
             UpdatePermission(attribute?.Permissions.Update);
-            ViewPermission(attribute?.Permissions.View);
+            ReadPermission(attribute?.Permissions.Read);
             DeletePermission(attribute?.Permissions.Delete);
         }
 

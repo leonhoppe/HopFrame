@@ -1,15 +1,17 @@
 using System.Text.RegularExpressions;
 using HopFrame.Database.Models;
 using HopFrame.Security;
+using HopFrame.Security.Authorization;
 using HopFrame.Web.Admin;
 using HopFrame.Web.Admin.Attributes;
 using HopFrame.Web.Admin.Generators;
 using HopFrame.Web.Admin.Models;
 using HopFrame.Web.Provider;
+using Microsoft.Extensions.Options;
 
 namespace HopFrame.Web;
 
-internal class HopAdminContext : AdminPagesContext {
+internal class HopAdminContext(IOptions<AdminPermissionOptions> options) : AdminPagesContext {
 
     [AdminPageUrl("users")]
     public AdminPage<User> Users { get; set; }
@@ -21,10 +23,10 @@ internal class HopAdminContext : AdminPagesContext {
         generator.Page<User>()
             .Description("On this page you can manage all user accounts.")
             .ConfigureProvider<UserProvider>()
-            .ViewPermission(AdminPermissions.ViewUsers)
-            .CreatePermission(AdminPermissions.AddUser)
-            .UpdatePermission(AdminPermissions.EditUser)
-            .DeletePermission(AdminPermissions.DeleteUser);
+            .ReadPermission(options.Value.Users.Read)
+            .CreatePermission(options.Value.Users.Create)
+            .UpdatePermission(options.Value.Users.Update)
+            .DeletePermission(options.Value.Users.Delete);
 
         generator.Page<User>().Property(u => u.Password)
             .DisplayInListing(false)
@@ -64,10 +66,10 @@ internal class HopAdminContext : AdminPagesContext {
         generator.Page<PermissionGroup>()
             .Description("On this page you can view, create, edit and delete permission groups.")
             .ConfigureProvider<GroupProvider>()
-            .ViewPermission(AdminPermissions.ViewGroups)
-            .CreatePermission(AdminPermissions.AddGroup)
-            .UpdatePermission(AdminPermissions.EditGroup)
-            .DeletePermission(AdminPermissions.DeleteGroup)
+            .ReadPermission(options.Value.Groups.Read)
+            .CreatePermission(options.Value.Groups.Create)
+            .UpdatePermission(options.Value.Groups.Update)
+            .DeletePermission(options.Value.Groups.Delete)
             .ListingProperty(g => g.Name);
 
         generator.Page<PermissionGroup>().Property(g => g.Name)

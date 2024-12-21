@@ -5,25 +5,26 @@
 @using BlazorStrap
 @using HopFrame.Web.Pages.Administration.Layout
 @using BlazorStrap.V5
-@using HopFrame.Security
+@using HopFrame.Security.Authorization
 @using HopFrame.Web.Admin.Providers
 @using HopFrame.Web.Components
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Options
 @layout AdminLayout
 
-<AuthorizedView Permission="@AdminPermissions.IsAdmin" RedirectIfUnauthorized="/administration/login" />
+<AuthorizedView Permission="@Options.Value.Dashboard" RedirectIfUnauthorized="/administration/login" />
 
 <PageTitle>Admin Dashboard</PageTitle>
 
 <BSContainer>
     <BSRow Justify="Justify.Center">
         @foreach (var adminPage in Pages.LoadRegisteredAdminPages()) {
-            <AuthorizedView Permission="@adminPage.Permissions.View">
+            <AuthorizedView Permission="@adminPage.Permissions.Read">
                 <BSCol Column="4" style="margin-bottom: 10px">
                     <BSCard CardType="CardType.Card" Color="BSColor.Dark" style="min-height: 200px; min-width: 200px">
                         <BSCard CardType="CardType.Body" style="display: flex; flex-direction: column">
                             <BSCard CardType="CardType.Title">@adminPage.Title</BSCard>
-                            <BSCard CardType="CardType.Subtitle"><span style="color: gray">@adminPage.Permissions.View</span></BSCard>
+                            <BSCard CardType="CardType.Subtitle"><span style="color: gray">@adminPage.Permissions.Read</span></BSCard>
                             <BSCard CardType="CardType.Text">@adminPage.Description</BSCard>
                             <BSButton IsOutlined="true" MarginTop="Margins.Auto" style="width: max-content; align-self: center" OnClick="() => NavigateTo(adminPage.Url)" Color="BSColor.Light">Open</BSButton>
                         </BSCard>
@@ -36,6 +37,7 @@
 
 @inject NavigationManager Navigator
 @inject IAdminPagesProvider Pages
+@inject IOptions<AdminPermissionOptions> Options
 
 @code {
 
