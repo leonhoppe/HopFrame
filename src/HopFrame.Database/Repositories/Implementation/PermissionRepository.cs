@@ -5,6 +5,10 @@ namespace HopFrame.Database.Repositories.Implementation;
 
 internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGroupRepository groupRepository) : IPermissionRepository where TDbContext : HopDbContextBase {
     public async Task<bool> HasPermission(IPermissionOwner owner, params string[] permissions) {
+        if (owner is Token { Type: Token.ApiTokenType } token) {
+            if (!await HasPermission(token.Owner, permissions)) return false;
+        }
+        
         var perms = (await GetFullPermissions(owner)).ToArray();
 
         foreach (var permission in permissions) {
@@ -27,6 +31,8 @@ internal sealed class PermissionRepository<TDbContext>(TDbContext context, IGrou
         }else if (owner is Token token) {
             if (token.Type != Token.ApiTokenType)
                 throw new ArgumentException("Only API tokens can have permissions!");
+            if (!await HasPermission(token.Owner, permission))
+                throw new ArgumentException("An api token cannot have more permissions than the owner has!");
             entry.Token = token;
         }
 

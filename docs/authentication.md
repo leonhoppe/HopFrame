@@ -62,8 +62,8 @@ tokens.CreateApiToken(user, DateTime.MaxValue);
 
 This creates a new api token that is valid until the provided DateTime has passed. Note that in the database and the token
 model the `CreatedAt` property represents the expiration date on an api token. For security reasons the api token by default
-has no permissions. This allows you to create tokens that are just permitted to perform a single action. Note that a token
-associated to a user can also have more permissions than the user itself so make sure to properly secure the creation process.
+has no permissions. This allows you to create tokens that are just permitted to perform a single action. Note that an api token
+can **never** have more permissions than the user associated with it.
 
 ### Add permissions to an api token
 

@@ -29,11 +29,16 @@ internal sealed class TokenRepository<TDbContext>(TDbContext context) : ITokenRe
         return token;
     }
 
-    public async Task DeleteUserTokens(User owner) {
+    public async Task DeleteUserTokens(User owner, bool includeApiTokens = false) {
         var tokens = await context.Tokens
             .Include(t => t.Owner)
             .Where(t => t.Owner.Id == owner.Id)
             .ToListAsync();
+
+        if (!includeApiTokens)
+            tokens = tokens
+                .Where(t => t.Type != Token.ApiTokenType)
+                .ToList();
         
         context.Tokens.RemoveRange(tokens);
         await context.SaveChangesAsync();
