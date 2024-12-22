@@ -15,8 +15,8 @@ namespace HopFrame.Testing.Api.Controllers;
 public class TestController(ITokenContext userContext, DatabaseContext context, ITokenRepository tokens, IPermissionRepository permissions) : ControllerBase {
 
     [HttpGet("permissions"), Authorized]
-    public ActionResult<IList<string>> Permissions() {
-        return new ActionResult<IList<string>>(userContext.ContextualPermissions);
+    public async Task<ActionResult<IList<string>>> Permissions() {
+        return new ActionResult<IList<string>>(await permissions.GetFullPermissions(userContext.AccessToken));
     }
 
     [HttpGet("generate")]
@@ -65,6 +65,12 @@ public class TestController(ITokenContext userContext, DatabaseContext context, 
     public async Task DeleteToken(string tokenId) {
         var token = await tokens.GetToken(tokenId);
         await tokens.DeleteToken(token);
+    }
+
+    [HttpGet("url")]
+    public async Task<ActionResult<SingleValueResult<string>>> GetUrl() {
+        var protocol = Request.IsHttps ? "https" : "http";
+        return Ok($"{protocol}://{Request.Host.Value}/auth/callback");
     }
     
 }

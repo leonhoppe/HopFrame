@@ -24,7 +24,9 @@ by configuring your configuration to load these.
 > custom configurations / HopFrame services.
 
 You can specify `Seconds`, `Minutes`, `Hours` and `Days` for either of the two token types.
-These get combined to a single time span.
+These get combined to a single time span. You can also completely disable the default authentication
+by setting the `DefaultAuthentication` to `false`. Note that you will no longer be able to login in any
+way unless you enabled the [OpenID](./openid.md) authentication.
 
 #### Configuration example
 ```json

@@ -1,6 +1,8 @@
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Authentication;
+using HopFrame.Security.Authentication.OpenID;
+using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Claims;
 using HopFrame.Security.Models;
 using HopFrame.Tests.Web.Extensions;
@@ -68,7 +70,16 @@ public class AuthServiceTests {
             .Setup(c => c.AccessToken)
             .Returns(providedAccessToken);
 
-        return (new AuthService(users.Object, accessor, tokens.Object, context.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions())), accessor.HttpContext);
+        return (new AuthService(
+            users.Object,
+            accessor,
+            tokens.Object,
+            context.Object,
+            new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()),
+            new OptionsWrapper<OpenIdOptions>(new OpenIdOptions()),
+            new Mock<IOpenIdAccessor>().Object,
+            users.Object
+            ), accessor.HttpContext);
     }
 
     private User CreateDummyUser() => new() {

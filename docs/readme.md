@@ -9,6 +9,7 @@ The HopFrame comes in two variations, you can eiter only use the backend with so
 - [Base Models](./models.md)
 - [Authentication](./authentication.md)
 - [Permissions](./permissions.md)
+- [OpenID Integration](./openid.md)
 
 ## HopFrame Web API
 

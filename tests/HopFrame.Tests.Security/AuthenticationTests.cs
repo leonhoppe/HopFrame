@@ -2,6 +2,8 @@ using System.Text.Encodings.Web;
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
 using HopFrame.Security.Authentication;
+using HopFrame.Security.Authentication.OpenID;
+using HopFrame.Security.Authentication.OpenID.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -46,7 +48,17 @@ public class AuthenticationTests {
             .Setup(x => x.GetFullPermissions(It.IsAny<Token>()))
             .ReturnsAsync(new List<string>());
 
-        var auth = new HopFrameAuthentication(options.Object, logger.Object, encoder.Object, clock.Object, tokens.Object, perms.Object, new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()));
+        var auth = new HopFrameAuthentication(
+            options.Object,
+            logger.Object,
+            encoder.Object,
+            clock.Object,
+            tokens.Object,
+            perms.Object,
+            new OptionsWrapper<HopFrameAuthenticationOptions>(new HopFrameAuthenticationOptions()),
+            new OptionsWrapper<OpenIdOptions>(new OpenIdOptions()),
+            new Mock<IUserRepository>().Object,
+            new Mock<IOpenIdAccessor>().Object);
         var context = new DefaultHttpContext();
         if (provideCorrectToken)
             context.HttpContext.Request.Headers.Append(HopFrameAuthentication.SchemeName, correctToken.TokenId.ToString());

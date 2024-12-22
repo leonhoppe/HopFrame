@@ -8,6 +8,7 @@ public class Token : IPermissionOwner {
     public const int RefreshTokenType = 0;
     public const int AccessTokenType = 1;
     public const int ApiTokenType = 2;
+    public const int OpenIdTokenType = 3;
 
     /// <summary>
     /// Defines the Type of the stored Token

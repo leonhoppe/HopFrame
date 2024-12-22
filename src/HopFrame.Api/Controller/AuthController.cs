@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HopFrame.Api.Controller;
 
 [ApiController]
-[Route("api/v1/authentication")]
-public class SecurityController(IAuthLogic auth) : ControllerBase {
+[Route("api/v1/auth")]
+public class AuthController(IAuthLogic auth) : ControllerBase {
 
     [HttpPut("login")]
     public async Task<ActionResult<SingleValueResult<string>>> Login([FromBody] UserLogin login) {

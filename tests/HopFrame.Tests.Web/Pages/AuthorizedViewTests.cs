@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Bunit;
 using Bunit.TestDoubles;
 using HopFrame.Security.Authentication;
+using HopFrame.Security.Authentication.OpenID;
 using HopFrame.Security.Claims;
 using HopFrame.Web.Components;
 using Microsoft.AspNetCore.Components;

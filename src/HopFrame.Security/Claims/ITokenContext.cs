@@ -21,6 +21,4 @@ public interface ITokenContext {
     /// The access token the user provided
     /// </summary>
     Token AccessToken { get; }
-    
-    IList<string> ContextualPermissions { get; }
 }
