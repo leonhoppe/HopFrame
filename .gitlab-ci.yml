@@ -17,11 +17,14 @@ build:
   artifacts:
     paths:
       - "**/bin/Release"
+    expire_in: 10 minutes
 
 test:
   stage: test
   script:
     - dotnet test --verbosity normal
+  dependencies:
+    - build
 
 publish:
   stage: publish
@@ -31,5 +34,8 @@ publish:
     - for nupkg in *.nupkg; do dotnet nuget push $nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json; done
   only:
     - tags
+  dependencies:
+    - build
+    - test
   variables:
     NUGET_API_KEY: $NUGET_API_KEY
