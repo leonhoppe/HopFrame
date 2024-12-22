@@ -1,6 +1,9 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
+using HopFrame.Security.Authentication.OpenID;
+using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -17,39 +20,83 @@ public class HopFrameAuthentication(
     UrlEncoder encoder,
     ISystemClock clock,
     ITokenRepository tokens,
+    IPermissionRepository perms,
+    IOptions<HopFrameAuthenticationOptions> tokenOptions,
+    IOptions<OpenIdOptions> openIdOptions,
     IUserRepository users,
-    IPermissionRepository perms)
+    IOpenIdAccessor accessor)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock) {
 
-    public const string SchemeName = "HopCore.Authentication";
-    public static readonly TimeSpan AccessTokenTime = new(0, 0, 5, 0);
-    public static readonly TimeSpan RefreshTokenTime = new(30, 0, 0, 0);
+    public const string SchemeName = "HopFrame.Authentication";
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync() {
         var accessToken = Request.Cookies[ITokenContext.AccessTokenType];
         if (string.IsNullOrEmpty(accessToken)) accessToken = Request.Headers[SchemeName];
         if (string.IsNullOrEmpty(accessToken)) accessToken = Request.Headers["Token"];
+        if (string.IsNullOrEmpty(accessToken)) accessToken = Request.Query["token"];
         if (string.IsNullOrEmpty(accessToken)) return AuthenticateResult.Fail("No Access Token provided");
-
+        
         var tokenEntry = await tokens.GetToken(accessToken);
+
+        if (tokenEntry?.Type != Token.ApiTokenType && openIdOptions.Value.Enabled && !Guid.TryParse(accessToken, out _)) {
+            var result = await accessor.InspectToken(accessToken);
+
+            if (result is null || !result.Active)
+                    return AuthenticateResult.Fail("Invalid OpenID Connect token");
+            
+            var email = result.Email;
+            if (string.IsNullOrEmpty(email))
+                return AuthenticateResult.Fail("OpenID user has no email associated to it");
+    
+            var user = await users.GetUserByEmail(email);
+            if (user is null) {
+                if (!openIdOptions.Value.GenerateUsers)
+                    return AuthenticateResult.Fail("OpenID user does not exist");
+
+                var username = result.PreferredUsername;
+                user = await users.AddUser(new User {
+                    Email = email,
+                    Username = username
+                });
+            }
+    
+            var token = new Token {
+                Owner = user,
+                CreatedAt = DateTime.Now,
+                Type = Token.OpenIdTokenType
+            };
+            var identity = await GenerateClaims(token, perms);
+            return AuthenticateResult.Success(new AuthenticationTicket(identity, Scheme.Name));
+        }
+        
+        if (!tokenOptions.Value.DefaultAuthentication)
+            return AuthenticateResult.Fail("HopFrame authentication scheme is disabled");
         
         if (tokenEntry is null) return AuthenticateResult.Fail("The provided Access Token does not exist");
-        if (tokenEntry.CreatedAt + AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
+
+        if (tokenEntry.Type == Token.ApiTokenType) {
+            if (tokenEntry.CreatedAt < DateTime.Now) return AuthenticateResult.Fail("The provided API Token is expired");
+        }else if (tokenEntry.CreatedAt + tokenOptions.Value.AccessTokenTime < DateTime.Now) return AuthenticateResult.Fail("The provided Access Token is expired");
         
         if (tokenEntry.Owner is null)
             return AuthenticateResult.Fail("The provided Access Token does not match any user");
 
+        var principal = await GenerateClaims(tokenEntry, perms);
+        return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+    }
+
+    public static async Task<ClaimsPrincipal> GenerateClaims(Token token, IPermissionRepository perms) {
         var claims = new List<Claim> {
-            new(HopFrameClaimTypes.AccessTokenId, accessToken),
-            new(HopFrameClaimTypes.UserId, tokenEntry.Owner.Id.ToString())
+            new(HopFrameClaimTypes.AccessTokenId, token.TokenId.ToString()),
+            new(HopFrameClaimTypes.UserId, token.Owner.Id.ToString())
         };
 
-        var permissions = await perms.GetFullPermissions(tokenEntry.Owner);
+        var permissions  = await perms.GetFullPermissions(token);
         claims.AddRange(permissions.Select(perm => new Claim(HopFrameClaimTypes.Permission, perm)));
 
         var principal = new ClaimsPrincipal();
         principal.AddIdentity(new ClaimsIdentity(claims, SchemeName));
-        return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+        return principal;
     }
     
 }

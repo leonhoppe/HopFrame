@@ -21,6 +21,9 @@ public class Permission {
     [ForeignKey("GroupName"), JsonIgnore]
     public virtual PermissionGroup Group { get; set; }
     
+    [ForeignKey("TokenId"), JsonIgnore]
+    public virtual Token Token { get; set; }
+    
 }
 
 public interface IPermissionOwner;

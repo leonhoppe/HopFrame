@@ -1,5 +1,6 @@
 using HopFrame.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace HopFrame.Database.Repositories.Implementation;
 
@@ -11,14 +12,14 @@ internal sealed class TokenRepository<TDbContext>(TDbContext context) : ITokenRe
         
         return await context.Tokens
             .Include(t => t.Owner)
-            .Where(t => t.Content == guid)
+            .Where(t => t.TokenId == guid)
             .SingleOrDefaultAsync();
     }
 
     public async Task<Token> CreateToken(int type, User owner) {
         var token = new Token {
             CreatedAt = DateTime.Now,
-            Content = Guid.NewGuid(),
+            TokenId = Guid.NewGuid(),
             Type = type,
             Owner = owner
         };
@@ -29,13 +30,37 @@ internal sealed class TokenRepository<TDbContext>(TDbContext context) : ITokenRe
         return token;
     }
 
-    public async Task DeleteUserTokens(User owner) {
+    public async Task DeleteUserTokens(User owner, bool includeApiTokens = false) {
         var tokens = await context.Tokens
             .Include(t => t.Owner)
             .Where(t => t.Owner.Id == owner.Id)
             .ToListAsync();
+
+        if (!includeApiTokens)
+            tokens = tokens
+                .Where(t => t.Type != Token.ApiTokenType)
+                .ToList();
         
         context.Tokens.RemoveRange(tokens);
         await context.SaveChangesAsync();
+    }
+
+    public async Task DeleteToken(Token token) {
+        context.Tokens.Remove(token);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<Token> CreateApiToken(User owner, DateTime expirationDate) {
+        var token = new Token {
+            CreatedAt = expirationDate,
+            TokenId = Guid.NewGuid(),
+            Type = Token.ApiTokenType,
+            Owner = owner
+        };
+
+        await context.Tokens.AddAsync(token);
+        await context.SaveChangesAsync();
+
+        return token;
     }
 }

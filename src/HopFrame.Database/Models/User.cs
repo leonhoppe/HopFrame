@@ -5,7 +5,7 @@ namespace HopFrame.Database.Models;
 
 public class User : IPermissionOwner {
     
-    [Key, Required, MinLength(36), MaxLength(36)]
+    [Key, Required]
     public Guid Id { get; init; }
     
     [Required, MaxLength(50)]
@@ -14,7 +14,7 @@ public class User : IPermissionOwner {
     [Required, MaxLength(50), EmailAddress]
     public string Email { get; set; }
     
-    [Required, MinLength(8), MaxLength(255), JsonIgnore]
+    [MinLength(8), MaxLength(255), JsonIgnore]
     public string Password { get; set; }
     
     [Required]

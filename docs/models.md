@@ -35,16 +35,18 @@ public class Permission {
     public DateTime GrantedAt { get; set; }
     public virtual User User { get; set; }
     public virtual PermissionGroup Group { get; set; }
+    public virtual Token Token { get; set; }
 }
 ```
 
 ## Token
 ```csharp
-public class Token {
+public class Token : IPermissionOwner {
     public int Type { get; set; }
     public Guid Content { get; set; }
     public DateTime CreatedAt { get; set; }
     public virtual User Owner { get; set; }
+    public virtual List<Permission> Permissions { get; set; }
 }
 ```
 

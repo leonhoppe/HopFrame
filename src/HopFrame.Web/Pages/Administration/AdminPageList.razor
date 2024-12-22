@@ -18,7 +18,7 @@
 @using HopFrame.Web.Components
 
 <PageTitle>@_pageData.Title</PageTitle>
-<AuthorizedView Permission="@_pageData.Permissions.View" RedirectIfUnauthorized="@GenerateRedirectString()" />
+<AuthorizedView Permission="@_pageData.Permissions.Read" RedirectIfUnauthorized="@GenerateRedirectString()" />
 
 <AdminPageModal ReloadDelegate="Reload" @ref="_modal"/>
 
@@ -33,7 +33,7 @@
     <div class="d-flex" role="search" id="search">
         <input class="form-control me-2 input-dark" type="search" placeholder="Search" aria-label="Search" @oninput="TriggerSearch">
     </div>
-    <AuthorizedView Permission="@Security.AdminPermissions.AddGroup">
+    <AuthorizedView Permission="@_pageData.Permissions.Create">
         <BSButton IsSubmit="false" Color="BSColor.Success" @onclick="Create">Add Entry</BSButton>
     </AuthorizedView>
 </div>
@@ -140,8 +140,8 @@
             throw new ArgumentException($"AdminPage '{_pageData.Title}' does not specify a model repository!'");
         _modelProvider = _pageData.LoadModelProvider(Provider);
 
-        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Update);
-        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.User, _pageData.Permissions.Delete);
+        _hasEditPermission = _pageData.Permissions.Update is null || await Permissions.HasPermission(Auth.AccessToken, _pageData.Permissions.Update);
+        _hasDeletePermission = _pageData.Permissions.Delete is null || await Permissions.HasPermission(Auth.AccessToken, _pageData.Permissions.Delete);
         
         await Reload();
     }

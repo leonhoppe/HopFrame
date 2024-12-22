@@ -69,10 +69,45 @@ internal sealed class UserRepository<TDbContext>(TDbContext context, IGroupRepos
             .SingleOrDefaultAsync(entry => entry.Id == user.Id);
         if (entry is null) return;
 
+        // Update the main entity's properties
         entry.Email = user.Email;
         entry.Username = user.Username;
-        entry.Permissions = user.Permissions;
-        entry.Tokens = user.Tokens;
+
+        // Update Permissions
+        foreach (var permission in user.Permissions) {
+            var existingPermission = entry.Permissions.FirstOrDefault(p => p.Id == permission.Id);
+            if (existingPermission != null) {
+                // Update existing permission
+                context.Entry(existingPermission).CurrentValues.SetValues(permission);
+            } else {
+                // Add new permission
+                entry.Permissions.Add(permission);
+            }
+        }
+
+        // Remove deleted permissions
+        foreach (var permission in entry.Permissions.ToList().Where(permission => user.Permissions.All(p => p.Id != permission.Id))) {
+            entry.Permissions.Remove(permission);
+            context.Permissions.Remove(permission); // Ensure it gets removed from the database
+        }
+
+        // Update Tokens
+        foreach (var token in user.Tokens) {
+            var existingToken = entry.Tokens.FirstOrDefault(t => t.TokenId == token.TokenId);
+            if (existingToken != null) {
+                // Update existing token
+                context.Entry(existingToken).CurrentValues.SetValues(token);
+            } else {
+                // Add new token
+                entry.Tokens.Add(token);
+            }
+        }
+
+        // Remove deleted tokens
+        foreach (var token in entry.Tokens.ToList().Where(token => user.Tokens.All(t => t.TokenId != token.TokenId))) {
+            entry.Tokens.Remove(token);
+            context.Tokens.Remove(token); // Ensure it gets removed from the database
+        }
 
         await context.SaveChangesAsync();
     }
