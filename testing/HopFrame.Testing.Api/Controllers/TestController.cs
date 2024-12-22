@@ -66,5 +66,11 @@ public class TestController(ITokenContext userContext, DatabaseContext context, 
         var token = await tokens.GetToken(tokenId);
         await tokens.DeleteToken(token);
     }
+
+    [HttpGet("url")]
+    public async Task<ActionResult<SingleValueResult<string>>> GetUrl() {
+        var protocol = Request.IsHttps ? "https" : "http";
+        return Ok($"{protocol}://{Request.Host.Value}/auth/callback");
+    }
     
 }

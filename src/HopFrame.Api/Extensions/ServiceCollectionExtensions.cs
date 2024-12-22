@@ -19,8 +19,13 @@ public static class ServiceCollectionExtensions {
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
-        services.AddMvcCore().UseSpecificControllers(typeof(SecurityController));
+        var controllers = new List<Type> { typeof(AuthController) };
+        
+        if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled"))
+            controllers.Add(typeof(OpenIdController));
+        
         AddHopFrameNoEndpoints<TDbContext>(services, configuration);
+        services.AddMvcCore().UseSpecificControllers(controllers.ToArray());
     }
     
     /// <summary>
@@ -30,6 +35,11 @@ public static class ServiceCollectionExtensions {
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrameNoEndpoints<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
+        services.AddMvcCore().ConfigureApplicationPartManager(manager => {
+            var endpoints = manager.ApplicationParts.SingleOrDefault(p => p.Name == typeof(ServiceCollectionExtensions).Namespace!.Replace(".Extensions", ""));
+            manager.ApplicationParts.Remove(endpoints);
+        });
+        
         services.AddHopFrameRepositories<TDbContext>();
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IAuthLogic, AuthLogic>();

@@ -7,13 +7,13 @@ namespace HopFrame.Testing.Api.Controllers;
 public class AuthController(IOpenIdAccessor accessor) : Controller {
 
     [HttpGet("auth/callback")]
-    public async Task<ActionResult<string>> Callback([FromQuery] string code, [FromQuery] string state) {
+    public async Task<ActionResult> Callback([FromQuery] string code, [FromQuery] string state) {
         if (string.IsNullOrEmpty(code)) {
             return BadRequest("Authorization code is missing");
         }
 
         var token = await accessor.RequestToken(code);
-        return Ok(token.AccessToken);
+        return Ok(token);
     }
 
     [HttpGet("auth")]

@@ -24,6 +24,7 @@ public static class HopFrameAuthenticationExtensions {
         service.AddScoped<ITokenContext, TokenContextImplementor>();
         
         service.AddHttpClient();
+        service.AddMemoryCache();
         service.AddScoped<IOpenIdAccessor, OpenIdAccessor>();
         
         service.AddOptionsFromConfiguration<HopFrameAuthenticationOptions>(configuration);

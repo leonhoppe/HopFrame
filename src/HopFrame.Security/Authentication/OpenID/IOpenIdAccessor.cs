@@ -7,4 +7,5 @@ public interface IOpenIdAccessor {
     Task<OpenIdToken> RequestToken(string code);
     Task<string> ConstructAuthUri(string state = null);
     Task<OpenIdIntrospection> InspectToken(string token);
+    Task<OpenIdToken> RefreshAccessToken(string refreshToken);
 }

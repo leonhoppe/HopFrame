@@ -101,9 +101,7 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
         var refreshToken = accessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
         
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
-            return LogicResult.Conflict("access or refresh token not provided");
-
-        await tokens.DeleteUserTokens(tokenContext.User);
+            await tokens.DeleteUserTokens(tokenContext.User);
         
         accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
         accessor.HttpContext?.Response.Cookies.Delete(ITokenContext.AccessTokenType);
