@@ -19,7 +19,10 @@ public static class ServiceCollectionExtensions {
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
-        var controllers = new List<Type> { typeof(AuthController) };
+        var controllers = new List<Type>();
+        
+        if (configuration.GetValue<bool>("HopFrame:Authentication:DefaultAuthentication"))
+            controllers.Add(typeof(AuthController));
         
         if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled"))
             controllers.Add(typeof(OpenIdController));

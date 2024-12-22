@@ -329,7 +329,7 @@ public class AuthLogicTests {
     }
 
     [Fact]
-    public async Task Logout_With_NoAccessToken_Should_Fail() {
+    public async Task Logout_With_NoAccessToken_Should_Succeed() {
         // Arrange
         var (auth, context) = SetupEnvironment(provideAccessToken: false);
         context.Response.Cookies.Append(ITokenContext.AccessTokenType, _accessToken.ToString());
@@ -339,14 +339,13 @@ public class AuthLogicTests {
         var result = await auth.Logout();
         
         // Assert
-        Assert.False(result.IsSuccessful);
-        Assert.Equal(HttpStatusCode.Conflict, result.State);
-        Assert.Equal(_accessToken.ToString(), context.Response.Headers.FindCookie(ITokenContext.AccessTokenType));
-        Assert.Equal(_refreshToken.ToString(), context.Response.Headers.FindCookie(ITokenContext.RefreshTokenType));
+        Assert.True(result.IsSuccessful);
+        Assert.Null(context.Response.Headers.FindCookie(ITokenContext.AccessTokenType));
+        Assert.Null(context.Response.Headers.FindCookie(ITokenContext.RefreshTokenType));
     }
 
     [Fact]
-    public async Task Logout_With_NoRefreshToken_Should_Fail() {
+    public async Task Logout_With_NoRefreshToken_Should_Succeed() {
         // Arrange
         var (auth, context) = SetupEnvironment();
         context.Response.Cookies.Append(ITokenContext.AccessTokenType, _accessToken.ToString());
@@ -356,10 +355,9 @@ public class AuthLogicTests {
         var result = await auth.Logout();
         
         // Assert
-        Assert.False(result.IsSuccessful);
-        Assert.Equal(HttpStatusCode.Conflict, result.State);
-        Assert.Equal(_accessToken.ToString(), context.Response.Headers.FindCookie(ITokenContext.AccessTokenType));
-        Assert.Equal(_refreshToken.ToString(), context.Response.Headers.FindCookie(ITokenContext.RefreshTokenType));
+        Assert.True(result.IsSuccessful);
+        Assert.Null(context.Response.Headers.FindCookie(ITokenContext.AccessTokenType));
+        Assert.Null(context.Response.Headers.FindCookie(ITokenContext.RefreshTokenType));
     }
 
     [Fact]

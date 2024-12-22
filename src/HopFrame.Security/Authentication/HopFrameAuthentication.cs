@@ -38,7 +38,7 @@ public class HopFrameAuthentication(
         
         var tokenEntry = await tokens.GetToken(accessToken);
 
-        if (tokenEntry?.Type != Token.ApiTokenType && openIdOptions.Value.Enabled) {
+        if (tokenEntry?.Type != Token.ApiTokenType && openIdOptions.Value.Enabled && !Guid.TryParse(accessToken, out _)) {
             var result = await accessor.InspectToken(accessToken);
 
             if (result is null || !result.Active)
@@ -65,9 +65,12 @@ public class HopFrameAuthentication(
                 CreatedAt = DateTime.Now,
                 Type = Token.OpenIdTokenType
             };
-            var identity = await GenerateClaims(token);
+            var identity = await GenerateClaims(token, perms);
             return AuthenticateResult.Success(new AuthenticationTicket(identity, Scheme.Name));
         }
+        
+        if (!tokenOptions.Value.DefaultAuthentication)
+            return AuthenticateResult.Fail("HopFrame authentication scheme is disabled");
         
         if (tokenEntry is null) return AuthenticateResult.Fail("The provided Access Token does not exist");
 
@@ -78,11 +81,11 @@ public class HopFrameAuthentication(
         if (tokenEntry.Owner is null)
             return AuthenticateResult.Fail("The provided Access Token does not match any user");
 
-        var principal = await GenerateClaims(tokenEntry);
+        var principal = await GenerateClaims(tokenEntry, perms);
         return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
     }
 
-    private async Task<ClaimsPrincipal> GenerateClaims(Token token) {
+    public static async Task<ClaimsPrincipal> GenerateClaims(Token token, IPermissionRepository perms) {
         var claims = new List<Claim> {
             new(HopFrameClaimTypes.AccessTokenId, token.TokenId.ToString()),
             new(HopFrameClaimTypes.UserId, token.Owner.Id.ToString())

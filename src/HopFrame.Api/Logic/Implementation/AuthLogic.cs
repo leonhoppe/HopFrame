@@ -12,6 +12,8 @@ namespace HopFrame.Api.Logic.Implementation;
 internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor, IOptions<HopFrameAuthenticationOptions> options) : IAuthLogic {
     
     public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
+        if (!options.Value.DefaultAuthentication) return LogicResult<SingleValueResult<string>>.BadRequest("HopFrame authentication scheme is disabled");
+        
         var user = await users.GetUserByEmail(login.Email);
 
         if (user is null)
@@ -38,6 +40,8 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Register(UserRegister register) {
+        if (!options.Value.DefaultAuthentication) return LogicResult<SingleValueResult<string>>.BadRequest("HopFrame authentication scheme is disabled");
+        
         if (register.Password.Length < 8)
             return LogicResult<SingleValueResult<string>>.BadRequest("Password needs to be at least 8 characters long");
 
@@ -69,6 +73,8 @@ internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenC
     }
 
     public async Task<LogicResult<SingleValueResult<string>>> Authenticate() {
+        if (!options.Value.DefaultAuthentication) return LogicResult<SingleValueResult<string>>.BadRequest("HopFrame authentication scheme is disabled");
+        
         var refreshToken = accessor.HttpContext?.Request.Cookies[ITokenContext.RefreshTokenType];
         
         if (string.IsNullOrEmpty(refreshToken))

@@ -8,8 +8,6 @@ using Microsoft.Extensions.Options;
 namespace HopFrame.Security.Authentication.OpenID.Implementation;
 
 internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdOptions> options, IHttpContextAccessor accessor, IMemoryCache cache) : IOpenIdAccessor {
-    private const string DefaultCallbackEndpoint = "api/v1/openid/callback";
-
     private const string ConfigurationCacheKey = "HopFrame:OpenID:Configuration";
     private const string AuthCodeCacheKey = "HopFrame:OpenID:Code:";
     private const string TokenCacheKey = "HopFrame:OpenID:Token:";
@@ -34,13 +32,13 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         return config;
     }
 
-    public async Task<OpenIdToken> RequestToken(string code) {
+    public async Task<OpenIdToken> RequestToken(string code, string defaultCallback) {
         if (options.Value.Cache.Enabled && options.Value.Cache.Auth.Enabled && cache.TryGetValue(AuthCodeCacheKey + code, out object cachedToken)) {
             return cachedToken as OpenIdToken;
         }
         
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{DefaultCallbackEndpoint}";
+        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
         
         var configuration = await LoadConfiguration();
 
@@ -67,9 +65,9 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         return token;
     }
 
-    public async Task<string> ConstructAuthUri(string state = null) {
+    public async Task<string> ConstructAuthUri(string defaultCallback, string state = null) {
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{DefaultCallbackEndpoint}";
+        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
         
         var configuration = await LoadConfiguration();
         return $"{configuration.AuthorizationEndpoint}?response_type=code&client_id={options.Value.ClientId}&redirect_uri={callback}&scope=openid%20profile%20email%20offline_access&state={state}";

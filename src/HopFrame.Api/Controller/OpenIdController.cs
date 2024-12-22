@@ -10,10 +10,11 @@ namespace HopFrame.Api.Controller;
 
 [ApiController, Route("api/v1/openid")]
 public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> options) : ControllerBase {
+    public const string DefaultCallback = "api/v1/openid/callback";
 
     [HttpGet("redirect")]
     public async Task<IActionResult> RedirectToProvider([FromQuery] string redirectAfter, [FromQuery] int performRedirect = 1) {
-        var uri = await accessor.ConstructAuthUri(redirectAfter);
+        var uri = await accessor.ConstructAuthUri(DefaultCallback, redirectAfter);
 
         if (performRedirect == 1) {
             return Redirect(uri);
@@ -28,7 +29,11 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
             return BadRequest("Authorization code is missing");
         }
 
-        var token = await accessor.RequestToken(code);
+        var token = await accessor.RequestToken(code, DefaultCallback);
+
+        if (token is null) {
+            return Forbid("Authorization code is not valid");
+        }
         
         Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
             MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),

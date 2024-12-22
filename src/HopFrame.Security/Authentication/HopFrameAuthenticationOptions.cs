@@ -8,6 +8,8 @@ public class HopFrameAuthenticationOptions : OptionsFromConfiguration {
     public TimeSpan AccessTokenTime => AccessToken is null ? new(0, 0, 5, 0) : AccessToken.ConstructTimeSpan;
     public TimeSpan RefreshTokenTime  => RefreshToken is null ? new(30, 0, 0, 0) : RefreshToken.ConstructTimeSpan;
 
+    public bool DefaultAuthentication { get; set; } = true;
+
     public TokenTime AccessToken { get; set; }
     public TokenTime RefreshToken { get; set; }
     
