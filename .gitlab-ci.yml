@@ -17,18 +17,25 @@ build:
   artifacts:
     paths:
       - "**/bin/Release"
+    expire_in: 10 minutes
 
 test:
   stage: test
   script:
     - dotnet test --verbosity normal
+  dependencies:
+    - build
 
 publish:
   stage: publish
   script:
-    - dotnet pack -c Release -o .
+    - export VERSION=$(echo $CI_COMMIT_TAG | sed 's/^v//')
+    - dotnet pack -c Release -o . /p:Version=$VERSION
     - for nupkg in *.nupkg; do dotnet nuget push $nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json; done
   only:
-    - main
-  variables: 
+    - tags
+  dependencies:
+    - build
+    - test
+  variables:
     NUGET_API_KEY: $NUGET_API_KEY
