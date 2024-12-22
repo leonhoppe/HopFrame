@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace HopFrame.Api.Logic.Implementation;
 
-internal class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor, IOptions<HopFrameAuthenticationOptions> options) : IAuthLogic {
+internal sealed class AuthLogic(IUserRepository users, ITokenRepository tokens, ITokenContext tokenContext, IHttpContextAccessor accessor, IOptions<HopFrameAuthenticationOptions> options) : IAuthLogic {
     
     public async Task<LogicResult<SingleValueResult<string>>> Login(UserLogin login) {
         if (!options.Value.DefaultAuthentication) return LogicResult<SingleValueResult<string>>.BadRequest("HopFrame authentication scheme is disabled");
