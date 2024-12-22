@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions {
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
-        var controllers = new List<Type> { typeof(UserController) };
+        var controllers = new List<Type> { typeof(UserController), typeof(GroupController) };
         
         var defaultAuthenticationSection = configuration.GetSection("HopFrame:Authentication:DefaultAuthentication");
         if (!defaultAuthenticationSection.Exists() || configuration.GetValue<bool>("HopFrame:Authentication:DefaultAuthentication"))
@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions {
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IAuthLogic, AuthLogic>();
         services.AddScoped<IUserLogic, UserLogic>();
+        services.AddScoped<IGroupLogic, GroupLogic>();
         
         services.AddHopFrameAuthentication(configuration);
     }

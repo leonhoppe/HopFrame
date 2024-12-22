@@ -33,18 +33,37 @@ internal sealed class GroupRepository<TDbContext>(TDbContext context) : IGroupRe
     }
 
     public async Task EditPermissionGroup(PermissionGroup group) {
-        var orig = await context.Groups.SingleOrDefaultAsync(g => g.Name == group.Name);
-        
+        var orig = await context.Groups
+            .Include(g => g.Permissions) // Include related entities
+            .SingleOrDefaultAsync(g => g.Name == group.Name);
+
         if (orig is null) return;
 
-        var entity = context.Groups.Update(orig);
+        // Update the main entity's properties
+        orig.IsDefaultGroup = group.IsDefaultGroup;
+        orig.Description = group.Description;
 
-        entity.Entity.IsDefaultGroup = group.IsDefaultGroup;
-        entity.Entity.Description = group.Description;
-        entity.Entity.Permissions = group.Permissions;
+        // Update the permissions
+        foreach (var permission in group.Permissions) {
+            var existingPermission = orig.Permissions.FirstOrDefault(p => p.Id == permission.Id);
+            if (existingPermission != null) {
+                // Update existing permission
+                context.Entry(existingPermission).CurrentValues.SetValues(permission);
+            } else {
+                // Add new permission
+                orig.Permissions.Add(permission);
+            }
+        }
+
+        // Remove deleted permissions
+        foreach (var permission in orig.Permissions.ToList().Where(permission => group.Permissions.All(p => p.Id != permission.Id))) {
+            orig.Permissions.Remove(permission);
+            context.Permissions.Remove(permission); // Ensure it gets removed from the database
+        }
 
         await context.SaveChangesAsync();
     }
+
 
     public async Task<PermissionGroup> CreatePermissionGroup(PermissionGroup group) {
         group.CreatedAt = DateTime.Now;
