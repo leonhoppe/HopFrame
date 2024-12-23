@@ -3,6 +3,7 @@ using HopFrame.Security.Authentication.OpenID.Implementation;
 using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
+using HopFrame.Security.Models;
 using HopFrame.Security.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +19,13 @@ public static class HopFrameAuthenticationExtensions {
     /// </summary>
     /// <param name="service">The service provider to add the services to</param>
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
+    /// <param name="config">Configuration for how the HopFrame services get set up</param>
     /// <returns></returns>
-    public static IServiceCollection AddHopFrameAuthentication(this IServiceCollection service, ConfigurationManager configuration) {
+    public static IServiceCollection AddHopFrameAuthentication(this IServiceCollection service, ConfigurationManager configuration, HopFrameConfig config = null) {
+        config ??= new HopFrameConfig();
+
+        service.AddSingleton(config);
+        service.AddScoped(typeof(ICacheProvider), config.CacheProvider);
         service.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         service.AddScoped<ITokenContext, TokenContextImplementor>();
         
