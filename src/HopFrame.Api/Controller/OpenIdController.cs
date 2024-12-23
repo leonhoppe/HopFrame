@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 namespace HopFrame.Api.Controller;
 
 [ApiController, Route("api/v1/openid")]
-public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> options) : ControllerBase {
+public class OpenIdController(IOpenIdAccessor accessor) : ControllerBase {
     public const string DefaultCallback = "api/v1/openid/callback";
 
     [HttpGet("redirect")]
@@ -35,16 +35,7 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
             return Forbid("Authorization code is not valid");
         }
         
-        Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
-            MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),
-            HttpOnly = false,
-            Secure = true
-        });
-        Response.Cookies.Append(ITokenContext.RefreshTokenType, token.RefreshToken, new CookieOptions {
-            MaxAge = options.Value.RefreshToken.ConstructTimeSpan,
-            HttpOnly = false,
-            Secure = true
-        });
+        accessor.SetAuthenticationCookies(token);
 
         if (string.IsNullOrEmpty(state)) {
             return Ok(new SingleValueResult<string>(token.AccessToken));
@@ -65,11 +56,7 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
         if (token is null)
             return NotFound("Refresh token not valid");
         
-        Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
-            MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),
-            HttpOnly = false,
-            Secure = true
-        });
+        accessor.SetAuthenticationCookies(token);
         
         return Ok(new SingleValueResult<string>(token.AccessToken));
     }

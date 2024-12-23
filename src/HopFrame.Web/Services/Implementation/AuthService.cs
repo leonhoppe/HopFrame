@@ -108,11 +108,7 @@ internal class AuthService(
                 });
             }
             
-            httpAccessor.HttpContext?.Response.Cookies.Append(ITokenContext.AccessTokenType, openIdToken.AccessToken, new CookieOptions {
-                MaxAge = TimeSpan.FromSeconds(openIdToken.ExpiresIn),
-                HttpOnly = false,
-                Secure = true
-            });
+            accessor.SetAuthenticationCookies(openIdToken);
             return new() {
                 Owner = user,
                 CreatedAt = DateTime.Now,
