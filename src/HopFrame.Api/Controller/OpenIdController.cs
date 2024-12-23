@@ -14,7 +14,7 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
 
     [HttpGet("redirect")]
     public async Task<IActionResult> RedirectToProvider([FromQuery] string redirectAfter, [FromQuery] int performRedirect = 1) {
-        var uri = await accessor.ConstructAuthUri(DefaultCallback, redirectAfter);
+        var uri = await accessor.ConstructAuthUri(redirectAfter);
 
         if (performRedirect == 1) {
             return Redirect(uri);
@@ -29,7 +29,7 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
             return BadRequest("Authorization code is missing");
         }
 
-        var token = await accessor.RequestToken(code, DefaultCallback);
+        var token = await accessor.RequestToken(code);
 
         if (token is null) {
             return Forbid("Authorization code is not valid");
