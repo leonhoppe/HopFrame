@@ -38,7 +38,7 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         }
         
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
+        var callback = options.Value.Callback ?? Path.Combine($"{protocol}://{accessor.HttpContext!.Request.Host.Value}", defaultCallback);
         
         var configuration = await LoadConfiguration();
 
@@ -67,7 +67,7 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
 
     public async Task<string> ConstructAuthUri(string defaultCallback, string state = null) {
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
+        var callback = options.Value.Callback ?? Path.Combine($"{protocol}://{accessor.HttpContext!.Request.Host.Value}", defaultCallback);
         
         var configuration = await LoadConfiguration();
         return $"{configuration.AuthorizationEndpoint}?response_type=code&client_id={options.Value.ClientId}&redirect_uri={callback}&scope=openid%20profile%20email%20offline_access&state={state}";
