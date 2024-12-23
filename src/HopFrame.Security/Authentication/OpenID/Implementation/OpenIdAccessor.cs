@@ -137,4 +137,9 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
                 Secure = true
             });
     }
+
+    public void Logout() {
+        accessor.HttpContext!.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        accessor.HttpContext!.Response.Cookies.Delete(ITokenContext.AccessTokenType);
+    }
 }

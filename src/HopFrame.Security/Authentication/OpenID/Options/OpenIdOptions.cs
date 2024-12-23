@@ -22,7 +22,7 @@ public sealed class OpenIdOptions : OptionsFromConfiguration {
         Configuration = new() {
             Enabled = true,
             TTL = new() {
-                Minutes = 10
+                Hours = 24
             }
         },
         Auth = new() {

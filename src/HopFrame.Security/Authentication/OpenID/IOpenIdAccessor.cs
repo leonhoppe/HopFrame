@@ -11,4 +11,5 @@ public interface IOpenIdAccessor {
     Task<OpenIdIntrospection> InspectToken(string token);
     Task<OpenIdToken> RefreshAccessToken(string refreshToken);
     void SetAuthenticationCookies(OpenIdToken token);
+    void Logout();
 }

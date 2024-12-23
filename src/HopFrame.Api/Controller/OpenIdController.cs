@@ -1,10 +1,7 @@
 using HopFrame.Api.Models;
 using HopFrame.Security.Authentication.OpenID;
-using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace HopFrame.Api.Controller;
 
@@ -63,8 +60,7 @@ public class OpenIdController(IOpenIdAccessor accessor) : ControllerBase {
 
     [HttpDelete("logout")]
     public IActionResult Logout() {
-        Response.Cookies.Delete(ITokenContext.RefreshTokenType);
-        Response.Cookies.Delete(ITokenContext.AccessTokenType);
+        accessor.Logout();
         return Ok();
     }
     
