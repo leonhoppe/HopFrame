@@ -76,7 +76,7 @@ public class AdminLoginTests : TestContext {
         var password = component.Find("""input[type="password"]""");
         var submit = component.Find("button");
 
-        component.Instance.RedirectAfter = "testRedirect";
+        component.Instance.RedirectAfter = "/administration/testRedirect";
 
         // Act
         email.Change("test@example.com");
