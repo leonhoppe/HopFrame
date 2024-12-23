@@ -3,6 +3,7 @@ using CurrieTechnologies.Razor.SweetAlert2;
 using HopFrame.Database;
 using HopFrame.Security.Authentication;
 using HopFrame.Web.Admin;
+using HopFrame.Web.Models;
 using HopFrame.Web.Services;
 using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
@@ -12,12 +13,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace HopFrame.Web;
 
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration) where TDbContext : HopDbContextBase {
+    public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration, HopFrameWebModuleConfig config = null) where TDbContext : HopDbContextBase {
         services.AddHttpClient();
         services.AddHopFrameRepositories<TDbContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddTransient<AuthMiddleware>();
         services.AddAdminContext<HopAdminContext>();
+        services.AddSingleton(config ?? new HopFrameWebModuleConfig());
         
         // Component library's
         services.AddSweetAlert2();

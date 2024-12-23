@@ -8,11 +8,12 @@
 @using HopFrame.Security.Authorization
 @using HopFrame.Web.Admin.Providers
 @using HopFrame.Web.Components
+@using HopFrame.Web.Models
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Extensions.Options
 @layout AdminLayout
 
-<AuthorizedView Permission="@Options.Value.Dashboard" RedirectIfUnauthorized="/administration/login" />
+<AuthorizedView Permission="@Options.Value.Dashboard" RedirectIfUnauthorized="@ConstructRedirectUri()" />
 
 <PageTitle>Admin Dashboard</PageTitle>
 
@@ -38,11 +39,16 @@
 @inject NavigationManager Navigator
 @inject IAdminPagesProvider Pages
 @inject IOptions<AdminPermissionOptions> Options
+@inject HopFrameWebModuleConfig Config
 
 @code {
 
     public void NavigateTo(string url) {
-        Navigator.NavigateTo("administration/" + url, true);
+        Navigator.NavigateTo("/administration/" + url, true);
+    }
+
+    public string ConstructRedirectUri() {
+        return Config.AdminLoginPageUri + "?redirect=/administration";
     }
 
 }
