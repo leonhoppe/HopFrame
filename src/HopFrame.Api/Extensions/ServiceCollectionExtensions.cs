@@ -3,6 +3,7 @@ using HopFrame.Api.Logic;
 using HopFrame.Api.Logic.Implementation;
 using HopFrame.Database;
 using HopFrame.Security.Authentication;
+using HopFrame.Security.Authentication.OpenID;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,8 +26,10 @@ public static class ServiceCollectionExtensions {
         if (!defaultAuthenticationSection.Exists() || configuration.GetValue<bool>("HopFrame:Authentication:DefaultAuthentication"))
             controllers.Add(typeof(AuthController));
         
-        if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled"))
+        if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled")) {
+            IOpenIdAccessor.DefaultCallback = OpenIdController.DefaultCallback;
             controllers.Add(typeof(OpenIdController));
+        }
         
         AddHopFrameNoEndpoints<TDbContext>(services, configuration);
         services.AddMvcCore().UseSpecificControllers(controllers.ToArray());

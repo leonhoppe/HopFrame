@@ -16,6 +16,7 @@
 @using HopFrame.Security.Claims
 @using HopFrame.Web.Admin
 @using HopFrame.Web.Components
+@using HopFrame.Web.Models
 
 <PageTitle>@_pageData.Title</PageTitle>
 <AuthorizedView Permission="@_pageData.Permissions.Read" RedirectIfUnauthorized="@GenerateRedirectString()" />
@@ -107,6 +108,7 @@
 @inject IPermissionRepository Permissions
 @inject SweetAlertService Alerts
 @inject NavigationManager Navigator
+@inject HopFrameWebModuleConfig Config
 
 @code {
     [Parameter]
@@ -251,6 +253,6 @@
     }
 
     private string GenerateRedirectString() {
-        return "/administration/login?redirect=" + _pageData?.Url;
+        return Config.AdminLoginPageUri + "?redirect=/administration/" + _pageData?.Url;
     }
 }

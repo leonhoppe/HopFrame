@@ -2,6 +2,7 @@ using HopFrame.Api.Logic;
 using HopFrame.Api.Models;
 using HopFrame.Database.Models;
 using HopFrame.Database.Repositories;
+using HopFrame.Security.Authentication.OpenID;
 using HopFrame.Security.Authorization;
 using HopFrame.Security.Claims;
 using HopFrame.Testing.Api.Models;
@@ -68,9 +69,8 @@ public class TestController(ITokenContext userContext, DatabaseContext context, 
     }
 
     [HttpGet("url")]
-    public async Task<ActionResult<SingleValueResult<string>>> GetUrl() {
-        var protocol = Request.IsHttps ? "https" : "http";
-        return Ok($"{protocol}://{Request.Host.Value}/auth/callback");
+    public ActionResult<string> GetUrl() {
+        return Ok(IOpenIdAccessor.DefaultCallback ?? "Not set");
     }
     
 }
