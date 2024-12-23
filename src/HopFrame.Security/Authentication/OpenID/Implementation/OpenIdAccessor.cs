@@ -1,6 +1,7 @@
 using System.Text.Json;
 using HopFrame.Security.Authentication.OpenID.Models;
 using HopFrame.Security.Authentication.OpenID.Options;
+using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         }
         
         var client = clientFactory.CreateClient();
-        var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(options.Value.Issuer, ".well-known/openid-configuration"));
+        var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(options.Value.Issuer, ".well-known/openid-configuration").Replace("\\", "/"));
         var response = await client.SendAsync(request);
         
         if (!response.IsSuccessStatusCode)
@@ -32,13 +33,13 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         return config;
     }
 
-    public async Task<OpenIdToken> RequestToken(string code, string defaultCallback) {
+    public async Task<OpenIdToken> RequestToken(string code) {
         if (options.Value.Cache.Enabled && options.Value.Cache.Auth.Enabled && cache.TryGetValue(AuthCodeCacheKey + code, out object cachedToken)) {
             return cachedToken as OpenIdToken;
         }
         
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
+        var callback = options.Value.Callback ?? Path.Combine($"{protocol}://{accessor.HttpContext!.Request.Host.Value}", IOpenIdAccessor.DefaultCallback).Replace("\\", "/");
         
         var configuration = await LoadConfiguration();
 
@@ -65,9 +66,9 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         return token;
     }
 
-    public async Task<string> ConstructAuthUri(string defaultCallback, string state = null) {
+    public async Task<string> ConstructAuthUri(string state = null) {
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
-        var callback = options.Value.Callback ?? $"{protocol}://{accessor.HttpContext!.Request.Host.Value}/{defaultCallback}";
+        var callback = options.Value.Callback ?? Path.Combine($"{protocol}://{accessor.HttpContext!.Request.Host.Value}", IOpenIdAccessor.DefaultCallback).Replace("\\", "/");
         
         var configuration = await LoadConfiguration();
         return $"{configuration.AuthorizationEndpoint}?response_type=code&client_id={options.Value.ClientId}&redirect_uri={callback}&scope=openid%20profile%20email%20offline_access&state={state}";
@@ -119,5 +120,26 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
             return null;
 
         return await JsonSerializer.DeserializeAsync<OpenIdToken>(await response.Content.ReadAsStreamAsync());
+    }
+
+    public void SetAuthenticationCookies(OpenIdToken token) {
+        if (token.AccessToken is not null)
+            accessor.HttpContext!.Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
+                MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),
+                HttpOnly = false,
+                Secure = true
+            });
+        
+        if (token.RefreshToken is not null)
+            accessor.HttpContext!.Response.Cookies.Append(ITokenContext.RefreshTokenType, token.RefreshToken, new CookieOptions {
+                MaxAge = options.Value.RefreshToken.ConstructTimeSpan,
+                HttpOnly = false,
+                Secure = true
+            });
+    }
+
+    public void Logout() {
+        accessor.HttpContext!.Response.Cookies.Delete(ITokenContext.RefreshTokenType);
+        accessor.HttpContext!.Response.Cookies.Delete(ITokenContext.AccessTokenType);
     }
 }

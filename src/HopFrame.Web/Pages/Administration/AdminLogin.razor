@@ -65,6 +65,6 @@
             return;
         }
 
-        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? DefaultRedirect : "/administration/" + RedirectAfter, true);
+        Navigator.NavigateTo(string.IsNullOrEmpty(RedirectAfter) ? DefaultRedirect : RedirectAfter, true);
     }
 }

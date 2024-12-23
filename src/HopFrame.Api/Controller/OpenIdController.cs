@@ -1,20 +1,17 @@
 using HopFrame.Api.Models;
 using HopFrame.Security.Authentication.OpenID;
-using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace HopFrame.Api.Controller;
 
 [ApiController, Route("api/v1/openid")]
-public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> options) : ControllerBase {
+public class OpenIdController(IOpenIdAccessor accessor) : ControllerBase {
     public const string DefaultCallback = "api/v1/openid/callback";
 
     [HttpGet("redirect")]
     public async Task<IActionResult> RedirectToProvider([FromQuery] string redirectAfter, [FromQuery] int performRedirect = 1) {
-        var uri = await accessor.ConstructAuthUri(DefaultCallback, redirectAfter);
+        var uri = await accessor.ConstructAuthUri(redirectAfter);
 
         if (performRedirect == 1) {
             return Redirect(uri);
@@ -29,22 +26,13 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
             return BadRequest("Authorization code is missing");
         }
 
-        var token = await accessor.RequestToken(code, DefaultCallback);
+        var token = await accessor.RequestToken(code);
 
         if (token is null) {
             return Forbid("Authorization code is not valid");
         }
         
-        Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
-            MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),
-            HttpOnly = false,
-            Secure = true
-        });
-        Response.Cookies.Append(ITokenContext.RefreshTokenType, token.RefreshToken, new CookieOptions {
-            MaxAge = options.Value.RefreshToken.ConstructTimeSpan,
-            HttpOnly = false,
-            Secure = true
-        });
+        accessor.SetAuthenticationCookies(token);
 
         if (string.IsNullOrEmpty(state)) {
             return Ok(new SingleValueResult<string>(token.AccessToken));
@@ -65,19 +53,14 @@ public class OpenIdController(IOpenIdAccessor accessor, IOptions<OpenIdOptions> 
         if (token is null)
             return NotFound("Refresh token not valid");
         
-        Response.Cookies.Append(ITokenContext.AccessTokenType, token.AccessToken, new CookieOptions {
-            MaxAge = TimeSpan.FromSeconds(token.ExpiresIn),
-            HttpOnly = false,
-            Secure = true
-        });
+        accessor.SetAuthenticationCookies(token);
         
         return Ok(new SingleValueResult<string>(token.AccessToken));
     }
 
     [HttpDelete("logout")]
     public IActionResult Logout() {
-        Response.Cookies.Delete(ITokenContext.RefreshTokenType);
-        Response.Cookies.Delete(ITokenContext.AccessTokenType);
+        accessor.Logout();
         return Ok();
     }
     
