@@ -51,7 +51,7 @@ public class OpenIdController(IOpenIdAccessor accessor) : ControllerBase {
         var token = await accessor.RefreshAccessToken(refreshToken);
 
         if (token is null)
-            return NotFound("Refresh token not valid");
+            return Conflict("Refresh token not valid");
         
         accessor.SetAuthenticationCookies(token);
         
