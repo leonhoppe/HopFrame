@@ -3,21 +3,24 @@ using HopFrame.Security.Authentication.OpenID.Models;
 using HopFrame.Security.Authentication.OpenID.Options;
 using HopFrame.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace HopFrame.Security.Authentication.OpenID.Implementation;
 
-internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdOptions> options, IHttpContextAccessor accessor, IMemoryCache cache) : IOpenIdAccessor {
+internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdOptions> options, IHttpContextAccessor accessor, ICacheProvider cache) : IOpenIdAccessor {
     private const string ConfigurationCacheKey = "HopFrame:OpenID:Configuration";
     private const string AuthCodeCacheKey = "HopFrame:OpenID:Code:";
     private const string TokenCacheKey = "HopFrame:OpenID:Token:";
     
-    public async Task<OpenIdConfiguration> LoadConfiguration() {
-        if (options.Value.Cache.Enabled && options.Value.Cache.Configuration.Enabled && cache.TryGetValue(ConfigurationCacheKey, out object cachedConfiguration)) {
-            return cachedConfiguration as OpenIdConfiguration;
+    public Task<OpenIdConfiguration> LoadConfiguration() {
+        if (options.Value.Cache.Enabled && options.Value.Cache.Configuration.Enabled) {
+            return cache.GetOrCreate(ConfigurationCacheKey, LoadConfigurationInCache);
         }
         
+        return LoadConfigurationInCache();
+    }
+
+    internal async Task<OpenIdConfiguration> LoadConfigurationInCache() {
         var client = clientFactory.CreateClient();
         var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(options.Value.Issuer, ".well-known/openid-configuration").Replace("\\", "/"));
         var response = await client.SendAsync(request);
@@ -28,16 +31,20 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         var config = await JsonSerializer.DeserializeAsync<OpenIdConfiguration>(await response.Content.ReadAsStreamAsync());
         
         if (options.Value.Cache.Enabled && options.Value.Cache.Configuration.Enabled)
-            cache.Set(ConfigurationCacheKey, config, options.Value.Cache.Configuration.TTL.ConstructTimeSpan);
+            await cache.Set(ConfigurationCacheKey, config, options.Value.Cache.Configuration.TTL.ConstructTimeSpan);
         
         return config;
     }
 
-    public async Task<OpenIdToken> RequestToken(string code) {
-        if (options.Value.Cache.Enabled && options.Value.Cache.Auth.Enabled && cache.TryGetValue(AuthCodeCacheKey + code, out object cachedToken)) {
-            return cachedToken as OpenIdToken;
+    public Task<OpenIdToken> RequestToken(string code) {
+        if (options.Value.Cache.Enabled && options.Value.Cache.Auth.Enabled) {
+            return cache.GetOrCreate(AuthCodeCacheKey + code, () => RequestTokenInCache(code));
         }
-        
+
+        return RequestTokenInCache(code);
+    }
+
+    internal async Task<OpenIdToken> RequestTokenInCache(string code) {
         var protocol = accessor.HttpContext!.Request.IsHttps ? "https" : "http";
         var callback = options.Value.Callback ?? Path.Combine($"{protocol}://{accessor.HttpContext!.Request.Host.Value}", IOpenIdAccessor.DefaultCallback).Replace("\\", "/");
         
@@ -61,7 +68,7 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         var token = await JsonSerializer.DeserializeAsync<OpenIdToken>(await response.Content.ReadAsStreamAsync());
         
         if (options.Value.Cache.Enabled && options.Value.Cache.Auth.Enabled)
-            cache.Set(AuthCodeCacheKey + code, token, options.Value.Cache.Auth.TTL.ConstructTimeSpan);
+            await cache.Set(AuthCodeCacheKey + code, token, options.Value.Cache.Auth.TTL.ConstructTimeSpan);
         
         return token;
     }
@@ -74,11 +81,15 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         return $"{configuration.AuthorizationEndpoint}?response_type=code&client_id={options.Value.ClientId}&redirect_uri={callback}&scope=openid%20profile%20email%20offline_access&state={state}";
     }
 
-    public async Task<OpenIdIntrospection> InspectToken(string token) {
-        if (options.Value.Cache.Enabled && options.Value.Cache.Inspection.Enabled && cache.TryGetValue(TokenCacheKey + token, out object cachedToken)) {
-            return cachedToken as OpenIdIntrospection;
+    public Task<OpenIdIntrospection> InspectToken(string token) {
+        if (options.Value.Cache.Enabled && options.Value.Cache.Inspection.Enabled) {
+            return cache.GetOrCreate(TokenCacheKey + token, () => InspectTokenInCache(token));
         }
-        
+
+        return InspectTokenInCache(token);
+    }
+
+    internal async Task<OpenIdIntrospection> InspectTokenInCache(string token) {
         var configuration = await LoadConfiguration();
 
         var client = clientFactory.CreateClient();
@@ -97,7 +108,7 @@ internal class OpenIdAccessor(IHttpClientFactory clientFactory, IOptions<OpenIdO
         var introspection = await JsonSerializer.DeserializeAsync<OpenIdIntrospection>(await response.Content.ReadAsStreamAsync());
         
         if (options.Value.Cache.Enabled && options.Value.Cache.Inspection.Enabled)
-            cache.Set(TokenCacheKey + token, introspection, options.Value.Cache.Inspection.TTL.ConstructTimeSpan);
+            await cache.Set(TokenCacheKey + token, introspection, options.Value.Cache.Inspection.TTL.ConstructTimeSpan);
         
         return introspection;
     }

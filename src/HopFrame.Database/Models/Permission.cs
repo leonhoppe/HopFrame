@@ -18,12 +18,18 @@ public class Permission {
     [ForeignKey("UserId"), JsonIgnore]
     public virtual User User { get; set; }
 
+    public Guid? UserId { get; set; }
+
     [ForeignKey("GroupName"), JsonIgnore]
     public virtual PermissionGroup Group { get; set; }
+
+    [MaxLength(255)]
+    public string GroupName { get; set; }
     
     [ForeignKey("TokenId"), JsonIgnore]
     public virtual Token Token { get; set; }
     
+    public Guid? TokenId { get; set; }
 }
 
 public interface IPermissionOwner;
