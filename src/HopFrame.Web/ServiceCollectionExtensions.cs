@@ -15,7 +15,6 @@ namespace HopFrame.Web;
 public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration, HopFrameWebModuleConfig config = null) where TDbContext : HopDbContextBase {
         config ??= new HopFrameWebModuleConfig();
-        services.AddHttpClient();
         services.AddHopFrameRepositories<TDbContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddTransient<AuthMiddleware>();

@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions {
     /// </summary>
     /// <param name="services">The service provider to add the services to</param>
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
-    /// <param name="config">Configuration for how the HopFrame services get set up</param>
+    /// <param name="config">Configuration for how the HopFrame services are set up</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrame<TDbContext>(this IServiceCollection services, ConfigurationManager configuration, HopFrameApiModuleConfig config = null) where TDbContext : HopDbContextBase {
         config ??= new();
@@ -30,10 +30,10 @@ public static class ServiceCollectionExtensions {
             controllers.AddRange([typeof(UserController), typeof(GroupController)]);
         
         var defaultAuthenticationSection = configuration.GetSection("HopFrame:Authentication:DefaultAuthentication");
-        if (!defaultAuthenticationSection.Exists() || configuration.GetValue<bool>("HopFrame:Authentication:DefaultAuthentication"))
+        if ((!defaultAuthenticationSection.Exists() || configuration.GetValue<bool>("HopFrame:Authentication:DefaultAuthentication")) && config.ExposeAuthEndpoints)
             controllers.Add(typeof(AuthController));
         
-        if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled")) {
+        if (configuration.GetValue<bool>("HopFrame:Authentication:OpenID:Enabled") && config.ExposeAuthEndpoints) {
             IOpenIdAccessor.DefaultCallback = OpenIdController.DefaultCallback;
             controllers.Add(typeof(OpenIdController));
         }
@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions {
     /// </summary>
     /// <param name="services">The service provider to add the services to</param>
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
-    /// <param name="config">Configuration for how the HopFrame services get set up</param>
+    /// <param name="config">Configuration for how the HopFrame services are set up</param>
     /// <typeparam name="TDbContext">The data source for all HopFrame entities</typeparam>
     public static void AddHopFrameNoEndpoints<TDbContext>(this IServiceCollection services, ConfigurationManager configuration, HopFrameApiModuleConfig config = null) where TDbContext : HopDbContextBase {
         config ??= new();

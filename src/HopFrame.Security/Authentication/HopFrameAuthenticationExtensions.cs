@@ -21,7 +21,7 @@ public static class HopFrameAuthenticationExtensions {
     /// </summary>
     /// <param name="services">The service provider to add the services to</param>
     /// <param name="configuration">The configuration used to configure HopFrame authentication</param>
-    /// <param name="config">Configuration for how the HopFrame services get set up</param>
+    /// <param name="config">Configuration for how the HopFrame services are set up</param>
     /// <returns></returns>
     public static IServiceCollection AddHopFrameAuthentication(this IServiceCollection services, ConfigurationManager configuration, HopFrameConfig config = null) {
         config ??= new HopFrameConfig();
