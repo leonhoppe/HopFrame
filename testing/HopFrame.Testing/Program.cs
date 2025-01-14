@@ -1,8 +1,8 @@
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
-using HopFrame.Testing.Models;
 using HopFrame.Web;
+using HopFrame.Web.Components.Pages;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +17,8 @@ builder.Services.AddDbContext<DatabaseContext>(options => {
 });
 
 builder.Services.AddHopFrame(options => {
-    options.AddDbContext<DatabaseContext>()
-        .Table<User>(table => table.Ignore());
+    options.DisplayUserInfo(false);
+    options.AddDbContext<DatabaseContext>();
 });
 
 var app = builder.Build();
@@ -36,6 +36,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(HopFrameHome).Assembly);
 
 app.Run();

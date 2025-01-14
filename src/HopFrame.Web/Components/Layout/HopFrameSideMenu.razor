@@ -1,0 +1,22 @@
+﻿@using HopFrame.Core.Services
+<FluentAppBar Orientation="Orientation.Vertical" Style="background-color: var(--neutral-layer-2); height: auto">
+    <FluentAppBarItem Href="/admin"
+                      Match="NavLinkMatch.All"
+                      IconActive="new Icons.Filled.Size24.Grid()"
+                      IconRest="new Icons.Regular.Size24.Grid()"
+                      Text="Dashboard"
+                      Style="margin-top: 0.25rem"/>
+
+    <br>
+    
+    @foreach (var table in Explorer.GetTableNames()) {
+        <FluentAppBarItem Href="@("/admin/" + table)"
+                          Match="NavLinkMatch.All"
+                          IconActive="new Icons.Filled.Size24.Database()"
+                          IconRest="new Icons.Regular.Size24.Database()"
+                          Text="@table"
+                          Style="margin-top: 0.25rem"/>
+    }
+</FluentAppBar>
+
+@inject IContextExplorer Explorer

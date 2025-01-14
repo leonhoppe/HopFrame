@@ -1,0 +1,48 @@
+﻿@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+@inherits LayoutComponentBase
+
+<link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+<link rel="stylesheet" href="/_content/HopFrame.Web/hopframe.css"/>
+
+<FluentDesignTheme Mode="DesignThemeModes.Dark" />
+
+<FluentLayout Class="hopframe-outer">
+    <HopFrameNavigation />
+    <FluentStack Orientation="Orientation.Horizontal" Width="100%" Class="hopframe-main">
+        <HopFrameSideMenu />
+        <FluentBodyContent>
+            <div class="hopframe-content">
+                @Body
+            </div>
+        </FluentBodyContent>
+    </FluentStack>
+    <FluentFooter>
+        <a href="https://git.leon-hoppe.de/leon.hoppe/hopframe" target="_blank">Documentation and source code</a>
+        <FluentSpacer/>
+        <a href="https://git.leon-hoppe.de/leon.hoppe/" target="_blank" style="margin-right: 0.25rem; text-decoration: none">
+            <i class="devicon-gitlab-plain"></i>
+        </a>
+        <a href="https://github.com/leonhoppe" target="_blank" style="text-decoration: none">
+            <i class="devicon-github-original"></i>
+        </a>
+    </FluentFooter>
+</FluentLayout>
+
+@inject IServiceProvider Provider
+@inject HopFrameConfig Config
+@inject NavigationManager Navigator
+
+@code {
+
+    protected override async Task OnInitializedAsync() {
+        if (!string.IsNullOrEmpty(Config.BasePolicy)) {
+            var handler = Provider.GetService(Config.AuthHandler!) as IHopFrameAuthHandler;
+            var authorized = await handler!.IsAuthenticatedAsync(Config.BasePolicy);
+            if (!authorized) {
+                Navigator.NavigateTo((Config.LoginPageRewrite ?? "/login") + "?redirect=" + Navigator.Uri);
+            }
+        }
+    }
+
+}

@@ -1,0 +1,17 @@
+﻿.hopframe-header {
+    background-color: var(--neutral-layer-4) !important;
+    border-bottom: calc(var(--stroke-width) * 2px) solid var(--accent-fill-rest) !important;
+    color: var(--neutral-foreground-rest) !important;
+}
+
+.hopframe-content {
+    padding: 0.5rem 1.5rem;
+    align-self: stretch !important;
+    width: 100%;
+}
+
+.hopframe-main {
+    min-height: calc(100dvh - 86px);
+    color: var(--neutral-foreground-rest);
+    align-items: stretch !important;
+}

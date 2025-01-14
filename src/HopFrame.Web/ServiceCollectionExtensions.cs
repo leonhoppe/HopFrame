@@ -9,10 +9,12 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
         var config = new HopFrameConfig();
         configurator.Invoke(new HopFrameConfigurator(config));
+        return AddHopFrame(services, config);
+    }
 
+    public static IServiceCollection AddHopFrame(this IServiceCollection services, HopFrameConfig config) {
         services.AddSingleton(config);
         services.AddHopFrameServices();
-        
         return services;
     }
     
