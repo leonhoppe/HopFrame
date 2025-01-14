@@ -2,6 +2,7 @@ using HopFrame.Core.Services;
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
+using HopFrame.Testing.Models;
 using HopFrame.Testing.Services;
 using HopFrame.Web;
 using HopFrame.Web.Components.Pages;
@@ -20,7 +21,21 @@ builder.Services.AddDbContext<DatabaseContext>(options => {
 
 builder.Services.AddHopFrame(options => {
     options.SetAuthHandler<AuthService>();
-    options.AddDbContext<DatabaseContext>();
+    options.AddDbContext<DatabaseContext>(context => {
+        context.Table<User>(table => {
+            table.Property(u => u.Password)
+                .List(false);
+
+            table.Property(u => u.FirstName)
+                .SetDisplayName("First Name");
+
+            table.Property(u => u.LastName)
+                .SetDisplayName("Last Name");
+
+            table.Property(u => u.Id)
+                .Sortable(false);
+        });
+    });
 });
 
 builder.Services.AddTransient<IHopFrameAuthHandler, AuthService>();

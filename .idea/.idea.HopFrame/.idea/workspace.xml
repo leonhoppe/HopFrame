@@ -9,19 +9,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added admin page navigation">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IModelManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ModelManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/Post.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Services/AuthService.cs" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameListView.razor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameListView.razor.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameNavigation.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameNavigation.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameSideMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameSideMenu.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/wwwroot/hopframe.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/wwwroot/hopframe.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,7 +63,10 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -78,24 +80,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
-    ".NET Project.HopFrame.Testing.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/setup",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.environmentSetup",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/setup&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -144,7 +146,9 @@
       <workItem from="1736788853462" duration="780000" />
       <workItem from="1736845367516" duration="283000" />
       <workItem from="1736845655122" duration="165000" />
-      <workItem from="1736845825812" duration="13786000" />
+      <workItem from="1736845825812" duration="14084000" />
+      <workItem from="1736863626597" duration="7027000" />
+      <workItem from="1736875984621" duration="8464000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -162,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736855209077</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added database loading logic">
+      <option name="closed" value="true" />
+      <created>1736859917232</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1736859917232</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,6 +186,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Added basic configuration" />
     <MESSAGE value="Added admin page navigation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added admin page navigation" />
+    <MESSAGE value="Added database loading logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added database loading logic" />
   </component>
 </project>

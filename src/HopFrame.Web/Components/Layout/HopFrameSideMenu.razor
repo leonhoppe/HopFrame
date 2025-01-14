@@ -10,7 +10,7 @@
     <br>
     
     @foreach (var table in Explorer.GetTableNames()) {
-        <FluentAppBarItem Href="@("/admin/" + table)"
+        <FluentAppBarItem Href="@("/admin/" + table.ToLower())"
                           Match="NavLinkMatch.All"
                           IconActive="new Icons.Filled.Size24.Database()"
                           IconRest="new Icons.Regular.Size24.Database()"

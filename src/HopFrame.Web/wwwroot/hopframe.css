@@ -5,7 +5,6 @@
 }
 
 .hopframe-content {
-    padding: 0.5rem 1.5rem;
     align-self: stretch !important;
     width: 100%;
 }
@@ -14,4 +13,18 @@
     min-height: calc(100dvh - 86px);
     color: var(--neutral-foreground-rest);
     align-items: stretch !important;
+    column-gap: 0 !important;
+}
+
+.hopframe-toolbar {
+    width: 100%;
+    padding: 0.5rem 1.5rem;
+}
+
+.hopframe-content .empty-content-row.empty-content-cell {
+    border: none !important;
+}
+
+fluent-option {
+    background: transparent !important;
 }

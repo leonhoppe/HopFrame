@@ -1,0 +1,144 @@
+﻿@page "/admin/{TableName}"
+@layout HopFrameLayout
+@rendermode InteractiveServer
+
+@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+@using Microsoft.JSInterop
+
+<div style="display: flex; flex-direction: column; height: 100%">
+    <FluentToolbar Class="hopframe-toolbar">
+        <h3>@_config?.PropertyName</h3>
+        <FluentSpacer />
+        <FluentSearch @oninput="OnSearch" @onchange="OnSearch" />
+        <FluentButton>Add Entry</FluentButton>
+    </FluentToolbar>
+
+    <div style="overflow-y: auto; flex-grow: 1">
+        <FluentDataGrid Items="_currentlyDisplayedModels?.AsQueryable()">
+            @{ var dataIndex = 0; }
+            @foreach (var property in _config!.Properties.Where(prop => prop.List)) {
+                <PropertyColumn Title="@property.Name" Property="o => property.Info.GetValue(o)" Style="min-width: max-content; min-height: 43px" Sortable="@property.Sortable"/>
+            }
+
+            <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 43px; min-width: max-content">
+                @{ var currentElement = _currentlyDisplayedModels!.ElementAt(dataIndex); }
+                <FluentButton aria-label="Edit entry">
+                    <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
+                </FluentButton>
+
+                <FluentButton aria-label="Delete entry" OnClick="() => { DeleteEntry(currentElement); }">
+                    <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
+                </FluentButton>
+
+                @{
+                    dataIndex++;
+                    dataIndex %= 20;
+                }
+            </TemplateColumn>
+        </FluentDataGrid>
+        
+        @if (_currentlyDisplayedModels?.Any() == true) {
+            <div class="hopframe-paginator">
+                <FluentButton BackgroundColor="transparent" OnClick="() => ChangePage(_currentPage - 1)">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.ArrowPrevious())" Color="Color.Neutral" />
+                </FluentButton>
+            
+                <span>Page</span>
+
+                <FluentSelect TOption="int"
+                              Items="Enumerable.Range(0, _totalPages)"
+                              OptionValue="@(p => p.ToString())"
+                              OptionText="@(p => (p + 1).ToString())"
+                              ValueChanged="s => ChangePage(Convert.ToInt32(s))"
+                              Width="max-content" SelectedOption="@_currentPage"/>
+            
+                <span>of @_totalPages</span>
+
+                <FluentButton BackgroundColor="transparent" OnClick="() => ChangePage(_currentPage + 1)">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.ArrowNext())" Color="Color.Neutral" />
+                </FluentButton>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function removeBg() {
+        const elements = document.querySelectorAll(".col-sort-button");
+        const style = new CSSStyleSheet();
+        style.replaceSync(".control { background: none !important; }");
+        elements.forEach(e => e.shadowRoot.adoptedStyleSheets.push(style));
+        console.log(elements);
+    }
+    
+    removeBg();
+</script>
+
+@inject IContextExplorer Explorer
+@inject NavigationManager Navigator
+@inject IJSRuntime Js
+
+@code {
+    
+    [Parameter]
+    public required string TableName { get; set; }
+
+    private TableConfig? _config;
+    private ITableManager? _manager;
+
+    private IEnumerable<object>? _currentlyDisplayedModels;
+    private int _currentPage = 0;
+    private int _totalPages;
+    private string? _searchTerm;
+
+    protected override void OnInitialized() {
+        _config = Explorer.GetTable(TableName);
+
+        if (_config is null) {
+            Navigator.NavigateTo("/admin", true);
+            return;
+        }
+
+        _manager = Explorer.GetTableManager(_config.PropertyName);
+        _currentlyDisplayedModels = _manager!.LoadPage(_currentPage).ToArray();
+        _totalPages = _manager.TotalPages();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        await Js.InvokeVoidAsync("removeBg");
+    }
+
+    private CancellationTokenSource _searchCancel = new();
+    private async Task OnSearch(ChangeEventArgs eventArgs) {
+        await _searchCancel.CancelAsync();
+        _searchTerm = eventArgs.Value?.ToString();
+        if (_searchTerm is null) return;
+        _searchCancel = new();
+        
+        await Task.Delay(500, _searchCancel.Token);
+        (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm);
+    }
+
+    private void ChangePage(int page) {
+        if (page < 0 || page > _totalPages - 1) return;
+        _currentPage = page;
+        if (!string.IsNullOrEmpty(_searchTerm)) {
+            (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm, page);
+        }
+        else {
+            _currentlyDisplayedModels = _manager!.LoadPage(page);
+        }
+    }
+
+    private async Task DeleteEntry(object element) { //TODO: display confirmation
+        await _manager!.DeleteItem(element);
+
+        if (!string.IsNullOrEmpty(_searchTerm)) {
+            (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm);
+        }
+        else {
+            OnInitialized();
+        }
+    }
+}

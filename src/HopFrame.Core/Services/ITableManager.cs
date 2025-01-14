@@ -1,5 +1,8 @@
 ﻿namespace HopFrame.Core.Services;
 
 public interface ITableManager {
-    public Task<IEnumerable<object>> LoadPage(int page, int perPage = 25);
+    public IQueryable<object> LoadPage(int page, int perPage = 20);
+    public (IEnumerable<object>, int) Search(string searchTerm, int page = 0, int perPage = 20);
+    public int TotalPages(int perPage = 20);
+    public Task DeleteItem(object item);
 }

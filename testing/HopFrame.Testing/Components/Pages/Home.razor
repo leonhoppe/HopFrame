@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using HopFrame.Core.Services
 
 <PageTitle>Home</PageTitle>
 
@@ -7,23 +6,43 @@
 
 Welcome to your new Fluent Blazor app.
 
-@inject IContextExplorer Explorer
 @inject DatabaseContext Context
 
 @code {
 
     protected override async Task OnInitializedAsync() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
+            var first = GenerateName(Random.Shared.Next(4, 6));
+            var last = GenerateName(Random.Shared.Next(4, 6));
+            var username = $"{first}.{last}";
             Context.Users.Add(new() {
-                Email = "leon@ladenbau-hoppe.de",
-                Id = Guid.CreateVersion7()
+                Email = $"{username}-{Random.Shared.Next(0, 20)}@gmail.com",
+                Id = Guid.CreateVersion7(),
+                FirstName = first,
+                LastName = last,
+                Username = username
             });
         }
+
         await Context.SaveChangesAsync();
-        
-        var manager = Explorer.GetTableManager("Users");
-        var page = await manager!.LoadPage(0);
-        Console.WriteLine(string.Join(", ", page));
+    }
+
+    public static string GenerateName(int len) {
+        Random r = new Random();
+        string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
+        string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
+        string Name = "";
+        Name += consonants[r.Next(consonants.Length)].ToUpper();
+        Name += vowels[r.Next(vowels.Length)];
+        int b = 2; //b tells how many times a new letter has been added. It's 2 right now because the first two letters are already in the name.
+        while (b < len) {
+            Name += consonants[r.Next(consonants.Length)];
+            b++;
+            Name += vowels[r.Next(vowels.Length)];
+            b++;
+        }
+
+        return Name;
     }
 
 }

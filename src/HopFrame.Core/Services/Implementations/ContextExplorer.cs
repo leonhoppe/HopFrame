@@ -15,7 +15,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
     
     public TableConfig? GetTable(string tableName) {
         foreach (var context in config.Contexts) {
-            var table = context.Tables.FirstOrDefault(table => table.PropertyName == tableName);
+            var table = context.Tables.FirstOrDefault(table => table.PropertyName.Equals(tableName, StringComparison.CurrentCultureIgnoreCase));
             if (table is not null)
                 return table;
         }
@@ -32,7 +32,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             if (dbContext is null) return null;
 
             var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-            return Activator.CreateInstance(type, dbContext) as ITableManager;
+            return Activator.CreateInstance(type, dbContext, table) as ITableManager;
         }
 
         return null;
