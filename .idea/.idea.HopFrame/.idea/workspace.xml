@@ -9,18 +9,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added basic configuration">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IHopFrameAuthHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameNavigation.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameSideMenu.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameHome.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/wwwroot/hopframe.css" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added admin page navigation">
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IModelManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ModelManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/Post.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Services/AuthService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/_Imports.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/_Imports.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameNavigation.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameNavigation.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,6 +63,9 @@
     &quot;second&quot;: &quot;2d65fdcb-5f13-45ad-a7ba-91dd4a88d6e4&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -140,7 +144,7 @@
       <workItem from="1736788853462" duration="780000" />
       <workItem from="1736845367516" duration="283000" />
       <workItem from="1736845655122" duration="165000" />
-      <workItem from="1736845825812" duration="9326000" />
+      <workItem from="1736845825812" duration="13786000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -150,7 +154,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736850899254</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added admin page navigation">
+      <option name="closed" value="true" />
+      <created>1736855209077</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1736855209077</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +173,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Added basic configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added basic configuration" />
+    <MESSAGE value="Added admin page navigation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added admin page navigation" />
   </component>
 </project>

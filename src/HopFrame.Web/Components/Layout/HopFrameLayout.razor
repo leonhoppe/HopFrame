@@ -1,5 +1,6 @@
 ﻿@using HopFrame.Core.Config
 @using HopFrame.Core.Services
+@using Microsoft.Extensions.DependencyInjection
 @inherits LayoutComponentBase
 
 <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
@@ -29,19 +30,16 @@
     </FluentFooter>
 </FluentLayout>
 
-@inject IServiceProvider Provider
+@inject IHopFrameAuthHandler Handler
 @inject HopFrameConfig Config
 @inject NavigationManager Navigator
 
 @code {
 
     protected override async Task OnInitializedAsync() {
-        if (!string.IsNullOrEmpty(Config.BasePolicy)) {
-            var handler = Provider.GetService(Config.AuthHandler!) as IHopFrameAuthHandler;
-            var authorized = await handler!.IsAuthenticatedAsync(Config.BasePolicy);
-            if (!authorized) {
-                Navigator.NavigateTo((Config.LoginPageRewrite ?? "/login") + "?redirect=" + Navigator.Uri);
-            }
+        var authorized = await Handler.IsAuthenticatedAsync(Config.BasePolicy);
+        if (!authorized) {
+            Navigator.NavigateTo((Config.LoginPageRewrite ?? "/login") + "?redirect=/" + Navigator.ToBaseRelativePath(Navigator.Uri), true);
         }
     }
 

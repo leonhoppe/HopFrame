@@ -8,11 +8,22 @@
 Welcome to your new Fluent Blazor app.
 
 @inject IContextExplorer Explorer
+@inject DatabaseContext Context
 
 @code {
 
-    protected override void OnInitialized() {
-        Console.WriteLine(string.Join(", ", Explorer.GetTableNames()));
+    protected override async Task OnInitializedAsync() {
+        for (int i = 0; i < 10; i++) {
+            Context.Users.Add(new() {
+                Email = "leon@ladenbau-hoppe.de",
+                Id = Guid.CreateVersion7()
+            });
+        }
+        await Context.SaveChangesAsync();
+        
+        var manager = Explorer.GetTableManager("Users");
+        var page = await manager!.LoadPage(0);
+        Console.WriteLine(string.Join(", ", page));
     }
 
 }

@@ -1,28 +1,28 @@
 ﻿@using System.Text
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
+
 <FluentHeader Class="hopframe-header">
-    <a href="/admin" style="text-decoration: none; color: @Color.Neutral.ToAttributeValue()">HopFrame</a>
-    <FluentSpacer/>
+    <a href="/admin" style="text-decoration: none; color: @Color.Neutral.ToAttributeValue();">HopFrame</a>
 
     @if (Config.DisplayUserInfo) {
-        <FluentPersona Name="@_displayName" Initials="@_initials" ImageSize="32px" TextPosition="TextPosition.Start"/>
+        <FluentPersona Name="@_displayName" Initials="@_initials" ImageSize="32px" TextPosition="TextPosition.Start" Style="margin-left: auto"/>
     }
 
 </FluentHeader>
 
 @inject HopFrameConfig Config
-@inject IServiceProvider Provider
+@inject IHopFrameAuthHandler Handler
 
 @code {
 
     private string? _displayName;
     private string? _initials;
+    private string? _searchValue;
 
     protected override async Task OnInitializedAsync() {
         if (Config.DisplayUserInfo) {
-            var handler = Provider.GetService(Config.AuthHandler!) as IHopFrameAuthHandler;
-            _displayName = await handler!.GetCurrentUserDisplayNameAsync();
+            _displayName = await Handler.GetCurrentUserDisplayNameAsync();
             _initials = GetInitials(_displayName);
         }
     }

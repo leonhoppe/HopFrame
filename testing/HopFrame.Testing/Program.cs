@@ -1,6 +1,8 @@
+using HopFrame.Core.Services;
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
+using HopFrame.Testing.Services;
 using HopFrame.Web;
 using HopFrame.Web.Components.Pages;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +19,11 @@ builder.Services.AddDbContext<DatabaseContext>(options => {
 });
 
 builder.Services.AddHopFrame(options => {
-    options.DisplayUserInfo(false);
+    options.SetAuthHandler<AuthService>();
     options.AddDbContext<DatabaseContext>();
 });
+
+builder.Services.AddTransient<IHopFrameAuthHandler, AuthService>();
 
 var app = builder.Build();
 
