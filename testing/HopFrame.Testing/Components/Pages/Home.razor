@@ -1,0 +1,18 @@
+﻿@page "/"
+@using HopFrame.Core.Services
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new Fluent Blazor app.
+
+@inject IContextExplorer Explorer
+
+@code {
+
+    protected override void OnInitialized() {
+        Console.WriteLine(string.Join(", ", Explorer.GetTableNames()));
+    }
+
+}
