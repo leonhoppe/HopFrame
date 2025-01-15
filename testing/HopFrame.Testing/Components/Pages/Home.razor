@@ -23,7 +23,8 @@ Welcome to your new Fluent Blazor app.
                 Id = Guid.CreateVersion7(),
                 FirstName = first,
                 LastName = last,
-                Username = username
+                Username = username,
+                Password = GenerateName(Random.Shared.Next(8, 16))
             };
 
             Context.Users.Add(user);

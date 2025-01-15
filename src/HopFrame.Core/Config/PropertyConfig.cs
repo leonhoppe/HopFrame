@@ -11,8 +11,11 @@ public class PropertyConfig(PropertyInfo info) {
     public bool Searchable { get; set; } = true;
     public PropertyInfo? DisplayedProperty { get; set; }
     public Func<object, string>? Formatter { get; set; }
+    public Func<string, object>? Parser { get; set; }
+    public Func<object>? Template { get; set; }
     public bool Editable { get; set; } = true;
     public bool Creatable { get; set; } = true;
+    public bool DisplayValue { get; set; } = true;
 }
 
 public class PropertyConfig<TProp>(PropertyConfig config) {
@@ -22,8 +25,8 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
         return this;
     }
 
-    public PropertyConfig<TProp> List(bool display) {
-        config.List = display;
+    public PropertyConfig<TProp> List(bool list) {
+        config.List = list;
         config.Searchable = false;
         return this;
     }
@@ -48,6 +51,16 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
         return this;
     }
 
+    public PropertyConfig<TProp> ValueParser(Func<string, TProp> parser) {
+        config.Parser = str => parser.Invoke(str)!;
+        return this;
+    }
+
+    public PropertyConfig<TProp> ValueTemplate(Func<TProp> template) {
+        config.Template = () => template.Invoke()!;
+        return this;
+    }
+
     public PropertyConfig<TProp> Editable(bool editable) {
         config.Editable = editable;
         return this;
@@ -55,6 +68,11 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> Creatable(bool creatable) {
         config.Creatable = creatable;
+        return this;
+    }
+
+    public PropertyConfig<TProp> DisplayValue(bool display) {
+        config.DisplayValue = display;
         return this;
     }
     

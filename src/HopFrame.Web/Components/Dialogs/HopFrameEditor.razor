@@ -1,8 +1,10 @@
 @implements IDialogContentComponent<EditorDialogData>
 
-@using HopFrame.Web.Models
+@using HopFrame.Core.Config
 @using HopFrame.Core.Services
+@using HopFrame.Web.Models
 @using HopFrame.Web.Helpers
+@using Microsoft.EntityFrameworkCore.Internal
 
 <FluentDialogBody>
     @foreach (var property in Content.Config.Properties) {
@@ -13,23 +15,69 @@
                 <FluentNumberField
                     TValue="double"
                     Label="@property.Name"
-                    Value="@(Convert.ToDouble(property.Info.GetValue(Content.CurrentObject)))"
+                    Value="GetPropertyValue<double>(property)"
                     Style="width: 100%;"
                     Disabled="@(!property.Editable)"
-                />
-            } else if (property.Info.PropertyType == typeof(bool)) {
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Number))" />
+            }
+            else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.Boolean) {
                 <FluentSwitch
                     Label="@property.Name"
-                    Value="@(Convert.ToBoolean(property.Info.GetValue(Content.CurrentObject)))"
-                />
+                    Value="GetPropertyValue<bool>(property)"
+                    Disabled="@(!property.Editable)"
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Switch))" />
+            }
+            else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.DateTime) {
+                <div style="display: flex; gap: 10px">
+                    <div style="display: flex; flex-direction: column; width: 100%">
+                        <FluentDatePicker 
+                            Label="@property.Name" 
+                            Value="GetPropertyValue<DateTime>(property)"
+                            Disabled="@(!property.Editable)"
+                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Date))" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: flex-end">
+                        <FluentTimePicker 
+                            Value="GetPropertyValue<DateTime>(property)"
+                            Disabled="@(!property.Editable)"
+                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Time))" />
+                    </div>
+                </div>
+            }
+            else if (property.Info.PropertyType == typeof(DateOnly)) {
+                <FluentDatePicker 
+                    Label="@property.Name"
+                    Value="GetPropertyValue<DateOnly>(property).ToDateTime(TimeOnly.MinValue)"
+                    Style="width: 100%"
+                    Disabled="@(!property.Editable)"
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Date))" />
+            }
+            else if (property.Info.PropertyType == typeof(TimeOnly)) {
+                <FluentTimePicker 
+                    Label="@property.Name"
+                    Value="GetPropertyValue<TimeOnly>(property).ToDateTime()"
+                    Style="width: 100%"
+                    Disabled="@(!property.Editable)"
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Time))" />
+            }
+            else if (property.Info.PropertyType.IsEnum) {
+                <FluentSelect 
+                    TOption="string"
+                    Label="@property.Name"
+                    Items="Enum.GetNames(property.Info.PropertyType)"
+                    Value="@(GetPropertyValue<string>(property))"
+                    Style="width: 100%"
+                    Height="250px"
+                    Disabled="@(!property.Editable)"
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Enum))" />
             }
             else {
                 <FluentTextField 
                     Label="@property.Name"
-                    Value="@_manager?.DisplayProperty(Content.CurrentObject, property.Info, Content.Config)"
+                    Value="@(GetPropertyValue<string>(property))"
                     Style="width: 100%;"
                     Disabled="@(!property.Editable)"
-                />
+                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Text))" />
             }
         </div>
     }
@@ -44,16 +92,103 @@
     [CascadingParameter]
     public required FluentDialog Dialog { get; set; }
 
-    private ITableManager? _manager;
     private bool _currentlyEditing;
+    private ITableManager? _manager;
 
     protected override void OnInitialized() {
-        if (Dialog.Instance is null) return;
         _currentlyEditing = Content.CurrentObject is not null;
-        Dialog.Instance.Parameters.Title = Content.CurrentObject is null ? "Add entry" : "Edit entry";
+        Dialog.Instance.Parameters.Title = (_currentlyEditing ? "Edit " : "Add ") + Content.Config.TableType.Name;
         Dialog.Instance.Parameters.PreventScroll = true;
         Dialog.Instance.Parameters.Width = "500px";
         Dialog.Instance.Parameters.PrimaryAction = "Save";
         _manager = Explorer.GetTableManager(Content.Config.PropertyName);
+        Content.CurrentObject ??= Activator.CreateInstance(Content.Config.TableType);
+    }
+
+    private TValue? GetPropertyValue<TValue>(PropertyConfig config) { //TODO: handle relational types
+        if (!config.DisplayValue) return default;
+        if (Content.CurrentObject is null) return default;
+        var value = config.Info.GetValue(Content.CurrentObject);
+
+        var newlyGenerated = false;
+        if (config.Info.PropertyType.IsDefaultValue(value) && config.Template is not null) {
+            value = config.Template.Invoke();
+            newlyGenerated = true;
+        }
+
+        if (value is null)
+            return default;
+
+        if (config.Info.PropertyType == typeof(TValue))
+            return (TValue)value;
+
+        if (typeof(TValue) == typeof(string)) {
+            if (!newlyGenerated)
+                return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config.Info, Content.Config);
+            
+            return (TValue)(object)value.ToString()!;
+        }
+
+        return (TValue)Convert.ChangeType(value, typeof(TValue));
+    }
+
+    private void SetPropertyValue(PropertyConfig config, object? value, InputType senderType) {
+        object? result = null;
+
+        if (value is not null) {
+            switch (senderType) {
+                case InputType.Number:
+                    result = Convert.ChangeType(value, config.Info.PropertyType);
+                    break;
+                    
+                case InputType.Text:
+                    result = Convert.ToString(value);
+                    break;
+                    
+                case InputType.Switch:
+                    result = Convert.ToBoolean(value);
+                    break;
+                    
+                case InputType.Enum:
+                    result = Enum.Parse(config.Info.PropertyType, (string)value);
+                    break;
+                    
+                case InputType.Date:
+                    if (config.Info.PropertyType == typeof(DateTime)) {
+                        var newDate = (DateOnly)value;
+                        var dateTime = GetPropertyValue<DateTime>(config);
+                        result = new DateTime(newDate.Year, newDate.Month, newDate.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Microsecond);
+                    }
+                    else result = (DateOnly)value;
+                    break;
+                    
+                case InputType.Time:
+                    if (config.Info.PropertyType == typeof(DateTime)) {
+                        var newTime = (TimeOnly)value;
+                        var dateTime = GetPropertyValue<DateTime>(config);
+                        result = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, newTime.Hour, newTime.Minute, newTime.Second, newTime.Millisecond, newTime.Microsecond);
+                    }
+                    else result = (TimeOnly)value;
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(senderType), senderType, null);
+            }
+        }
+
+        if (config.Parser is not null) {
+            result = config.Parser(result!.ToString()!);
+        }
+
+        config.Info.SetValue(Content.CurrentObject, result);
+    }
+    
+    private enum InputType {
+        Number,
+        Switch,
+        Date,
+        Time,
+        Enum,
+        Text
     }
 }

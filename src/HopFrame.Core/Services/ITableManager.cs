@@ -8,6 +8,9 @@ public interface ITableManager {
     public (IEnumerable<object>, int) Search(string searchTerm, int page = 0, int perPage = 20);
     public int TotalPages(int perPage = 20);
     public Task DeleteItem(object item);
+    public Task EditItem(object item);
+    public Task AddItem(object item);
+    public Task RevertChanges(object item);
     
     public string DisplayProperty(object? item, PropertyInfo info, TableConfig? tableConfig);
 }

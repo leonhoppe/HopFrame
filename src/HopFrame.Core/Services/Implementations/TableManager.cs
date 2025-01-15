@@ -37,6 +37,20 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         await context.SaveChangesAsync();
     }
 
+    public async Task EditItem(object item) {
+        await context.SaveChangesAsync();
+    }
+
+    public async Task AddItem(object item) {
+        var table = context.Set<TModel>();
+        await table.AddAsync((TModel)item);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RevertChanges(object item) {
+        await context.Entry((TModel)item).ReloadAsync();
+    }
+
     private bool ItemSearched(TModel item, string searchTerm) {
         foreach (var property in config.Properties) {
             if (!property.Searchable) continue;

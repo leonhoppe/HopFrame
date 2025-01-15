@@ -24,7 +24,8 @@ builder.Services.AddHopFrame(options => {
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)
-                .List(false);
+                .List(false)
+                .DisplayValue(false);
 
             table.Property(u => u.FirstName)
                 .SetDisplayName("First Name");
@@ -33,20 +34,17 @@ builder.Services.AddHopFrame(options => {
                 .SetDisplayName("Last Name");
 
             table.Property(u => u.Id)
-                .Sortable(false);
+                .Sortable(false)
+                .ValueTemplate(Guid.CreateVersion7);
         });
 
-        /* context.Table<Post>()
-            .Property(p => p.Author)
-            .DisplayedProperty(u => u!.Username); */
         context.Table<Post>()
             .Property(p => p.Author)
             .Format(user => $"{user?.FirstName} {user?.LastName}");
 
         context.Table<Post>()
             .Property(p => p.Id)
-            .SetDisplayName("ID")
-            .Editable(true);
+            .SetDisplayName("ID");
     });
 });
 

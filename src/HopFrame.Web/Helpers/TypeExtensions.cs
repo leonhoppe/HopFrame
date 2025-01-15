@@ -2,6 +2,7 @@ namespace HopFrame.Web.Helpers;
 
 internal static class TypeExtensions {
     public static bool IsNumeric(this Type o) {
+        if (o.IsEnum) return false;
         switch (Type.GetTypeCode(o)) {
             case TypeCode.Byte:
             case TypeCode.SByte:

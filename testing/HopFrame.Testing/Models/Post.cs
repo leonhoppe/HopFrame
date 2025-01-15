@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HopFrame.Testing.Models;
@@ -15,5 +16,13 @@ public class Post {
     [ForeignKey("author")]
     public User? Author { get; set; }
 
-    public bool Published { get; set; }
+    /*public bool Published { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateOnly Created { get; set; }
+
+    public TimeOnly At { get; set; }*/
+
+    public ListSortDirection Type { get; set; }
 }

@@ -76,8 +76,7 @@
         const elements = document.querySelectorAll(".col-sort-button");
         const style = new CSSStyleSheet();
         style.replaceSync(".control { background: none !important; }");
-        elements.forEach(e => e.shadowRoot.adoptedStyleSheets.push(style));
-        console.log(elements);
+        elements.forEach(e => e?.shadowRoot?.adoptedStyleSheets?.push(style));
     }
     
     removeBg();
@@ -97,19 +96,19 @@
     private ITableManager? _manager;
 
     private IEnumerable<object>? _currentlyDisplayedModels;
-    private int _currentPage = 0;
+    private int _currentPage;
     private int _totalPages;
     private string? _searchTerm;
 
     protected override void OnInitialized() {
-        _config = Explorer.GetTable(TableName);
+        _config ??= Explorer.GetTable(TableName);
 
         if (_config is null) {
             Navigator.NavigateTo("/admin", true);
             return;
         }
 
-        _manager = Explorer.GetTableManager(_config.PropertyName);
+        _manager ??= Explorer.GetTableManager(_config.PropertyName);
         _currentlyDisplayedModels = _manager!.LoadPage(_currentPage).ToArray();
         _totalPages = _manager.TotalPages();
     }
@@ -117,7 +116,10 @@
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         try {
             await Js.InvokeVoidAsync("removeBg");
-        }catch (Exception) {}
+        }
+        catch (Exception) {
+            // ignored
+        }
     }
 
     private CancellationTokenSource _searchCancel = new();
@@ -128,36 +130,52 @@
         _searchCancel = new();
         
         await Task.Delay(500, _searchCancel.Token);
-        (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm);
+        (var query, _totalPages) = _manager!.Search(_searchTerm);
+        _currentlyDisplayedModels = query.ToArray();
     }
 
-    private void ChangePage(int page) {
-        if (page < 0 || page > _totalPages - 1) return;
-        _currentPage = page;
+    private void Reload() {
         if (!string.IsNullOrEmpty(_searchTerm)) {
-            (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm, page);
-        }
-        else {
-            _currentlyDisplayedModels = _manager!.LoadPage(page);
-        }
-    }
-
-    private async Task DeleteEntry(object element) { //TODO: display confirmation
-        var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
-        var result = await dialog.Result;
-        if (result.Cancelled) return;
-
-        await _manager!.DeleteItem(element);
-
-        if (!string.IsNullOrEmpty(_searchTerm)) {
-            (_currentlyDisplayedModels, _totalPages) = _manager!.Search(_searchTerm);
+            (var query, _totalPages) = _manager!.Search(_searchTerm);
+            _currentlyDisplayedModels = query.ToArray();
         }
         else {
             OnInitialized();
         }
     }
 
+    private void ChangePage(int page) {
+        if (page < 0 || page > _totalPages - 1) return;
+        _currentPage = page;
+        Reload();
+    }
+
+    private async Task DeleteEntry(object element) {
+        var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
+        var result = await dialog.Result;
+        if (result.Cancelled) return;
+
+        await _manager!.DeleteItem(element);
+
+        Reload();
+    }
+
     private async Task CreateOrEdit(object? element) {
         var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new());
+        var result = await panel.Result;
+        var data = result.Data as EditorDialogData;
+        
+        if (result.Cancelled) {
+            if (data?.CurrentObject is not null)
+                await _manager!.RevertChanges(data.CurrentObject);
+            return;
+        }
+        
+        if (element is null)
+            await _manager!.AddItem(data!.CurrentObject!);
+        else
+            await _manager!.EditItem(data!.CurrentObject!);
+        
+        Reload();
     }
 }
