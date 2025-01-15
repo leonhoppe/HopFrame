@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using HopFrame.Testing.Models
 
 <PageTitle>Home</PageTitle>
 
@@ -11,18 +12,30 @@ Welcome to your new Fluent Blazor app.
 @code {
 
     protected override async Task OnInitializedAsync() {
+        User? user = null;
         for (int i = 0; i < 100; i++) {
             var first = GenerateName(Random.Shared.Next(4, 6));
             var last = GenerateName(Random.Shared.Next(4, 6));
             var username = $"{first}.{last}";
-            Context.Users.Add(new() {
+
+            user = new() {
                 Email = $"{username}-{Random.Shared.Next(0, 20)}@gmail.com",
                 Id = Guid.CreateVersion7(),
                 FirstName = first,
                 LastName = last,
                 Username = username
-            });
+            };
+
+            Context.Users.Add(user);
         }
+
+        await Context.SaveChangesAsync();
+
+        Context.Posts.Add(new() {
+            Caption = "Cool Post",
+            Content = "This post is cool",
+            Author = user
+        });
 
         await Context.SaveChangesAsync();
     }
@@ -46,3 +59,5 @@ Welcome to your new Fluent Blazor app.
     }
 
 }
+    using HopFrame.Testing.Models;
+    using System.Runtime.InteropServices;

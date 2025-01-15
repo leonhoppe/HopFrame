@@ -18,7 +18,7 @@
         <FluentDataGrid Items="_currentlyDisplayedModels?.AsQueryable()">
             @{ var dataIndex = 0; }
             @foreach (var property in _config!.Properties.Where(prop => prop.List)) {
-                <PropertyColumn Title="@property.Name" Property="o => property.Info.GetValue(o)" Style="min-width: max-content; min-height: 43px" Sortable="@property.Sortable"/>
+                <PropertyColumn Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property.Info, _config)" Style="min-width: max-content; min-height: 43px" Sortable="@property.Sortable"/>
             }
 
             <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 43px; min-width: max-content">
@@ -27,7 +27,7 @@
                     <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                 </FluentButton>
 
-                <FluentButton aria-label="Delete entry" OnClick="() => { DeleteEntry(currentElement); }">
+                <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement); }">
                     <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                 </FluentButton>
 

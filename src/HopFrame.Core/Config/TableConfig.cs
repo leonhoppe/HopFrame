@@ -42,7 +42,7 @@ public class TableConfig<TModel>(TableConfig innerConfig) {
         return this;
     }
     
-    private static PropertyInfo GetPropertyInfo<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda) {
+    internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda) {
         if (propertyLambda.Body is not MemberExpression member) {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
         }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace HopFrame.Core.Config;
 
@@ -8,6 +9,7 @@ public class PropertyConfig(PropertyInfo info) {
     public bool List { get; set; } = true;
     public bool Sortable { get; set; } = true;
     public bool Searchable { get; set; } = true;
+    public PropertyInfo? DisplayedProperty { get; set; }
 }
 
 public class PropertyConfig<TProp>(PropertyConfig config) {
@@ -30,6 +32,11 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> Searchable(bool searchable) {
         config.Searchable = searchable;
+        return this;
+    }
+
+    public PropertyConfig<TProp> DisplayedProperty<TInnerProp>(Expression<Func<TProp, TInnerProp>> propertyExpression) {
+        config.DisplayedProperty = TableConfig<TProp>.GetPropertyInfo(propertyExpression);
         return this;
     }
     

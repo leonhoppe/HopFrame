@@ -35,6 +35,10 @@ builder.Services.AddHopFrame(options => {
             table.Property(u => u.Id)
                 .Sortable(false);
         });
+
+        context.Table<Post>()
+            .Property(p => p.Author)
+            .DisplayedProperty(u => u!.Username);
     });
 });
 
