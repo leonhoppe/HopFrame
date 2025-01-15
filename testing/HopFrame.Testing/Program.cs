@@ -36,9 +36,17 @@ builder.Services.AddHopFrame(options => {
                 .Sortable(false);
         });
 
+        /* context.Table<Post>()
+            .Property(p => p.Author)
+            .DisplayedProperty(u => u!.Username); */
         context.Table<Post>()
             .Property(p => p.Author)
-            .DisplayedProperty(u => u!.Username);
+            .Format(user => $"{user?.FirstName} {user?.LastName}");
+
+        context.Table<Post>()
+            .Property(p => p.Id)
+            .SetDisplayName("ID")
+            .Editable(true);
     });
 });
 

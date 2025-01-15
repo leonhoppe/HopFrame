@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
@@ -50,14 +51,27 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return false;
     }
 
-    public string DisplayProperty(object item, PropertyInfo info, TableConfig? tableConfig) {
+    public string DisplayProperty(object? item, PropertyInfo info, TableConfig? tableConfig) {
         if (item is null) return string.Empty;
         var prop = tableConfig?.Properties.Find(prop => prop.Info.Name == info.Name);
         if (prop is null) return item.ToString() ?? string.Empty;
 
         var propValue = prop.Info.GetValue(item);
-        if (propValue is null || prop.DisplayedProperty is null)
-            return propValue?.ToString() ?? string.Empty;
+        if (propValue is null)
+            return string.Empty;
+
+        if (prop.Formatter is not null) {
+            return prop.Formatter.Invoke(propValue);
+        }
+
+        if (prop.DisplayedProperty is null) {
+            var key = prop.Info.PropertyType
+                .GetProperties()
+                .Where(p => p.GetCustomAttributes(true).Any(a => a is KeyAttribute))
+                .FirstOrDefault();
+
+            return key?.GetValue(propValue)?.ToString() ?? propValue.ToString() ?? string.Empty;
+        }
         
         var innerConfig = explorer.GetTable(propValue.GetType());
         return DisplayProperty(propValue, prop.DisplayedProperty, innerConfig);

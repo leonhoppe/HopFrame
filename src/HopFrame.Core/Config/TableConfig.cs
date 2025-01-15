@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace HopFrame.Core.Config;
@@ -17,7 +19,18 @@ public class TableConfig {
         ContextConfig = config;
 
         foreach (var info in tableType.GetProperties()) {
-            Properties.Add(new PropertyConfig(info));
+            var propConfig = new PropertyConfig(info);
+
+            if (info.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute)) {
+                propConfig.Creatable = false;
+                propConfig.Editable = false;
+            }
+
+            if (info.GetCustomAttributes(true).Any(a => a is KeyAttribute)) {
+                propConfig.Editable = false;
+            }
+
+            Properties.Add(propConfig);
         }
     }
 }

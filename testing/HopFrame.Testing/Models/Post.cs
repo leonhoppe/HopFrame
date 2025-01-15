@@ -14,4 +14,6 @@ public class Post {
 
     [ForeignKey("author")]
     public User? Author { get; set; }
+
+    public bool Published { get; set; }
 }

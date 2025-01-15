@@ -4,30 +4,38 @@
 
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
+@using HopFrame.Web.Models
 @using Microsoft.JSInterop
+@using System.Text.Json
+
+<FluentDialogProvider />
 
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
         <h3>@_config?.PropertyName</h3>
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" />
-        <FluentButton>Add Entry</FluentButton>
+        <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
     </FluentToolbar>
 
     <div style="overflow-y: auto; flex-grow: 1">
         <FluentDataGrid Items="_currentlyDisplayedModels?.AsQueryable()">
             @{ var dataIndex = 0; }
             @foreach (var property in _config!.Properties.Where(prop => prop.List)) {
-                <PropertyColumn Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property.Info, _config)" Style="min-width: max-content; min-height: 43px" Sortable="@property.Sortable"/>
+                <PropertyColumn 
+                    Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property.Info, _config)"
+                    Style="min-width: max-content; min-height: 43px;"
+                    Sortable="@property.Sortable"
+                />
             }
 
             <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 43px; min-width: max-content">
-                @{ var currentElement = _currentlyDisplayedModels!.ElementAt(dataIndex); }
-                <FluentButton aria-label="Edit entry">
+                @{ var currentElement = _currentlyDisplayedModels!.ElementAtOrDefault(dataIndex); }
+                <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
                     <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                 </FluentButton>
 
-                <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement); }">
+                <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
                     <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                 </FluentButton>
 
@@ -38,7 +46,7 @@
             </TemplateColumn>
         </FluentDataGrid>
         
-        @if (_currentlyDisplayedModels?.Any() == true) {
+        @if (_totalPages > 1) {
             <div class="hopframe-paginator">
                 <FluentButton BackgroundColor="transparent" OnClick="() => ChangePage(_currentPage - 1)">
                     <FluentIcon Value="@(new Icons.Regular.Size20.ArrowPrevious())" Color="Color.Neutral" />
@@ -78,6 +86,7 @@
 @inject IContextExplorer Explorer
 @inject NavigationManager Navigator
 @inject IJSRuntime Js
+@inject IDialogService Dialogs
 
 @code {
     
@@ -106,7 +115,9 @@
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
-        await Js.InvokeVoidAsync("removeBg");
+        try {
+            await Js.InvokeVoidAsync("removeBg");
+        }catch (Exception) {}
     }
 
     private CancellationTokenSource _searchCancel = new();
@@ -132,6 +143,10 @@
     }
 
     private async Task DeleteEntry(object element) { //TODO: display confirmation
+        var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
+        var result = await dialog.Result;
+        if (result.Cancelled) return;
+
         await _manager!.DeleteItem(element);
 
         if (!string.IsNullOrEmpty(_searchTerm)) {
@@ -140,5 +155,9 @@
         else {
             OnInitialized();
         }
+    }
+
+    private async Task CreateOrEdit(object? element) {
+        var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new());
     }
 }

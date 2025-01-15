@@ -9,5 +9,5 @@ public interface ITableManager {
     public int TotalPages(int perPage = 20);
     public Task DeleteItem(object item);
     
-    public string DisplayProperty(object item, PropertyInfo info, TableConfig? tableConfig);
+    public string DisplayProperty(object? item, PropertyInfo info, TableConfig? tableConfig);
 }

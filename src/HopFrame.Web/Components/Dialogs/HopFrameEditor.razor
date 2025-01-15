@@ -1,0 +1,59 @@
+@implements IDialogContentComponent<EditorDialogData>
+
+@using HopFrame.Web.Models
+@using HopFrame.Core.Services
+@using HopFrame.Web.Helpers
+
+<FluentDialogBody>
+    @foreach (var property in Content.Config.Properties) {
+        if (!_currentlyEditing && !property.Creatable) continue;
+
+        <div style="margin-bottom: 20px">
+            @if (property.Info.PropertyType.IsNumeric()) {
+                <FluentNumberField
+                    TValue="double"
+                    Label="@property.Name"
+                    Value="@(Convert.ToDouble(property.Info.GetValue(Content.CurrentObject)))"
+                    Style="width: 100%;"
+                    Disabled="@(!property.Editable)"
+                />
+            } else if (property.Info.PropertyType == typeof(bool)) {
+                <FluentSwitch
+                    Label="@property.Name"
+                    Value="@(Convert.ToBoolean(property.Info.GetValue(Content.CurrentObject)))"
+                />
+            }
+            else {
+                <FluentTextField 
+                    Label="@property.Name"
+                    Value="@_manager?.DisplayProperty(Content.CurrentObject, property.Info, Content.Config)"
+                    Style="width: 100%;"
+                    Disabled="@(!property.Editable)"
+                />
+            }
+        </div>
+    }
+</FluentDialogBody>
+
+@inject IContextExplorer Explorer
+
+@code {
+    [Parameter]
+    public required EditorDialogData Content { get; set; }
+
+    [CascadingParameter]
+    public required FluentDialog Dialog { get; set; }
+
+    private ITableManager? _manager;
+    private bool _currentlyEditing;
+
+    protected override void OnInitialized() {
+        if (Dialog.Instance is null) return;
+        _currentlyEditing = Content.CurrentObject is not null;
+        Dialog.Instance.Parameters.Title = Content.CurrentObject is null ? "Add entry" : "Edit entry";
+        Dialog.Instance.Parameters.PreventScroll = true;
+        Dialog.Instance.Parameters.Width = "500px";
+        Dialog.Instance.Parameters.PrimaryAction = "Save";
+        _manager = Explorer.GetTableManager(Content.Config.PropertyName);
+    }
+}
