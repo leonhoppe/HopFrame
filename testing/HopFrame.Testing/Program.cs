@@ -1,9 +1,7 @@
-using HopFrame.Core.Services;
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
 using HopFrame.Testing.Models;
-using HopFrame.Testing.Services;
 using HopFrame.Web;
 using HopFrame.Web.Components.Pages;
 using Microsoft.EntityFrameworkCore;
@@ -20,21 +18,29 @@ builder.Services.AddDbContext<DatabaseContext>(options => {
 });
 
 builder.Services.AddHopFrame(options => {
+    options.DisplayUserInfo(false);
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)
                 .ValueParser(pwd => pwd + "-edited");
 
             table.Property(u => u.FirstName)
-                .SetDisplayName("First Name");
+                .List(false);
 
             table.Property(u => u.LastName)
-                .SetDisplayName("Last Name");
+                .List(false);
 
             table.Property(u => u.Id)
-                .Sortable(false);
+                .Sortable(false)
+                .OrderIndex(3);
+
+            table.AddListingProperty("Name", user => $"{user.FirstName} {user.LastName}")
+                .OrderIndex(2);
 
             table.SetDisplayName("Benutzer");
+            table.SetDescription("This table is used for user data store and user authentication");
+
+            table.SetViewPolicy("policy");
         });
 
         context.Table<Post>()
@@ -61,10 +67,11 @@ builder.Services.AddHopFrame(options => {
 
                 return errors;
             });
+
+        context.Table<Post>()
+            .OrderIndex(-1);
     });
 });
-
-builder.Services.AddTransient<IHopFrameAuthHandler, AuthService>();
 
 var app = builder.Build();
 

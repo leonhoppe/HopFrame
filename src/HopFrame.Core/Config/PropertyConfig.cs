@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace HopFrame.Core.Config;
 
-public class PropertyConfig(PropertyInfo info, TableConfig table) {
+public class PropertyConfig(PropertyInfo info, TableConfig table, int nthProperty) {
     public PropertyInfo Info { get; } = info;
     public TableConfig Table { get; } = table;
     public string Name { get; set; } = info.Name;
@@ -19,6 +19,8 @@ public class PropertyConfig(PropertyInfo info, TableConfig table) {
     public bool DisplayValue { get; set; } = true;
     public bool IsRelation { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsListingProperty { get; set; }
+    public int Order { get; set; } = nthProperty;
 }
 
 public class PropertyConfig<TProp>(PropertyConfig config) {
@@ -82,6 +84,11 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
     
     public PropertyConfig<TProp> Validator(Func<TProp?, Task<IEnumerable<string>>> validator) {
         InnerConfig.Validator = obj => validator.Invoke((TProp?)obj);
+        return this;
+    }
+
+    public PropertyConfig<TProp> OrderIndex(int index) {
+        InnerConfig.Order = index;
         return this;
     }
 }

@@ -4,7 +4,7 @@ namespace HopFrame.Core.Config;
 
 public class DbContextConfig {
     public Type ContextType { get; }
-    public List<TableConfig> Tables { get; init; } = new();
+    public List<TableConfig> Tables { get; } = new();
 
     public DbContextConfig(Type context) {
         ContextType = context;
@@ -15,7 +15,7 @@ public class DbContextConfig {
             var setType = typeof(DbSet<>).MakeGenericType(innerType);
             if (property.PropertyType != setType) continue;
             
-            var table = new TableConfig(this, innerType, property.Name);
+            var table = new TableConfig(this, innerType, property.Name, Tables.Count);
             Tables.Add(table);
         }
     }

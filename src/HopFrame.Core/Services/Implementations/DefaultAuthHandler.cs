@@ -1,12 +1,10 @@
-﻿using HopFrame.Core.Services;
+﻿namespace HopFrame.Core.Services.Implementations;
 
-namespace HopFrame.Testing.Services;
-
-public class AuthService : IHopFrameAuthHandler {
+internal sealed class DefaultAuthHandler : IHopFrameAuthHandler {
     public Task<bool> IsAuthenticatedAsync(string? policy) {
         return Task.FromResult(true);
     }
     public Task<string> GetCurrentUserDisplayNameAsync() {
-        return Task.FromResult("Leon Hoppe");
+        return Task.FromResult(string.Empty);
     }
 }

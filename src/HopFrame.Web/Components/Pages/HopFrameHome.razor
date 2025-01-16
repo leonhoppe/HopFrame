@@ -1,8 +1,45 @@
 ﻿@page "/admin"
+@using HopFrame.Core.Config
+@using HopFrame.Core.Services
 @layout HopFrameLayout
 
-<h3>HopFrameHome</h3>
+<PageTitle>HopFrame</PageTitle>
+
+<div style="padding: 1.5rem 1.5rem;">
+    <h2>Tables</h2>
+    
+    <FluentStack Orientation="Orientation.Horizontal" Wrap="true" Style="margin-top: 1.5rem">
+        @foreach (var table in _tables.OrderBy(t => t.Order)) {
+            <FluentCard Width="350px" Height="200px" Style="display: flex; flex-direction: column; background-color: var(--neutral-layer-1)">
+                <h3 style="margin-bottom: 0;">@table.DisplayName</h3>
+                <FluentLabel Typo="Typography.Body" Color="Color.Info" Style="margin-bottom: 0.5rem">@table.ViewPolicy</FluentLabel>
+                <span>@table.Description</span>
+                <FluentSpacer />
+                <div style="display: flex">
+                    <FluentSpacer/>
+
+                    <a href="@("/admin/" + table.DisplayName.ToLower())" style="display: inline-block">
+                        <FluentButton>Open</FluentButton>
+                    </a>
+                </div>
+            </FluentCard>
+        }
+    </FluentStack>
+</div>
+
+@inject IContextExplorer Explorer
+@inject IHopFrameAuthHandler Handler
 
 @code {
+    
+    private readonly List<TableConfig> _tables = [];
+
+    protected override async Task OnInitializedAsync() {
+        foreach (var table in Explorer.GetTables()) {
+            if (table.Ignored) continue;
+            if (!await Handler.IsAuthenticatedAsync(table.ViewPolicy)) continue;
+            _tables.Add(table);
+        }
+    }
     
 }

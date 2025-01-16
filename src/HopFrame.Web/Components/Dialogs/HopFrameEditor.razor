@@ -8,7 +8,7 @@
 @using Microsoft.EntityFrameworkCore.Internal
 
 <FluentDialogBody>
-    @foreach (var property in Content.Config.Properties) {
+    @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
         if (!_currentlyEditing && !property.Creatable) continue;
 
         <div style="margin-bottom: 20px">
@@ -21,10 +21,10 @@
                             Required="@property.IsRequired"
                             ReadOnly="true"
                             Style="width: 100%"
-                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Text))" />
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
                     </div>
                     <div style="display: flex; gap: 5px; margin-bottom: 4px">
-                        <FluentButton OnClick="() => SetPropertyValue(property, null, InputType.Relation)" Disabled="@(!property.Editable)">
+                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(!property.Editable)">
                             <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
                         </FluentButton>
                         <FluentButton OnClick="async () => await OpenRelationalPicker(property)" Disabled="@(!property.Editable)">
@@ -41,7 +41,7 @@
                     Style="width: 100%;"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Number))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Number))" />
             }
             else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.Boolean) {
                 <FluentSwitch
@@ -49,24 +49,24 @@
                     Value="GetPropertyValue<bool>(property)"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Switch))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Switch))" />
             }
             else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.DateTime) {
-                <div style="display: flex; gap: 10px">
+                <div style="display: flex; gap: 5px">
                     <div style="display: flex; flex-direction: column; width: 100%">
                         <FluentDatePicker
                             Label="@property.Name"
                             Value="GetPropertyValue<DateTime>(property)"
                             Disabled="@(!property.Editable)"
                             Required="@property.IsRequired"
-                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Date))" />
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: flex-end">
                         <FluentTimePicker
                             Value="GetPropertyValue<DateTime>(property)"
                             Disabled="@(!property.Editable)"
                             Required="@property.IsRequired"
-                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Time))" />
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
                     </div>
                 </div>
             }
@@ -77,7 +77,7 @@
                     Style="width: 100%"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Date))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
             }
             else if (property.Info.PropertyType == typeof(TimeOnly)) {
                 <FluentTimePicker
@@ -86,7 +86,7 @@
                     Style="width: 100%"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Time))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
             }
             else if (property.Info.PropertyType.IsEnum) {
                 <FluentSelect
@@ -98,7 +98,28 @@
                     Height="250px"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Enum))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
+            }
+            else if (property.Info.PropertyType.IsNullableEnum()) {
+                <div style="display: flex; gap: 5px; align-items: flex-end">
+                    <div style="flex-grow: 1">
+                        <FluentSelect
+                            TOption="string"
+                            Label="@property.Name"
+                            Items="@(["", ..Enum.GetNames(Nullable.GetUnderlyingType(property.Info.PropertyType)!)])"
+                            Value="@(GetPropertyValue<string>(property))"
+                            Style="width: 100%"
+                            Height="250px"
+                            Disabled="@(!property.Editable)"
+                            Required="@property.IsRequired"
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
+                    </div>
+                    <div style="display: flex; gap: 5px">
+                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Enum)" Disabled="@(!property.Editable)">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
+                        </FluentButton>
+                    </div>
+                </div>
             }
             else {
                 <FluentTextField
@@ -107,7 +128,7 @@
                     Style="width: 100%;"
                     Disabled="@(!property.Editable)"
                     Required="@property.IsRequired"
-                    ValueChanged="@(v => SetPropertyValue(property, v, InputType.Text))" />
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
             }
             
             @foreach (var error in _validationErrors[property.Info.Name]) {
@@ -119,6 +140,7 @@
 
 @inject IContextExplorer Explorer
 @inject IDialogService Dialogs
+@inject IHopFrameAuthHandler Handler
 
 @code {
     [Parameter]
@@ -141,6 +163,7 @@
         Content.CurrentObject ??= Activator.CreateInstance(Content.Config.TableType);
         
         foreach (var property in Content.Config.Properties) {
+            if (property.IsListingProperty) continue;
             _validationErrors.Add(property.Info.Name, []);
         }
     }
@@ -157,15 +180,18 @@
             return (TValue)value;
 
         if (typeof(TValue) == typeof(string))
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config.Info, Content.Config);
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, Content.Config);
 
         return (TValue)Convert.ChangeType(value, typeof(TValue));
     }
 
-    private void SetPropertyValue(PropertyConfig config, object? value, InputType senderType) {
+    private async Task SetPropertyValue(PropertyConfig config, object? value, InputType senderType) {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return;
+        
         object? result = null;
 
-        if (value is not null) {
+        if (value is not null && config.Parser is null) {
             switch (senderType) {
                 case InputType.Number:
                     result = Convert.ChangeType(value, config.Info.PropertyType);
@@ -180,7 +206,10 @@
                     break;
                     
                 case InputType.Enum:
-                    result = Enum.Parse(config.Info.PropertyType, (string)value);
+                    var type = Nullable.GetUnderlyingType(config.Info.PropertyType);
+                    if (type is not null && string.IsNullOrEmpty((string)value)) break;
+                    type ??= config.Info.PropertyType;
+                    result = Enum.Parse(type, (string)value);
                     break;
                     
                 case InputType.Date:
@@ -218,6 +247,9 @@
     }
 
     private async Task OpenRelationalPicker(PropertyConfig config) {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return;
+        
         var relationTable = Explorer.GetTable(config.Info.PropertyType);
         if (relationTable is null) return;
 
@@ -227,11 +259,16 @@
         if (result.Cancelled) return;
         
         var data = (RelationPickerDialogData)result.Data!;
-        SetPropertyValue(config, data.Object, InputType.Relation);
+        await SetPropertyValue(config, data.Object, InputType.Relation);
     }
 
     private async Task<bool> ValidateInputs() {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return false;
+        
         foreach (var property in Content.Config.Properties) {
+            if (property.IsListingProperty) continue;
+            
             var errorList = _validationErrors[property.Info.Name];
             errorList.Clear();
             var value = property.Info.GetValue(Content.CurrentObject);
@@ -242,7 +279,7 @@
             }
             
             if (value is null && property.IsRequired)
-                errorList.Add("Value cannot be null");
+                errorList.Add($"{property.Name} is required");
         }
 
         StateHasChanged();

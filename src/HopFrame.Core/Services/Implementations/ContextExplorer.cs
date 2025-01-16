@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 namespace HopFrame.Core.Services.Implementations;
 
 internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider provider, ILogger<ContextExplorer> logger) : IContextExplorer {
-    public IEnumerable<string> GetTableNames() {
+    public IEnumerable<TableConfig> GetTables() {
         foreach (var context in config.Contexts) {
             foreach (var table in context.Tables) {
                 if (table.Ignored) continue;
-                yield return table.DisplayName;
+                yield return table;
             }
         }
     }
@@ -60,6 +60,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         
         foreach (var key in entity.GetForeignKeys()) {
             var propConfig = table.Properties
+                .Where(prop => !prop.IsListingProperty)
                 .SingleOrDefault(prop => prop.Info == key.DependentToPrincipal?.PropertyInfo);
             if (propConfig is null) continue;
             propConfig.IsRelation = true;
@@ -67,6 +68,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         
         foreach (var property in entity.GetProperties()) {
             var propConfig = table.Properties
+                .Where(prop => !prop.IsListingProperty)
                 .SingleOrDefault(prop => prop.Info == property.PropertyInfo);
             if (propConfig is null) continue;
             propConfig.IsRequired = !property.IsNullable;

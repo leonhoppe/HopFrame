@@ -25,4 +25,6 @@ public class Post {
     public TimeOnly At { get; set; }
 
     public ListSortDirection Type { get; set; }
+    
+    public TypeCode? TypeCode { get; set; }
 }

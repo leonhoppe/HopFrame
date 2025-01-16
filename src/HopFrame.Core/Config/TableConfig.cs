@@ -9,20 +9,30 @@ public class TableConfig {
     public Type TableType { get; }
     public string PropertyName { get; }
     public string DisplayName { get; set; }
+    public string? Description { get; set; }
     public DbContextConfig ContextConfig { get; }
     public bool Ignored { get; set; }
+    public int Order { get; set; }
     internal bool Seeded { get; set; }
 
+    public string? ViewPolicy { get; set; }
+    public string? CreatePolicy { get; set; }
+    public string? UpdatePolicy { get; set; }
+    public string? DeletePolicy { get; set; }
+    
     public List<PropertyConfig> Properties { get; } = new();
 
-    public TableConfig(DbContextConfig config, Type tableType, string propertyName) {
+    public TableConfig(DbContextConfig config, Type tableType, string propertyName, int nthTable) {
         TableType = tableType;
         PropertyName = propertyName;
         ContextConfig = config;
         DisplayName = PropertyName;
+        Order = nthTable;
 
-        foreach (var info in tableType.GetProperties()) {
-            var propConfig = new PropertyConfig(info, this);
+        var properties = tableType.GetProperties();
+        for (var i = 0; i < properties.Length; i++) {
+            var info = properties[i];
+            var propConfig = new PropertyConfig(info, this, i);
 
             if (info.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute)) {
                 propConfig.Creatable = false;
@@ -59,8 +69,53 @@ public class TableConfig<TModel>(TableConfig config) {
         return this;
     }
 
+    public PropertyConfig<string> AddListingProperty(string name, Func<TModel, string> template) {
+        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count);
+        prop.Name = name;
+        prop.IsListingProperty = true;
+        prop.Formatter = obj => template.Invoke((TModel)obj);
+        InnerConfig.Properties.Add(prop);
+        return new PropertyConfig<string>(prop);
+    }
+    
+    public TableConfig<TModel> AddListingProperty(string name, Func<TModel, string> template, Action<PropertyConfig<string>> configurator) {
+        var prop = AddListingProperty(name, template);
+        configurator.Invoke(prop);
+        return this;
+    }
+
     public TableConfig<TModel> SetDisplayName(string name) {
         InnerConfig.DisplayName = name;
+        return this;
+    }
+
+    public TableConfig<TModel> SetDescription(string description) {
+        InnerConfig.Description = description;
+        return this;
+    }
+
+    public TableConfig<TModel> OrderIndex(int index) {
+        InnerConfig.Order = index;
+        return this;
+    }
+
+    public TableConfig<TModel> SetViewPolicy(string policy) {
+        InnerConfig.ViewPolicy = policy;
+        return this;
+    }
+    
+    public TableConfig<TModel> SetUpdatePolicy(string policy) {
+        InnerConfig.UpdatePolicy = policy;
+        return this;
+    }
+    
+    public TableConfig<TModel> SetCreatePolicy(string policy) {
+        InnerConfig.CreatePolicy = policy;
+        return this;
+    }
+    
+    public TableConfig<TModel> SetDeletePolicy(string policy) {
+        InnerConfig.DeletePolicy = policy;
         return this;
     }
     

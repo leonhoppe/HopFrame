@@ -67,10 +67,11 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return false;
     }
 
-    public string DisplayProperty(object? item, PropertyInfo info, TableConfig? tableConfig) {
+    public string DisplayProperty(object? item, PropertyConfig prop, TableConfig? tableConfig) {
         if (item is null) return string.Empty;
-        var prop = tableConfig?.Properties.Find(prop => prop.Info.Name == info.Name);
-        if (prop is null) return item.ToString() ?? string.Empty;
+
+        if (prop.IsListingProperty)
+            return prop.Formatter!.Invoke(item);
 
         var propValue = prop.Info.GetValue(item);
         if (propValue is null)
@@ -83,14 +84,17 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         if (prop.DisplayedProperty is null) {
             var key = prop.Info.PropertyType
                 .GetProperties()
-                .Where(p => p.GetCustomAttributes(true).Any(a => a is KeyAttribute))
-                .FirstOrDefault();
+                .FirstOrDefault(p => p.GetCustomAttributes(true).Any(a => a is KeyAttribute));
 
             return key?.GetValue(propValue)?.ToString() ?? propValue.ToString() ?? string.Empty;
         }
         
         var innerConfig = explorer.GetTable(propValue.GetType());
-        return DisplayProperty(propValue, prop.DisplayedProperty, innerConfig);
+        var innerProp = innerConfig!.Properties
+            .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsListingProperty);
+
+        if (innerProp is null) return propValue.ToString() ?? string.Empty;
+        return DisplayProperty(propValue, innerProp, innerConfig);
     }
 
     private IQueryable<TModel> IncludeForgeinKeys(IQueryable<TModel> query) {

@@ -9,23 +9,29 @@
 @using Microsoft.JSInterop
 @using Microsoft.EntityFrameworkCore
 
+@if (!DisplaySelection) {
+    <PageTitle>@_config?.DisplayName</PageTitle>
+}
+
 <FluentDialogProvider />
 
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
         <h3>@_config?.DisplayName</h3>
-        <FluentButton
-            IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
-            OnClick="Reload"
-            Loading="_loading"
-            Style="margin-left: 10px">
-            Refresh
-        </FluentButton>
+        @if (!DisplaySelection) {
+            <FluentButton
+                IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
+                OnClick="Reload"
+                Loading="_loading"
+                Style="margin-left: 10px">
+                Refresh
+            </FluentButton>
+        }
         
         <FluentSpacer />
-        <FluentSearch @oninput="OnSearch" @onchange="OnSearch" />
+        <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
         
-        @if (!DisplaySelection) {
+        @if (!DisplaySelection && _hasCreatePolicy) {
             <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
         }
     </FluentToolbar>
@@ -47,25 +53,30 @@
 
         <div style="flex-grow: 1">
             <FluentDataGrid Items="_currentlyDisplayedModels.AsQueryable()">
-                @foreach (var property in _config!.Properties.Where(prop => prop.List)) {
+                @foreach (var property in _config!.Properties.Where(prop => prop.List).OrderBy(prop => prop.Order)) {
                     <PropertyColumn
-                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property.Info, _config)"
+                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, _config)"
                         Style="min-width: max-content; height: 44px;"
                         Sortable="@property.Sortable"/>
                 }
 
-                @if (DisplayActions) {
+                @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
                     var dataIndex = 0;
 
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
                         @{ var currentElement = _currentlyDisplayedModels.ElementAtOrDefault(dataIndex); }
-                        <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
-                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
-                        </FluentButton>
+                        
+                        @if (_hasUpdatePolicy) {
+                            <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
+                                <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                            </FluentButton>
+                        }
 
-                        <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
-                            <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
-                        </FluentButton>
+                        @if (_hasDeletePolicy) {
+                            <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
+                                <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning" />
+                            </FluentButton>
+                        }
 
                         @{
                             dataIndex++;
@@ -116,6 +127,7 @@
 @inject NavigationManager Navigator
 @inject IJSRuntime Js
 @inject IDialogService Dialogs
+@inject IHopFrameAuthHandler Handler
 
 @code {
     
@@ -142,7 +154,10 @@
     private int _totalPages;
     private string? _searchTerm;
     private bool _loading;
-    private int _selectedIndex = -1;
+
+    private bool _hasUpdatePolicy;
+    private bool _hasDeletePolicy;
+    private bool _hasCreatePolicy;
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -153,6 +168,15 @@
     }
 
     protected override async Task OnInitializedAsync() {
+        if (!await Handler.IsAuthenticatedAsync(_config?.ViewPolicy)) {
+            Navigator.NavigateTo("/admin", true);
+            return;
+        }
+
+        _hasUpdatePolicy = await Handler.IsAuthenticatedAsync(_config?.UpdatePolicy);
+        _hasDeletePolicy = await Handler.IsAuthenticatedAsync(_config?.DeletePolicy);
+        _hasCreatePolicy = await Handler.IsAuthenticatedAsync(_config?.CreatePolicy);
+        
         _manager ??= Explorer.GetTableManager(_config!.PropertyName);
         _currentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
         _totalPages = await _manager.TotalPages(PerPage);
@@ -201,6 +225,11 @@
     }
 
     private async Task DeleteEntry(object element) {
+        if (!await Handler.IsAuthenticatedAsync(_config?.DeletePolicy)) {
+            Navigator.NavigateTo("/admin", true);
+            return;
+        }
+        
         var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
         var result = await dialog.Result;
         if (result.Cancelled) return;
@@ -210,6 +239,11 @@
     }
 
     private async Task CreateOrEdit(object? element) {
+        if (!await Handler.IsAuthenticatedAsync(element is null ? _config?.CreatePolicy : _config?.UpdatePolicy)) {
+            Navigator.NavigateTo("/admin", true);
+            return;
+        }
+        
         var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new DialogParameters {
             TrapFocus = false
         });
