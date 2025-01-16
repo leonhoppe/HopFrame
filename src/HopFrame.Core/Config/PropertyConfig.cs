@@ -13,7 +13,6 @@ public class PropertyConfig(PropertyInfo info, TableConfig table) {
     public PropertyInfo? DisplayedProperty { get; set; }
     public Func<object, string>? Formatter { get; set; }
     public Func<string, object>? Parser { get; set; }
-    public Func<object>? Template { get; set; }
     public Func<object?, Task<IEnumerable<string>>>? Validator { get; set; }
     public bool Editable { get; set; } = true;
     public bool Creatable { get; set; } = true;
@@ -58,11 +57,6 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> ValueParser(Func<string, TProp> parser) {
         InnerConfig.Parser = str => parser.Invoke(str)!;
-        return this;
-    }
-
-    public PropertyConfig<TProp> ValueTemplate(Func<TProp> template) {
-        InnerConfig.Template = () => template.Invoke()!;
         return this;
     }
 

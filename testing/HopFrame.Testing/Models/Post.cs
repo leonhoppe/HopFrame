@@ -12,13 +12,13 @@ public class Post {
     public required string Caption { get; set; }
     
     public required string Content { get; set; }
-
+    
     [ForeignKey("author")]
-    public User? Author { get; set; }
+    public virtual required User Author { get; set; }
 
     public bool Published { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public DateOnly Created { get; set; }
 

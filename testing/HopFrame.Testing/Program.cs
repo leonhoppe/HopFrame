@@ -32,8 +32,7 @@ builder.Services.AddHopFrame(options => {
                 .SetDisplayName("Last Name");
 
             table.Property(u => u.Id)
-                .Sortable(false)
-                .ValueTemplate(Guid.CreateVersion7);
+                .Sortable(false);
 
             table.SetDisplayName("Benutzer");
         });
@@ -47,8 +46,7 @@ builder.Services.AddHopFrame(options => {
             .SetDisplayName("ID");
 
         context.Table<Post>()
-            .Property(p => p.CreatedAt)
-            .ValueTemplate(() => DateTime.UtcNow);
+            .Property(p => p.CreatedAt);
 
         context.Table<Post>()
             .Property(p => p.Caption)

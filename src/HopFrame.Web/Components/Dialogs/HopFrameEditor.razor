@@ -129,7 +129,7 @@
 
     private bool _currentlyEditing;
     private ITableManager? _manager;
-    private Dictionary<string, List<string>> _validationErrors = new();
+    private readonly Dictionary<string, List<string>> _validationErrors = new();
 
     protected override void OnInitialized() {
         _currentlyEditing = Content.CurrentObject is not null;
@@ -150,24 +150,14 @@
         if (Content.CurrentObject is null) return default;
         var value = config.Info.GetValue(Content.CurrentObject);
 
-        var newlyGenerated = false;
-        if (config.Info.PropertyType.IsDefaultValue(value) && config.Template is not null && !_currentlyEditing) {
-            value = config.Template.Invoke();
-            newlyGenerated = true;
-        }
-
         if (value is null)
             return default;
 
         if (config.Info.PropertyType == typeof(TValue))
             return (TValue)value;
 
-        if (typeof(TValue) == typeof(string)) {
-            if (!newlyGenerated)
-                return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config.Info, Content.Config);
-            
-            return (TValue)(object)value.ToString()!;
-        }
+        if (typeof(TValue) == typeof(string))
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config.Info, Content.Config);
 
         return (TValue)Convert.ChangeType(value, typeof(TValue));
     }
