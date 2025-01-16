@@ -16,19 +16,21 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
             .Take(perPage);
     }
 
-    public (IEnumerable<object>, int) Search(string searchTerm, int page = 0, int perPage = 20) {
+    public Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
         var table = context.Set<TModel>();
         var all = IncludeForgeinKeys(table)
             .AsEnumerable()
             .Where(item => ItemSearched(item, searchTerm))
             .ToList();
 
-        return (all.Skip(page * perPage).Take(perPage), (int)Math.Ceiling(all.Count / (double)perPage));
+        return Task.FromResult((
+            (IEnumerable<object>)all.Skip(page * perPage).Take(perPage),
+            (int)Math.Ceiling(all.Count / (double)perPage)));
     }
 
-    public int TotalPages(int perPage = 20) {
+    public async Task<int> TotalPages(int perPage = 20) {
         var table = context.Set<TModel>();
-        return (int)Math.Ceiling(table.Count() / (double)perPage);
+        return (int)Math.Ceiling(await table.CountAsync() / (double)perPage);
     }
 
     public async Task DeleteItem(object item) {

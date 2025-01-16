@@ -20,7 +20,6 @@ builder.Services.AddDbContext<DatabaseContext>(options => {
 });
 
 builder.Services.AddHopFrame(options => {
-    options.SetAuthHandler<AuthService>();
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)

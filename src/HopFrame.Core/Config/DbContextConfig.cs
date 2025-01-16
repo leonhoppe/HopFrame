@@ -21,7 +21,8 @@ public class DbContextConfig {
     }
 }
 
-public class DbContextConfig<TDbContext>(Type context) : DbContextConfig(context) where TDbContext : DbContext {
+public class DbContextConfig<TDbContext>(DbContextConfig config) {
+    public DbContextConfig InnerConfig { get; } = config;
 
     public DbContextConfig<TDbContext> Table<TModel>(Action<TableConfig<TModel>> configurator) where TModel : class {
         var table = Table<TModel>();
@@ -30,7 +31,7 @@ public class DbContextConfig<TDbContext>(Type context) : DbContextConfig(context
     }
     
     public TableConfig<TModel> Table<TModel>() where TModel : class {
-        var table = Tables.Single(table => table.TableType == typeof(TModel));
+        var table = InnerConfig.Tables.Single(table => table.TableType == typeof(TModel));
         return new TableConfig<TModel>(table);
     }
     

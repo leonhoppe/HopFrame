@@ -35,16 +35,17 @@ public class TableConfig {
     }
 }
 
-public class TableConfig<TModel>(TableConfig innerConfig) {
+public class TableConfig<TModel>(TableConfig config) {
+    public TableConfig InnerConfig { get; } = config;
 
     public TableConfig<TModel> Ignore() {
-        innerConfig.Ignored = true;
+        InnerConfig.Ignored = true;
         return this;
     }
 
     public PropertyConfig<TProp> Property<TProp>(Expression<Func<TModel, TProp>> propertyExpression) {
         var info = GetPropertyInfo(propertyExpression);
-        var prop = innerConfig.Properties
+        var prop = InnerConfig.Properties
             .Single(prop => prop.Info.Name == info.Name);
         return new PropertyConfig<TProp>(prop);
     }

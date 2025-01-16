@@ -1,22 +1,32 @@
 ﻿@page "/admin/{TableName}"
 @layout HopFrameLayout
 @rendermode InteractiveServer
+@implements IDisposable
 
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
 @using Microsoft.JSInterop
-@using System.Text.Json
+@using Microsoft.EntityFrameworkCore
 
 <FluentDialogProvider />
 
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
         <h3>@_config?.PropertyName</h3>
+        <FluentButton
+            IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
+            OnClick="Reload"
+            Loading="_loading"
+            Style="margin-left: 10px">
+            Refresh
+        </FluentButton>
+        
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" />
         <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
     </FluentToolbar>
+    <FluentProgress Visible="_loading" Width="100%" />
 
     <div style="overflow-y: auto; flex-grow: 1">
         <FluentDataGrid Items="_currentlyDisplayedModels?.AsQueryable()">
@@ -48,7 +58,7 @@
         
         @if (_totalPages > 1) {
             <div class="hopframe-paginator">
-                <FluentButton BackgroundColor="transparent" OnClick="() => ChangePage(_currentPage - 1)">
+                <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage - 1)">
                     <FluentIcon Value="@(new Icons.Regular.Size20.ArrowPrevious())" Color="Color.Neutral" />
                 </FluentButton>
             
@@ -58,12 +68,12 @@
                               Items="Enumerable.Range(0, _totalPages)"
                               OptionValue="@(p => p.ToString())"
                               OptionText="@(p => (p + 1).ToString())"
-                              ValueChanged="s => ChangePage(Convert.ToInt32(s))"
+                              ValueChanged="async s => await ChangePage(Convert.ToInt32(s))"
                               Width="max-content" SelectedOption="@_currentPage"/>
             
                 <span>of @_totalPages</span>
 
-                <FluentButton BackgroundColor="transparent" OnClick="() => ChangePage(_currentPage + 1)">
+                <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage + 1)">
                     <FluentIcon Value="@(new Icons.Regular.Size20.ArrowNext())" Color="Color.Neutral" />
                 </FluentButton>
             </div>
@@ -99,18 +109,20 @@
     private int _currentPage;
     private int _totalPages;
     private string? _searchTerm;
+    private bool _loading;
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableName);
 
         if (_config is null) {
             Navigator.NavigateTo("/admin", true);
-            return;
         }
+    }
 
-        _manager ??= Explorer.GetTableManager(_config.PropertyName);
-        _currentlyDisplayedModels = _manager!.LoadPage(_currentPage).ToArray();
-        _totalPages = _manager.TotalPages();
+    protected override async Task OnInitializedAsync() {
+        _manager ??= Explorer.GetTableManager(_config!.PropertyName);
+        _currentlyDisplayedModels = await _manager!.LoadPage(_currentPage).ToArrayAsync();
+        _totalPages = await _manager.TotalPages();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
@@ -122,6 +134,10 @@
         }
     }
 
+    public void Dispose() {
+        _searchCancel.Dispose();
+    }
+
     private CancellationTokenSource _searchCancel = new();
     private async Task OnSearch(ChangeEventArgs eventArgs) {
         await _searchCancel.CancelAsync();
@@ -130,24 +146,26 @@
         _searchCancel = new();
         
         await Task.Delay(500, _searchCancel.Token);
-        (var query, _totalPages) = _manager!.Search(_searchTerm);
+        (var query, _totalPages) = await _manager!.Search(_searchTerm);
         _currentlyDisplayedModels = query.ToArray();
     }
 
-    private void Reload() {
+    private async Task Reload() {
+        _loading = true;
         if (!string.IsNullOrEmpty(_searchTerm)) {
-            (var query, _totalPages) = _manager!.Search(_searchTerm);
+            (var query, _totalPages) = await _manager!.Search(_searchTerm);
             _currentlyDisplayedModels = query.ToArray();
         }
         else {
-            OnInitialized();
+            await OnInitializedAsync();
         }
+        _loading = false;
     }
 
-    private void ChangePage(int page) {
+    private async Task ChangePage(int page) {
         if (page < 0 || page > _totalPages - 1) return;
         _currentPage = page;
-        Reload();
+        await Reload();
     }
 
     private async Task DeleteEntry(object element) {
@@ -156,8 +174,7 @@
         if (result.Cancelled) return;
 
         await _manager!.DeleteItem(element);
-
-        Reload();
+        await Reload();
     }
 
     private async Task CreateOrEdit(object? element) {
@@ -176,6 +193,6 @@
         else
             await _manager!.EditItem(data!.CurrentObject!);
         
-        Reload();
+        await Reload();
     }
 }
