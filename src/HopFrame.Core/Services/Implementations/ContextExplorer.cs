@@ -1,23 +1,26 @@
 ﻿using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HopFrame.Core.Services.Implementations;
 
-internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider provider) : IContextExplorer {
+internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider provider, ILogger<ContextExplorer> logger) : IContextExplorer {
     public IEnumerable<string> GetTableNames() {
         foreach (var context in config.Contexts) {
             foreach (var table in context.Tables) {
                 if (table.Ignored) continue;
-                yield return table.PropertyName;
+                yield return table.DisplayName;
             }
         }
     }
     
-    public TableConfig? GetTable(string tableName) {
+    public TableConfig? GetTable(string tableDisplayName) {
         foreach (var context in config.Contexts) {
-            var table = context.Tables.FirstOrDefault(table => table.PropertyName.Equals(tableName, StringComparison.CurrentCultureIgnoreCase));
-            if (table is not null)
-                return table;
+            var table = context.Tables.FirstOrDefault(table => table.DisplayName.Equals(tableDisplayName, StringComparison.CurrentCultureIgnoreCase));
+            if (table is null) continue;
+            
+            SeedTableData(table);
+            return table;
         }
 
         return null;
@@ -26,16 +29,18 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
     public TableConfig? GetTable(Type tableEntity) {
         foreach (var context in config.Contexts) {
             var table = context.Tables.FirstOrDefault(table => table.TableType == tableEntity);
-            if (table is not null)
-                return table;
+            if (table is null) continue;
+            
+            SeedTableData(table);
+            return table;
         }
 
         return null;
     }
 
-    public ITableManager? GetTableManager(string tableName) {
+    public ITableManager? GetTableManager(string tablePropertyName) {
         foreach (var context in config.Contexts) {
-            var table = context.Tables.FirstOrDefault(table => table.PropertyName == tableName);
+            var table = context.Tables.FirstOrDefault(table => table.PropertyName == tablePropertyName);
             if (table is null) continue;
             
             var dbContext = provider.GetService(context.ContextType) as DbContext;
@@ -46,6 +51,22 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         }
 
         return null;
+    }
+
+    private void SeedTableData(TableConfig table) {
+        if (table.Seeded) return;
+        var dbContext = (provider.GetService(table.ContextConfig.ContextType) as DbContext)!;
+        var entity = dbContext.Model.FindEntityType(table.TableType)!;
+        
+        foreach (var key in entity.GetForeignKeys()) {
+            var propConfig = table.Properties
+                .SingleOrDefault(prop => prop.Info == key.DependentToPrincipal?.PropertyInfo);
+            if (propConfig is null) continue;
+            propConfig.IsRelation = true;
+        }
+        
+        logger.LogInformation("Extracted information for table '" + table.PropertyName + "'");
+        table.Seeded = true;
     }
 
 }

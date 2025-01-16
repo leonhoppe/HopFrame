@@ -9,17 +9,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added reload button and animation">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameRelationPicker.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Models/RelationPickerDialogData.cs" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added relation picker dialog">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameListView.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameListView.razor.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameRelationPicker.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameRelationPicker.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -154,7 +151,7 @@
       <workItem from="1736875984621" duration="8464000" />
       <workItem from="1736884461354" duration="1075000" />
       <workItem from="1736962119221" duration="8119000" />
-      <workItem from="1737021098746" duration="13969000" />
+      <workItem from="1737021098746" duration="16566000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -204,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737023058093</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Added relation picker dialog">
+      <option name="closed" value="true" />
+      <created>1737035288104</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1737035288104</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -220,6 +225,7 @@
     <MESSAGE value="Started working on listing page" />
     <MESSAGE value="Added entry saving support" />
     <MESSAGE value="Added reload button and animation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added reload button and animation" />
+    <MESSAGE value="Added relation picker dialog" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added relation picker dialog" />
   </component>
 </project>

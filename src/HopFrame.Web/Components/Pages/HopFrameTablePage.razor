@@ -1,4 +1,4 @@
-﻿@page "/admin/{TableName}"
+﻿@page "/admin/{TableDisplayName}"
 @layout HopFrameLayout
 @rendermode InteractiveServer
 @implements IDisposable
@@ -13,7 +13,7 @@
 
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
-        <h3>@_config?.PropertyName</h3>
+        <h3>@_config?.DisplayName</h3>
         <FluentButton
             IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
             OnClick="Reload"
@@ -120,7 +120,7 @@
 @code {
     
     [Parameter]
-    public required string TableName { get; set; }
+    public required string TableDisplayName { get; set; }
     
     [Parameter]
     public bool DisplaySelection { get; set; }
@@ -145,9 +145,9 @@
     private int _selectedIndex = -1;
 
     protected override void OnInitialized() {
-        _config ??= Explorer.GetTable(TableName);
+        _config ??= Explorer.GetTable(TableDisplayName);
 
-        if (_config is null) {
+        if (_config is null || (_config.Ignored && DialogData is null)) {
             Navigator.NavigateTo("/admin", true);
         }
     }

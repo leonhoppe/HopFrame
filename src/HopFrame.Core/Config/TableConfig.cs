@@ -8,8 +8,10 @@ namespace HopFrame.Core.Config;
 public class TableConfig {
     public Type TableType { get; }
     public string PropertyName { get; }
+    public string DisplayName { get; set; }
     public DbContextConfig ContextConfig { get; }
     public bool Ignored { get; set; }
+    internal bool Seeded { get; set; }
 
     public List<PropertyConfig> Properties { get; } = new();
 
@@ -17,6 +19,7 @@ public class TableConfig {
         TableType = tableType;
         PropertyName = propertyName;
         ContextConfig = config;
+        DisplayName = PropertyName;
 
         foreach (var info in tableType.GetProperties()) {
             var propConfig = new PropertyConfig(info, this);
@@ -53,6 +56,11 @@ public class TableConfig<TModel>(TableConfig config) {
     public TableConfig<TModel> Property<TProp>(Expression<Func<TModel, TProp>> propertyExpression, Action<PropertyConfig<TProp>> configurator) {
         var prop = Property(propertyExpression);
         configurator.Invoke(prop);
+        return this;
+    }
+
+    public TableConfig<TModel> SetDisplayName(string name) {
+        InnerConfig.DisplayName = name;
         return this;
     }
     

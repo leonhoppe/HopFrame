@@ -79,10 +79,4 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
         InnerConfig.DisplayValue = display;
         return this;
     }
-
-    public PropertyConfig<TProp> IsRelation(bool isRelation) {
-        InnerConfig.IsRelation = isRelation;
-        return this;
-    }
-    
 }

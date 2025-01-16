@@ -4,7 +4,7 @@ namespace HopFrame.Core.Services;
 
 public interface IContextExplorer {
     public IEnumerable<string> GetTableNames();
-    public TableConfig? GetTable(string tableName);
+    public TableConfig? GetTable(string tableDisplayName);
     public TableConfig? GetTable(Type tableEntity);
-    public ITableManager? GetTableManager(string tableName);
+    public ITableManager? GetTableManager(string tablePropertyName);
 }

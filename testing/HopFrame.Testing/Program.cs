@@ -23,8 +23,7 @@ builder.Services.AddHopFrame(options => {
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)
-                .List(false)
-                .DisplayValue(false);
+                .ValueParser(pwd => pwd + "-edited");
 
             table.Property(u => u.FirstName)
                 .SetDisplayName("First Name");
@@ -35,6 +34,8 @@ builder.Services.AddHopFrame(options => {
             table.Property(u => u.Id)
                 .Sortable(false)
                 .ValueTemplate(Guid.CreateVersion7);
+
+            table.SetDisplayName("Benutzer");
         });
 
         context.Table<Post>()
@@ -46,8 +47,8 @@ builder.Services.AddHopFrame(options => {
             .SetDisplayName("ID");
 
         context.Table<Post>()
-            .Property(p => p.Author)
-            .IsRelation(true);
+            .Property(p => p.CreatedAt)
+            .ValueTemplate(() => DateTime.UtcNow);
     });
 });
 
