@@ -256,9 +256,14 @@
         }
 
         StateHasChanged();
-        return _validationErrors
+        var valid = _validationErrors
             .Select(err => err.Value.Count)
             .All(c => c == 0);
+
+        if (!valid) return false;
+        var dialog = await Dialogs.ShowConfirmationAsync($"Do you really want to {(_currentlyEditing ? "edit" : "create")} this entry?");
+        var result = await dialog.Result;
+        return !result.Cancelled;
     }
     
     private enum InputType {
