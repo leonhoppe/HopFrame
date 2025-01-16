@@ -1,0 +1,26 @@
+﻿@implements IDialogContentComponent<RelationPickerDialogData>
+@rendermode InteractiveServer
+
+@using HopFrame.Web.Models
+@using HopFrame.Web.Components.Pages
+
+<FluentDialogBody Style="overflow-x: auto">
+    <HopFrameTablePage DisplayActions="false" DisplaySelection="true" TableName="@Content.SourceTable.PropertyName" PerPage="15" DialogData="Content" />
+</FluentDialogBody>
+
+@code {
+    
+    [Parameter]
+    public required RelationPickerDialogData Content { get; set; }
+    
+    [CascadingParameter]
+    public required FluentDialog Dialog { get; set; }
+
+    protected override void OnInitialized() {
+        Dialog.Instance.Parameters.Title = $"Select {Content.SourceTable.TableType.Name}";
+        Dialog.Instance.Parameters.Width = "90vw";
+        Dialog.Instance.Parameters.Height = "90vh";
+        Dialog.Instance.Parameters.PrimaryAction = "Assign";
+    }
+
+}

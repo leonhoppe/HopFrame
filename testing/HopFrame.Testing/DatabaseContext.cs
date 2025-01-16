@@ -13,6 +13,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
         modelBuilder.Entity<Post>()
             .HasOne<User>()
-            .WithMany();
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

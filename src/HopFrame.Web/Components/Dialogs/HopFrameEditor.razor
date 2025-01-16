@@ -1,4 +1,5 @@
 @implements IDialogContentComponent<EditorDialogData>
+@rendermode InteractiveServer
 
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
@@ -11,7 +12,28 @@
         if (!_currentlyEditing && !property.Creatable) continue;
 
         <div style="margin-bottom: 20px">
-            @if (property.Info.PropertyType.IsNumeric()) {
+            @if (property.IsRelation) {
+                <div style="display: flex; gap: 5px; align-items: flex-end">
+                    <div style="flex-grow: 1">
+                        <FluentTextField
+                            Label="@property.Name"
+                            Value="@(GetPropertyValue<string>(property))"
+                            Disabled="@(!property.Editable)"
+                            ReadOnly="true"
+                            Style="width: 100%"
+                            ValueChanged="@(v => SetPropertyValue(property, v, InputType.Text))" />
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-bottom: 4px">
+                        <FluentButton OnClick="() => SetPropertyValue(property, null, InputType.Relation)">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
+                        </FluentButton>
+                        <FluentButton OnClick="async () => await OpenRelationalPicker(property)">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Open())" Color="Color.Neutral" />
+                        </FluentButton>
+                    </div>
+                </div>
+            }
+            else if (property.Info.PropertyType.IsNumeric()) {
                 <FluentNumberField
                     TValue="double"
                     Label="@property.Name"
@@ -84,6 +106,7 @@
 </FluentDialogBody>
 
 @inject IContextExplorer Explorer
+@inject IDialogService Dialogs
 
 @code {
     [Parameter]
@@ -98,14 +121,13 @@
     protected override void OnInitialized() {
         _currentlyEditing = Content.CurrentObject is not null;
         Dialog.Instance.Parameters.Title = (_currentlyEditing ? "Edit " : "Add ") + Content.Config.TableType.Name;
-        Dialog.Instance.Parameters.PreventScroll = true;
         Dialog.Instance.Parameters.Width = "500px";
         Dialog.Instance.Parameters.PrimaryAction = "Save";
         _manager = Explorer.GetTableManager(Content.Config.PropertyName);
         Content.CurrentObject ??= Activator.CreateInstance(Content.Config.TableType);
     }
 
-    private TValue? GetPropertyValue<TValue>(PropertyConfig config) { //TODO: handle relational types
+    private TValue? GetPropertyValue<TValue>(PropertyConfig config) {
         if (!config.DisplayValue) return default;
         if (Content.CurrentObject is null) return default;
         var value = config.Info.GetValue(Content.CurrentObject);
@@ -170,17 +192,34 @@
                     }
                     else result = (TimeOnly)value;
                     break;
+                    
+                case InputType.Relation:
+                    result = value;
+                    break;
                 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(senderType), senderType, null);
             }
         }
 
-        if (config.Parser is not null) {
-            result = config.Parser(result!.ToString()!);
+        if (config.Parser is not null && result is not null) {
+            result = config.Parser(result.ToString()!);
         }
 
         config.Info.SetValue(Content.CurrentObject, result);
+    }
+
+    private async Task OpenRelationalPicker(PropertyConfig config) {
+        var relationTable = Explorer.GetTable(config.Info.PropertyType);
+        if (relationTable is null) return;
+
+        var currentValue = config.Info.GetValue(Content.CurrentObject);
+        var dialog = await Dialogs.ShowDialogAsync<HopFrameRelationPicker>(new RelationPickerDialogData(relationTable, currentValue), new DialogParameters());
+        var result = await dialog.Result;
+        if (result.Cancelled) return;
+        
+        var data = (RelationPickerDialogData)result.Data!;
+        SetPropertyValue(config, data.Object, InputType.Relation);
     }
     
     private enum InputType {
@@ -189,6 +228,7 @@
         Date,
         Time,
         Enum,
-        Text
+        Text,
+        Relation
     }
 }

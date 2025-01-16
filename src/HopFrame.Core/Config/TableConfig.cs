@@ -19,7 +19,7 @@ public class TableConfig {
         ContextConfig = config;
 
         foreach (var info in tableType.GetProperties()) {
-            var propConfig = new PropertyConfig(info);
+            var propConfig = new PropertyConfig(info, this);
 
             if (info.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute)) {
                 propConfig.Creatable = false;

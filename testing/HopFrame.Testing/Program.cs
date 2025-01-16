@@ -44,6 +44,10 @@ builder.Services.AddHopFrame(options => {
         context.Table<Post>()
             .Property(p => p.Id)
             .SetDisplayName("ID");
+
+        context.Table<Post>()
+            .Property(p => p.Author)
+            .IsRelation(true);
     });
 });
 

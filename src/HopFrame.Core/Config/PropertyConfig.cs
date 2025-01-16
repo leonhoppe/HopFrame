@@ -3,8 +3,9 @@ using System.Reflection;
 
 namespace HopFrame.Core.Config;
 
-public class PropertyConfig(PropertyInfo info) {
-    public PropertyInfo Info { get; init; } = info;
+public class PropertyConfig(PropertyInfo info, TableConfig table) {
+    public PropertyInfo Info { get; } = info;
+    public TableConfig Table { get; } = table;
     public string Name { get; set; } = info.Name;
     public bool List { get; set; } = true;
     public bool Sortable { get; set; } = true;
@@ -17,6 +18,7 @@ public class PropertyConfig(PropertyInfo info) {
     public bool Creatable { get; set; } = true;
     public bool DisplayValue { get; set; } = true;
     public bool IsRelation { get; set; }
+    public bool IsPrimaryKey { get; set; }
 }
 
 public class PropertyConfig<TProp>(PropertyConfig config) {

@@ -1,0 +1,232 @@
+﻿@page "/admin/{TableName}"
+@layout HopFrameLayout
+@rendermode InteractiveServer
+@implements IDisposable
+
+@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+@using HopFrame.Web.Models
+@using Microsoft.JSInterop
+@using Microsoft.EntityFrameworkCore
+
+<FluentDialogProvider />
+
+<div style="display: flex; flex-direction: column; height: 100%">
+    <FluentToolbar Class="hopframe-toolbar">
+        <h3>@_config?.PropertyName</h3>
+        <FluentButton
+            IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
+            OnClick="Reload"
+            Loading="_loading"
+            Style="margin-left: 10px">
+            Refresh
+        </FluentButton>
+        
+        <FluentSpacer />
+        <FluentSearch @oninput="OnSearch" @onchange="OnSearch" />
+        
+        @if (!DisplaySelection) {
+            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
+        }
+    </FluentToolbar>
+    <FluentProgress Visible="_loading" Width="100%" />
+
+    <div style="display: flex; overflow-y: auto; flex-grow: 1">
+        @if (DisplaySelection) {
+            <div style="margin-top: calc(44px - (var(--stroke-width) * 1px)); border-top: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-divider-rest);">
+                @foreach (var model in _currentlyDisplayedModels) {
+                    <div class="hopframe-radio">
+                        <FluentRadioGroup TValue="int" Value="@(DialogData!.Object == model ? 1 : 0)">
+                            <FluentRadio Value="0" Style="display: none" />
+                            <FluentRadio Value="1" @onclick="() => DialogData!.Object = model" Style="width: 20px"/>
+                        </FluentRadioGroup>
+                    </div>
+                }
+            </div>
+        }
+
+        <div style="flex-grow: 1">
+            <FluentDataGrid Items="_currentlyDisplayedModels.AsQueryable()">
+                @foreach (var property in _config!.Properties.Where(prop => prop.List)) {
+                    <PropertyColumn
+                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property.Info, _config)"
+                        Style="min-width: max-content; height: 44px;"
+                        Sortable="@property.Sortable"/>
+                }
+
+                @if (DisplayActions) {
+                    var dataIndex = 0;
+
+                    <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
+                        @{ var currentElement = _currentlyDisplayedModels.ElementAtOrDefault(dataIndex); }
+                        <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
+                        </FluentButton>
+
+                        <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
+                            <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
+                        </FluentButton>
+
+                        @{
+                            dataIndex++;
+                            dataIndex %= 20;
+                        }
+                    </TemplateColumn>
+                }
+            </FluentDataGrid>
+        </div>
+    </div>
+
+    @if (_totalPages > 1) {
+        <div class="hopframe-paginator">
+            <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage - 1)">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowPrevious())" Color="Color.Neutral" />
+            </FluentButton>
+
+            <span>Page</span>
+
+            <FluentSelect TOption="int"
+                          Items="Enumerable.Range(0, _totalPages)"
+                          OptionValue="@(p => p.ToString())"
+                          OptionText="@(p => (p + 1).ToString())"
+                          ValueChanged="async s => await ChangePage(Convert.ToInt32(s))"
+                          Width="max-content" SelectedOption="@_currentPage"/>
+
+            <span>of @_totalPages</span>
+
+            <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage + 1)">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowNext())" Color="Color.Neutral" />
+            </FluentButton>
+        </div>
+    }
+</div>
+
+<script>
+    function removeBg() {
+        const elements = document.querySelectorAll(".col-sort-button");
+        const style = new CSSStyleSheet();
+        style.replaceSync(".control { background: none !important; }");
+        elements.forEach(e => e?.shadowRoot?.adoptedStyleSheets?.push(style));
+    }
+    
+    removeBg();
+</script>
+
+@inject IContextExplorer Explorer
+@inject NavigationManager Navigator
+@inject IJSRuntime Js
+@inject IDialogService Dialogs
+
+@code {
+    
+    [Parameter]
+    public required string TableName { get; set; }
+    
+    [Parameter]
+    public bool DisplaySelection { get; set; }
+
+    [Parameter]
+    public bool DisplayActions { get; set; } = true;
+    
+    [Parameter]
+    public RelationPickerDialogData? DialogData { get; set; }
+
+    [Parameter]
+    public int PerPage { get; set; } = 20;
+
+    private TableConfig? _config;
+    private ITableManager? _manager;
+
+    private IEnumerable<object> _currentlyDisplayedModels = [];
+    private int _currentPage;
+    private int _totalPages;
+    private string? _searchTerm;
+    private bool _loading;
+    private int _selectedIndex = -1;
+
+    protected override void OnInitialized() {
+        _config ??= Explorer.GetTable(TableName);
+
+        if (_config is null) {
+            Navigator.NavigateTo("/admin", true);
+        }
+    }
+
+    protected override async Task OnInitializedAsync() {
+        _manager ??= Explorer.GetTableManager(_config!.PropertyName);
+        _currentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
+        _totalPages = await _manager.TotalPages(PerPage);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        try {
+            await Js.InvokeVoidAsync("removeBg");
+        }
+        catch (Exception) {
+            // ignored
+        }
+    }
+
+    public void Dispose() {
+        _searchCancel.Dispose();
+    }
+
+    private CancellationTokenSource _searchCancel = new();
+    private async Task OnSearch(ChangeEventArgs eventArgs) {
+        await _searchCancel.CancelAsync();
+        _searchTerm = eventArgs.Value?.ToString();
+        if (_searchTerm is null) return;
+        _searchCancel = new();
+        
+        await Task.Delay(500, _searchCancel.Token);
+        await Reload();
+    }
+
+    private async Task Reload() {
+        _loading = true;
+        if (!string.IsNullOrEmpty(_searchTerm)) {
+            (var query, _totalPages) = await _manager!.Search(_searchTerm, 0, PerPage);
+            _currentlyDisplayedModels = query.ToArray();
+        }
+        else {
+            await OnInitializedAsync();
+        }
+        _loading = false;
+    }
+
+    private async Task ChangePage(int page) {
+        if (page < 0 || page > _totalPages - 1) return;
+        _currentPage = page;
+        await Reload();
+    }
+
+    private async Task DeleteEntry(object element) {
+        var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
+        var result = await dialog.Result;
+        if (result.Cancelled) return;
+
+        await _manager!.DeleteItem(element);
+        await Reload();
+    }
+
+    private async Task CreateOrEdit(object? element) {
+        var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new DialogParameters {
+            TrapFocus = false
+        });
+        var result = await panel.Result;
+        var data = result.Data as EditorDialogData;
+        
+        if (result.Cancelled) {
+            if (data?.CurrentObject is not null)
+                await _manager!.RevertChanges(data.CurrentObject);
+            return;
+        }
+        
+        if (element is null)
+            await _manager!.AddItem(data!.CurrentObject!);
+        else
+            await _manager!.EditItem(data!.CurrentObject!);
+        
+        await Reload();
+    }
+}
