@@ -65,6 +65,13 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             propConfig.IsRelation = true;
         }
         
+        foreach (var property in entity.GetProperties()) {
+            var propConfig = table.Properties
+                .SingleOrDefault(prop => prop.Info == property.PropertyInfo);
+            if (propConfig is null) continue;
+            propConfig.IsRequired = !property.IsNullable;
+        }
+        
         logger.LogInformation("Extracted information for table '" + table.PropertyName + "'");
         table.Seeded = true;
     }

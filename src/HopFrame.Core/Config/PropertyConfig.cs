@@ -14,11 +14,12 @@ public class PropertyConfig(PropertyInfo info, TableConfig table) {
     public Func<object, string>? Formatter { get; set; }
     public Func<string, object>? Parser { get; set; }
     public Func<object>? Template { get; set; }
+    public Func<object?, Task<IEnumerable<string>>>? Validator { get; set; }
     public bool Editable { get; set; } = true;
     public bool Creatable { get; set; } = true;
     public bool DisplayValue { get; set; } = true;
     public bool IsRelation { get; set; }
-    public bool IsPrimaryKey { get; set; }
+    public bool IsRequired { get; set; }
 }
 
 public class PropertyConfig<TProp>(PropertyConfig config) {
@@ -77,6 +78,16 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> DisplayValue(bool display) {
         InnerConfig.DisplayValue = display;
+        return this;
+    }
+
+    public PropertyConfig<TProp> Validator(Func<TProp?, IEnumerable<string>> validator) {
+        InnerConfig.Validator = obj => Task.FromResult(validator.Invoke((TProp?)obj));
+        return this;
+    }
+    
+    public PropertyConfig<TProp> Validator(Func<TProp?, Task<IEnumerable<string>>> validator) {
+        InnerConfig.Validator = obj => validator.Invoke((TProp?)obj);
         return this;
     }
 }

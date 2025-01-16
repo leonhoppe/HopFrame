@@ -49,6 +49,20 @@ builder.Services.AddHopFrame(options => {
         context.Table<Post>()
             .Property(p => p.CreatedAt)
             .ValueTemplate(() => DateTime.UtcNow);
+
+        context.Table<Post>()
+            .Property(p => p.Caption)
+            .Validator(input => {
+                var errors = new List<string>();
+                
+                if (input is null)
+                    errors.Add("Value cannot be null");
+                
+                if (input?.Length > 10)
+                    errors.Add("Value can only be 10 characters long");
+
+                return errors;
+            });
     });
 });
 
