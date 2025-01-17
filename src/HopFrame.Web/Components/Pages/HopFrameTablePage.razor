@@ -31,31 +31,29 @@
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
         
-        @if (!DisplaySelection && _hasCreatePolicy) {
+        @if (_hasCreatePolicy && DisplayActions) {
             <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
         }
     </FluentToolbar>
     <FluentProgress Visible="_loading" Width="100%" />
 
     <div style="display: flex; overflow-y: auto; flex-grow: 1">
-        @if (DisplaySelection) {
-            <div style="margin-top: calc(44px - (var(--stroke-width) * 1px)); border-top: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-divider-rest);">
-                @foreach (var model in _currentlyDisplayedModels) {
-                    <div class="hopframe-radio">
-                        <FluentRadioGroup TValue="int" Value="@(DialogData!.Object == model ? 1 : 0)">
-                            <FluentRadio Value="0" Style="display: none" />
-                            <FluentRadio Value="1" @onclick="() => DialogData!.Object = model" Style="width: 20px"/>
-                        </FluentRadioGroup>
-                    </div>
-                }
-            </div>
-        }
-
         <div style="flex-grow: 1">
             <FluentDataGrid Items="_currentlyDisplayedModels.AsQueryable()">
+                @if (DisplaySelection) {
+                    <SelectColumn 
+                        TGridItem="object"
+                        SelectMode="SelectionMode"
+                        SelectFromEntireRow="true"
+                        SelectedItems="DialogData?.SelectedObjects.ToArray()"
+                        OnSelect="data => SelectItem(data.Item, data.Selected)"
+                        SelectAllChanged="SelectAll"
+                        Style="min-width: max-content; height: 44px; display: grid; align-items: center" @ref="_selectColumn" />
+                }
+                
                 @foreach (var property in _config!.Properties.Where(prop => prop.List).OrderBy(prop => prop.Order)) {
                     <PropertyColumn
-                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, _config)"
+                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, null)"
                         Style="min-width: max-content; height: 44px;"
                         Sortable="@property.Sortable"/>
                 }
@@ -65,16 +63,16 @@
 
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
                         @{ var currentElement = _currentlyDisplayedModels.ElementAtOrDefault(dataIndex); }
-                        
+
                         @if (_hasUpdatePolicy) {
                             <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
-                                <FluentIcon Value="@(new Icons.Regular.Size16.Edit())" />
+                                <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                             </FluentButton>
                         }
 
                         @if (_hasDeletePolicy) {
                             <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
-                                <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning" />
+                                <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                             </FluentButton>
                         }
 
@@ -144,12 +142,15 @@
     public RelationPickerDialogData? DialogData { get; set; }
 
     [Parameter]
+    public DataGridSelectMode SelectionMode { get; set; } = DataGridSelectMode.Single;
+
+    [Parameter]
     public int PerPage { get; set; } = 20;
 
     private TableConfig? _config;
     private ITableManager? _manager;
 
-    private IEnumerable<object> _currentlyDisplayedModels = [];
+    private object[] _currentlyDisplayedModels = [];
     private int _currentPage;
     private int _totalPages;
     private string? _searchTerm;
@@ -158,6 +159,8 @@
     private bool _hasUpdatePolicy;
     private bool _hasDeletePolicy;
     private bool _hasCreatePolicy;
+
+    private SelectColumn<object>? _selectColumn;
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -262,5 +265,20 @@
             await _manager!.EditItem(data!.CurrentObject!);
         
         await Reload();
+    }
+
+    private void SelectItem(object item, bool selected) {
+        if (!selected)
+            DialogData?.SelectedObjects.Remove(item);
+        else DialogData?.SelectedObjects.Add(item);
+    }
+
+    private void SelectAll(bool? selected) {
+        selected = _currentlyDisplayedModels.Any(obj => DialogData?.SelectedObjects.Contains(obj) != true);
+        foreach (var displayedModel in _currentlyDisplayedModels) {
+            SelectItem(displayedModel, selected == true);
+        }
+
+        _selectColumn!.SelectAll = selected;
     }
 }

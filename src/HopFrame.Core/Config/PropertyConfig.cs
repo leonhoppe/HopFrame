@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace HopFrame.Core.Config;
@@ -12,6 +13,7 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool Searchable { get; set; } = true;
     public PropertyInfo? DisplayedProperty { get; set; }
     public Func<object, string>? Formatter { get; set; }
+    public Func<object, string>? EnumerableFormatter { get; set; }
     public Func<string, object>? Parser { get; set; }
     public Func<object?, Task<IEnumerable<string>>>? Validator { get; set; }
     public bool Editable { get; set; } = true;
@@ -19,6 +21,7 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool DisplayValue { get; set; } = true;
     public bool IsRelation { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsEnumerable { get; set; }
     public bool IsListingProperty { get; set; }
     public int Order { get; set; } = nthProperty;
 }
@@ -54,6 +57,11 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> Format(Func<TProp, string> formatter) {
         InnerConfig.Formatter = obj => formatter.Invoke((TProp)obj);
+        return this;
+    }
+
+    public PropertyConfig<TProp> FormatEach<TInnerProp>(Func<TInnerProp, string> formatter) {
+        InnerConfig.EnumerableFormatter = obj => formatter.Invoke((TInnerProp)obj);
         return this;
     }
 

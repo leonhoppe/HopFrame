@@ -1,3 +1,4 @@
+using System.Collections;
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
@@ -41,6 +42,9 @@ builder.Services.AddHopFrame(options => {
             table.SetDescription("This table is used for user data store and user authentication");
 
             table.SetViewPolicy("policy");
+
+            table.Property(u => u.Posts)
+                .FormatEach<Post>(post => post.Caption);
         });
 
         context.Table<Post>()
@@ -56,7 +60,7 @@ builder.Services.AddHopFrame(options => {
 
         context.Table<Post>()
             .Property(p => p.Caption)
-            .Validator(input => {
+            /*.Validator(input => {
                 var errors = new List<string>();
                 
                 if (input is null)
@@ -66,7 +70,7 @@ builder.Services.AddHopFrame(options => {
                     errors.Add("Value can only be 10 characters long");
 
                 return errors;
-            });
+            })*/;
 
         context.Table<Post>()
             .OrderIndex(-1);

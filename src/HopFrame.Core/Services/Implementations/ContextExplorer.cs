@@ -1,4 +1,5 @@
-﻿using HopFrame.Core.Config;
+﻿using System.Text.Json;
+using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -58,12 +59,15 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         var dbContext = (provider.GetService(table.ContextConfig.ContextType) as DbContext)!;
         var entity = dbContext.Model.FindEntityType(table.TableType)!;
         
-        foreach (var key in entity.GetForeignKeys()) {
-            var propConfig = table.Properties
-                .Where(prop => !prop.IsListingProperty)
-                .SingleOrDefault(prop => prop.Info == key.DependentToPrincipal?.PropertyInfo);
-            if (propConfig is null) continue;
-            propConfig.IsRelation = true;
+        foreach (var propertyConfig in table.Properties) {
+            if (propertyConfig.IsListingProperty) continue;
+            var prop = entity.FindProperty(propertyConfig.Info.Name);
+            if (prop is not null) continue;
+            var nav = entity.FindNavigation(propertyConfig.Info.Name);
+            if (nav is null) continue;
+            propertyConfig.IsRelation = true;
+            propertyConfig.IsRequired = nav.ForeignKey.IsRequired;
+            propertyConfig.IsEnumerable = nav.IsCollection;
         }
         
         foreach (var property in entity.GetProperties()) {

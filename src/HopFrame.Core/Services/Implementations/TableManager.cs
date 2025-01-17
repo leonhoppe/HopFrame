@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using HopFrame.Core.Config;
@@ -67,18 +68,30 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return false;
     }
 
-    public string DisplayProperty(object? item, PropertyConfig prop, TableConfig? tableConfig) {
+    public string DisplayProperty(object? item, PropertyConfig prop, object? value = null) {
         if (item is null) return string.Empty;
 
         if (prop.IsListingProperty)
             return prop.Formatter!.Invoke(item);
 
-        var propValue = prop.Info.GetValue(item);
+        var propValue = value ?? prop.Info.GetValue(item);
         if (propValue is null)
             return string.Empty;
 
         if (prop.Formatter is not null) {
             return prop.Formatter.Invoke(propValue);
+        }
+
+        if (prop.IsEnumerable) {
+            if (value is not null) {
+                if (prop.EnumerableFormatter is not null) {
+                    return prop.EnumerableFormatter.Invoke(value);
+                }
+            
+                return value.ToString() ?? string.Empty;
+            }
+            
+            return (propValue as IEnumerable)!.OfType<object>().Count().ToString();
         }
 
         if (prop.DisplayedProperty is null) {
@@ -94,19 +107,13 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
             .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsListingProperty);
 
         if (innerProp is null) return propValue.ToString() ?? string.Empty;
-        return DisplayProperty(propValue, innerProp, innerConfig);
+        return DisplayProperty(propValue, innerProp);
     }
 
     private IQueryable<TModel> IncludeForgeinKeys(IQueryable<TModel> query) {
         var pendingQuery = query;
         
-        foreach (var property in config.Properties) {
-            var attr = property.Info
-            .GetCustomAttributes(true)
-            .FirstOrDefault(att => att is ForeignKeyAttribute) as ForeignKeyAttribute;
-
-            if (attr is null) continue;
-
+        foreach (var property in config.Properties.Where(prop => prop.IsRelation)) {
             pendingQuery = pendingQuery.Include(property.Info.Name);
         }
 

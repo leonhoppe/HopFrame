@@ -1,11 +1,11 @@
 @implements IDialogContentComponent<EditorDialogData>
 @rendermode InteractiveServer
 
+@using System.Collections
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
 @using HopFrame.Web.Helpers
-@using Microsoft.EntityFrameworkCore.Internal
 
 <FluentDialogBody>
     @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
@@ -15,18 +15,31 @@
             @if (property.IsRelation) {
                 <div style="display: flex; gap: 5px; align-items: flex-end">
                     <div style="flex-grow: 1">
-                        <FluentTextField
-                            Label="@property.Name"
-                            Value="@(GetPropertyValue<string>(property))"
-                            Required="@property.IsRequired"
-                            ReadOnly="true"
-                            Style="width: 100%"
-                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
+                        @if (property.IsEnumerable) {
+                            <FluentLabel Style="margin-bottom: calc(var(--design-unit) * 1px)">@property.Name</FluentLabel>
+                            <div class="hopframe-listview">
+                                <FluentOverflow Style="width: 100%">
+                                    @foreach (var item in GetPropertyValue<IEnumerable>(property) ?? Enumerable.Empty<object>()) {
+                                        <FluentOverflowItem><FluentBadge>@(GetPropertyValue<string>(property, item))</FluentBadge></FluentOverflowItem>
+                                    }
+                                </FluentOverflow>
+                            </div>
+                        }
+                        else {
+                            <FluentTextField
+                                Label="@property.Name"
+                                Value="@(GetPropertyValue<string>(property))"
+                                Required="@property.IsRequired"
+                                ReadOnly="true"
+                                Style="width: 100%" />
+                        }
                     </div>
                     <div style="display: flex; gap: 5px; margin-bottom: 4px">
-                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(!property.Editable)">
-                            <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
-                        </FluentButton>
+                        @if (!property.IsRequired) {
+                            <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(!property.Editable)">
+                                <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
+                            </FluentButton>
+                        }
                         <FluentButton OnClick="async () => await OpenRelationalPicker(property)" Disabled="@(!property.Editable)">
                             <FluentIcon Value="@(new Icons.Regular.Size20.Open())" Color="Color.Neutral" />
                         </FluentButton>
@@ -168,19 +181,24 @@
         }
     }
 
-    private TValue? GetPropertyValue<TValue>(PropertyConfig config) {
+    private TValue? GetPropertyValue<TValue>(PropertyConfig config, object? listItem = null) {
         if (!config.DisplayValue) return default;
         if (Content.CurrentObject is null) return default;
+
+        if (listItem is not null) {
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, listItem);
+        }
+        
         var value = config.Info.GetValue(Content.CurrentObject);
 
         if (value is null)
             return default;
 
-        if (config.Info.PropertyType == typeof(TValue))
+        if (typeof(TValue).IsAssignableFrom(config.Info.PropertyType))
             return (TValue)value;
 
         if (typeof(TValue) == typeof(string))
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, Content.Config);
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config);
 
         return (TValue)Convert.ChangeType(value, typeof(TValue));
     }
@@ -190,6 +208,7 @@
             return;
         
         object? result = null;
+        var needsOverride = true;
 
         if (value is not null && config.Parser is null) {
             switch (senderType) {
@@ -231,7 +250,16 @@
                     break;
                     
                 case InputType.Relation:
-                    result = value;
+                    if (!config.IsEnumerable)
+                        result = ((IEnumerable)value).OfType<object>().FirstOrDefault();
+                    else {
+                        needsOverride = false;
+                        var asList = (IList)config.Info.GetValue(Content.CurrentObject)!;
+                        asList.Clear();
+                        foreach (var element in (IEnumerable)value) {
+                            asList.Add(element);
+                        }
+                    }
                     break;
                 
                 default:
@@ -243,23 +271,40 @@
             result = config.Parser(result.ToString()!);
         }
 
-        config.Info.SetValue(Content.CurrentObject, result);
+        if (needsOverride)
+            config.Info.SetValue(Content.CurrentObject, result);
     }
 
     private async Task OpenRelationalPicker(PropertyConfig config) {
         if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
             return;
+
+        var relationType = config.Info.PropertyType;
+        if (config.IsEnumerable) {
+            relationType = config.Info.PropertyType.GetGenericArguments().First();
+        }
         
-        var relationTable = Explorer.GetTable(config.Info.PropertyType);
+        var relationTable = Explorer.GetTable(relationType);
         if (relationTable is null) return;
 
-        var currentValue = config.Info.GetValue(Content.CurrentObject);
-        var dialog = await Dialogs.ShowDialogAsync<HopFrameRelationPicker>(new RelationPickerDialogData(relationTable, currentValue), new DialogParameters());
+        var currentValues = new List<object>();
+        if (config.IsEnumerable) {
+            foreach (var o in GetPropertyValue<IEnumerable>(config) ?? Enumerable.Empty<object>()) {
+                currentValues.Add(o);
+            }
+        }
+        else {
+            var raw = config.Info.GetValue(Content.CurrentObject);
+            if (raw is not null)
+                currentValues.Add(raw);
+        }
+        
+        var dialog = await Dialogs.ShowDialogAsync<HopFrameRelationPicker>(new RelationPickerDialogData(relationTable, currentValues, config.IsEnumerable), new DialogParameters());
         var result = await dialog.Result;
         if (result.Cancelled) return;
         
         var data = (RelationPickerDialogData)result.Data!;
-        await SetPropertyValue(config, data.Object, InputType.Relation);
+        await SetPropertyValue(config, data.SelectedObjects, InputType.Relation);
     }
 
     private async Task<bool> ValidateInputs() {

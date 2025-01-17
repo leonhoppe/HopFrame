@@ -11,7 +11,7 @@ public class Post {
     [MaxLength(255)]
     public required string Caption { get; set; }
     
-    public required string Content { get; set; }
+    public required string? Content { get; set; }
     
     [ForeignKey("author")]
     public virtual required User Author { get; set; }
