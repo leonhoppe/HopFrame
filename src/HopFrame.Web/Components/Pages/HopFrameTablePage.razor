@@ -273,8 +273,8 @@
         else DialogData?.SelectedObjects.Add(item);
     }
 
-    private void SelectAll(bool? selected) {
-        selected = _currentlyDisplayedModels.Any(obj => DialogData?.SelectedObjects.Contains(obj) != true);
+    private void SelectAll() {
+        var selected = _currentlyDisplayedModels.Any(obj => DialogData?.SelectedObjects.Contains(obj) != true);
         foreach (var displayedModel in _currentlyDisplayedModels) {
             SelectItem(displayedModel, selected == true);
         }

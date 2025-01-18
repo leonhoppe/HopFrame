@@ -48,7 +48,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             if (dbContext is null) return null;
 
             var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-            return Activator.CreateInstance(type, dbContext, table, this) as ITableManager;
+            return Activator.CreateInstance(type, dbContext, table, this, provider) as ITableManager;
         }
 
         return null;

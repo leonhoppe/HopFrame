@@ -36,11 +36,11 @@
                     </div>
                     <div style="display: flex; gap: 5px; margin-bottom: 4px">
                         @if (!property.IsRequired) {
-                            <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(!property.Editable)">
+                            <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(_currentlyEditing && !property.Editable)">
                                 <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
                             </FluentButton>
                         }
-                        <FluentButton OnClick="async () => await OpenRelationalPicker(property)" Disabled="@(!property.Editable)">
+                        <FluentButton OnClick="async () => await OpenRelationalPicker(property)" Disabled="@(_currentlyEditing && !property.Editable)">
                             <FluentIcon Value="@(new Icons.Regular.Size20.Open())" Color="Color.Neutral" />
                         </FluentButton>
                     </div>
@@ -52,7 +52,7 @@
                     Label="@property.Name"
                     Value="GetPropertyValue<double>(property)"
                     Style="width: 100%;"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Number))" />
             }
@@ -60,7 +60,7 @@
                 <FluentSwitch
                     Label="@property.Name"
                     Value="GetPropertyValue<bool>(property)"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Switch))" />
             }
@@ -70,14 +70,14 @@
                         <FluentDatePicker
                             Label="@property.Name"
                             Value="GetPropertyValue<DateTime>(property)"
-                            Disabled="@(!property.Editable)"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
                             Required="@property.IsRequired"
                             ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: flex-end">
                         <FluentTimePicker
                             Value="GetPropertyValue<DateTime>(property)"
-                            Disabled="@(!property.Editable)"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
                             Required="@property.IsRequired"
                             ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
                     </div>
@@ -88,7 +88,7 @@
                     Label="@property.Name"
                     Value="GetPropertyValue<DateOnly>(property).ToDateTime(TimeOnly.MinValue)"
                     Style="width: 100%"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
             }
@@ -97,7 +97,7 @@
                     Label="@property.Name"
                     Value="GetPropertyValue<TimeOnly>(property).ToDateTime()"
                     Style="width: 100%"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
             }
@@ -109,7 +109,7 @@
                     Value="@(GetPropertyValue<string>(property))"
                     Style="width: 100%"
                     Height="250px"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
             }
@@ -123,23 +123,33 @@
                             Value="@(GetPropertyValue<string>(property))"
                             Style="width: 100%"
                             Height="250px"
-                            Disabled="@(!property.Editable)"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
                             Required="@property.IsRequired"
                             ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
                     </div>
                     <div style="display: flex; gap: 5px">
-                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Enum)" Disabled="@(!property.Editable)">
+                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Enum)" Disabled="@(_currentlyEditing && !property.Editable)">
                             <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
                         </FluentButton>
                     </div>
                 </div>
+            }
+            else if (property.TextArea) {
+                <FluentTextArea
+                    Label="@property.Name"
+                    Value="@(GetPropertyValue<string>(property))"
+                    Style="width: 100%;"
+                    Rows="@property.TextAreaRows"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
             }
             else {
                 <FluentTextField
                     Label="@property.Name"
                     Value="@(GetPropertyValue<string>(property))"
                     Style="width: 100%;"
-                    Disabled="@(!property.Editable)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
             }
@@ -151,9 +161,13 @@
     }
 </FluentDialogBody>
 
+<FluentToastProvider MaxToastCount="10" />
+
 @inject IContextExplorer Explorer
 @inject IDialogService Dialogs
 @inject IHopFrameAuthHandler Handler
+@inject IToastService Toasts
+@inject IServiceProvider Provider
 
 @code {
     [Parameter]
@@ -217,6 +231,13 @@
                     break;
                     
                 case InputType.Text:
+                    if (config.Info.PropertyType == typeof(Guid)) {
+                        var success = Guid.TryParse((string)value, out var guid);
+                        if (success) result = guid;
+                        else Toasts.ShowError($"'{value}' is not a valid guid");
+                        break;
+                    }
+                    
                     result = Convert.ToString(value);
                     break;
                     
@@ -254,6 +275,11 @@
                         result = ((IEnumerable)value).OfType<object>().FirstOrDefault();
                     else {
                         needsOverride = false;
+
+                        if (!typeof(IList).IsAssignableFrom(config.Info.PropertyType)) {
+                            throw new ArgumentException($"Invalid type of '{config.Name}' property in '{config.Table.DisplayName}' table, only list types are supported on enumerable relations.");
+                        }
+                        
                         var asList = (IList)config.Info.GetValue(Content.CurrentObject)!;
                         asList.Clear();
                         foreach (var element in (IEnumerable)value) {
@@ -268,7 +294,7 @@
         }
 
         if (config.Parser is not null && result is not null) {
-            result = config.Parser(result.ToString()!);
+            result = config.Parser(result.ToString()!, Provider);
         }
 
         if (needsOverride)
@@ -319,7 +345,7 @@
             var value = property.Info.GetValue(Content.CurrentObject);
 
             if (property.Validator is not null) {
-                errorList.AddRange(await property.Validator.Invoke(value));
+                errorList.AddRange(await property.Validator.Invoke(value, Provider));
                 continue;
             }
             

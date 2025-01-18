@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.Services.Implementations;
 
-internal sealed class TableManager<TModel>(DbContext context, TableConfig config, IContextExplorer explorer) : ITableManager where TModel : class {
+internal sealed class TableManager<TModel>(DbContext context, TableConfig config, IContextExplorer explorer, IServiceProvider provider) : ITableManager where TModel : class {
     
     public IQueryable<object> LoadPage(int page, int perPage = 20) {
         var table = context.Set<TModel>();
@@ -72,20 +70,20 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         if (item is null) return string.Empty;
 
         if (prop.IsListingProperty)
-            return prop.Formatter!.Invoke(item);
+            return prop.Formatter!.Invoke(item, provider);
 
         var propValue = value ?? prop.Info.GetValue(item);
         if (propValue is null)
             return string.Empty;
 
         if (prop.Formatter is not null) {
-            return prop.Formatter.Invoke(propValue);
+            return prop.Formatter.Invoke(propValue, provider);
         }
 
         if (prop.IsEnumerable) {
             if (value is not null) {
                 if (prop.EnumerableFormatter is not null) {
-                    return prop.EnumerableFormatter.Invoke(value);
+                    return prop.EnumerableFormatter.Invoke(value, provider);
                 }
             
                 return value.ToString() ?? string.Empty;

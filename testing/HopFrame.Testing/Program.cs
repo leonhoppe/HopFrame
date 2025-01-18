@@ -23,7 +23,7 @@ builder.Services.AddHopFrame(options => {
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)
-                .ValueParser(pwd => pwd + "-edited");
+                .SetParser((pwd, _) => pwd + "-edited");
 
             table.Property(u => u.FirstName)
                 .List(false);
@@ -32,11 +32,11 @@ builder.Services.AddHopFrame(options => {
                 .List(false);
 
             table.Property(u => u.Id)
-                .Sortable(false)
-                .OrderIndex(3);
+                .IsSortable(false)
+                .SetOrderIndex(3);
 
-            table.AddListingProperty("Name", user => $"{user.FirstName} {user.LastName}")
-                .OrderIndex(2);
+            table.AddListingProperty("Name", (user, _) => $"{user.FirstName} {user.LastName}")
+                .SetOrderIndex(2);
 
             table.SetDisplayName("Benutzer");
             table.SetDescription("This table is used for user data store and user authentication");
@@ -44,12 +44,12 @@ builder.Services.AddHopFrame(options => {
             table.SetViewPolicy("policy");
 
             table.Property(u => u.Posts)
-                .FormatEach<Post>(post => post.Caption);
+                .FormatEach<Post>((post, _) => post.Caption);
         });
 
         context.Table<Post>()
             .Property(p => p.Author)
-            .Format(user => $"{user?.FirstName} {user?.LastName}");
+            .Format((user, _) => $"{user.FirstName} {user.LastName}");
 
         context.Table<Post>()
             .Property(p => p.Id)
@@ -59,7 +59,8 @@ builder.Services.AddHopFrame(options => {
             .Property(p => p.CreatedAt);
 
         context.Table<Post>()
-            .Property(p => p.Caption)
+            .Property(p => p.Content)
+            .IsTextArea(true)
             /*.Validator(input => {
                 var errors = new List<string>();
                 
@@ -73,7 +74,7 @@ builder.Services.AddHopFrame(options => {
             })*/;
 
         context.Table<Post>()
-            .OrderIndex(-1);
+            .SetOrderIndex(-1);
     });
 });
 

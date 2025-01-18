@@ -69,16 +69,16 @@ public class TableConfig<TModel>(TableConfig config) {
         return this;
     }
 
-    public PropertyConfig<string> AddListingProperty(string name, Func<TModel, string> template) {
+    public PropertyConfig<string> AddListingProperty(string name, Func<TModel, IServiceProvider, string> template) {
         var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count);
         prop.Name = name;
         prop.IsListingProperty = true;
-        prop.Formatter = obj => template.Invoke((TModel)obj);
+        prop.Formatter = (obj, provider) => template.Invoke((TModel)obj, provider);
         InnerConfig.Properties.Add(prop);
         return new PropertyConfig<string>(prop);
     }
     
-    public TableConfig<TModel> AddListingProperty(string name, Func<TModel, string> template, Action<PropertyConfig<string>> configurator) {
+    public TableConfig<TModel> AddListingProperty(string name, Func<TModel, IServiceProvider, string> template, Action<PropertyConfig<string>> configurator) {
         var prop = AddListingProperty(name, template);
         configurator.Invoke(prop);
         return this;
@@ -94,7 +94,7 @@ public class TableConfig<TModel>(TableConfig config) {
         return this;
     }
 
-    public TableConfig<TModel> OrderIndex(int index) {
+    public TableConfig<TModel> SetOrderIndex(int index) {
         InnerConfig.Order = index;
         return this;
     }

@@ -12,13 +12,15 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool Sortable { get; set; } = true;
     public bool Searchable { get; set; } = true;
     public PropertyInfo? DisplayedProperty { get; set; }
-    public Func<object, string>? Formatter { get; set; }
-    public Func<object, string>? EnumerableFormatter { get; set; }
-    public Func<string, object>? Parser { get; set; }
-    public Func<object?, Task<IEnumerable<string>>>? Validator { get; set; }
+    public Func<object, IServiceProvider, string>? Formatter { get; set; }
+    public Func<object, IServiceProvider, string>? EnumerableFormatter { get; set; }
+    public Func<string, IServiceProvider, object>? Parser { get; set; }
+    public Func<object?, IServiceProvider, Task<IEnumerable<string>>>? Validator { get; set; }
     public bool Editable { get; set; } = true;
     public bool Creatable { get; set; } = true;
     public bool DisplayValue { get; set; } = true;
+    public bool TextArea { get; set; }
+    public int TextAreaRows { get; set; } = 16;
     public bool IsRelation { get; set; }
     public bool IsRequired { get; set; }
     public bool IsEnumerable { get; set; }
@@ -36,46 +38,46 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
 
     public PropertyConfig<TProp> List(bool list) {
         InnerConfig.List = list;
-        InnerConfig.Searchable = false;
+        InnerConfig.Searchable = !list;
         return this;
     }
 
-    public PropertyConfig<TProp> Sortable(bool sortable) {
+    public PropertyConfig<TProp> IsSortable(bool sortable) {
         InnerConfig.Sortable = sortable;
         return this;
     }
 
-    public PropertyConfig<TProp> Searchable(bool searchable) {
+    public PropertyConfig<TProp> IsSearchable(bool searchable) {
         InnerConfig.Searchable = searchable;
         return this;
     }
 
-    public PropertyConfig<TProp> DisplayedProperty<TInnerProp>(Expression<Func<TProp, TInnerProp>> propertyExpression) {
+    public PropertyConfig<TProp> SetDisplayedProperty<TInnerProp>(Expression<Func<TProp, TInnerProp>> propertyExpression) {
         InnerConfig.DisplayedProperty = TableConfig<TProp>.GetPropertyInfo(propertyExpression);
         return this;
     }
 
-    public PropertyConfig<TProp> Format(Func<TProp, string> formatter) {
-        InnerConfig.Formatter = obj => formatter.Invoke((TProp)obj);
+    public PropertyConfig<TProp> Format(Func<TProp, IServiceProvider, string> formatter) {
+        InnerConfig.Formatter = (obj, provider) => formatter.Invoke((TProp)obj, provider);
         return this;
     }
 
-    public PropertyConfig<TProp> FormatEach<TInnerProp>(Func<TInnerProp, string> formatter) {
-        InnerConfig.EnumerableFormatter = obj => formatter.Invoke((TInnerProp)obj);
+    public PropertyConfig<TProp> FormatEach<TInnerProp>(Func<TInnerProp, IServiceProvider, string> formatter) {
+        InnerConfig.EnumerableFormatter = (obj, provider) => formatter.Invoke((TInnerProp)obj, provider);
         return this;
     }
 
-    public PropertyConfig<TProp> ValueParser(Func<string, TProp> parser) {
-        InnerConfig.Parser = str => parser.Invoke(str)!;
+    public PropertyConfig<TProp> SetParser(Func<string, IServiceProvider, TProp> parser) {
+        InnerConfig.Parser = (str, provider) => parser.Invoke(str, provider)!;
         return this;
     }
 
-    public PropertyConfig<TProp> Editable(bool editable) {
+    public PropertyConfig<TProp> SetEditable(bool editable) {
         InnerConfig.Editable = editable;
         return this;
     }
 
-    public PropertyConfig<TProp> Creatable(bool creatable) {
+    public PropertyConfig<TProp> SetCreatable(bool creatable) {
         InnerConfig.Creatable = creatable;
         return this;
     }
@@ -85,17 +87,27 @@ public class PropertyConfig<TProp>(PropertyConfig config) {
         return this;
     }
 
-    public PropertyConfig<TProp> Validator(Func<TProp?, IEnumerable<string>> validator) {
-        InnerConfig.Validator = obj => Task.FromResult(validator.Invoke((TProp?)obj));
-        return this;
-    }
-    
-    public PropertyConfig<TProp> Validator(Func<TProp?, Task<IEnumerable<string>>> validator) {
-        InnerConfig.Validator = obj => validator.Invoke((TProp?)obj);
+    public PropertyConfig<TProp> IsTextArea(bool textField) {
+        InnerConfig.TextArea = textField;
         return this;
     }
 
-    public PropertyConfig<TProp> OrderIndex(int index) {
+    public PropertyConfig<TProp> SetTextAreaRows(int rows) {
+        InnerConfig.TextAreaRows = rows;
+        return this;
+    }
+
+    public PropertyConfig<TProp> SetValidator(Func<TProp?, IServiceProvider, IEnumerable<string>> validator) {
+        InnerConfig.Validator = (obj, provider) => Task.FromResult(validator.Invoke((TProp?)obj, provider));
+        return this;
+    }
+    
+    public PropertyConfig<TProp> SetValidator(Func<TProp?, IServiceProvider, Task<IEnumerable<string>>> validator) {
+        InnerConfig.Validator = (obj, provider) => validator.Invoke((TProp?)obj, provider);
+        return this;
+    }
+
+    public PropertyConfig<TProp> SetOrderIndex(int index) {
         InnerConfig.Order = index;
         return this;
     }
