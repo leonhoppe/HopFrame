@@ -9,9 +9,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added text area support and DI support for modifier functions">
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Addressed all build warnings">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfigurator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfigurator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfigurator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/IHopFrameAuthHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IHopFrameAuthHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +39,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="dev" />
+        <entry key="$PROJECT_DIR$" value="feature/setup" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -84,24 +92,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/setup&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Project.HopFrame.Testing.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "!17 on feature/documentation",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.environmentSetup",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -158,7 +166,7 @@
       <workItem from="1737021098746" duration="21112000" />
       <workItem from="1737047730756" duration="7678000" />
       <workItem from="1737120164342" duration="9351000" />
-      <workItem from="1737199714142" duration="2964000" />
+      <workItem from="1737199714142" duration="7872000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -272,7 +280,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737202192471</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Addressed all build warnings">
+      <option name="closed" value="true" />
+      <created>1737203441319</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1737203441319</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -296,6 +312,7 @@
     <MESSAGE value="Added policy validation, ordering and virtual listing properties" />
     <MESSAGE value="Added n -&gt; m relation support" />
     <MESSAGE value="Added text area support and DI support for modifier functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added text area support and DI support for modifier functions" />
+    <MESSAGE value="Addressed all build warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Addressed all build warnings" />
   </component>
 </project>

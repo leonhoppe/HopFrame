@@ -140,6 +140,7 @@
                     Value="@(GetPropertyValue<string>(property))"
                     Style="width: 100%;"
                     Rows="@property.TextAreaRows"
+                    Resize="TextAreaResize.Vertical"
                     Disabled="@(_currentlyEditing && !property.Editable)"
                     Required="@property.IsRequired"
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />

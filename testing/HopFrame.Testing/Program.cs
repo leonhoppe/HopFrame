@@ -35,7 +35,7 @@ builder.Services.AddHopFrame(options => {
                 .IsSortable(false)
                 .SetOrderIndex(3);
 
-            table.AddListingProperty("Name", (user, _) => $"{user.FirstName} {user.LastName}")
+            table.AddVirtualProperty("Name", (user, _) => $"{user.FirstName} {user.LastName}")
                 .SetOrderIndex(2);
 
             table.SetDisplayName("Benutzer");
