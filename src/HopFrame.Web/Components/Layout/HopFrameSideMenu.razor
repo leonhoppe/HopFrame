@@ -1,0 +1,39 @@
+﻿@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+
+<FluentAppBar Orientation="Orientation.Vertical" PopoverShowSearch="false" Style="background-color: var(--neutral-layer-2); height: auto">
+    <FluentAppBarItem Href="/admin"
+                      Match="NavLinkMatch.All"
+                      IconActive="new Icons.Filled.Size24.Grid()"
+                      IconRest="new Icons.Regular.Size24.Grid()"
+                      Text="Dashboard"
+                      Style="margin-top: 0.25rem"/>
+
+    <br>
+    
+    @foreach (var table in _tables.OrderBy(t => t.Order).Select(t => t.DisplayName)) {
+        <FluentAppBarItem Href="@("/admin/" + table.ToLower())"
+                          Match="NavLinkMatch.All"
+                          IconActive="new Icons.Filled.Size24.Database()"
+                          IconRest="new Icons.Regular.Size24.Database()"
+                          Text="@table"
+                          Style="margin-top: 0.25rem"/>
+    }
+</FluentAppBar>
+
+@inject IContextExplorer Explorer
+@inject IHopFrameAuthHandler Handler
+
+@code {
+
+    private readonly List<TableConfig> _tables = [];
+
+    protected override async Task OnInitializedAsync() {
+        foreach (var table in Explorer.GetTables()) {
+            if (table.Ignored) continue;
+            if (!await Handler.IsAuthenticatedAsync(table.ViewPolicy)) continue;
+            _tables.Add(table);
+        }
+    }
+
+}

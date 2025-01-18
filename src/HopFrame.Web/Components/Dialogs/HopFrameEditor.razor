@@ -1,0 +1,376 @@
+@implements IDialogContentComponent<EditorDialogData>
+@rendermode InteractiveServer
+
+@using System.Collections
+@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+@using HopFrame.Web.Models
+@using HopFrame.Web.Helpers
+
+<FluentDialogBody>
+    @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
+        if (!_currentlyEditing && !property.Creatable) continue;
+
+        <div style="margin-bottom: 20px">
+            @if (property.IsRelation) {
+                <div style="display: flex; gap: 5px; align-items: flex-end">
+                    <div style="flex-grow: 1">
+                        @if (property.IsEnumerable) {
+                            <FluentLabel Style="margin-bottom: calc(var(--design-unit) * 1px)">@property.Name</FluentLabel>
+                            <div class="hopframe-listview">
+                                <FluentOverflow Style="width: 100%">
+                                    @foreach (var item in GetPropertyValue<IEnumerable>(property) ?? Enumerable.Empty<object>()) {
+                                        <FluentOverflowItem><FluentBadge>@(GetPropertyValue<string>(property, item))</FluentBadge></FluentOverflowItem>
+                                    }
+                                </FluentOverflow>
+                            </div>
+                        }
+                        else {
+                            <FluentTextField
+                                Label="@property.Name"
+                                Value="@(GetPropertyValue<string>(property))"
+                                Required="@property.IsRequired"
+                                ReadOnly="true"
+                                Style="width: 100%" />
+                        }
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-bottom: 4px">
+                        @if (!property.IsRequired) {
+                            <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Relation)" Disabled="@(_currentlyEditing && !property.Editable)">
+                                <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
+                            </FluentButton>
+                        }
+                        <FluentButton OnClick="async () => await OpenRelationalPicker(property)" Disabled="@(_currentlyEditing && !property.Editable)">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Open())" Color="Color.Neutral" />
+                        </FluentButton>
+                    </div>
+                </div>
+            }
+            else if (property.Info.PropertyType.IsNumeric()) {
+                <FluentNumberField
+                    TValue="double"
+                    Label="@property.Name"
+                    Value="GetPropertyValue<double>(property)"
+                    Style="width: 100%;"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Number))" />
+            }
+            else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.Boolean) {
+                <FluentSwitch
+                    Label="@property.Name"
+                    Value="GetPropertyValue<bool>(property)"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Switch))" />
+            }
+            else if (Type.GetTypeCode(property.Info.PropertyType) == TypeCode.DateTime) {
+                <div style="display: flex; gap: 5px">
+                    <div style="display: flex; flex-direction: column; width: 100%">
+                        <FluentDatePicker
+                            Label="@property.Name"
+                            Value="GetPropertyValue<DateTime>(property)"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
+                            Required="@property.IsRequired"
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: flex-end">
+                        <FluentTimePicker
+                            Value="GetPropertyValue<DateTime>(property)"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
+                            Required="@property.IsRequired"
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
+                    </div>
+                </div>
+            }
+            else if (property.Info.PropertyType == typeof(DateOnly)) {
+                <FluentDatePicker
+                    Label="@property.Name"
+                    Value="GetPropertyValue<DateOnly>(property).ToDateTime(TimeOnly.MinValue)"
+                    Style="width: 100%"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Date))" />
+            }
+            else if (property.Info.PropertyType == typeof(TimeOnly)) {
+                <FluentTimePicker
+                    Label="@property.Name"
+                    Value="GetPropertyValue<TimeOnly>(property).ToDateTime()"
+                    Style="width: 100%"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Time))" />
+            }
+            else if (property.Info.PropertyType.IsEnum) {
+                <FluentSelect
+                    TOption="string"
+                    Label="@property.Name"
+                    Items="Enum.GetNames(property.Info.PropertyType)"
+                    Value="@(GetPropertyValue<string>(property))"
+                    Style="width: 100%"
+                    Height="250px"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
+            }
+            else if (property.Info.PropertyType.IsNullableEnum()) {
+                <div style="display: flex; gap: 5px; align-items: flex-end">
+                    <div style="flex-grow: 1">
+                        <FluentSelect
+                            TOption="string"
+                            Label="@property.Name"
+                            Items="@(["", ..Enum.GetNames(Nullable.GetUnderlyingType(property.Info.PropertyType)!)])"
+                            Value="@(GetPropertyValue<string>(property))"
+                            Style="width: 100%"
+                            Height="250px"
+                            Disabled="@(_currentlyEditing && !property.Editable)"
+                            Required="@property.IsRequired"
+                            ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Enum))" />
+                    </div>
+                    <div style="display: flex; gap: 5px">
+                        <FluentButton OnClick="async () => await SetPropertyValue(property, null, InputType.Enum)" Disabled="@(_currentlyEditing && !property.Editable)">
+                            <FluentIcon Value="@(new Icons.Regular.Size20.Dismiss())" Color="Color.Neutral" />
+                        </FluentButton>
+                    </div>
+                </div>
+            }
+            else if (property.TextArea) {
+                <FluentTextArea
+                    Label="@property.Name"
+                    Value="@(GetPropertyValue<string>(property))"
+                    Style="width: 100%;"
+                    Rows="@property.TextAreaRows"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
+            }
+            else {
+                <FluentTextField
+                    Label="@property.Name"
+                    Value="@(GetPropertyValue<string>(property))"
+                    Style="width: 100%;"
+                    Disabled="@(_currentlyEditing && !property.Editable)"
+                    Required="@property.IsRequired"
+                    ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
+            }
+            
+            @foreach (var error in _validationErrors[property.Info.Name]) {
+                <FluentLabel Color="@Color.Error">@error</FluentLabel>
+            }
+        </div>
+    }
+</FluentDialogBody>
+
+<FluentToastProvider MaxToastCount="10" />
+
+@inject IContextExplorer Explorer
+@inject IDialogService Dialogs
+@inject IHopFrameAuthHandler Handler
+@inject IToastService Toasts
+@inject IServiceProvider Provider
+
+@code {
+    [Parameter]
+    public required EditorDialogData Content { get; set; }
+
+    [CascadingParameter]
+    public required FluentDialog Dialog { get; set; }
+
+    private bool _currentlyEditing;
+    private ITableManager? _manager;
+    private readonly Dictionary<string, List<string>> _validationErrors = new();
+
+    protected override void OnInitialized() {
+        _currentlyEditing = Content.CurrentObject is not null;
+        Dialog.Instance.Parameters.Title = (_currentlyEditing ? "Edit " : "Add ") + Content.Config.TableType.Name;
+        Dialog.Instance.Parameters.Width = "500px";
+        Dialog.Instance.Parameters.PrimaryAction = "Save";
+        Dialog.Instance.Parameters.ValidateDialogAsync = ValidateInputs;
+        _manager = Explorer.GetTableManager(Content.Config.PropertyName);
+        Content.CurrentObject ??= Activator.CreateInstance(Content.Config.TableType);
+        
+        foreach (var property in Content.Config.Properties) {
+            if (property.IsListingProperty) continue;
+            _validationErrors.Add(property.Info.Name, []);
+        }
+    }
+
+    private TValue? GetPropertyValue<TValue>(PropertyConfig config, object? listItem = null) {
+        if (!config.DisplayValue) return default;
+        if (Content.CurrentObject is null) return default;
+
+        if (listItem is not null) {
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, listItem);
+        }
+        
+        var value = config.Info.GetValue(Content.CurrentObject);
+
+        if (value is null)
+            return default;
+
+        if (typeof(TValue).IsAssignableFrom(config.Info.PropertyType))
+            return (TValue)value;
+
+        if (typeof(TValue) == typeof(string))
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config);
+
+        return (TValue)Convert.ChangeType(value, typeof(TValue));
+    }
+
+    private async Task SetPropertyValue(PropertyConfig config, object? value, InputType senderType) {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return;
+        
+        object? result = null;
+        var needsOverride = true;
+
+        if (value is not null && config.Parser is null) {
+            switch (senderType) {
+                case InputType.Number:
+                    result = Convert.ChangeType(value, config.Info.PropertyType);
+                    break;
+                    
+                case InputType.Text:
+                    if (config.Info.PropertyType == typeof(Guid)) {
+                        var success = Guid.TryParse((string)value, out var guid);
+                        if (success) result = guid;
+                        else Toasts.ShowError($"'{value}' is not a valid guid");
+                        break;
+                    }
+                    
+                    result = Convert.ToString(value);
+                    break;
+                    
+                case InputType.Switch:
+                    result = Convert.ToBoolean(value);
+                    break;
+                    
+                case InputType.Enum:
+                    var type = Nullable.GetUnderlyingType(config.Info.PropertyType);
+                    if (type is not null && string.IsNullOrEmpty((string)value)) break;
+                    type ??= config.Info.PropertyType;
+                    result = Enum.Parse(type, (string)value);
+                    break;
+                    
+                case InputType.Date:
+                    if (config.Info.PropertyType == typeof(DateTime)) {
+                        var newDate = (DateTime)value;
+                        var dateTime = GetPropertyValue<DateTime>(config);
+                        result = new DateTime(newDate.Year, newDate.Month, newDate.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Microsecond);
+                    }
+                    else result = DateOnly.FromDateTime((DateTime)value);
+                    break;
+                    
+                case InputType.Time:
+                    if (config.Info.PropertyType == typeof(DateTime)) {
+                        var newTime = (DateTime)value;
+                        var dateTime = GetPropertyValue<DateTime>(config);
+                        result = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, newTime.Hour, newTime.Minute, newTime.Second, newTime.Millisecond, newTime.Microsecond);
+                    }
+                    else result = TimeOnly.FromDateTime((DateTime)value);
+                    break;
+                    
+                case InputType.Relation:
+                    if (!config.IsEnumerable)
+                        result = ((IEnumerable)value).OfType<object>().FirstOrDefault();
+                    else {
+                        needsOverride = false;
+
+                        if (!typeof(IList).IsAssignableFrom(config.Info.PropertyType)) {
+                            throw new ArgumentException($"Invalid type of '{config.Name}' property in '{config.Table.DisplayName}' table, only list types are supported on enumerable relations.");
+                        }
+                        
+                        var asList = (IList)config.Info.GetValue(Content.CurrentObject)!;
+                        asList.Clear();
+                        foreach (var element in (IEnumerable)value) {
+                            asList.Add(element);
+                        }
+                    }
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(senderType), senderType, null);
+            }
+        }
+
+        if (config.Parser is not null && result is not null) {
+            result = config.Parser(result.ToString()!, Provider);
+        }
+
+        if (needsOverride)
+            config.Info.SetValue(Content.CurrentObject, result);
+    }
+
+    private async Task OpenRelationalPicker(PropertyConfig config) {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return;
+
+        var relationType = config.Info.PropertyType;
+        if (config.IsEnumerable) {
+            relationType = config.Info.PropertyType.GetGenericArguments().First();
+        }
+        
+        var relationTable = Explorer.GetTable(relationType);
+        if (relationTable is null) return;
+
+        var currentValues = new List<object>();
+        if (config.IsEnumerable) {
+            foreach (var o in GetPropertyValue<IEnumerable>(config) ?? Enumerable.Empty<object>()) {
+                currentValues.Add(o);
+            }
+        }
+        else {
+            var raw = config.Info.GetValue(Content.CurrentObject);
+            if (raw is not null)
+                currentValues.Add(raw);
+        }
+        
+        var dialog = await Dialogs.ShowDialogAsync<HopFrameRelationPicker>(new RelationPickerDialogData(relationTable, currentValues, config.IsEnumerable), new DialogParameters());
+        var result = await dialog.Result;
+        if (result.Cancelled) return;
+        
+        var data = (RelationPickerDialogData)result.Data!;
+        await SetPropertyValue(config, data.SelectedObjects, InputType.Relation);
+    }
+
+    private async Task<bool> ValidateInputs() {
+        if (!await Handler.IsAuthenticatedAsync(_currentlyEditing ? Content.Config.UpdatePolicy : Content.Config.CreatePolicy))
+            return false;
+        
+        foreach (var property in Content.Config.Properties) {
+            if (property.IsListingProperty) continue;
+            
+            var errorList = _validationErrors[property.Info.Name];
+            errorList.Clear();
+            var value = property.Info.GetValue(Content.CurrentObject);
+
+            if (property.Validator is not null) {
+                errorList.AddRange(await property.Validator.Invoke(value, Provider));
+                continue;
+            }
+            
+            if (value is null && property.IsRequired)
+                errorList.Add($"{property.Name} is required");
+        }
+
+        StateHasChanged();
+        var valid = _validationErrors
+            .Select(err => err.Value.Count)
+            .All(c => c == 0);
+
+        if (!valid) return false;
+        var dialog = await Dialogs.ShowConfirmationAsync($"Do you really want to {(_currentlyEditing ? "edit" : "create")} this entry?");
+        var result = await dialog.Result;
+        return !result.Cancelled;
+    }
+    
+    private enum InputType {
+        Number,
+        Switch,
+        Date,
+        Time,
+        Enum,
+        Text,
+        Relation
+    }
+}

@@ -1,0 +1,45 @@
+﻿@using System.Text
+@using HopFrame.Core.Config
+@using HopFrame.Core.Services
+
+<FluentHeader Class="hopframe-header">
+    <a href="/admin" style="text-decoration: none; color: @Color.Neutral.ToAttributeValue();">HopFrame</a>
+
+    @if (Config.DisplayUserInfo) {
+        <FluentPersona Name="@_displayName" Initials="@_initials" ImageSize="32px" TextPosition="TextPosition.Start" Style="margin-left: auto"/>
+    }
+
+</FluentHeader>
+
+@inject HopFrameConfig Config
+@inject IHopFrameAuthHandler Handler
+
+@code {
+
+    private string? _displayName;
+    private string? _initials;
+
+    protected override async Task OnInitializedAsync() {
+        if (Config.DisplayUserInfo) {
+            _displayName = await Handler.GetCurrentUserDisplayNameAsync();
+            _initials = GetInitials(_displayName);
+        }
+    }
+
+    private static string GetInitials(string input) {
+        if (string.IsNullOrEmpty(input))
+            return string.Empty;
+
+        StringBuilder initials = new StringBuilder();
+        string[] words = input.Split([' ', '.', '_'], StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string word in words) {
+            if (!string.IsNullOrEmpty(word) && char.IsLetter(word[0]))
+                initials.Append(word[0]);
+        }
+
+        return initials.ToString().ToUpper();
+    }
+
+
+}

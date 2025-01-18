@@ -1,0 +1,22 @@
+﻿h3 {
+    margin: 0;
+}
+
+.hopframe-paginator {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.hopframe-radio {
+    width: 30px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-divider-rest);
+}
