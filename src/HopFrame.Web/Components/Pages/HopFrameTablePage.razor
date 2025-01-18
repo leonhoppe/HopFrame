@@ -48,6 +48,7 @@
                         SelectedItems="DialogData?.SelectedObjects.ToArray()"
                         OnSelect="data => SelectItem(data.Item, data.Selected)"
                         SelectAllChanged="SelectAll"
+                        SelectAll="_allSelected"
                         Style="min-width: max-content; height: 44px; display: grid; align-items: center" @ref="_selectColumn" />
                 }
                 
@@ -161,6 +162,7 @@
     private bool _hasCreatePolicy;
 
     private SelectColumn<object>? _selectColumn;
+    private bool _allSelected;
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -276,9 +278,9 @@
     private void SelectAll() {
         var selected = _currentlyDisplayedModels.Any(obj => DialogData?.SelectedObjects.Contains(obj) != true);
         foreach (var displayedModel in _currentlyDisplayedModels) {
-            SelectItem(displayedModel, selected == true);
+            SelectItem(displayedModel, selected);
         }
 
-        _selectColumn!.SelectAll = selected;
+        _allSelected = selected;
     }
 }
