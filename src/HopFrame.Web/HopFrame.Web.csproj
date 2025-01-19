@@ -4,6 +4,11 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        
+        <IsPackable>true</IsPackable>
+        <PackageReadmeFile>../../README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageId>HopFrame.Web</PackageId>
     </PropertyGroup>
 
 

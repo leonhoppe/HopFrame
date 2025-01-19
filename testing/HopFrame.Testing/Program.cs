@@ -23,7 +23,7 @@ builder.Services.AddHopFrame(options => {
     options.AddDbContext<DatabaseContext>(context => {
         context.Table<User>(table => {
             table.Property(u => u.Password)
-                .SetParser((pwd, _) => pwd + "-edited");
+                .DisplayValue(false);
 
             table.Property(u => u.FirstName)
                 .List(false);

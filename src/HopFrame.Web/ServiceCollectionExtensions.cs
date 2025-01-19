@@ -36,6 +36,9 @@ public static class ServiceCollectionExtensions {
         return services;
     }
 
+    /// <summary>
+    /// Maps the HopFrame admin ui endpoints
+    /// </summary>
     public static RazorComponentsEndpointConventionBuilder MapHopFramePages(this RazorComponentsEndpointConventionBuilder builder) {
         builder
             .AddInteractiveServerRenderMode()
