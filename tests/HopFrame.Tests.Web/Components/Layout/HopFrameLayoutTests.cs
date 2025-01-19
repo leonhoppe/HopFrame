@@ -62,6 +62,7 @@ public class HopFrameLayoutTests : TestContext {
 
         Services.AddSingleton(navMock);
         Services.AddHopFrame(config);
+        Services.AddSingleton(authHandlerMock.Object);
 
         JSInterop.Mode = JSRuntimeMode.Loose;
 
@@ -69,6 +70,6 @@ public class HopFrameLayoutTests : TestContext {
         var cut = RenderComponent<HopFrameLayout>();
 
         // Assert
-        // TODO: check if uri matches
+        Assert.Equal("http://localhost/login?redirect=/", navMock.Uri);
     }
 }
