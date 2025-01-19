@@ -4,7 +4,19 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        
+        <IsPackable>true</IsPackable>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageId>HopFrame.Core</PackageId>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="../../README.md">
+            <Pack>true</Pack>
+            <PackagePath>/</PackagePath>
+        </Content>
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
