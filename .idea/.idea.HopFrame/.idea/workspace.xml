@@ -10,24 +10,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/DbContextConfiguratorTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/HopFrameConfiguratorTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/PropertyConfiguratorTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/TableConfiguratorTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/HopFrame.Core.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel2.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/QueryProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/ContextExplorerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/TableManagerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/DisplayPropertyTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HopFrame.sln" beforeDir="false" afterPath="$PROJECT_DIR$/HopFrame.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfigurator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfigurator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfigurator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/HopFrameConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/HopFrameConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/PropertyConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/PropertyConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/TableConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/TableConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel2.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/ContextExplorerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/ContextExplorerTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,26 +90,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
-    ".NET Project.HopFrame.Testing.executor": "Run",
-    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!18 on feature/unit-tests",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.environmentSetup",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!18 on feature/unit-tests&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -171,7 +167,8 @@
       <workItem from="1737047730756" duration="7678000" />
       <workItem from="1737120164342" duration="9351000" />
       <workItem from="1737199714142" duration="8344000" />
-      <workItem from="1737208313207" duration="3856000" />
+      <workItem from="1737208313207" duration="4612000" />
+      <workItem from="1737281957060" duration="2760000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -301,11 +298,79 @@
       <option name="project" value="LOCAL" />
       <updated>1737208088933</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Created tests for the core module">
+      <option name="closed" value="true" />
+      <created>1737212497960</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1737212497960</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnitTestsCoverage.Settings">
+    <option name="coveragePercentColumnWidth" value="131" />
+    <option name="sortOrder" value="DESCENDING" />
+    <option name="sortedColumn" value="1" />
+    <option name="symbolColumnWidth" value="457" />
+    <coverage-tree-state>
+      <expand>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services.Implementations 93% 9/134" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services.Implementations 93% 9/134" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="TableManager&lt;TModel&gt; 87% 8/63" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 59% 577/1420" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 45% 407/741" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 92% 31/365" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services.Implementations 93% 9/134" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="TableManager&lt;TModel&gt; 87% 8/63" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="DisplayProperty(object,PropertyConfig,object) 73% 7/26" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+      </expand>
+      <select />
+    </coverage-tree-state>
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -327,6 +392,7 @@
     <MESSAGE value="Added text area support and DI support for modifier functions" />
     <MESSAGE value="Addressed all build warnings" />
     <MESSAGE value="Added documentation for the configurators and service extensions methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added documentation for the configurators and service extensions methods" />
+    <MESSAGE value="Created tests for the core module" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created tests for the core module" />
   </component>
 </project>

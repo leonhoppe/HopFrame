@@ -99,10 +99,11 @@ public class TableConfigurator<TModel>(TableConfig config) {
     /// <returns>The configurator for the virtual property</returns>
     /// <seealso cref="PropertyConfigurator{TProp}"/>
     public PropertyConfigurator<string> AddVirtualProperty(string name, Func<TModel, IServiceProvider, string> template) {
-        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count);
-        prop.Name = name;
-        prop.IsListingProperty = true;
-        prop.Formatter = (obj, provider) => template.Invoke((TModel)obj, provider);
+        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count) {
+            Name = name,
+            IsListingProperty = true,
+            Formatter = (obj, provider) => template.Invoke((TModel)obj, provider)
+        };
         InnerConfig.Properties.Add(prop);
         return new PropertyConfigurator<string>(prop);
     }

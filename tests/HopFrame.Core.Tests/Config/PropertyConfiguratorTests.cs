@@ -209,4 +209,17 @@ public class PropertyConfiguratorTests {
         // Assert
         Assert.Equal(orderIndex, propertyConfig.Order);
     }
+
+    [Fact]
+    public void Constructor_SetsTableProperty() {
+        // Arrange
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        
+        // Act
+        var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!, tableConfig, 0);
+        
+        // Assert
+        Assert.NotNull(propertyConfig.Table);
+        Assert.Equal(tableConfig, propertyConfig.Table);
+    }
 }

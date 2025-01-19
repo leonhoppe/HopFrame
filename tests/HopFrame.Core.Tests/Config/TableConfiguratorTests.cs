@@ -32,6 +32,22 @@ public class TableConfiguratorTests {
         // Assert
         Assert.IsType<PropertyConfigurator<int>>(propertyConfigurator);
     }
+    
+    public void Property_WithConfigurator_ReturnsCorrectPropertyConfigurator() {
+        // Arrange
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var configurator = new TableConfigurator<MockModel>(tableConfig);
+        Expression<Func<MockModel, int>> propertyExpression = model => model.Id;
+
+        // Act
+        object propertyConfigurator = null!;
+        configurator.Property(propertyExpression, c => {
+            propertyConfigurator = c;
+        });
+
+        // Assert
+        Assert.IsType<PropertyConfigurator<int>>(propertyConfigurator);
+    }
 
     [Fact]
     public void AddVirtualProperty_AddsVirtualPropertyToConfig() {
@@ -42,6 +58,27 @@ public class TableConfiguratorTests {
 
         // Act
         var propertyConfigurator = configurator.AddVirtualProperty("VirtualName", template);
+
+        // Assert
+        var virtualProperty = tableConfig.Properties.SingleOrDefault(p => p.Name == "VirtualName");
+        Assert.NotNull(virtualProperty);
+        Assert.NotNull(propertyConfigurator);
+        Assert.True(virtualProperty.IsListingProperty);
+        Assert.Equal("VirtualName", virtualProperty.Name);
+    }
+    
+    [Fact]
+    public void AddVirtualProperty_WithConfigurator_AddsVirtualPropertyToConfig() {
+        // Arrange
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var configurator = new TableConfigurator<MockModel>(tableConfig);
+        Func<MockModel, IServiceProvider, string> template = (model, _) => model.Name!;
+
+        // Act
+        object propertyConfigurator = null!;
+        configurator.AddVirtualProperty("VirtualName", template, c => {
+            propertyConfigurator = c;
+        });
 
         // Assert
         var virtualProperty = tableConfig.Properties.SingleOrDefault(p => p.Name == "VirtualName");
@@ -147,5 +184,28 @@ public class TableConfiguratorTests {
 
         // Assert
         Assert.Equal(policy, tableConfig.DeletePolicy);
+    }
+
+    [Fact]
+    public void Constructor_WithKeyProperty_DisablesEdit() {
+        // Act
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel2), "Models2", 0);
+        var prop = tableConfig.Properties.SingleOrDefault(prop => prop.Info.Name == nameof(MockModel2.Id));
+
+        // Assert
+        Assert.NotNull(prop);
+        Assert.False(prop.Editable);
+    }
+
+    [Fact]
+    public void Constructor_WithGeneratedProperty_DisablesEditAndCreate() {
+        // Act
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel2), "Models2", 0);
+        var prop = tableConfig.Properties.SingleOrDefault(prop => prop.Info.Name == nameof(MockModel2.Number));
+
+        // Assert
+        Assert.NotNull(prop);
+        Assert.False(prop.Editable);
+        Assert.False(prop.Creatable);
     }
 }

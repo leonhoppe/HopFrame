@@ -18,6 +18,24 @@ public class HopFrameConfiguratorTests {
         Assert.IsType<DbContextConfig>(config.Contexts[0]);
         Assert.IsType<DbContextConfigurator<MockDbContext>>(dbContextConfigurator);
     }
+    
+    [Fact]
+    public void AddDbContext_WithConfigurator_AddsDbContextToInnerConfig() {
+        // Arrange
+        var config = new HopFrameConfig();
+        var configurator = new HopFrameConfigurator(config);
+
+        // Act
+        object dbContextConfigurator = null!;
+        configurator.AddDbContext<MockDbContext>(context => {
+            dbContextConfigurator = context;
+        });
+
+        // Assert
+        Assert.Single(config.Contexts);
+        Assert.IsType<DbContextConfig>(config.Contexts[0]);
+        Assert.IsType<DbContextConfigurator<MockDbContext>>(dbContextConfigurator);
+    }
 
     [Fact]
     public void DisplayUserInfo_SetsDisplayUserInfoProperty() {
