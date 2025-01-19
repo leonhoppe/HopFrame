@@ -9,14 +9,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Tested login functionality">
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="prepared project for release">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrame.Web.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +33,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/documentation" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -83,27 +80,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;!18 on feature/unit-tests&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Project.HopFrame.Testing.executor": "Run",
+    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
+    "git-widget-placeholder": "release/v3.0.0",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.environmentSetup",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager">
+}]]></component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
@@ -162,7 +159,7 @@
       <workItem from="1737199714142" duration="8344000" />
       <workItem from="1737208313207" duration="4612000" />
       <workItem from="1737281957060" duration="3232000" />
-      <workItem from="1737293153907" duration="7091000" />
+      <workItem from="1737293153907" duration="7750000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -324,7 +321,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737299111987</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="prepared project for release">
+      <option name="closed" value="true" />
+      <created>1737300408069</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1737300408069</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -339,30 +344,30 @@
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 40% 987/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1123/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 40% 987/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 65% 262/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1123/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 398/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 40% 987/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 65% 262/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1123/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 398/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="HopFrame.Core 94% 22/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 40% 987/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 65% 262/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1123/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 398/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="HopFrame.Core 94% 22/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="HopFrame.Core 94% 22/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 40% 987/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 65% 262/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1123/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 398/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="HopFrame.Core 94% 22/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="HopFrame.Core 94% 22/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="Config 93% 17/228" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
@@ -395,6 +400,7 @@
     <MESSAGE value="Added more tests" />
     <MESSAGE value="Added web module tests" />
     <MESSAGE value="Tested login functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tested login functionality" />
+    <MESSAGE value="prepared project for release" />
+    <option name="LAST_COMMIT_MESSAGE" value="prepared project for release" />
   </component>
 </project>
