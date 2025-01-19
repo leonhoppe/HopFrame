@@ -1,7 +1,9 @@
 ﻿using HopFrame.Core;
 using HopFrame.Core.Config;
+using HopFrame.Web.Components.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Microsoft.AspNetCore.Builder;
 
 namespace HopFrame.Web;
 
@@ -32,6 +34,13 @@ public static class ServiceCollectionExtensions {
         services.AddHopFrameServices();
         services.AddFluentUIComponents(fluentUiLibraryConfiguration);
         return services;
+    }
+
+    public static RazorComponentsEndpointConventionBuilder MapHopFramePages(this RazorComponentsEndpointConventionBuilder builder) {
+        builder
+            .AddInteractiveServerRenderMode()
+            .AddAdditionalAssemblies(typeof(HopFrameHome).Assembly);
+        return builder;
     }
     
 }

@@ -9,7 +9,7 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     
     public IQueryable<object> LoadPage(int page, int perPage = 20) {
         var table = context.Set<TModel>();
-        var data = IncludeForgeinKeys(table);
+        var data = IncludeForeignKeys(table);
         return data
             .Skip(page * perPage)
             .Take(perPage);
@@ -17,7 +17,7 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
 
     public Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
         var table = context.Set<TModel>();
-        var all = IncludeForgeinKeys(table)
+        var all = IncludeForeignKeys(table)
             .AsEnumerable()
             .Where(item => ItemSearched(item, searchTerm))
             .ToList();
@@ -101,6 +101,8 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         }
         
         var innerConfig = explorer.GetTable(propValue.GetType());
+        if (innerConfig is null) return propValue.ToString()!;
+        
         var innerProp = innerConfig!.Properties
             .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsListingProperty);
 
@@ -108,14 +110,10 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return DisplayProperty(propValue, innerProp);
     }
 
-    private IQueryable<TModel> IncludeForgeinKeys(IQueryable<TModel> query) {
-        var pendingQuery = query;
-        
-        foreach (var property in config.Properties.Where(prop => prop.IsRelation)) {
-            pendingQuery = pendingQuery.Include(property.Info.Name);
-        }
-
-        return pendingQuery;
+    private IQueryable<TModel> IncludeForeignKeys(IQueryable<TModel> query) {
+        return config.Properties
+            .Where(prop => prop.IsRelation)
+            .Aggregate(query, (current, property) => current.Include(property.Info.Name));
     }
 
 }

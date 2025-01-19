@@ -9,17 +9,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Addressed all build warnings">
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Dialogs/HopFrameEditorTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Layout/HopFrameLayoutTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Layout/HopFrameNavigationTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Layout/HopFrameSideMenuTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameHomeTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameTablePageTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Helpers/EnumerableExtensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/HopFrame.Tests.Web.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Models/MyDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Models/MyTable.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfigurator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfigurator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfigurator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/IHopFrameAuthHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/IHopFrameAuthHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HopFrame.sln" beforeDir="false" afterPath="$PROJECT_DIR$/HopFrame.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/HopFrame.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/DbContextConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/DbContextConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/HopFrameConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/HopFrameConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/PropertyConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/PropertyConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Config/TableConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/HopFrame.Core.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/HopFrame.Tests.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Models/MockDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Models/MockModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/MockModel2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Models/MockModel2.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Models/QueryProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Models/QueryProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/ContextExplorerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/ContextExplorerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/DefaultAuthHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DefaultAuthHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/DisplayPropertyTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Core.Tests/Services/TableManagerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +55,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/setup" />
+        <entry key="$PROJECT_DIR$" value="feature/documentation" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -67,18 +83,12 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/adcd2c45092dd8e4fc412325c8adb75d6e7d8b3e90a9523f167583fb9c60/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bfff78ecaa39c818519fc918bb2d4bbdca6ad93d7170f5cf325f67ccd0b97d43/BooleanAsserts.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ee4d234452e240d83e3de396c2e85cbf9ac9fb9add618b955eea196c81aaf8/IDialogContentComponent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/TableConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Services/Implementations/TableManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/testing/HopFrame.Testing/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -92,24 +102,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
-    ".NET Project.HopFrame.Testing.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "!17 on feature/documentation",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.environmentSetup",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!18 on feature/unit-tests&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -166,7 +178,10 @@
       <workItem from="1737021098746" duration="21112000" />
       <workItem from="1737047730756" duration="7678000" />
       <workItem from="1737120164342" duration="9351000" />
-      <workItem from="1737199714142" duration="7872000" />
+      <workItem from="1737199714142" duration="8344000" />
+      <workItem from="1737208313207" duration="4612000" />
+      <workItem from="1737281957060" duration="3232000" />
+      <workItem from="1737293153907" duration="5484000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -288,11 +303,76 @@
       <option name="project" value="LOCAL" />
       <updated>1737203441319</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Added documentation for the configurators and service extensions methods">
+      <option name="closed" value="true" />
+      <created>1737208088933</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1737208088933</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Created tests for the core module">
+      <option name="closed" value="true" />
+      <created>1737212497960</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1737212497960</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Added more tests">
+      <option name="closed" value="true" />
+      <created>1737285123218</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1737285123218</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnitTestsCoverage.Settings">
+    <option name="coveragePercentColumnWidth" value="131" />
+    <option name="sortOrder" value="DESCENDING" />
+    <option name="sortedColumn" value="1" />
+    <option name="symbolColumnWidth" value="457" />
+    <coverage-tree-state>
+      <expand>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 61% 571/1454" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 61% 571/1454" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 401/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 61% 571/1454" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 401/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 93% 25/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 61% 571/1454" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 401/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 93% 25/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 93% 25/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 61% 571/1454" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 46% 401/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 93% 25/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="HopFrame.Core 93% 25/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services.Implementations 96% 5/136" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+      </expand>
+      <select />
+    </coverage-tree-state>
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -313,6 +393,9 @@
     <MESSAGE value="Added n -&gt; m relation support" />
     <MESSAGE value="Added text area support and DI support for modifier functions" />
     <MESSAGE value="Addressed all build warnings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Addressed all build warnings" />
+    <MESSAGE value="Added documentation for the configurators and service extensions methods" />
+    <MESSAGE value="Created tests for the core module" />
+    <MESSAGE value="Added more tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added more tests" />
   </component>
 </project>

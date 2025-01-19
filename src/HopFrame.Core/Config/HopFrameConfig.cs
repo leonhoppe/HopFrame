@@ -1,5 +1,4 @@
-﻿using HopFrame.Core.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.Config;
 

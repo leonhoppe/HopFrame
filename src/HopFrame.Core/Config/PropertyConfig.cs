@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace HopFrame.Core.Config;
@@ -21,9 +20,9 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool DisplayValue { get; set; } = true;
     public bool TextArea { get; set; }
     public int TextAreaRows { get; set; } = 16;
-    public bool IsRelation { get; set; }
-    public bool IsRequired { get; set; }
-    public bool IsEnumerable { get; set; }
+    public bool IsRelation { get; internal set; }
+    public bool IsRequired { get; internal set; }
+    public bool IsEnumerable { get; internal set; }
     public bool IsListingProperty { get; set; }
     public int Order { get; set; } = nthProperty;
 }
