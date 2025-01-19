@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace HopFrame.Core.Tests.Models;
+namespace HopFrame.Tests.Core.Models;
 
 // A mock DbContext for testing purposes
 public class MockDbContext : DbContext {

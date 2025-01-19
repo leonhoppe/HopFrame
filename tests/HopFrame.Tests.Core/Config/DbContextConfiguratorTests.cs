@@ -1,8 +1,8 @@
 ﻿using HopFrame.Core.Config;
-using HopFrame.Core.Tests.Models;
+using HopFrame.Tests.Core.Models;
 using Moq;
 
-namespace HopFrame.Core.Tests.Config;
+namespace HopFrame.Tests.Core.Config;
 
 public class DbContextConfiguratorTests {
     [Fact]

@@ -3,11 +3,11 @@
 using HopFrame.Core.Config;
 using HopFrame.Core.Services;
 using HopFrame.Core.Services.Implementations;
-using HopFrame.Core.Tests.Models;
+using HopFrame.Tests.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace HopFrame.Core.Tests.Services;
+namespace HopFrame.Tests.Core.Services;
 
 public class TableManagerTests {
     private Mock<DbContext> CreateMockDbContext<TModel>(List<TModel> data) where TModel : class {

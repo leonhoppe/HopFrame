@@ -1,11 +1,11 @@
 ﻿using HopFrame.Core.Config;
 using HopFrame.Core.Services;
 using HopFrame.Core.Services.Implementations;
-using HopFrame.Core.Tests.Models;
+using HopFrame.Tests.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace HopFrame.Core.Tests.Services;
+namespace HopFrame.Tests.Core.Services;
 
 public class DisplayPropertyTests {
     private readonly Mock<IServiceProvider> _providerMock;

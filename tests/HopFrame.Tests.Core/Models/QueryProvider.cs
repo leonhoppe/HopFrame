@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace HopFrame.Core.Tests.Models;
+namespace HopFrame.Tests.Core.Models;
 
 // A mock implementation for async query provider
 internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HopFrame.Core.Tests.Models;
+namespace HopFrame.Tests.Core.Models;
 
 // A mock model for testing purposes
 public class MockModel {

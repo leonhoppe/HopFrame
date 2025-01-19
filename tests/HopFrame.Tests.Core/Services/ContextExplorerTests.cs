@@ -1,10 +1,10 @@
 ﻿using HopFrame.Core.Config;
 using HopFrame.Core.Services.Implementations;
-using HopFrame.Core.Tests.Models;
+using HopFrame.Tests.Core.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace HopFrame.Core.Tests.Services;
+namespace HopFrame.Tests.Core.Services;
 
 public class ContextExplorerTests {
     [Fact]

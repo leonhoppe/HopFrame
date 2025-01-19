@@ -1,6 +1,6 @@
 ﻿using HopFrame.Core.Services.Implementations;
 
-namespace HopFrame.Core.Tests.Services;
+namespace HopFrame.Tests.Core.Services;
 
 public class DefaultAuthHandlerTests {
     [Fact]

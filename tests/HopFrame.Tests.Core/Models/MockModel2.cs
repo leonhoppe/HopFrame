@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HopFrame.Core.Tests.Models;
+namespace HopFrame.Tests.Core.Models;
 
 public class MockModel2 {
     [Key] 
