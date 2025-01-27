@@ -32,7 +32,7 @@ public class HopFrameSideMenuTests : TestContext {
 
         Services.AddSingleton(contextExplorerMock.Object);
         Services.AddSingleton(authHandlerMock.Object);
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
 
         JSInterop.Mode = JSRuntimeMode.Loose;
 

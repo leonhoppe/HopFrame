@@ -38,7 +38,7 @@ public class HopFrameHomeTests : TestContext {
         authHandlerMock.Setup(h => h.IsAuthenticatedAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
         Services.AddSingleton(contextExplorerMock.Object);
         Services.AddSingleton(authHandlerMock.Object);
 
