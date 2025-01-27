@@ -35,7 +35,7 @@ public class HopFrameTablePageTests : TestContext {
         authHandlerMock.Setup(h => h.IsAuthenticatedAsync(It.IsAny<string>())).ReturnsAsync(true);
         managerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).Returns(Enumerable.Empty<object>().AsAsyncQueryable());
 
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
         Services.AddSingleton(contextExplorerMock.Object);
         Services.AddSingleton(authHandlerMock.Object);
         Services.AddSingleton(dialogServiceMock.Object);
@@ -77,7 +77,7 @@ public class HopFrameTablePageTests : TestContext {
         contextExplorerMock.Setup(e => e.GetTableManager("Table1")).Returns(tableManagerMock.Object);
         authHandlerMock.Setup(h => h.IsAuthenticatedAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Services.AddHopFrame(new HopFrameConfig());
+        Services.AddHopFrame(new HopFrameConfig(), null, false);
         Services.AddSingleton(contextExplorerMock.Object);
         Services.AddSingleton(authHandlerMock.Object);
         Services.AddSingleton(dialogServiceMock.Object);

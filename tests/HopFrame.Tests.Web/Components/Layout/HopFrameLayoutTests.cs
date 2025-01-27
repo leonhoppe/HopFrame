@@ -25,7 +25,7 @@ public class HopFrameLayoutTests : TestContext {
             .ReturnsAsync(true);
 
         Services.AddSingleton(authHandlerMock.Object);
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
 
         JSInterop.Mode = JSRuntimeMode.Loose;
 
@@ -61,7 +61,7 @@ public class HopFrameLayoutTests : TestContext {
             .ReturnsAsync(false);
 
         Services.AddSingleton(navMock);
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
         Services.AddSingleton(authHandlerMock.Object);
 
         JSInterop.Mode = JSRuntimeMode.Loose;

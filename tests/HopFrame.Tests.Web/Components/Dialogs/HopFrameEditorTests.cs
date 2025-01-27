@@ -5,6 +5,8 @@ using HopFrame.Tests.Web.Models;
 using HopFrame.Web;
 using HopFrame.Web.Components.Dialogs;
 using HopFrame.Web.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Moq;
@@ -34,7 +36,7 @@ public class HopFrameEditorTests : TestContext {
         contextExplorerMock.Setup(e => e.GetTableManager("Table1")).Returns(Mock.Of<ITableManager>());
         authHandlerMock.Setup(h => h.IsAuthenticatedAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Services.AddHopFrame(config);
+        Services.AddHopFrame(config, null, false);
         Services.AddSingleton(contextExplorerMock.Object);
         Services.AddSingleton(authHandlerMock.Object);
         Services.AddSingleton(dialogServiceMock.Object);
