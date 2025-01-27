@@ -66,24 +66,24 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return false;
     }
 
-    public string DisplayProperty(object? item, PropertyConfig prop, object? value = null) {
+    public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null) {
         if (item is null) return string.Empty;
 
         if (prop.IsListingProperty)
-            return prop.Formatter!.Invoke(item, provider);
+            return await prop.Formatter!.Invoke(item, provider);
 
         var propValue = value ?? prop.Info.GetValue(item);
         if (propValue is null)
             return string.Empty;
 
         if (prop.Formatter is not null) {
-            return prop.Formatter.Invoke(propValue, provider);
+            return await prop.Formatter.Invoke(propValue, provider);
         }
 
         if (prop.IsEnumerable) {
             if (value is not null) {
                 if (prop.EnumerableFormatter is not null) {
-                    return prop.EnumerableFormatter.Invoke(value, provider);
+                    return await prop.EnumerableFormatter.Invoke(value, provider);
                 }
             
                 return value.ToString() ?? string.Empty;
@@ -103,11 +103,11 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         var innerConfig = explorer.GetTable(propValue.GetType());
         if (innerConfig is null) return propValue.ToString()!;
         
-        var innerProp = innerConfig!.Properties
+        var innerProp = innerConfig.Properties
             .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsListingProperty);
 
         if (innerProp is null) return propValue.ToString() ?? string.Empty;
-        return DisplayProperty(propValue, innerProp);
+        return await DisplayProperty(propValue, innerProp);
     }
 
     private IQueryable<TModel> IncludeForeignKeys(IQueryable<TModel> query) {

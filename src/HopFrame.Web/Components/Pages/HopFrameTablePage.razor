@@ -54,7 +54,7 @@
                 
                 @foreach (var property in _config!.Properties.Where(prop => prop.List).OrderBy(prop => prop.Order)) {
                     <PropertyColumn
-                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, null)"
+                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, null).Result"
                         Style="min-width: max-content; height: 44px;"
                         Sortable="@property.Sortable"/>
                 }
