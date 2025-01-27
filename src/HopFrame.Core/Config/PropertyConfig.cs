@@ -11,9 +11,9 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool Sortable { get; set; } = true;
     public bool Searchable { get; set; } = true;
     public PropertyInfo? DisplayedProperty { get; set; }
-    public Func<object, IServiceProvider, string>? Formatter { get; set; }
-    public Func<object, IServiceProvider, string>? EnumerableFormatter { get; set; }
-    public Func<string, IServiceProvider, object>? Parser { get; set; }
+    public Func<object, IServiceProvider, Task<string>>? Formatter { get; set; }
+    public Func<object, IServiceProvider, Task<string>>? EnumerableFormatter { get; set; }
+    public Func<string, IServiceProvider, Task<object>>? Parser { get; set; }
     public Func<object?, IServiceProvider, Task<IEnumerable<string>>>? Validator { get; set; }
     public bool Editable { get; set; } = true;
     public bool Creatable { get; set; } = true;
@@ -74,7 +74,6 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
     /// <summary>
     /// Determines if the value that should be displayed instead of the string representation of the type
     /// </summary>
-    /// <seealso cref="Format"/>
     public PropertyConfigurator<TProp> SetDisplayedProperty<TInnerProp>(Expression<Func<TProp, TInnerProp>> propertyExpression) {
         InnerConfig.DisplayedProperty = TableConfigurator<TProp>.GetPropertyInfo(propertyExpression);
         return this;
@@ -83,9 +82,14 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
     /// <summary>
     /// Determines the value that's displayed in the admin ui
     /// </summary>
-    /// <seealso cref="FormatEach{TInnerProp}"/>
     /// <seealso cref="SetDisplayedProperty{TInnerProp}"/>
     public PropertyConfigurator<TProp> Format(Func<TProp, IServiceProvider, string> formatter) {
+        InnerConfig.Formatter = (obj, provider) => Task.FromResult(formatter.Invoke((TProp)obj, provider));
+        return this;
+    }
+    
+    /// <inheritdoc cref="Format(System.Func{TProp,System.IServiceProvider,string})"/>
+    public PropertyConfigurator<TProp> Format(Func<TProp, IServiceProvider, Task<string>> formatter) {
         InnerConfig.Formatter = (obj, provider) => formatter.Invoke((TProp)obj, provider);
         return this;
     }
@@ -94,6 +98,12 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
     /// Determines the value that's displayed for each entry in the list
     /// </summary>
     public PropertyConfigurator<TProp> FormatEach<TInnerProp>(Func<TInnerProp, IServiceProvider, string> formatter) {
+        InnerConfig.EnumerableFormatter = (obj, provider) => Task.FromResult(formatter.Invoke((TInnerProp)obj, provider));
+        return this;
+    }
+    
+    /// <inheritdoc cref="FormatEach{TInnerProp}(System.Func{TInnerProp,System.IServiceProvider,string})"/>
+    public PropertyConfigurator<TProp> FormatEach<TInnerProp>(Func<TInnerProp, IServiceProvider, Task<string>> formatter) {
         InnerConfig.EnumerableFormatter = (obj, provider) => formatter.Invoke((TInnerProp)obj, provider);
         return this;
     }
@@ -102,7 +112,13 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
     /// Determines the function used for parsing the value provided in the editor dialog to the actual property value
     /// </summary>
     public PropertyConfigurator<TProp> SetParser(Func<string, IServiceProvider, TProp> parser) {
-        InnerConfig.Parser = (str, provider) => parser.Invoke(str, provider)!;
+        InnerConfig.Parser = (str, provider) => Task.FromResult<object>(parser.Invoke(str, provider)!);
+        return this;
+    }
+    
+    /// <inheritdoc cref="SetParser(System.Func{string,System.IServiceProvider,TProp})"/>
+    public PropertyConfigurator<TProp> SetParser(Func<string, IServiceProvider, Task<TProp>> parser) {
+        InnerConfig.Parser = async (str, provider) => (await parser.Invoke(str, provider))!;
         return this;
     }
 

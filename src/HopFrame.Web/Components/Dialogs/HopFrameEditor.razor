@@ -201,7 +201,7 @@
         if (Content.CurrentObject is null) return default;
 
         if (listItem is not null) {
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, listItem);
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, listItem).Result;
         }
         
         var value = config.Info.GetValue(Content.CurrentObject);
@@ -213,7 +213,7 @@
             return (TValue)value;
 
         if (typeof(TValue) == typeof(string))
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config);
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config).Result;
 
         return (TValue)Convert.ChangeType(value, typeof(TValue));
     }
@@ -295,7 +295,7 @@
         }
 
         if (config.Parser is not null && result is not null) {
-            result = config.Parser(result.ToString()!, Provider);
+            result = await config.Parser(result.ToString()!, Provider);
         }
 
         if (needsOverride)

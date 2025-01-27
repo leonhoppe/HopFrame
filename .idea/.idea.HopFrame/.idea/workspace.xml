@@ -11,16 +11,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added missing files">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/App.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing.Api/HopFrame.Testing.Api.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing.Api/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing.Api/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing.Api/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing.Api/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HopFrame.sln" beforeDir="false" afterPath="$PROJECT_DIR$/HopFrame.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added a simple web api abstraction method">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +38,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="fix/missing-styles" />
+        <entry key="$PROJECT_DIR$" value="feature/api-abstraction" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -69,11 +67,17 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/adcd2c45092dd8e4fc412325c8adb75d6e7d8b3e90a9523f167583fb9c60/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bfff78ecaa39c818519fc918bb2d4bbdca6ad93d7170f5cf325f67ccd0b97d43/BooleanAsserts.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d39923abb31e6a6e7a9e8173e217da584c54925ce63e568126a2b89b9ab/DefaultRazorComponentsServiceOptionsConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ee4d234452e240d83e3de396c2e85cbf9ac9fb9add618b955eea196c81aaf8/IDialogContentComponent.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fc2027f7e776fc105cddb56b1a25eeb3895b3ae6f3aac854d786e63bd01f75e2/CallSiteFactory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -102,7 +106,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!21 on feature/api-abstraction",
+    "git-widget-placeholder": "!22 on feature/async-delegates",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -207,7 +211,7 @@
       <workItem from="1737293153907" duration="8953000" />
       <workItem from="1737390240714" duration="60000" />
       <workItem from="1737390360987" duration="601000" />
-      <workItem from="1737993570961" duration="1590000" />
+      <workItem from="1737993570961" duration="3116000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -393,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737994074137</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Added a simple web api abstraction method">
+      <option name="closed" value="true" />
+      <created>1737995782424</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1737995782424</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -467,6 +479,7 @@
     <MESSAGE value="prepared project for release" />
     <MESSAGE value="Included readme file in projects" />
     <MESSAGE value="Added missing files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added missing files" />
+    <MESSAGE value="Added a simple web api abstraction method" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a simple web api abstraction method" />
   </component>
 </project>

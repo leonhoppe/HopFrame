@@ -102,6 +102,17 @@ public class TableConfigurator<TModel>(TableConfig config) {
         var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count) {
             Name = name,
             IsListingProperty = true,
+            Formatter = (obj, provider) => Task.FromResult(template.Invoke((TModel)obj, provider))
+        };
+        InnerConfig.Properties.Add(prop);
+        return new PropertyConfigurator<string>(prop);
+    }
+    
+    /// <inheritdoc cref="AddVirtualProperty(string,System.Func{TModel,System.IServiceProvider,string})"/>
+    public PropertyConfigurator<string> AddVirtualProperty(string name, Func<TModel, IServiceProvider, Task<string>> template) {
+        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count) {
+            Name = name,
+            IsListingProperty = true,
             Formatter = (obj, provider) => template.Invoke((TModel)obj, provider)
         };
         InnerConfig.Properties.Add(prop);
