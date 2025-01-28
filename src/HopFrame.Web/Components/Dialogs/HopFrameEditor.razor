@@ -180,6 +180,7 @@
     private bool _currentlyEditing;
     private ITableManager? _manager;
     private readonly Dictionary<string, List<string>> _validationErrors = new();
+    private readonly List<PropertyChange> _changes = new();
 
     protected override void OnInitialized() {
         _currentlyEditing = Content.CurrentObject is not null;
@@ -201,10 +202,10 @@
         if (Content.CurrentObject is null) return default;
 
         if (listItem is not null) {
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, listItem).Result;
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, null, listItem).Result;
         }
-        
-        var value = config.Info.GetValue(Content.CurrentObject);
+
+        var value = GetNewestValue(config);
 
         if (value is null)
             return default;
@@ -213,7 +214,7 @@
             return (TValue)value;
 
         if (typeof(TValue) == typeof(string))
-            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config).Result;
+            return (TValue)(object)_manager!.DisplayProperty(Content.CurrentObject, config, value).Result;
 
         return (TValue)Convert.ChangeType(value, typeof(TValue));
     }
@@ -277,15 +278,19 @@
                     else {
                         needsOverride = false;
 
-                        if (!typeof(IList).IsAssignableFrom(config.Info.PropertyType)) {
-                            throw new ArgumentException($"Invalid type of '{config.Name}' property in '{config.Table.DisplayName}' table, only list types are supported on enumerable relations.");
+                        var newItems = ((IEnumerable)value).OfType<object>();
+
+                        var collection = Activator.CreateInstance(config.Info.PropertyType);
+                        var addMethod = config.Info.PropertyType.GetMethod(nameof(ICollection<object>.Add));
+
+                        if (addMethod is null)
+                            throw new ArgumentException($"Cannot modify property '{config.Name}' on table '{config.Table}' because no 'Add' method is implemented");
+                        
+                        foreach (var item in newItems) {
+                            addMethod.Invoke(collection, [item]);
                         }
                         
-                        var asList = (IList)config.Info.GetValue(Content.CurrentObject)!;
-                        asList.Clear();
-                        foreach (var element in (IEnumerable)value) {
-                            asList.Add(element);
-                        }
+                        _changes.Add(new PropertyChange(config.Info, collection));
                     }
                     break;
                 
@@ -299,7 +304,24 @@
         }
 
         if (needsOverride)
-            config.Info.SetValue(Content.CurrentObject, result);
+            _changes.Add(new PropertyChange(config.Info, result));
+    }
+
+    private void ApplyChanges(object entry) {
+        foreach (var prop in Content.Config.Properties) {
+            var newValue = GetNewestValue(prop);
+            prop.Info.SetValue(entry, newValue);
+        }
+    }
+
+    private object? GetNewestValue(PropertyConfig config) {
+        var value = config.Info.GetValue(Content.CurrentObject);
+
+        var change = _changes.LastOrDefault(c => c.Property == config.Info);
+        if (change is not null)
+            value = change.Value;
+
+        return value;
     }
 
     private async Task OpenRelationalPicker(PropertyConfig config) {
@@ -321,7 +343,7 @@
             }
         }
         else {
-            var raw = config.Info.GetValue(Content.CurrentObject);
+            var raw = GetNewestValue(config);
             if (raw is not null)
                 currentValues.Add(raw);
         }
@@ -343,7 +365,7 @@
             
             var errorList = _validationErrors[property.Info.Name];
             errorList.Clear();
-            var value = property.Info.GetValue(Content.CurrentObject);
+            var value = GetNewestValue(property);
 
             if (property.Validator is not null) {
                 errorList.AddRange(await property.Validator.Invoke(value, Provider));
@@ -362,7 +384,10 @@
         if (!valid) return false;
         var dialog = await Dialogs.ShowConfirmationAsync($"Do you really want to {(_currentlyEditing ? "edit" : "create")} this entry?");
         var result = await dialog.Result;
-        return !result.Cancelled;
+        if (result.Cancelled) return false;
+        
+        ApplyChanges(Content.CurrentObject!);
+        return true;
     }
     
     private enum InputType {
