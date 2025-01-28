@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HopFrame.Core.Services.Implementations;
 
@@ -49,7 +50,14 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     }
 
     public async Task RevertChanges(object item) {
-        await context.Entry((TModel)item).ReloadAsync();
+        var entry = context.Entry((TModel)item);
+        await entry.ReloadAsync();
+
+        if (entry.Collections.Any()) {
+            context.ChangeTracker.Clear();
+        }
+        
+        await context.SaveChangesAsync();
     }
 
     private bool ItemSearched(TModel item, string searchTerm) {
@@ -66,7 +74,7 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         return false;
     }
 
-    public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null) {
+    public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null) {
         if (item is null) return string.Empty;
 
         if (prop.IsListingProperty)
@@ -81,12 +89,12 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         }
 
         if (prop.IsEnumerable) {
-            if (value is not null) {
+            if (enumerableValue is not null) {
                 if (prop.EnumerableFormatter is not null) {
-                    return await prop.EnumerableFormatter.Invoke(value, provider);
+                    return await prop.EnumerableFormatter.Invoke(enumerableValue, provider);
                 }
             
-                return value.ToString() ?? string.Empty;
+                return enumerableValue.ToString() ?? string.Empty;
             }
             
             return (propValue as IEnumerable)!.OfType<object>().Count().ToString();

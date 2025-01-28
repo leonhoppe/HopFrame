@@ -140,7 +140,7 @@ public class DisplayPropertyTests {
         };
 
         // Act
-        var result = await _tableManager.DisplayProperty(item, prop, item.List);
+        var result = await _tableManager.DisplayProperty(item, prop, null, item.List);
 
         // Assert
         Assert.Equal("1,2,3", result);

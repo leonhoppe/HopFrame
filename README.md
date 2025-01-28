@@ -72,6 +72,12 @@ builder.Services.AddHopFrame(options => {
 });
 ```
 
+Then you need to map the frontend pages in your application:
+
+```csharp
+app.MapHopFrame();
+```
+
 ### Usage
 
 - Navigate to `/admin` to access the admin dashboard and start managing your tables.

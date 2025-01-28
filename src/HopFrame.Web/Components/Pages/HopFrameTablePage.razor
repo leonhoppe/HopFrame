@@ -246,11 +246,7 @@
         var result = await panel.Result;
         var data = result.Data as EditorDialogData;
         
-        if (result.Cancelled) {
-            if (data?.CurrentObject is not null)
-                await _manager!.RevertChanges(data.CurrentObject);
-            return;
-        }
+        if (result.Cancelled) return;
         
         if (element is null)
             await _manager!.AddItem(data!.CurrentObject!);
