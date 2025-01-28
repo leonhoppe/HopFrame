@@ -60,26 +60,17 @@
                 }
 
                 @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
-                    var dataIndex = 0;
-
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
-                        @{ var currentElement = _currentlyDisplayedModels.ElementAtOrDefault(dataIndex); }
-
                         @if (_hasUpdatePolicy) {
-                            <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(currentElement); }">
+                            <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                             </FluentButton>
                         }
 
                         @if (_hasDeletePolicy) {
-                            <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(currentElement!); }">
+                            <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                             </FluentButton>
-                        }
-
-                        @{
-                            dataIndex++;
-                            dataIndex %= 20;
                         }
                     </TemplateColumn>
                 }
