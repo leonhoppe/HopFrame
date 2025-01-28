@@ -72,6 +72,8 @@ public class HopFrameTablePageTests : TestContext {
         var tableManagerMock = new Mock<ITableManager>();
         var items = new List<object> { new MyTable(), new MyTable() };
         tableManagerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).Returns(items.AsAsyncQueryable());
+        tableManagerMock.Setup(t => t.DisplayProperty(It.IsAny<object>(), It.IsAny<PropertyConfig>(), null))
+            .ReturnsAsync(string.Empty);
 
         contextExplorerMock.Setup(e => e.GetTable("Table1")).Returns(tableConfig);
         contextExplorerMock.Setup(e => e.GetTableManager("Table1")).Returns(tableManagerMock.Object);

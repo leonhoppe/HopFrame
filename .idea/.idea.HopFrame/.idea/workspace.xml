@@ -11,11 +11,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Implemented async delegates">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-    </list>
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added maximum display length" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -209,7 +205,7 @@
       <workItem from="1737390240714" duration="60000" />
       <workItem from="1737390360987" duration="601000" />
       <workItem from="1737993570961" duration="4163000" />
-      <workItem from="1738054766160" duration="413000" />
+      <workItem from="1738054766160" duration="741000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -411,7 +407,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737997122807</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Added maximum display length">
+      <option name="closed" value="true" />
+      <created>1738055497527</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1738055497527</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -462,7 +466,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added basic configuration" />
     <MESSAGE value="Added admin page navigation" />
     <MESSAGE value="Added database loading logic" />
     <MESSAGE value="Started working on listing page" />
@@ -487,6 +490,7 @@
     <MESSAGE value="Added missing files" />
     <MESSAGE value="Added a simple web api abstraction method" />
     <MESSAGE value="Implemented async delegates" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented async delegates" />
+    <MESSAGE value="Added maximum display length" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added maximum display length" />
   </component>
 </project>
