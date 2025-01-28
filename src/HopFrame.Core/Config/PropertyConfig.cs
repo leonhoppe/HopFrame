@@ -25,6 +25,7 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool IsEnumerable { get; internal set; }
     public bool IsListingProperty { get; set; }
     public int Order { get; set; } = nthProperty;
+    public int DisplayLength { get; set; } = 32;
 }
 
 /// <summary>
@@ -188,6 +189,15 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
     /// <seealso cref="TableConfigurator{TModel}.SetOrderIndex"/>
     public PropertyConfigurator<TProp> SetOrderIndex(int index) {
         InnerConfig.Order = index;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the maximum character length displayed in the admin ui (not in the editor dialog)
+    /// </summary>
+    /// <param name="maxLength">The maximum length of characters to be displayed</param>
+    public PropertyConfigurator<TProp> SetDisplayLength(int maxLength) {
+        InnerConfig.DisplayLength = maxLength;
         return this;
     }
 }
