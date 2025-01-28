@@ -95,6 +95,6 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .MapHopFramePages();
+    .AddHopFramePages();
 
 app.Run();

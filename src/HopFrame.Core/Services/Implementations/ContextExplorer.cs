@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace HopFrame.Core.Services.Implementations;
@@ -56,15 +57,35 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
 
     private void SeedTableData(TableConfig table) {
         if (table.Seeded) return;
-        var dbContext = (provider.GetService(table.ContextConfig.ContextType) as DbContext)!;
+        var dbContext = (provider.GetRequiredService(table.ContextConfig.ContextType) as DbContext)!;
         var entity = dbContext.Model.FindEntityType(table.TableType)!;
         
         foreach (var propertyConfig in table.Properties) {
             if (propertyConfig.IsListingProperty) continue;
+            if (propertyConfig.IsRelation) continue;
+            
             var prop = entity.FindProperty(propertyConfig.Info.Name);
             if (prop is not null) continue;
+            
             var nav = entity.FindNavigation(propertyConfig.Info.Name);
-            if (nav is null) continue;
+            if (nav is null) {
+                if (!propertyConfig.Info.PropertyType.IsGenericType) continue;
+                var relationType = propertyConfig.Info.PropertyType.GenericTypeArguments[0];
+
+                var isRelation = entity.Model.GetEntityTypes()
+                    .Select(e => e.GetForeignKeys())
+                    .Any(keys => keys
+                        .Select(k => k.PrincipalEntityType.ClrType)
+                        .Any(t => t == relationType || t == table.TableType));
+                if (!isRelation) continue;
+                
+                propertyConfig.IsRelation = true;
+                propertyConfig.IsRequired = false;
+                propertyConfig.IsEnumerable = true;
+                
+                continue;
+            }
+            
             propertyConfig.IsRelation = true;
             propertyConfig.IsRequired = nav.ForeignKey.IsRequired;
             propertyConfig.IsEnumerable = nav.IsCollection;
@@ -74,7 +95,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             var propConfig = table.Properties
                 .Where(prop => !prop.IsListingProperty)
                 .SingleOrDefault(prop => prop.Info == property.PropertyInfo);
-            if (propConfig is null) continue;
+            if (propConfig is null || propConfig.IsRequired) continue;
             propConfig.IsRequired = !property.IsNullable;
         }
         

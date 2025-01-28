@@ -200,4 +200,16 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
         InnerConfig.DisplayLength = maxLength;
         return this;
     }
+
+    /// <summary>
+    /// Forces a property to be treated as a relation
+    /// </summary>
+    /// <param name="isEnumerable">Determines if it is possible to assign multiple objects to the property</param>
+    /// <param name="isRequired">Determines if the property is nullable</param>
+    public PropertyConfigurator<TProp> ForceRelation(bool isEnumerable = false, bool isRequired = true) {
+        InnerConfig.IsRelation = true;
+        InnerConfig.IsEnumerable = isEnumerable;
+        InnerConfig.IsRequired = isRequired;
+        return this;
+    }
 }

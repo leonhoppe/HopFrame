@@ -11,7 +11,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added maximum display length" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Fixed test for table view">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Home.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/DatabaseContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/Post.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/Post.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,7 +38,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/async-delegates" />
+        <entry key="$PROJECT_DIR$" value="feature/max-length" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -99,7 +107,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!23 on feature/max-length",
+    "git-widget-placeholder": "!24 on fix/relations",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -205,7 +213,7 @@
       <workItem from="1737390240714" duration="60000" />
       <workItem from="1737390360987" duration="601000" />
       <workItem from="1737993570961" duration="4163000" />
-      <workItem from="1738054766160" duration="741000" />
+      <workItem from="1738054766160" duration="6716000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -415,7 +423,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738055497527</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Fixed test for table view">
+      <option name="closed" value="true" />
+      <created>1738055822074</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1738055822074</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -466,7 +482,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added admin page navigation" />
     <MESSAGE value="Added database loading logic" />
     <MESSAGE value="Started working on listing page" />
     <MESSAGE value="Added entry saving support" />
@@ -491,6 +506,7 @@
     <MESSAGE value="Added a simple web api abstraction method" />
     <MESSAGE value="Implemented async delegates" />
     <MESSAGE value="Added maximum display length" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added maximum display length" />
+    <MESSAGE value="Fixed test for table view" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed test for table view" />
   </component>
 </project>
