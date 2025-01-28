@@ -54,7 +54,7 @@
                 
                 @foreach (var property in _config!.Properties.Where(prop => prop.List).OrderBy(prop => prop.Order)) {
                     <PropertyColumn
-                        Title="@property.Name" Property="o => _manager!.DisplayProperty(o, property, null).Result"
+                        Title="@property.Name" Property="o => DisplayProperty(property, o).Result"
                         Style="min-width: max-content; height: 44px;"
                         Sortable="@property.Sortable"/>
                 }
@@ -282,5 +282,14 @@
         }
 
         _allSelected = selected;
+    }
+
+    private async Task<string> DisplayProperty(PropertyConfig config, object entry) {
+        var display = await _manager!.DisplayProperty(entry, config);
+
+        if (display.Length > config.DisplayLength)
+            display = display.Substring(0, config.DisplayLength) + "...";
+
+        return display;
     }
 }

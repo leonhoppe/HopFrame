@@ -60,6 +60,7 @@ builder.Services.AddHopFrame(options => {
 
         context.Table<Post>()
             .Property(p => p.Content)
+            .SetDisplayLength(100)
             .IsTextArea(true)
             /*.Validator(input => {
                 var errors = new List<string>();
