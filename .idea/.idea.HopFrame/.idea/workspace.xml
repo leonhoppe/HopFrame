@@ -11,7 +11,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added n-m relation mapping">
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +36,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/max-length" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,23 +60,24 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/26c9a2fb5243863babc926e4be763daf4128d4f97c4a769cdce1e2e3e5c532/FluentButton.razor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2751d5afefca5424bfc4b21347f581372f7a739c0ae4df661ea557fcb97ef20/EnumExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/439c4ee753b23e743cc14119593bc889751f9eb0b38997577d8e4c47c4fed/ToCollection.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5a69b82eed595b731b82667db08722b69b82482e275cf32dfb219190e3dc49/CollectionEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/60e7b22380df80ef6fefe43138047f49ec6eff4b25c12b42ce3d6ed5aac/MethodInvokerCommon.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/642391624bd5c30b3411a11434588aba4906207335166b784bf3a4325f6c7/NavigationEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ad7d2d0ae865063993eb8a03427815ea3bdb6a774e0a2f95512e9f669a4f489/MemberEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8d5d6cbff46ddc7b152381f92ae1ae51d3e7b57b14dd23840a11f5aaaaed396/InternalEntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/adcd2c45092dd8e4fc412325c8adb75d6e7d8b3e90a9523f167583fb9c60/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bfff78ecaa39c818519fc918bb2d4bbdca6ad93d7170f5cf325f67ccd0b97d43/BooleanAsserts.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d39923abb31e6a6e7a9e8173e217da584c54925ce63e568126a2b89b9ab/DefaultRazorComponentsServiceOptionsConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/eab2d6b892f743a27cb49a139ba782855897baf1233febd2dfd2092f3/EntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ee4d234452e240d83e3de396c2e85cbf9ac9fb9add618b955eea196c81aaf8/IDialogContentComponent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fc2027f7e776fc105cddb56b1a25eeb3895b3ae6f3aac854d786e63bd01f75e2/CallSiteFactory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Core/Config/PropertyConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -101,7 +106,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!24 on fix/relations",
+    "git-widget-placeholder": "!26 on fix/cancellabe-relations",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -207,7 +212,8 @@
       <workItem from="1737390240714" duration="60000" />
       <workItem from="1737390360987" duration="601000" />
       <workItem from="1737993570961" duration="4163000" />
-      <workItem from="1738054766160" duration="7142000" />
+      <workItem from="1738054766160" duration="7449000" />
+      <workItem from="1738075629332" duration="3160000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -433,7 +439,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738062559567</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Fixed wrong element selection for action buttons">
+      <option name="closed" value="true" />
+      <created>1738063028173</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1738063028173</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -484,7 +498,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Started working on listing page" />
     <MESSAGE value="Added entry saving support" />
     <MESSAGE value="Added reload button and animation" />
     <MESSAGE value="Added relation picker dialog" />
@@ -509,6 +522,7 @@
     <MESSAGE value="Added maximum display length" />
     <MESSAGE value="Fixed test for table view" />
     <MESSAGE value="Added n-m relation mapping" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added n-m relation mapping" />
+    <MESSAGE value="Fixed wrong element selection for action buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed wrong element selection for action buttons" />
   </component>
 </project>

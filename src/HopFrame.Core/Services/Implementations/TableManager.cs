@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HopFrame.Core.Services.Implementations;
 
@@ -49,7 +50,14 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     }
 
     public async Task RevertChanges(object item) {
-        await context.Entry((TModel)item).ReloadAsync();
+        var entry = context.Entry((TModel)item);
+        await entry.ReloadAsync();
+
+        if (entry.Collections.Any()) {
+            context.ChangeTracker.Clear();
+        }
+        
+        await context.SaveChangesAsync();
     }
 
     private bool ItemSearched(TModel item, string searchTerm) {

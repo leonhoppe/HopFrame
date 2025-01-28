@@ -249,6 +249,7 @@
         if (result.Cancelled) {
             if (data?.CurrentObject is not null)
                 await _manager!.RevertChanges(data.CurrentObject);
+            await Reload();
             return;
         }
         
