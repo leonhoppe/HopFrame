@@ -12,8 +12,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Post>()
-            .HasOne<User>(p => p.Author)
-            .WithMany(u => u.Posts)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(p => p.Author)
+            .WithMany(u => u.Posts);
     }
 }
