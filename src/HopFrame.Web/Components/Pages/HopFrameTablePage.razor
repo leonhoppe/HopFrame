@@ -45,11 +45,10 @@
                         TGridItem="object"
                         SelectMode="SelectionMode"
                         SelectFromEntireRow="true"
-                        SelectedItems="DialogData?.SelectedObjects.ToArray()"
                         OnSelect="data => SelectItem(data.Item, data.Selected)"
-                        SelectAllChanged="SelectAll"
-                        SelectAll="_allSelected"
-                        Style="min-width: max-content; height: 44px; display: grid; align-items: center" @ref="_selectColumn" />
+                        SelectAllDisabled="true"
+                        Property="o => DialogData!.SelectedObjects.Contains(o)"
+                        Style="min-width: max-content; height: 44px; display: grid; align-items: center" />
                 }
                 
                 @foreach (var property in _config!.Properties.Where(prop => prop.List).OrderBy(prop => prop.Order)) {
@@ -152,7 +151,6 @@
     private bool _hasDeletePolicy;
     private bool _hasCreatePolicy;
 
-    private SelectColumn<object>? _selectColumn;
     private bool _allSelected;
 
     protected override void OnInitialized() {
@@ -258,16 +256,15 @@
 
     private void SelectItem(object item, bool selected) {
         if (!selected)
-            DialogData?.SelectedObjects.Remove(item);
-        else DialogData?.SelectedObjects.Add(item);
+            DialogData!.SelectedObjects.Remove(item);
+        else DialogData!.SelectedObjects.Add(item);
     }
 
     private void SelectAll() {
-        var selected = _currentlyDisplayedModels.Any(obj => DialogData?.SelectedObjects.Contains(obj) != true);
+        var selected = _currentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
         foreach (var displayedModel in _currentlyDisplayedModels) {
-            SelectItem(displayedModel, selected);
+            SelectItem(displayedModel, !selected);
         }
-
         _allSelected = selected;
     }
 
@@ -275,7 +272,7 @@
         var display = await _manager!.DisplayProperty(entry, config);
 
         if (display.Length > config.DisplayLength)
-            display = display.Substring(0, config.DisplayLength) + "...";
+            display = display[..config.DisplayLength] + "...";
 
         return display;
     }
