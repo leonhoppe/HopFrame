@@ -11,14 +11,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Implemented primitive change reversion">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Models/PropertyChange.cs" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,6 +94,7 @@
 }</component>
   <component name="ProjectId" id="2raEUZtlphkj04rfRNtlQw6fPMU" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -116,7 +112,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!26 on fix/cancellabe-relations",
+    "git-widget-placeholder": "!27 on fix/selection",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -223,7 +219,8 @@
       <workItem from="1737390360987" duration="601000" />
       <workItem from="1737993570961" duration="4163000" />
       <workItem from="1738054766160" duration="7449000" />
-      <workItem from="1738075629332" duration="8328000" />
+      <workItem from="1738075629332" duration="8862000" />
+      <workItem from="1738335286481" duration="1624000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -465,7 +462,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738079122848</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Implemented deferred entry manipulation">
+      <option name="closed" value="true" />
+      <created>1738084259089</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1738084259089</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -516,7 +521,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added reload button and animation" />
     <MESSAGE value="Added relation picker dialog" />
     <MESSAGE value="Added automatic relation mapping" />
     <MESSAGE value="Added property validation" />
@@ -541,6 +545,7 @@
     <MESSAGE value="Added n-m relation mapping" />
     <MESSAGE value="Fixed wrong element selection for action buttons" />
     <MESSAGE value="Implemented primitive change reversion" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented primitive change reversion" />
+    <MESSAGE value="Implemented deferred entry manipulation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented deferred entry manipulation" />
   </component>
 </project>
