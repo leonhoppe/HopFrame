@@ -16,6 +16,14 @@ configure it to their needs to implement it fully in their data management pipel
 
 ## Getting Started
 
+### Installation
+
+Install the nuget package using the CLI or the UI of your IDE:
+
+```bash
+dotnet add package HopFrame.Web
+```
+
 ### Configuration
 
 Configuring HopFrame is straightforward and flexible. You can easily define your contexts, tables, and their properties using the provided configurators.
