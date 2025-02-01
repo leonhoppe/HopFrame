@@ -12,8 +12,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Events/EventTypes.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Events/HopEventHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Events/IEventEmitter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/EventEmitter.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/DbContextConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/DbContextConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/PropertyConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/PropertyConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/ContextExplorerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/ContextExplorerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Dialogs/HopFrameEditorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Dialogs/HopFrameEditorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Layout/HopFrameSideMenuTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Layout/HopFrameSideMenuTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameHomeTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameHomeTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameTablePageTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Web/Components/Pages/HopFrameTablePageTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,14 +125,14 @@
   "keyToString": {
     ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
     ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Debug",
     ".NET Project.HopFrame.Testing.executor": "Run",
     "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!27 on fix/selection",
+    "git-widget-placeholder": "!28 on feature/events",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -220,7 +240,8 @@
       <workItem from="1737993570961" duration="4163000" />
       <workItem from="1738054766160" duration="7449000" />
       <workItem from="1738075629332" duration="8862000" />
-      <workItem from="1738335286481" duration="1624000" />
+      <workItem from="1738335286481" duration="2039000" />
+      <workItem from="1738403493974" duration="3350000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -470,7 +491,23 @@
       <option name="project" value="LOCAL" />
       <updated>1738084259089</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Removed select all button">
+      <option name="closed" value="true" />
+      <created>1738337068205</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1738337068205</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Added missing installation instructions">
+      <option name="closed" value="true" />
+      <created>1738337314351</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1738337314351</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -521,8 +558,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added relation picker dialog" />
-    <MESSAGE value="Added automatic relation mapping" />
     <MESSAGE value="Added property validation" />
     <MESSAGE value="Added creation/modification confirmation" />
     <MESSAGE value="Removed Template" />
@@ -546,6 +581,27 @@
     <MESSAGE value="Fixed wrong element selection for action buttons" />
     <MESSAGE value="Implemented primitive change reversion" />
     <MESSAGE value="Implemented deferred entry manipulation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented deferred entry manipulation" />
+    <MESSAGE value="Removed select all button" />
+    <MESSAGE value="Added missing installation instructions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added missing installation instructions" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/EventEmitter.cs</url>
+          <line>19</line>
+          <properties documentPath="C:\Users\leon\Documents\Projekte\HopFrame\src\HopFrame.Core\Services\Implementations\EventEmitter.cs" containingFunctionPresentation="Method 'DispatchEvent'">
+            <startOffsets>
+              <option value="712" />
+            </startOffsets>
+            <endOffsets>
+              <option value="789" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

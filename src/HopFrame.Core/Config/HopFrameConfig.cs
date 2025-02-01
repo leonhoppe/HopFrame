@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HopFrame.Core.Events;
+using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.Config;
 
@@ -7,6 +8,7 @@ public class HopFrameConfig {
     public bool DisplayUserInfo { get; set; } = true;
     public string? BasePolicy { get; set; }
     public string? LoginPageRewrite { get; set; }
+    public List<HopEventHandler> Handlers { get; } = new();
 }
 
 /// <summary>
@@ -38,7 +40,7 @@ public class HopFrameConfigurator(HopFrameConfig config) {
     /// <returns>The configurator used for the DbContext</returns>
     /// <seealso cref="DbContextConfigurator{TDbContext}"/>
     public DbContextConfigurator<TDbContext> AddDbContext<TDbContext>() where TDbContext : DbContext {
-        var context = new DbContextConfig(typeof(TDbContext));
+        var context = new DbContextConfig(typeof(TDbContext), InnerConfig);
         InnerConfig.Contexts.Add(context);
         return new DbContextConfigurator<TDbContext>(context);
     }

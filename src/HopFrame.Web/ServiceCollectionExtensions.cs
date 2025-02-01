@@ -1,5 +1,6 @@
 ﻿using HopFrame.Core;
 using HopFrame.Core.Config;
+using HopFrame.Core.Events;
 using HopFrame.Web.Components;
 using HopFrame.Web.Components.Pages;
 using Microsoft.Extensions.DependencyInjection;

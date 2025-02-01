@@ -11,7 +11,7 @@ public class ContextExplorerTests {
     public void GetTables_ReturnsNonIgnoredTables() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig1 = contextConfig.Tables[0];
         var tableConfig2 = contextConfig.Tables[1];
         config.Contexts.Add(contextConfig);
@@ -33,7 +33,7 @@ public class ContextExplorerTests {
     public void GetTable_ByDisplayName_ReturnsCorrectTable() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         config.Contexts.Add(contextConfig);
         tableConfig.DisplayName = "TestTable";
@@ -54,7 +54,7 @@ public class ContextExplorerTests {
     public void GetTable_ByDisplayName_ReturnsNullIfTableNotFound() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         config.Contexts.Add(contextConfig);
         tableConfig.DisplayName = "TestTable";
@@ -74,7 +74,7 @@ public class ContextExplorerTests {
     public void GetTable_ByType_ReturnsCorrectTable() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         config.Contexts.Add(contextConfig);
 
@@ -94,7 +94,7 @@ public class ContextExplorerTests {
     public void GetTable_ByType_ReturnsNullIfTableNotFound() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         config.Contexts.Add(contextConfig);
 
@@ -113,7 +113,7 @@ public class ContextExplorerTests {
     public void GetTableManager_ReturnsCorrectTableManager() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = new TableConfig(contextConfig, typeof(MockModel), "Models", 0);
         contextConfig.Tables.Add(tableConfig);
         config.Contexts.Add(contextConfig);
@@ -135,7 +135,7 @@ public class ContextExplorerTests {
     public void GetTableManager_ReturnsNullIfDbContextNotFound() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = new TableConfig(contextConfig, typeof(MockModel), "MockModels", 0);
         contextConfig.Tables.Add(tableConfig);
         config.Contexts.Add(contextConfig);
@@ -154,7 +154,7 @@ public class ContextExplorerTests {
     public void GetTableManager_ReturnsNullIfTableNotFound() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = new TableConfig(contextConfig, typeof(MockModel), "Models", 0);
         contextConfig.Tables.Add(tableConfig);
         config.Contexts.Add(contextConfig);
@@ -175,7 +175,7 @@ public class ContextExplorerTests {
     public void SeedTableData_SetsTableSeededFlag() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         config.Contexts.Add(contextConfig);
 
@@ -194,7 +194,7 @@ public class ContextExplorerTests {
     public void SeedTableData_SetsTablePropertiesCorrectly() {
         // Arrange
         var config = new HopFrameConfig();
-        var contextConfig = new DbContextConfig(typeof(MockDbContext));
+        var contextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var tableConfig = contextConfig.Tables[0];
         var tableConfig2 = contextConfig.Tables[1];
         config.Contexts.Add(contextConfig);

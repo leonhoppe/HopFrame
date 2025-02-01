@@ -48,7 +48,7 @@ public class TableManagerTests {
             new MockModel { Id = 3, Name = "Item3" }
         };
         var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
         var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
@@ -70,7 +70,7 @@ public class TableManagerTests {
             new MockModel { Id = 3, Name = "TestItem" }
         };
         var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         config.Properties.Add(new PropertyConfig(typeof(MockModel).GetProperty("Name")!, config, 0)
             { Searchable = true });
         var explorer = new Mock<IContextExplorer>();
@@ -96,7 +96,7 @@ public class TableManagerTests {
             new MockModel { Id = 3, Name = "Item3" }
         };
         var dbContext = new MockDbContext();
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
         var manager = new TableManager<MockModel>(dbContext, config, explorer.Object, provider.Object);
@@ -118,7 +118,7 @@ public class TableManagerTests {
             new MockModel { Id = 2, Name = "Item2" }
         };
         var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
         var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
@@ -139,7 +139,7 @@ public class TableManagerTests {
             new MockModel { Id = 1, Name = "Item1" }
         };
         var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
         var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
@@ -156,7 +156,7 @@ public class TableManagerTests {
         // Arrange
         var data = new List<MockModel>();
         var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
         var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);

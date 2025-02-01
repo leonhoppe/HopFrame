@@ -9,7 +9,7 @@ public class TableConfiguratorTests {
     public void Ignore_SetsIgnoredProperty() {
         // Arrange
         var tableConfig =
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
 
         // Act
@@ -22,7 +22,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void Property_ReturnsCorrectPropertyConfigurator() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         Expression<Func<MockModel, int>> propertyExpression = model => model.Id;
 
@@ -35,7 +35,7 @@ public class TableConfiguratorTests {
     
     public void Property_WithConfigurator_ReturnsCorrectPropertyConfigurator() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         Expression<Func<MockModel, int>> propertyExpression = model => model.Id;
 
@@ -52,7 +52,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void AddVirtualProperty_AddsVirtualPropertyToConfig() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         Func<MockModel, IServiceProvider, string> template = (model, _) => model.Name!;
 
@@ -70,7 +70,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void AddVirtualProperty_WithConfigurator_AddsVirtualPropertyToConfig() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         Func<MockModel, IServiceProvider, string> template = (model, _) => model.Name!;
 
@@ -91,7 +91,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetDisplayName_SetsDisplayNameProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var displayName = "Mock Model Display Name";
 
@@ -105,7 +105,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetDescription_SetsDescriptionProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var description = "Mock Model Description";
 
@@ -119,7 +119,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetOrderIndex_SetsOrderIndexProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var orderIndex = 1;
 
@@ -133,7 +133,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetViewPolicy_SetsViewPolicyProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var policy = "ViewPolicy";
 
@@ -147,7 +147,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetUpdatePolicy_SetsUpdatePolicyProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var policy = "UpdatePolicy";
 
@@ -161,7 +161,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetCreatePolicy_SetsCreatePolicyProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var policy = "CreatePolicy";
 
@@ -175,7 +175,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void SetDeletePolicy_SetsDeletePolicyProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         var configurator = new TableConfigurator<MockModel>(tableConfig);
         var policy = "DeletePolicy";
 
@@ -189,7 +189,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void Constructor_WithKeyProperty_DisablesEdit() {
         // Act
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel2), "Models2", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel2), "Models2", 0);
         var prop = tableConfig.Properties.SingleOrDefault(prop => prop.Info.Name == nameof(MockModel2.Id));
 
         // Assert
@@ -200,7 +200,7 @@ public class TableConfiguratorTests {
     [Fact]
     public void Constructor_WithGeneratedProperty_DisablesEditAndCreate() {
         // Act
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel2), "Models2", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel2), "Models2", 0);
         var prop = tableConfig.Properties.SingleOrDefault(prop => prop.Info.Name == nameof(MockModel2.Number));
 
         // Assert
