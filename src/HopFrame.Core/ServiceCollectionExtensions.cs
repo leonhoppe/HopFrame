@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrameServices(this IServiceCollection services) {
         services.AddScoped<IContextExplorer, ContextExplorer>();
         services.TryAddScoped<IHopFrameAuthHandler, DefaultAuthHandler>();
-        services.TryAddSingleton<IEventEmitter, EventEmitter>();
+        services.TryAddScoped<IEventEmitter, EventEmitter>();
         return services;
     }
     
