@@ -1,0 +1,35 @@
+﻿<FluentCard Width="350px" Height="200px" Style="display: flex; flex-direction: column; background-color: var(--neutral-layer-1)">
+    <h3 style="margin-bottom: 0; display: flex; align-items: center; gap: 5px">
+        @if (Icon is not null) {
+            <FluentIcon Value="Icon" Color="Color.Neutral" />
+        }
+        @Title
+    </h3>
+    <FluentLabel Typo="Typography.Body" Color="Color.Info" Style="margin-bottom: 0.5rem">@Subtitle</FluentLabel>
+    <span>@Description</span>
+    <FluentSpacer />
+    <div style="display: flex">
+        <FluentSpacer/>
+
+        <a href="@Href" style="display: inline-block">
+            <FluentButton>Open</FluentButton>
+        </a>
+    </div>
+</FluentCard>
+
+@code {
+    [Parameter]
+    public required string Title { get; set; }
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public required string Description { get; set; }
+
+    [Parameter]
+    public required string Href { get; set; }
+    
+    [Parameter]
+    public Icon? Icon { get; set; }
+}

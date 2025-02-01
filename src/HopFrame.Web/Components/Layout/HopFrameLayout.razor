@@ -1,5 +1,6 @@
 ﻿@using HopFrame.Core.Config
 @using HopFrame.Core.Services
+@using HopFrame.Web.Models
 @using Microsoft.Extensions.DependencyInjection
 @inherits LayoutComponentBase
 
@@ -39,10 +40,28 @@
 
 @code {
 
+    internal static readonly List<CustomView> CustomViews = new();
+
     protected override async Task OnInitializedAsync() {
         var authorized = await Handler.IsAuthenticatedAsync(Config.BasePolicy);
+
+        var currentUri = "/" + Navigator.ToBaseRelativePath(Navigator.Uri);
+
+        if (authorized) {
+            foreach (var view in CustomViews.Where(view => !string.IsNullOrWhiteSpace(view.Policy))) {
+                switch (view.LinkMatch) {
+                    case NavLinkMatch.All when currentUri != view.Url:
+                    case NavLinkMatch.Prefix when !currentUri.StartsWith(view.Url):
+                        continue;
+                }
+
+                authorized = await Handler.IsAuthenticatedAsync(view.Policy);
+                break;
+            }
+        }
+        
         if (!authorized) {
-            Navigator.NavigateTo((Config.LoginPageRewrite ?? "/login") + "?redirect=/" + Navigator.ToBaseRelativePath(Navigator.Uri), true);
+            Navigator.NavigateTo((Config.LoginPageRewrite ?? "/login") + "?redirect=" + currentUri, true);
         }
     }
 

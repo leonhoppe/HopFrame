@@ -1,11 +1,8 @@
-using System.Collections;
-using HopFrame.Core.Events;
 using HopFrame.Testing;
 using Microsoft.FluentUI.AspNetCore.Components;
 using HopFrame.Testing.Components;
 using HopFrame.Testing.Models;
 using HopFrame.Web;
-using HopFrame.Web.Components.Pages;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,8 +73,13 @@ builder.Services.AddHopFrame(options => {
             })*/;
 
         context.Table<Post>()
-            .SetOrderIndex(-1);
+            .SetOrderIndex(-1)
+            .Ignore(true);
     });
+
+    options.AddCustomView("Counter", "/counter")
+        .SetDescription("A custom view")
+        .SetPolicy("counter.view");
 });
 
 var app = builder.Build();
