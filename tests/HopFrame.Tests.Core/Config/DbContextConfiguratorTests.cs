@@ -8,7 +8,7 @@ public class DbContextConfiguratorTests {
     [Fact]
     public void Table_WithConfigurator_InvokesConfigurator() {
         // Arrange
-        var dbContextConfig = new DbContextConfig(typeof(MockDbContext));
+        var dbContextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var configurator = new DbContextConfigurator<MockDbContext>(dbContextConfig);
         var mockConfigurator = new Mock<Action<TableConfigurator<MockModel>>>();
 
@@ -22,7 +22,7 @@ public class DbContextConfiguratorTests {
     [Fact]
     public void Table_ReturnsCorrectTableConfigurator() {
         // Arrange
-        var dbContextConfig = new DbContextConfig(typeof(MockDbContext));
+        var dbContextConfig = new DbContextConfig(typeof(MockDbContext), null!);
         var configurator = new DbContextConfigurator<MockDbContext>(dbContextConfig);
 
         // Act

@@ -22,7 +22,7 @@ public class HopFrameEditorTests : TestContext {
         var dialogServiceMock = new Mock<IDialogService>();
         var toastServiceMock = new Mock<IToastService>();
         var serviceProviderMock = new Mock<IServiceProvider>();
-        var contextConfig = new DbContextConfig(typeof(MyDbContext));
+        var contextConfig = new DbContextConfig(typeof(MyDbContext), null!);
         var tableConfig = new TableConfig(contextConfig, typeof(MyTable), "Table1", 0) {
             DisplayName = "Table1",
             ViewPolicy = "Policy1"

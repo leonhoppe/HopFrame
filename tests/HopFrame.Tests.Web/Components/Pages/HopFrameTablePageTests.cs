@@ -19,7 +19,7 @@ public class HopFrameTablePageTests : TestContext {
         var contextExplorerMock = new Mock<IContextExplorer>();
         var authHandlerMock = new Mock<IHopFrameAuthHandler>();
         var dialogServiceMock = new Mock<IDialogService>();
-        var contextConfig = new DbContextConfig(typeof(MyDbContext));
+        var contextConfig = new DbContextConfig(typeof(MyDbContext), null!);
         var managerMock = new Mock<ITableManager>();
         var tableConfig = new TableConfig(contextConfig, typeof(MyTable), "Table1", 0) {
             DisplayName = "Table1",
@@ -63,7 +63,7 @@ public class HopFrameTablePageTests : TestContext {
         var contextExplorerMock = new Mock<IContextExplorer>();
         var authHandlerMock = new Mock<IHopFrameAuthHandler>();
         var dialogServiceMock = new Mock<IDialogService>();
-        var contextConfig = new DbContextConfig(typeof(MyDbContext));
+        var contextConfig = new DbContextConfig(typeof(MyDbContext), null!);
         var tableConfig = new TableConfig(contextConfig, typeof(MyTable), "Table1", 0) {
             DisplayName = "Table1",
             ViewPolicy = "Policy1"

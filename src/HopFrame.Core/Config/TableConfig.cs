@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
+using HopFrame.Core.Events;
 
 namespace HopFrame.Core.Config;
 
@@ -186,6 +187,36 @@ public class TableConfigurator<TModel>(TableConfig config) {
     /// </summary>
     public TableConfigurator<TModel> SetDeletePolicy(string policy) {
         InnerConfig.DeletePolicy = policy;
+        return this;
+    }
+
+    /// <summary>
+    /// Adds an event handler of the provided type
+    /// </summary>
+    /// <param name="type">The type of event that triggers the handler</param>
+    /// <param name="handler">The handler delegate</param>
+    public TableConfigurator<TModel> AddEventHandler(EventType type, Func<TModel, IServiceProvider, Task> handler) {
+        var eventName = EventTypes.ConstructEventName(type, InnerConfig);
+        var handlerStore = new HopEventHandler(eventName, (o, provider) => handler.Invoke((TModel)o, provider));
+        InnerConfig.ContextConfig.ParentConfig.Handlers.Add(handlerStore);
+        
+        return this;
+    }
+    
+    /// <summary>
+    /// Adds an event handler of the provided type
+    /// </summary>
+    /// <param name="type">The type of event that triggers the handler</param>
+    /// <param name="handler">The handler delegate</param>
+    public TableConfigurator<TModel> AddEventHandler(EventType type, Action<TModel, IServiceProvider> handler) {
+        var eventName = EventTypes.ConstructEventName(type, InnerConfig);
+        var handlerStore = new HopEventHandler(eventName, (o, provider) => {
+            handler.Invoke((TModel)o, provider);
+            return Task.CompletedTask;
+        });
+        
+        InnerConfig.ContextConfig.ParentConfig.Handlers.Add(handlerStore);
+        
         return this;
     }
     

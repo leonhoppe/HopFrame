@@ -1,13 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HopFrame.Core.Events;
+using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.Config;
 
 public class DbContextConfig {
     public Type ContextType { get; }
     public List<TableConfig> Tables { get; } = new();
+    public HopFrameConfig ParentConfig { get; }
 
-    public DbContextConfig(Type context) {
+    public DbContextConfig(Type context, HopFrameConfig parentConfig) {
         ContextType = context;
+        ParentConfig = parentConfig;
 
         foreach (var property in ContextType.GetProperties()) {
             if (!property.PropertyType.IsGenericType) continue;

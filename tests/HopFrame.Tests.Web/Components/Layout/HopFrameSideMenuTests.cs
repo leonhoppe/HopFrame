@@ -17,7 +17,7 @@ public class HopFrameSideMenuTests : TestContext {
         // Arrange
         var contextExplorerMock = new Mock<IContextExplorer>();
         var authHandlerMock = new Mock<IHopFrameAuthHandler>();
-        var contextConfig = new DbContextConfig(typeof(MyDbContext));
+        var contextConfig = new DbContextConfig(typeof(MyDbContext), null!);
         var tableConfigs = new List<TableConfig> {
             new (contextConfig, typeof(MyTable), "Table1", 0),
             new (contextConfig, typeof(MyTable2), "Table2", 1)

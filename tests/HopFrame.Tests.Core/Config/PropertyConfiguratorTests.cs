@@ -9,7 +9,7 @@ public class PropertyConfiguratorTests {
     public void SetDisplayName_SetsNameProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         var displayName = "ID";
 
@@ -24,7 +24,7 @@ public class PropertyConfiguratorTests {
     public void List_SetsListAndSearchableProperties() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -39,7 +39,7 @@ public class PropertyConfiguratorTests {
     public void IsSortable_SetsSortableProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -53,7 +53,7 @@ public class PropertyConfiguratorTests {
     public void IsSearchable_SetsSearchableProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -67,7 +67,7 @@ public class PropertyConfiguratorTests {
     public void SetDisplayedProperty_SetsDisplayedProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<MockModel>(propertyConfig);
         Expression<Func<MockModel, int>> propertyExpression = model => model.Id;
 
@@ -83,7 +83,7 @@ public class PropertyConfiguratorTests {
     public void Format_SetsFormatter() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         Func<int, IServiceProvider, string> formatter = (val, _) => val.ToString();
 
@@ -98,7 +98,7 @@ public class PropertyConfiguratorTests {
     public void SetParser_SetsParser() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         Func<string, IServiceProvider, int> parser = (str, _) => int.Parse(str);
 
@@ -113,7 +113,7 @@ public class PropertyConfiguratorTests {
     public void SetEditable_SetsEditableProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -127,7 +127,7 @@ public class PropertyConfiguratorTests {
     public void SetCreatable_SetsCreatableProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -141,7 +141,7 @@ public class PropertyConfiguratorTests {
     public void DisplayValue_SetsDisplayValueProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -155,7 +155,7 @@ public class PropertyConfiguratorTests {
     public void IsTextArea_SetsTextAreaProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
 
         // Act
@@ -169,7 +169,7 @@ public class PropertyConfiguratorTests {
     public void SetTextAreaRows_SetsTextAreaRowsProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         var rows = 10;
 
@@ -184,7 +184,7 @@ public class PropertyConfiguratorTests {
     public void SetValidator_SetsValidator() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         Func<int, IServiceProvider, IEnumerable<string>> validator = (_, _) => new List<string>();
 
@@ -199,7 +199,7 @@ public class PropertyConfiguratorTests {
     public void SetOrderIndex_SetsOrderProperty() {
         // Arrange
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!,
-            new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0), 0);
+            new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0), 0);
         var configurator = new PropertyConfigurator<int>(propertyConfig);
         var orderIndex = 1;
 
@@ -213,7 +213,7 @@ public class PropertyConfiguratorTests {
     [Fact]
     public void Constructor_SetsTableProperty() {
         // Arrange
-        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "MockModels", 0);
+        var tableConfig = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "MockModels", 0);
         
         // Act
         var propertyConfig = new PropertyConfig(typeof(MockModel).GetProperty("Id")!, tableConfig, 0);

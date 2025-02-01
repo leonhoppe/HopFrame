@@ -16,7 +16,7 @@ public class HopFrameHomeTests : TestContext {
         // Arrange
         var contextExplorerMock = new Mock<IContextExplorer>();
         var authHandlerMock = new Mock<IHopFrameAuthHandler>();
-        var contextConfig = new DbContextConfig(typeof(MyDbContext));
+        var contextConfig = new DbContextConfig(typeof(MyDbContext), null!);
         var tableConfigs = new List<TableConfig> {
             new TableConfig(contextConfig, typeof(MyTable), "Table1", 0) {
                 DisplayName = "Table1",

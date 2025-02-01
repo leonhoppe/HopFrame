@@ -4,6 +4,7 @@
 @implements IDisposable
 
 @using HopFrame.Core.Config
+@using HopFrame.Core.Events
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
 @using Microsoft.JSInterop
@@ -117,6 +118,7 @@
 @inject IJSRuntime Js
 @inject IDialogService Dialogs
 @inject IHopFrameAuthHandler Handler
+@inject IEventEmitter Emitter
 
 @code {
     
@@ -229,6 +231,7 @@
         if (result.Cancelled) return;
 
         await _manager!.DeleteItem(element);
+        await Emitter.DispatchEvent(EventTypes.DeleteEntry(_config!), element);
         await Reload();
     }
 
@@ -246,10 +249,14 @@
         
         if (result.Cancelled) return;
         
-        if (element is null)
+        if (element is null) {
             await _manager!.AddItem(data!.CurrentObject!);
-        else
+            await Emitter.DispatchEvent(EventTypes.CreateEntry(_config!), data.CurrentObject!);
+        }
+        else {
             await _manager!.EditItem(data!.CurrentObject!);
+            await Emitter.DispatchEvent(EventTypes.UpdateEntry(_config!), data.CurrentObject!);
+        }
         
         await Reload();
     }

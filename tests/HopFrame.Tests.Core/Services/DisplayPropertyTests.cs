@@ -17,7 +17,7 @@ public class DisplayPropertyTests {
         var contextMock = new Mock<DbContext>();
         _providerMock = new Mock<IServiceProvider>();
         _explorerMock = new Mock<IContextExplorer>();
-        _config = new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0);
+        _config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         _tableManager =
             new TableManager<object>(contextMock.Object, _config, _explorerMock.Object, _providerMock.Object);
     }
@@ -106,7 +106,7 @@ public class DisplayPropertyTests {
 
         _explorerMock
             .Setup(e => e.GetTable(item.Inner.GetType()))
-            .Returns(new TableConfig(new DbContextConfig(typeof(MockDbContext)), typeof(MockModel), "Models", 0) {
+            .Returns(new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0) {
                 Properties = { innerPropConfig }
             });
 
