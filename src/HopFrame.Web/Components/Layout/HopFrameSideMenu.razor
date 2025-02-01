@@ -1,5 +1,6 @@
 ﻿@using HopFrame.Core.Config
 @using HopFrame.Core.Services
+@using HopFrame.Web.Models
 
 <FluentAppBar Orientation="Orientation.Vertical" PopoverShowSearch="false" Style="background-color: var(--neutral-layer-2); height: auto">
     <FluentAppBarItem Href="/admin"
@@ -10,6 +11,15 @@
                       Style="margin-top: 0.25rem"/>
 
     <br>
+    
+    @foreach (var view in _views) {
+        <FluentAppBarItem Href="@view.Url"
+                          Match="@view.LinkMatch"
+                          IconActive="GetLinkIcon(view, IconVariant.Filled)"
+                          IconRest="GetLinkIcon(view, IconVariant.Regular)"
+                          Text="@view.Name"
+                          Style="margin-top: 0.25rem"/>
+    }
     
     @foreach (var table in _tables.OrderBy(t => t.Order).Select(t => t.DisplayName)) {
         <FluentAppBarItem Href="@("/admin/" + table.ToLower())"
@@ -27,6 +37,7 @@
 @code {
 
     private readonly List<TableConfig> _tables = [];
+    private readonly List<CustomView> _views = [];
 
     protected override async Task OnInitializedAsync() {
         foreach (var table in Explorer.GetTables()) {
@@ -34,6 +45,21 @@
             if (!await Handler.IsAuthenticatedAsync(table.ViewPolicy)) continue;
             _tables.Add(table);
         }
+
+        foreach (var view in HopFrameLayout.CustomViews) {
+            if (!await Handler.IsAuthenticatedAsync(view.Policy)) continue;
+            _views.Add(view);
+        }
+    }
+
+    internal static Icon GetLinkIcon(CustomView view, IconVariant variant) {
+        var info = new IconInfo {
+            Name = view.Icon,
+            Variant = variant,
+            Size = IconSize.Size24
+        };
+        
+        return info.GetInstance();
     }
 
 }
