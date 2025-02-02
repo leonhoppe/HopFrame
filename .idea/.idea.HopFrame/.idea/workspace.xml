@@ -12,13 +12,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/HopFrameCard.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Models/CustomView.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Annotations/EventHandlerAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Annotations/PluginConfiguratorAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/EntryEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/HopFrameEventArgs.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageChangeEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PluginEventContainer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ReloadEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ValidationEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/IPluginOrchestrator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameSideMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Layout/HopFrameSideMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Counter.razor" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Components/Pages/Counter.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Events/EventTypes.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Callbacks/CallbackTypes.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Events/HopEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Callbacks/HopCallbackHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Events/IEventEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Callbacks/ICallbackEmitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/EventEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/CallbackEmitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -68,13 +87,16 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/fc/6f7933d2/ICollection`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/10c66a9a1e137111895f7182a2ae246eabe06a261578c3fa495a45f6f177d35/IconVariant.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1b81cb3be224213a6a73519b6e340a628d9a1fb8629c351a186a26f6376669/List.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/24dd1164ba47541cb1d3eb011e638e16953dbea3ae3f4dc208c3bbf3e96298a/ServiceCollectionServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/26c9a2fb5243863babc926e4be763daf4128d4f97c4a769cdce1e2e3e5c532/FluentButton.razor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2751d5afefca5424bfc4b21347f581372f7a739c0ae4df661ea557fcb97ef20/EnumExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/439c4ee753b23e743cc14119593bc889751f9eb0b38997577d8e4c47c4fed/ToCollection.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4c41a7d338749915157d56585365d1693fbad6be8231d3d583b1cf10d16896d9/FluentIcon.razor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4ee221fd7e91e9a4c14ff82aae2ee938edecde35a934133e991aba56aa9499/Icon.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5a69b82eed595b731b82667db08722b69b82482e275cf32dfb219190e3dc49/CollectionEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/60e7b22380df80ef6fefe43138047f49ec6eff4b25c12b42ce3d6ed5aac/MethodInvokerCommon.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/642391624bd5c30b3411a11434588aba4906207335166b784bf3a4325f6c7/NavigationEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6d1d64f05e7045295fa180276a8c2aef0302c9e96eb53b3431ab13db4579/FluentAppBarItem.razor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fe785cceb29ca2d1da78e157315815a7c4372b582a20a71c28b210f9d56e/IconsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ad7d2d0ae865063993eb8a03427815ea3bdb6a774e0a2f95512e9f669a4f489/MemberEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
@@ -86,6 +108,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d04a416cac8afac0341a8be0e859b230f2eae64924298eef48c317ba35916/RenderTreeBuilder.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d39923abb31e6a6e7a9e8173e217da584c54925ce63e568126a2b89b9ab/DefaultRazorComponentsServiceOptionsConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dac3553c90d47a746e7e7f02faecb1a5e581090/Components_AppBar_FluentAppBarItem_razor.g.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e26a4f2df232f16e374b9719f883c1b2419f6341838d94b7581db9c7d2de17/IconInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/eab2d6b892f743a27cb49a139ba782855897baf1233febd2dfd2092f3/EntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
@@ -111,28 +134,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.Api: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
-    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;!29 on feature/custom-views&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Project.HopFrame.Testing.executor": "Run",
+    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
+    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
+    "git-widget-placeholder": "!30 on feature/plugins",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.environmentSetup",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -233,6 +256,9 @@
       <workItem from="1738335286481" duration="2039000" />
       <workItem from="1738403493974" duration="4231000" />
       <workItem from="1738418482606" duration="2795000" />
+      <workItem from="1738421294144" duration="1651000" />
+      <workItem from="1738422949337" duration="141000" />
+      <workItem from="1738512801911" duration="6705000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -514,7 +540,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738407710507</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Added custom views">
+      <option name="closed" value="true" />
+      <created>1738422931038</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1738422931038</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -565,7 +599,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Removed Template" />
     <MESSAGE value="Added policy validation, ordering and virtual listing properties" />
     <MESSAGE value="Added n -&gt; m relation support" />
     <MESSAGE value="Added text area support and DI support for modifier functions" />
@@ -590,6 +623,7 @@
     <MESSAGE value="Added missing installation instructions" />
     <MESSAGE value="Added modular event system" />
     <MESSAGE value="Fixed event emitter service scope" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed event emitter service scope" />
+    <MESSAGE value="Added custom views" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added custom views" />
   </component>
 </project>

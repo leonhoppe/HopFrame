@@ -4,9 +4,11 @@
 @implements IDisposable
 
 @using HopFrame.Core.Config
-@using HopFrame.Core.Events
+@using HopFrame.Core.Callbacks
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
+@using HopFrame.Web.Plugins
+@using HopFrame.Web.Plugins.Events
 @using Microsoft.JSInterop
 @using Microsoft.EntityFrameworkCore
 
@@ -118,7 +120,8 @@
 @inject IJSRuntime Js
 @inject IDialogService Dialogs
 @inject IHopFrameAuthHandler Handler
-@inject IEventEmitter Emitter
+@inject ICallbackEmitter Emitter
+@inject IPluginOrchestrator PluginOrchestrator
 
 @code {
     
@@ -199,11 +202,28 @@
         _searchCancel = new();
         
         await Task.Delay(500, _searchCancel.Token);
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new SearchEvent(this) {
+            SearchTerm = _searchTerm,
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) return;
+        _searchTerm = eventResult.SearchTerm;
+        
         await Reload();
     }
 
     private async Task Reload() {
         _loading = true;
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new ReloadEvent(this) {
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) {
+            _loading = false;
+            return;
+        }
+        
         if (!string.IsNullOrEmpty(_searchTerm)) {
             (var query, _totalPages) = await _manager!.Search(_searchTerm, 0, PerPage);
             _currentlyDisplayedModels = query.ToArray();
@@ -215,6 +235,15 @@
     }
 
     private async Task ChangePage(int page) {
+        var eventResult = await PluginOrchestrator.DispatchEvent(new PageChangeEvent(this) {
+            CurrentPage = _currentPage,
+            NewPage = page,
+            TotalPages = _totalPages,
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) return;
+        page = eventResult.NewPage;
+        
         if (page < 0 || page > _totalPages - 1) return;
         _currentPage = page;
         await Reload();
@@ -225,13 +254,19 @@
             Navigator.NavigateTo("/admin", true);
             return;
         }
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new DeleteEntryEvent(this) {
+            Entity = element,
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) return;
         
         var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
         var result = await dialog.Result;
         if (result.Cancelled) return;
 
         await _manager!.DeleteItem(element);
-        await Emitter.DispatchEvent(EventTypes.DeleteEntry(_config!), element);
+        await Emitter.DispatchCallback(CallbackTypes.DeleteEntry(_config!), element);
         await Reload();
     }
 
@@ -240,6 +275,22 @@
             Navigator.NavigateTo("/admin", true);
             return;
         }
+
+        HopFrameTablePageEventArgs eventArgs;
+        if (element is null) {
+            eventArgs = new CreateEntryEvent(this) {
+                Table = _config!
+            };
+        }
+        else {
+            eventArgs = new UpdateEntryEvent(this) {
+                Table = _config!,
+                Entity = element
+            };
+        }
+        
+        var eventResult = await PluginOrchestrator.DispatchEvent(eventArgs);
+        if (eventResult.IsCanceled) return;
         
         var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new DialogParameters {
             TrapFocus = false
@@ -251,17 +302,25 @@
         
         if (element is null) {
             await _manager!.AddItem(data!.CurrentObject!);
-            await Emitter.DispatchEvent(EventTypes.CreateEntry(_config!), data.CurrentObject!);
+            await Emitter.DispatchCallback(CallbackTypes.CreateEntry(_config!), data.CurrentObject!);
         }
         else {
             await _manager!.EditItem(data!.CurrentObject!);
-            await Emitter.DispatchEvent(EventTypes.UpdateEntry(_config!), data.CurrentObject!);
+            await Emitter.DispatchCallback(CallbackTypes.UpdateEntry(_config!), data.CurrentObject!);
         }
         
         await Reload();
     }
 
     private void SelectItem(object item, bool selected) {
+        var eventResult = PluginOrchestrator.DispatchEvent(new SelectEntryEvent(this) {
+            Entity = item,
+            Selected = selected,
+            Table = _config!
+        }).Result;
+        if (eventResult.IsCanceled) return;
+        selected = eventResult.Selected;
+        
         if (!selected)
             DialogData!.SelectedObjects.Remove(item);
         else DialogData!.SelectedObjects.Add(item);

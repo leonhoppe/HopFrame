@@ -1,22 +1,22 @@
 ﻿using HopFrame.Core.Config;
-using HopFrame.Core.Events;
+using HopFrame.Core.Callbacks;
 
 namespace HopFrame.Core.Services.Implementations;
 
-internal sealed class EventEmitter(IServiceProvider provider, HopFrameConfig config) : IEventEmitter {
+internal sealed class CallbackEmitter(IServiceProvider provider, HopFrameConfig config) : ICallbackEmitter {
     
-    public Guid RegisterEventHandler(string @event, Func<object, IServiceProvider, Task> handler) {
-        var handlerStore = new HopEventHandler(@event, handler);
+    public Guid RegisterCallbackHandler(string @event, Func<object, IServiceProvider, Task> handler) {
+        var handlerStore = new HopCallbackHandler(@event, handler);
         config.Handlers.Add(handlerStore);
         return handlerStore.Id;
     }
     
-    public bool RemoveEventHandler(Guid id) {
+    public bool RemoveCallbackHandler(Guid id) {
         var count = config.Handlers.RemoveAll(handler => handler.Id == id);
         return count > 0;
     }
     
-    public async Task DispatchEvent(string @event, object argument = null!) {
+    public async Task DispatchCallback(string @event, object argument = null!) {
         var handlers = config.Handlers.Where(handler => handler.EventType == @event);
         var tasks = new List<Task>();
         
@@ -28,11 +28,11 @@ internal sealed class EventEmitter(IServiceProvider provider, HopFrameConfig con
         await Task.WhenAll(tasks);
     }
     
-    public void RemoveAllEventHandlers(string @event) {
+    public void RemoveAllCallbackHandlers(string @event) {
         config.Handlers.RemoveAll(handler => handler.EventType == @event);
     }
     
-    public void RemoveAllEventHandlers() {
+    public void RemoveAllCallbackHandlers() {
         config.Handlers.Clear();
     }
     

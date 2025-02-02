@@ -80,6 +80,8 @@ builder.Services.AddHopFrame(options => {
     options.AddCustomView("Counter", "/counter")
         .SetDescription("A custom view")
         .SetPolicy("counter.view");
+
+    options.AddPlugin<TestPlugin>();
 });
 
 var app = builder.Build();

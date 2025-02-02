@@ -6,6 +6,8 @@
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
 @using HopFrame.Web.Helpers
+@using HopFrame.Web.Plugins
+@using HopFrame.Web.Plugins.Events
 
 <FluentDialogBody>
     @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
@@ -169,6 +171,7 @@
 @inject IHopFrameAuthHandler Handler
 @inject IToastService Toasts
 @inject IServiceProvider Provider
+@inject IPluginOrchestrator PluginOrchestrator
 
 @code {
     [Parameter]
@@ -374,6 +377,14 @@
             
             if (value is null && property.IsRequired)
                 errorList.Add($"{property.Name} is required");
+
+            var eventResult = await PluginOrchestrator.DispatchEvent(new ValidationEvent(this) {
+                Errors = errorList,
+                Property = property,
+                Table = Content.Config
+            });
+
+            if (eventResult.IsCanceled) return false;
         }
 
         StateHasChanged();

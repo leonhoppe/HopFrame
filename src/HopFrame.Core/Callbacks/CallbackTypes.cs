@@ -1,8 +1,8 @@
 ﻿using HopFrame.Core.Config;
 
-namespace HopFrame.Core.Events;
+namespace HopFrame.Core.Callbacks;
 
-public static class EventTypes {
+public static class CallbackTypes {
 
     private const string Prefix = "HopFrame.";
     private const string CreateEntryPrefix = Prefix + "Entry.Create.";
@@ -13,18 +13,18 @@ public static class EventTypes {
     public static string UpdateEntry(TableConfig config) => UpdateEntryPrefix + config.PropertyName;
     public static string DeleteEntry(TableConfig config) => DeleteEntryPrefix + config.PropertyName;
 
-    public static string ConstructEventName(EventType type, TableConfig config) {
+    public static string ConstructCallbackName(CallbackType type, TableConfig config) {
         return type switch {
-            EventType.CreateEntry => CreateEntry(config),
-            EventType.UpdateEntry => UpdateEntry(config),
-            EventType.DeleteEntry => DeleteEntry(config),
+            CallbackType.CreateEntry => CreateEntry(config),
+            CallbackType.UpdateEntry => UpdateEntry(config),
+            CallbackType.DeleteEntry => DeleteEntry(config),
             _ => Prefix
         };
     }
 
 }
 
-public enum EventType {
+public enum CallbackType {
     CreateEntry = 0,
     UpdateEntry = 1,
     DeleteEntry = 2

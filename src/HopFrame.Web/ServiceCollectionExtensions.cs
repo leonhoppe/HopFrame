@@ -1,8 +1,10 @@
 ﻿using HopFrame.Core;
 using HopFrame.Core.Config;
-using HopFrame.Core.Events;
+using HopFrame.Core.Callbacks;
 using HopFrame.Web.Components;
 using HopFrame.Web.Components.Pages;
+using HopFrame.Web.Plugins;
+using HopFrame.Web.Plugins.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.AspNetCore.Builder;
@@ -21,7 +23,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>The same service collection that is passed in</returns>
     public static IServiceCollection AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator, LibraryConfiguration? fluentUiLibraryConfiguration = null, bool addRazorComponents = true) {
         var config = new HopFrameConfig();
-        configurator.Invoke(new HopFrameConfigurator(config));
+        configurator.Invoke(new HopFrameConfigurator(config, services));
         return AddHopFrame(services, config, fluentUiLibraryConfiguration, addRazorComponents);
     }
 
@@ -37,6 +39,8 @@ public static class ServiceCollectionExtensions {
         services.AddSingleton(config);
         services.AddHopFrameServices();
         services.AddFluentUIComponents(fluentUiLibraryConfiguration);
+
+        services.AddScoped<IPluginOrchestrator, PluginOrchestrator>();
 
         if (addRazorComponents) {
             services.AddRazorComponents()
