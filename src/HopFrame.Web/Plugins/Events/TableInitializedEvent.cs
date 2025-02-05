@@ -4,8 +4,9 @@ using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace HopFrame.Web.Plugins.Events;
 
-public class PageInitializedEvent(HopFrameTablePage sender) : HopFrameTablePageEventArgs(sender) {
+public class TableInitializedEvent(HopFrameTablePage sender) : HopFrameTablePageEventArgs(sender) {
     public List<PluginButton> PluginButtons { get; } = new();
+    public DefaultButtonToggles DefaultButtons { get; set; } = new();
     
     public void AddPageButton(string title, Func<Task> callback, bool pushRight = false, IconInfo? icon = null) {
         PluginButtons.Add(new() {
@@ -90,4 +91,11 @@ public enum PluginButtonPosition {
     TopLeft = 0,
     TopRight = 1,
     OnEntry = 2
+}
+
+public struct DefaultButtonToggles() {
+    public bool ShowRefreshButton { get; set; } = true;
+    public bool ShowAddEntityButton { get; set; } = true;
+    public bool ShowDeleteButton { get; set; } = true;
+    public bool ShowEditButton { get; set; } = true;
 }

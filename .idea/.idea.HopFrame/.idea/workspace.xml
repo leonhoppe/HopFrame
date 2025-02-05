@@ -11,12 +11,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Passed cancellation tokens to event handlers if needed">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageInitializedEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Added plugin buttons">
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageInitializedEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/TableInitializedEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/IPluginOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/IPluginOrchestrator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +239,7 @@
       <workItem from="1738421294144" duration="1651000" />
       <workItem from="1738422949337" duration="141000" />
       <workItem from="1738512801911" duration="6776000" />
-      <workItem from="1738769458367" duration="3697000" />
+      <workItem from="1738769458367" duration="4838000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -546,7 +545,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738770468949</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Added plugin buttons">
+      <option name="closed" value="true" />
+      <created>1738773315593</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1738773315593</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -597,7 +604,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added text area support and DI support for modifier functions" />
     <MESSAGE value="Addressed all build warnings" />
     <MESSAGE value="Added documentation for the configurators and service extensions methods" />
     <MESSAGE value="Created tests for the core module" />
@@ -622,6 +628,7 @@
     <MESSAGE value="Added custom views" />
     <MESSAGE value="Added plugin events" />
     <MESSAGE value="Passed cancellation tokens to event handlers if needed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Passed cancellation tokens to event handlers if needed" />
+    <MESSAGE value="Added plugin buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added plugin buttons" />
   </component>
 </project>

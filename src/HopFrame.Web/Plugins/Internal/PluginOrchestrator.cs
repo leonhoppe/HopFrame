@@ -54,5 +54,4 @@ internal sealed class PluginOrchestrator(IServiceProvider services) : IPluginOrc
 
         return @event;
     }
-    
 }

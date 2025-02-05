@@ -21,7 +21,7 @@
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
         <h3>@_config?.DisplayName</h3>
-        @if (!DisplaySelection) {
+        @if (!DisplaySelection && _buttonToggles.ShowRefreshButton) {
             <FluentButton
                 IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
                 OnClick="Reload"
@@ -42,8 +42,8 @@
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
         
-        @if (_hasCreatePolicy && DisplayActions) {
-            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
+        @if (_hasCreatePolicy && DisplayActions && _buttonToggles.ShowAddEntityButton) {
+            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entity</FluentButton>
         }
 
         @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopRight)) {
@@ -85,13 +85,13 @@
                             </FluentButton>
                         }
                         
-                        @if (_hasUpdatePolicy) {
+                        @if (_hasUpdatePolicy && _buttonToggles.ShowEditButton) {
                             <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                             </FluentButton>
                         }
 
-                        @if (_hasDeletePolicy) {
+                        @if (_hasDeletePolicy && _buttonToggles.ShowDeleteButton) {
                             <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                             </FluentButton>
@@ -182,6 +182,7 @@
 
     private readonly CancellationTokenSource _tokenSource = new();
     private List<PluginButton> _pluginButtons = new();
+    private DefaultButtonToggles _buttonToggles = new();
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -197,11 +198,12 @@
             return;
         }
 
-        var eventResult = await PluginOrchestrator.DispatchEvent(new PageInitializedEvent(this) {
+        var eventResult = await PluginOrchestrator.DispatchEvent(new TableInitializedEvent(this) {
             Table = _config!
         });
         if (eventResult.IsCanceled) return;
         _pluginButtons = eventResult.PluginButtons;
+        _buttonToggles = eventResult.DefaultButtons;
 
         _hasUpdatePolicy = await Handler.IsAuthenticatedAsync(_config?.UpdatePolicy);
         _hasDeletePolicy = await Handler.IsAuthenticatedAsync(_config?.DeletePolicy);
@@ -223,6 +225,7 @@
 
     public void Dispose() {
         _searchCancel.Dispose();
+        _tokenSource.Dispose();
     }
 
     private CancellationTokenSource _searchCancel = new();
