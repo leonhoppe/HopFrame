@@ -239,9 +239,16 @@
 
         var eventResult = await PluginOrchestrator.DispatchEvent(new SearchEvent(this) {
             SearchTerm = _searchTerm,
-            Table = _config!
+            Table = _config!,
+            CurrentPage = _currentPage
         }, _tokenSource.Token);
-        if (eventResult.IsCanceled) return;
+        if (eventResult.IsCanceled) {
+            if (eventResult.SearchResult is null) return;
+            
+            CurrentlyDisplayedModels = eventResult.SearchResult.ToArray();
+            _totalPages = eventResult.TotalPages;
+            return;
+        }
         _searchTerm = eventResult.SearchTerm;
         
         await Reload();
@@ -259,7 +266,7 @@
         }
         
         if (!string.IsNullOrEmpty(_searchTerm)) {
-            (var query, _totalPages) = await _manager!.Search(_searchTerm, 0, PerPage);
+            (var query, _totalPages) = await _manager!.Search(_searchTerm, _currentPage, PerPage);
             CurrentlyDisplayedModels = query.ToArray();
         }
         else {
