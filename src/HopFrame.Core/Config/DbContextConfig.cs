@@ -1,5 +1,4 @@
-﻿using HopFrame.Core.Events;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.Config;
 

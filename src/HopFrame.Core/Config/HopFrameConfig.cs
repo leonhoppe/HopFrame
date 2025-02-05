@@ -1,5 +1,6 @@
-﻿using HopFrame.Core.Events;
+﻿using HopFrame.Core.Callbacks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Core.Config;
 
@@ -8,18 +9,20 @@ public class HopFrameConfig {
     public bool DisplayUserInfo { get; set; } = true;
     public string? BasePolicy { get; set; }
     public string? LoginPageRewrite { get; set; }
-    public List<HopEventHandler> Handlers { get; } = new();
+    public List<HopCallbackHandler> Handlers { get; } = new();
 }
 
 /// <summary>
 /// A helper class for editing the <see cref="HopFrameConfig"/>
 /// </summary>
-public class HopFrameConfigurator(HopFrameConfig config) {
+public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection collection = null!) {
     
     /// <summary>
     /// The Internal HopFrame configuration that's modified by the helper functions
     /// </summary>
     public HopFrameConfig InnerConfig { get; } = config;
+
+    public IServiceCollection ServiceCollection { get; } = collection;
     
     /// <summary>
     /// Adds all tables defined in the DbContext to the HopFrame ui and configures it using the provided configurator
@@ -43,6 +46,18 @@ public class HopFrameConfigurator(HopFrameConfig config) {
         var context = new DbContextConfig(typeof(TDbContext), InnerConfig);
         InnerConfig.Contexts.Add(context);
         return new DbContextConfigurator<TDbContext>(context);
+    }
+
+    public bool HasDbContext<TDbContext>() where TDbContext : DbContext {
+        return InnerConfig.Contexts.Any(context => context.ContextType == typeof(TDbContext));
+    }
+
+    public DbContextConfigurator<TDbContext>? GetDbContext<TDbContext>() where TDbContext : DbContext {
+        var config = InnerConfig.Contexts
+            .SingleOrDefault(context => context.ContextType == typeof(TDbContext));
+        if (config is null) return null;
+
+        return new DbContextConfigurator<TDbContext>(config);
     }
 
     /// <summary>

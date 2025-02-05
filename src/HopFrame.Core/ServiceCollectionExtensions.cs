@@ -1,4 +1,4 @@
-﻿using HopFrame.Core.Events;
+﻿using HopFrame.Core.Callbacks;
 using HopFrame.Core.Services;
 using HopFrame.Core.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection AddHopFrameServices(this IServiceCollection services) {
         services.AddScoped<IContextExplorer, ContextExplorer>();
         services.TryAddScoped<IHopFrameAuthHandler, DefaultAuthHandler>();
-        services.TryAddScoped<IEventEmitter, EventEmitter>();
+        services.TryAddScoped<ICallbackEmitter, CallbackEmitter>();
         return services;
     }
     

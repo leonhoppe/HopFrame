@@ -1,11 +1,14 @@
 @rendermode InteractiveServer
 @implements IDialogContentComponent<EditorDialogData>
+@implements IDisposable
 
 @using System.Collections
 @using HopFrame.Core.Config
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
 @using HopFrame.Web.Helpers
+@using HopFrame.Web.Plugins
+@using HopFrame.Web.Plugins.Events
 
 <FluentDialogBody>
     @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
@@ -169,6 +172,7 @@
 @inject IHopFrameAuthHandler Handler
 @inject IToastService Toasts
 @inject IServiceProvider Provider
+@inject IPluginOrchestrator PluginOrchestrator
 
 @code {
     [Parameter]
@@ -181,6 +185,7 @@
     private ITableManager? _manager;
     private readonly Dictionary<string, List<string>> _validationErrors = new();
     private readonly List<PropertyChange> _changes = new();
+    private readonly CancellationTokenSource _tokenSource = new();
 
     protected override void OnInitialized() {
         _currentlyEditing = Content.CurrentObject is not null;
@@ -374,6 +379,14 @@
             
             if (value is null && property.IsRequired)
                 errorList.Add($"{property.Name} is required");
+
+            var eventResult = await PluginOrchestrator.DispatchEvent(new ValidationEvent(this) {
+                Errors = errorList,
+                Property = property,
+                Table = Content.Config
+            }, _tokenSource.Token);
+
+            if (eventResult.IsCanceled) return false;
         }
 
         StateHasChanged();
@@ -389,7 +402,11 @@
         ApplyChanges(Content.CurrentObject!);
         return true;
     }
-    
+
+    public void Dispose() {
+        _tokenSource.Dispose();
+    }
+
     private enum InputType {
         Number,
         Switch,

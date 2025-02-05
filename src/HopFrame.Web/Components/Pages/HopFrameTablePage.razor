@@ -4,9 +4,11 @@
 @implements IDisposable
 
 @using HopFrame.Core.Config
-@using HopFrame.Core.Events
+@using HopFrame.Core.Callbacks
 @using HopFrame.Core.Services
 @using HopFrame.Web.Models
+@using HopFrame.Web.Plugins
+@using HopFrame.Web.Plugins.Events
 @using Microsoft.JSInterop
 @using Microsoft.EntityFrameworkCore
 
@@ -19,7 +21,7 @@
 <div style="display: flex; flex-direction: column; height: 100%">
     <FluentToolbar Class="hopframe-toolbar">
         <h3>@_config?.DisplayName</h3>
-        @if (!DisplaySelection) {
+        @if (!DisplaySelection && _buttonToggles.ShowRefreshButton) {
             <FluentButton
                 IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
                 OnClick="Reload"
@@ -29,18 +31,34 @@
             </FluentButton>
         }
         
+        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopLeft)) {
+            <FluentButton
+                IconStart="@(button.Icon?.GetInstance())"
+                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                @button.Title
+            </FluentButton>
+        }
+        
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
         
-        @if (_hasCreatePolicy && DisplayActions) {
-            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
+        @if (_hasCreatePolicy && DisplayActions && _buttonToggles.ShowAddEntityButton) {
+            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entity</FluentButton>
+        }
+
+        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopRight)) {
+            <FluentButton
+                IconStart="@(button.Icon?.GetInstance())"
+                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                @button.Title
+            </FluentButton>
         }
     </FluentToolbar>
     <FluentProgress Visible="_loading" Width="100%" />
 
     <div style="display: flex; overflow-y: auto; flex-grow: 1">
         <div style="flex-grow: 1">
-            <FluentDataGrid Items="_currentlyDisplayedModels.AsQueryable()">
+            <FluentDataGrid Items="CurrentlyDisplayedModels.AsQueryable()">
                 @if (DisplaySelection) {
                     <SelectColumn 
                         TGridItem="object"
@@ -61,13 +79,19 @@
 
                 @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
-                        @if (_hasUpdatePolicy) {
+                        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.OnEntry)) {
+                            <FluentButton OnClick="() => button.Handler.Invoke(context, _config!)">
+                                <FluentIcon Value="@(button.Icon!.GetInstance())" />
+                            </FluentButton>
+                        }
+                        
+                        @if (_hasUpdatePolicy && _buttonToggles.ShowEditButton) {
                             <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                             </FluentButton>
                         }
 
-                        @if (_hasDeletePolicy) {
+                        @if (_hasDeletePolicy && _buttonToggles.ShowDeleteButton) {
                             <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                             </FluentButton>
@@ -118,7 +142,8 @@
 @inject IJSRuntime Js
 @inject IDialogService Dialogs
 @inject IHopFrameAuthHandler Handler
-@inject IEventEmitter Emitter
+@inject ICallbackEmitter Emitter
+@inject IPluginOrchestrator PluginOrchestrator
 
 @code {
     
@@ -143,7 +168,7 @@
     private TableConfig? _config;
     private ITableManager? _manager;
 
-    private object[] _currentlyDisplayedModels = [];
+    public object[] CurrentlyDisplayedModels = [];
     private int _currentPage;
     private int _totalPages;
     private string? _searchTerm;
@@ -154,6 +179,10 @@
     private bool _hasCreatePolicy;
 
     private bool _allSelected;
+
+    private readonly CancellationTokenSource _tokenSource = new();
+    private List<PluginButton> _pluginButtons = new();
+    private DefaultButtonToggles _buttonToggles = new();
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -169,12 +198,19 @@
             return;
         }
 
+        var eventResult = await PluginOrchestrator.DispatchEvent(new TableInitializedEvent(this) {
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) return;
+        _pluginButtons = eventResult.PluginButtons;
+        _buttonToggles = eventResult.DefaultButtons;
+
         _hasUpdatePolicy = await Handler.IsAuthenticatedAsync(_config?.UpdatePolicy);
         _hasDeletePolicy = await Handler.IsAuthenticatedAsync(_config?.DeletePolicy);
         _hasCreatePolicy = await Handler.IsAuthenticatedAsync(_config?.CreatePolicy);
         
         _manager ??= Explorer.GetTableManager(_config!.PropertyName);
-        _currentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
+        CurrentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
         _totalPages = await _manager.TotalPages(PerPage);
     }
 
@@ -189,6 +225,7 @@
 
     public void Dispose() {
         _searchCancel.Dispose();
+        _tokenSource.Dispose();
     }
 
     private CancellationTokenSource _searchCancel = new();
@@ -199,14 +236,31 @@
         _searchCancel = new();
         
         await Task.Delay(500, _searchCancel.Token);
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new SearchEvent(this) {
+            SearchTerm = _searchTerm,
+            Table = _config!
+        }, _tokenSource.Token);
+        if (eventResult.IsCanceled) return;
+        _searchTerm = eventResult.SearchTerm;
+        
         await Reload();
     }
 
     private async Task Reload() {
         _loading = true;
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new ReloadEvent(this) {
+            Table = _config!
+        }, _tokenSource.Token);
+        if (eventResult.IsCanceled) {
+            _loading = false;
+            return;
+        }
+        
         if (!string.IsNullOrEmpty(_searchTerm)) {
             (var query, _totalPages) = await _manager!.Search(_searchTerm, 0, PerPage);
-            _currentlyDisplayedModels = query.ToArray();
+            CurrentlyDisplayedModels = query.ToArray();
         }
         else {
             await OnInitializedAsync();
@@ -215,6 +269,15 @@
     }
 
     private async Task ChangePage(int page) {
+        var eventResult = await PluginOrchestrator.DispatchEvent(new PageChangeEvent(this) {
+            CurrentPage = _currentPage,
+            NewPage = page,
+            TotalPages = _totalPages,
+            Table = _config!
+        }, _tokenSource.Token);
+        if (eventResult.IsCanceled) return;
+        page = eventResult.NewPage;
+        
         if (page < 0 || page > _totalPages - 1) return;
         _currentPage = page;
         await Reload();
@@ -225,13 +288,19 @@
             Navigator.NavigateTo("/admin", true);
             return;
         }
+
+        var eventResult = await PluginOrchestrator.DispatchEvent(new DeleteEntryEvent(this) {
+            Entity = element,
+            Table = _config!
+        }, _tokenSource.Token);
+        if (eventResult.IsCanceled) return;
         
         var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
         var result = await dialog.Result;
         if (result.Cancelled) return;
 
         await _manager!.DeleteItem(element);
-        await Emitter.DispatchEvent(EventTypes.DeleteEntry(_config!), element);
+        await Emitter.DispatchCallback(CallbackTypes.DeleteEntry(_config!), element);
         await Reload();
     }
 
@@ -240,6 +309,22 @@
             Navigator.NavigateTo("/admin", true);
             return;
         }
+
+        HopFrameTablePageEventArgs eventArgs;
+        if (element is null) {
+            eventArgs = new CreateEntryEvent(this) {
+                Table = _config!
+            };
+        }
+        else {
+            eventArgs = new UpdateEntryEvent(this) {
+                Table = _config!,
+                Entity = element
+            };
+        }
+        
+        var eventResult = await PluginOrchestrator.DispatchEvent(eventArgs, _tokenSource.Token);
+        if (eventResult.IsCanceled) return;
         
         var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new DialogParameters {
             TrapFocus = false
@@ -251,25 +336,33 @@
         
         if (element is null) {
             await _manager!.AddItem(data!.CurrentObject!);
-            await Emitter.DispatchEvent(EventTypes.CreateEntry(_config!), data.CurrentObject!);
+            await Emitter.DispatchCallback(CallbackTypes.CreateEntry(_config!), data.CurrentObject!);
         }
         else {
             await _manager!.EditItem(data!.CurrentObject!);
-            await Emitter.DispatchEvent(EventTypes.UpdateEntry(_config!), data.CurrentObject!);
+            await Emitter.DispatchCallback(CallbackTypes.UpdateEntry(_config!), data.CurrentObject!);
         }
         
         await Reload();
     }
 
     private void SelectItem(object item, bool selected) {
+        var eventResult = PluginOrchestrator.DispatchEvent(new SelectEntryEvent(this) {
+            Entity = item,
+            Selected = selected,
+            Table = _config!
+        }, _tokenSource.Token).Result;
+        if (eventResult.IsCanceled) return;
+        selected = eventResult.Selected;
+        
         if (!selected)
             DialogData!.SelectedObjects.Remove(item);
         else DialogData!.SelectedObjects.Add(item);
     }
 
     private void SelectAll() {
-        var selected = _currentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
-        foreach (var displayedModel in _currentlyDisplayedModels) {
+        var selected = CurrentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
+        foreach (var displayedModel in CurrentlyDisplayedModels) {
             SelectItem(displayedModel, !selected);
         }
         _allSelected = selected;
