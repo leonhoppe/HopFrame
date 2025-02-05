@@ -31,18 +31,34 @@
             </FluentButton>
         }
         
+        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopLeft)) {
+            <FluentButton
+                IconStart="@(button.Icon?.GetInstance())"
+                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                @button.Title
+            </FluentButton>
+        }
+        
         <FluentSpacer />
         <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
         
         @if (_hasCreatePolicy && DisplayActions) {
             <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entry</FluentButton>
         }
+
+        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopRight)) {
+            <FluentButton
+                IconStart="@(button.Icon?.GetInstance())"
+                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                @button.Title
+            </FluentButton>
+        }
     </FluentToolbar>
     <FluentProgress Visible="_loading" Width="100%" />
 
     <div style="display: flex; overflow-y: auto; flex-grow: 1">
         <div style="flex-grow: 1">
-            <FluentDataGrid Items="_currentlyDisplayedModels.AsQueryable()">
+            <FluentDataGrid Items="CurrentlyDisplayedModels.AsQueryable()">
                 @if (DisplaySelection) {
                     <SelectColumn 
                         TGridItem="object"
@@ -63,6 +79,12 @@
 
                 @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
+                        @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.OnEntry)) {
+                            <FluentButton OnClick="() => button.Handler.Invoke(context, _config!)">
+                                <FluentIcon Value="@(button.Icon!.GetInstance())" />
+                            </FluentButton>
+                        }
+                        
                         @if (_hasUpdatePolicy) {
                             <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(context); }">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
@@ -146,7 +168,7 @@
     private TableConfig? _config;
     private ITableManager? _manager;
 
-    private object[] _currentlyDisplayedModels = [];
+    public object[] CurrentlyDisplayedModels = [];
     private int _currentPage;
     private int _totalPages;
     private string? _searchTerm;
@@ -159,6 +181,7 @@
     private bool _allSelected;
 
     private readonly CancellationTokenSource _tokenSource = new();
+    private List<PluginButton> _pluginButtons = new();
 
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
@@ -174,12 +197,18 @@
             return;
         }
 
+        var eventResult = await PluginOrchestrator.DispatchEvent(new PageInitializedEvent(this) {
+            Table = _config!
+        });
+        if (eventResult.IsCanceled) return;
+        _pluginButtons = eventResult.PluginButtons;
+
         _hasUpdatePolicy = await Handler.IsAuthenticatedAsync(_config?.UpdatePolicy);
         _hasDeletePolicy = await Handler.IsAuthenticatedAsync(_config?.DeletePolicy);
         _hasCreatePolicy = await Handler.IsAuthenticatedAsync(_config?.CreatePolicy);
         
         _manager ??= Explorer.GetTableManager(_config!.PropertyName);
-        _currentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
+        CurrentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
         _totalPages = await _manager.TotalPages(PerPage);
     }
 
@@ -228,7 +257,7 @@
         
         if (!string.IsNullOrEmpty(_searchTerm)) {
             (var query, _totalPages) = await _manager!.Search(_searchTerm, 0, PerPage);
-            _currentlyDisplayedModels = query.ToArray();
+            CurrentlyDisplayedModels = query.ToArray();
         }
         else {
             await OnInitializedAsync();
@@ -329,8 +358,8 @@
     }
 
     private void SelectAll() {
-        var selected = _currentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
-        foreach (var displayedModel in _currentlyDisplayedModels) {
+        var selected = CurrentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
+        foreach (var displayedModel in CurrentlyDisplayedModels) {
             SelectItem(displayedModel, !selected);
         }
         _allSelected = selected;

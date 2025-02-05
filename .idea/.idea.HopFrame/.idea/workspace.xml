@@ -11,12 +11,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Passed cancellation tokens to event handlers if needed">
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageInitializedEvent.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/IPluginOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/IPluginOrchestrator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -95,6 +94,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ece8533187fe96ce67b3ef1c9cc3502ef8da5510aadb132a9b21c5605d7c2119/PropertyColumn.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ee4d234452e240d83e3de396c2e85cbf9ac9fb9add618b955eea196c81aaf8/IDialogContentComponent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fc2027f7e776fc105cddb56b1a25eeb3895b3ae6f3aac854d786e63bd01f75e2/CallSiteFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fd57398b7dc3a8ce7da2786f2c67289c3d974658a9e90d0c1e84db3d965fbf1/Console.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -240,7 +240,7 @@
       <workItem from="1738421294144" duration="1651000" />
       <workItem from="1738422949337" duration="141000" />
       <workItem from="1738512801911" duration="6776000" />
-      <workItem from="1738769458367" duration="962000" />
+      <workItem from="1738769458367" duration="3697000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -538,7 +538,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738519603597</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Passed cancellation tokens to event handlers if needed">
+      <option name="closed" value="true" />
+      <created>1738770468949</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1738770468949</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -589,7 +597,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added n -&gt; m relation support" />
     <MESSAGE value="Added text area support and DI support for modifier functions" />
     <MESSAGE value="Addressed all build warnings" />
     <MESSAGE value="Added documentation for the configurators and service extensions methods" />
@@ -614,6 +621,7 @@
     <MESSAGE value="Fixed event emitter service scope" />
     <MESSAGE value="Added custom views" />
     <MESSAGE value="Added plugin events" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added plugin events" />
+    <MESSAGE value="Passed cancellation tokens to event handlers if needed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Passed cancellation tokens to event handlers if needed" />
   </component>
 </project>
