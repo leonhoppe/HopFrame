@@ -28,13 +28,25 @@ internal sealed class PluginOrchestrator(IServiceProvider services) : IPluginOrc
         }
     }
 
-    public async Task<TEvent> DispatchEvent<TEvent>(TEvent @event, CancellationToken ct = new()) {
+    public async Task<TEvent> DispatchEvent<TEvent>(TEvent @event, CancellationToken ct = new()) where TEvent : HopFrameEventArgs {
         var eventContainers = services.GetRequiredService<IEnumerable<PluginEventContainer>>()
             .Where(container => container.EventType == typeof(TEvent));
 
+        var eventType = typeof(TEvent);
+        var tokenType = typeof(CancellationToken);
         foreach (var container in eventContainers) {
             var plugin = services.GetRequiredService(container.Handler.DeclaringType!);
-            var result = container.Handler.Invoke(plugin, [@event]);
+            var parameters = new List<object?>();
+
+            foreach (var parameter in container.Handler.GetParameters()) {
+                if (parameter.ParameterType == eventType)
+                    parameters.Add(@event);
+                else if (parameter.ParameterType == tokenType)
+                    parameters.Add(ct);
+                else parameters.Add(null);
+            }
+            
+            var result = container.Handler.Invoke(plugin, parameters.ToArray());
 
             if (container.IsAwaitable)
                 await (Task)result!;

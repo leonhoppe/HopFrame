@@ -1,5 +1,6 @@
 @rendermode InteractiveServer
 @implements IDialogContentComponent<EditorDialogData>
+@implements IDisposable
 
 @using System.Collections
 @using HopFrame.Core.Config
@@ -184,6 +185,7 @@
     private ITableManager? _manager;
     private readonly Dictionary<string, List<string>> _validationErrors = new();
     private readonly List<PropertyChange> _changes = new();
+    private readonly CancellationTokenSource _tokenSource = new();
 
     protected override void OnInitialized() {
         _currentlyEditing = Content.CurrentObject is not null;
@@ -382,7 +384,7 @@
                 Errors = errorList,
                 Property = property,
                 Table = Content.Config
-            });
+            }, _tokenSource.Token);
 
             if (eventResult.IsCanceled) return false;
         }
@@ -400,7 +402,11 @@
         ApplyChanges(Content.CurrentObject!);
         return true;
     }
-    
+
+    public void Dispose() {
+        _tokenSource.Dispose();
+    }
+
     private enum InputType {
         Number,
         Switch,

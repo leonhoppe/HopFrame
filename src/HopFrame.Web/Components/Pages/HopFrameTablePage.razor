@@ -158,6 +158,8 @@
 
     private bool _allSelected;
 
+    private readonly CancellationTokenSource _tokenSource = new();
+
     protected override void OnInitialized() {
         _config ??= Explorer.GetTable(TableDisplayName);
 
@@ -206,7 +208,7 @@
         var eventResult = await PluginOrchestrator.DispatchEvent(new SearchEvent(this) {
             SearchTerm = _searchTerm,
             Table = _config!
-        });
+        }, _tokenSource.Token);
         if (eventResult.IsCanceled) return;
         _searchTerm = eventResult.SearchTerm;
         
@@ -218,7 +220,7 @@
 
         var eventResult = await PluginOrchestrator.DispatchEvent(new ReloadEvent(this) {
             Table = _config!
-        });
+        }, _tokenSource.Token);
         if (eventResult.IsCanceled) {
             _loading = false;
             return;
@@ -240,7 +242,7 @@
             NewPage = page,
             TotalPages = _totalPages,
             Table = _config!
-        });
+        }, _tokenSource.Token);
         if (eventResult.IsCanceled) return;
         page = eventResult.NewPage;
         
@@ -258,7 +260,7 @@
         var eventResult = await PluginOrchestrator.DispatchEvent(new DeleteEntryEvent(this) {
             Entity = element,
             Table = _config!
-        });
+        }, _tokenSource.Token);
         if (eventResult.IsCanceled) return;
         
         var dialog = await Dialogs.ShowConfirmationAsync("Do you really want to delete this entry?");
@@ -289,7 +291,7 @@
             };
         }
         
-        var eventResult = await PluginOrchestrator.DispatchEvent(eventArgs);
+        var eventResult = await PluginOrchestrator.DispatchEvent(eventArgs, _tokenSource.Token);
         if (eventResult.IsCanceled) return;
         
         var panel = await Dialogs.ShowPanelAsync<HopFrameEditor>(new EditorDialogData(_config!, element), new DialogParameters {
@@ -317,7 +319,7 @@
             Entity = item,
             Selected = selected,
             Table = _config!
-        }).Result;
+        }, _tokenSource.Token).Result;
         if (eventResult.IsCanceled) return;
         selected = eventResult.Selected;
         
