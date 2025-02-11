@@ -12,11 +12,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/TestPlugin.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/.idea/docs.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/c.list" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/cfg/buildprofiles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/cfg/glossary.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/h.tree" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/topics/Installation.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/topics/starter.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/v.list" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Writerside/writerside.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +107,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Plugins/Internal/PluginOrchestrator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -118,28 +126,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.Api: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
-    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.environmentSetup&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Project.HopFrame.Testing.executor": "Run",
+    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
+    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
+    "git-widget-placeholder": "!31 on feature/docs",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -244,7 +252,8 @@
       <workItem from="1738422949337" duration="141000" />
       <workItem from="1738512801911" duration="6776000" />
       <workItem from="1738769458367" duration="5256000" />
-      <workItem from="1738774834563" duration="361000" />
+      <workItem from="1738774834563" duration="728000" />
+      <workItem from="1739301922710" duration="33000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -566,7 +575,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738774569657</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Added custom search functionality">
+      <option name="closed" value="true" />
+      <created>1738775556256</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1738775556256</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -617,7 +634,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added documentation for the configurators and service extensions methods" />
     <MESSAGE value="Created tests for the core module" />
     <MESSAGE value="Added more tests" />
     <MESSAGE value="Added web module tests" />
@@ -642,6 +658,7 @@
     <MESSAGE value="Passed cancellation tokens to event handlers if needed" />
     <MESSAGE value="Added plugin buttons" />
     <MESSAGE value="Added default button removal feature" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added default button removal feature" />
+    <MESSAGE value="Added custom search functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added custom search functionality" />
   </component>
 </project>
