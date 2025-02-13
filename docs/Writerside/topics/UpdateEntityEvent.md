@@ -1,3 +1,0 @@
-# UpdateEntityEvent
-
-Start typing here...

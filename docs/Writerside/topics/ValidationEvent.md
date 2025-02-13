@@ -1,3 +1,0 @@
-# ValidationEvent
-
-Start typing here...

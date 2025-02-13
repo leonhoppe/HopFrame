@@ -1,3 +1,0 @@
-# SelectEntityEvent
-
-Start typing here...

@@ -12,15 +12,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/docs/Writerside/images/dashboard.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/Writerside/images/editor.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/Writerside/images/table.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/AuthService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/Dashboard.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Dashboard.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/Table.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Table.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Writerside/hopframe.tree" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/hopframe.tree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/starter.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -252,6 +247,7 @@
       <workItem from="1739301922710" duration="33000" />
       <workItem from="1739352479748" duration="3047000" />
       <workItem from="1739369355001" duration="1751000" />
+      <workItem from="1739461452173" duration="5533000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />

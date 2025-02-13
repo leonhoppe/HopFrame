@@ -1,3 +1,0 @@
-# CreateEntityEvent
-
-Start typing here...

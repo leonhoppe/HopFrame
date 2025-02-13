@@ -1,3 +1,0 @@
-# DeleteEntityEvent
-
-Start typing here...

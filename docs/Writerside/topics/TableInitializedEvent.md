@@ -1,3 +1,0 @@
-# TableInitializedEvent
-
-Start typing here...

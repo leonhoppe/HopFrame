@@ -1,3 +1,0 @@
-# SearchEvent
-
-Start typing here...

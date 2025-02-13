@@ -14,7 +14,7 @@ public abstract class HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **Sender**: The sender of the event.
     - **Type:** `TSender`
@@ -23,7 +23,7 @@ public abstract class HopFrameEventArgs {
 - **Table**: The table configuration related to the event.
     - **Type:** `TableConfig`
 
-### Methods
+**Methods:**
 
 - **SetCancelled**
     - **Parameters:**
@@ -40,7 +40,7 @@ public sealed class DeleteEntryEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **Entity**: The entity being deleted.
     - **Type:** `object`
@@ -65,7 +65,7 @@ public sealed class UpdateEntryEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **Entity**: The entity being updated.
     - **Type:** `object`
@@ -81,7 +81,7 @@ public sealed class SelectEntryEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **Entity**: The entity being selected.
     - **Type:** `object`
@@ -100,7 +100,7 @@ public sealed class PageChangeEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **CurrentPage**: The current page number.
     - **Type:** `int`
@@ -132,7 +132,7 @@ public sealed class SearchEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **SearchTerm**: The search term used.
     - **Type:** `string`
@@ -143,7 +143,7 @@ public sealed class SearchEvent : HopFrameEventArgs {
 - **TotalPages**: The total number of pages of search results.
     - **Type:** `int`
 
-### Methods
+**Methods:**
 
 - **SetSearchResult**
     - **Parameters:**
@@ -172,14 +172,14 @@ public class TableInitializedEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **PluginButtons**: The list of plugin buttons for the table.
     - **Type:** `List<PluginButton>`
 - **DefaultButtons**: The default button toggles for the table.
     - **Type:** `DefaultButtonToggles`
 
-### Methods
+**Methods:**
 
 - **AddPageButton**
     - **Parameters:**
@@ -206,7 +206,7 @@ public sealed class ValidationEvent : HopFrameEventArgs {
 }
 ```
 
-### Properties
+**Properties:**
 
 - **Errors**: The list of validation errors.
     - **Type:** `IList<string>`
