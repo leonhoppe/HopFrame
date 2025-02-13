@@ -43,7 +43,7 @@ public sealed class CustomViewConfigurator(CustomView view) {
     }
 
     /// <summary>
-    /// Sets the rule for sidebar to determine if the link is active
+    /// Sets the rule for the sidebar to determine if the link is active
     /// </summary>
     /// <param name="match">The desired match rule</param>
     public CustomViewConfigurator SetLinkMatch(NavLinkMatch match) {

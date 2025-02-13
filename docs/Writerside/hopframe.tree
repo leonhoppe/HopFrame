@@ -8,6 +8,7 @@
 
     <toc-element topic="starter.md"/>
     <toc-element topic="Installation.md"/>
+    <toc-element topic="Authentication.md"/>
     <toc-element toc-title="Core Module">
         <toc-element toc-title="Configurations">
             <toc-element topic="HopFrameConfig.md"/>
@@ -19,20 +20,12 @@
     </toc-element>
     <toc-element toc-title="Web Module">
         <toc-element toc-title="Interface">
+            <toc-element topic="Custom-Views.md"/>
             <toc-element topic="Table.md"/>
             <toc-element topic="Dashboard.md"/>
         </toc-element>
         <toc-element topic="Plugins.md">
             <toc-element topic="Events.md">
-                <toc-element topic="SelectEntityEvent.md"/>
-                <toc-element topic="UpdateEntityEvent.md"/>
-                <toc-element topic="CreateEntityEvent.md"/>
-                <toc-element topic="DeleteEntityEvent.md"/>
-                <toc-element topic="TableInitializedEvent.md"/>
-                <toc-element topic="PageChangeEvent.md"/>
-                <toc-element topic="ReloadEvent.md"/>
-                <toc-element topic="SearchEvent.md"/>
-                <toc-element topic="ValidationEvent.md"/>
             </toc-element>
         </toc-element>
     </toc-element>
