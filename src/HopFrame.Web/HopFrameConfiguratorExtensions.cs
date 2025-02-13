@@ -33,6 +33,11 @@ public static class HopFrameConfiguratorExtensions {
         return configurator;
     }
 
+    /// <summary>
+    /// Registers a plugin
+    /// </summary>
+    /// <param name="configurator">The configurator for the HopFrame config that is being created</param>
+    /// <typeparam name="TPlugin">The plugin that should be registered</typeparam>
     public static HopFrameConfigurator AddPlugin<TPlugin>(this HopFrameConfigurator configurator) where TPlugin : HopFramePlugin {
         PluginOrchestrator.RegisterPlugin(configurator.ServiceCollection, typeof(TPlugin));
 

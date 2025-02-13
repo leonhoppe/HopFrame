@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="hopframe"
+                 name="HopFrame"
+                 start-page="Overview.md">
+
+    <toc-element topic="Overview.md"/>
+    <toc-element topic="Installation.md"/>
+    <toc-element topic="Authentication.md"/>
+    <toc-element toc-title="Core Module">
+        <toc-element toc-title="Configurations">
+            <toc-element topic="HopFrameConfig.md"/>
+            <toc-element topic="DbContextConfig.md"/>
+            <toc-element topic="TableConfig.md"/>
+            <toc-element topic="PropertyConfig.md"/>
+        </toc-element>
+        <toc-element topic="Callbacks.md"/>
+    </toc-element>
+    <toc-element toc-title="Web Module">
+        <toc-element toc-title="Interface">
+            <toc-element topic="Custom-Views.md"/>
+            <toc-element topic="Table.md"/>
+            <toc-element topic="Dashboard.md"/>
+        </toc-element>
+        <toc-element topic="Plugins.md">
+            <toc-element topic="Events.md">
+            </toc-element>
+        </toc-element>
+    </toc-element>
+</instance-profile>

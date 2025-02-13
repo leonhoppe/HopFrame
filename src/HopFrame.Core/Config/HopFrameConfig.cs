@@ -48,10 +48,20 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection coll
         return new DbContextConfigurator<TDbContext>(context);
     }
 
+    /// <summary>
+    /// Check if a context is already registered in the HopFrame
+    /// </summary>
+    /// <typeparam name="TDbContext">The context that should be checked</typeparam>
+    /// <returns>true if the context is already registered, false if not</returns>
     public bool HasDbContext<TDbContext>() where TDbContext : DbContext {
         return InnerConfig.Contexts.Any(context => context.ContextType == typeof(TDbContext));
     }
 
+    /// <summary>
+    /// Returns a configurator for the context if it was already defined
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <returns>The configurator of the context if it already was defined, null if not</returns>
     public DbContextConfigurator<TDbContext>? GetDbContext<TDbContext>() where TDbContext : DbContext {
         var config = InnerConfig.Contexts
             .SingleOrDefault(context => context.ContextType == typeof(TDbContext));
