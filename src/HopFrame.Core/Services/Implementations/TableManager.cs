@@ -63,7 +63,7 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     private bool ItemSearched(TModel item, string searchTerm) {
         foreach (var property in config.Properties) {
             if (!property.Searchable) continue;
-            var value = property.Info.GetValue(item);
+            var value = property.GetValue(item, provider);
             if (value is null) continue;
             
             var strValue = value.ToString();
@@ -77,10 +77,10 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null) {
         if (item is null) return string.Empty;
 
-        if (prop.IsListingProperty)
+        if (prop.IsVirtualProperty)
             return await prop.Formatter!.Invoke(item, provider);
 
-        var propValue = value ?? prop.Info.GetValue(item);
+        var propValue = value ?? prop.GetValue(item, provider);
         if (propValue is null)
             return string.Empty;
 
@@ -112,7 +112,7 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         if (innerConfig is null) return propValue.ToString()!;
         
         var innerProp = innerConfig.Properties
-            .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsListingProperty);
+            .SingleOrDefault(p => p.Info == prop.DisplayedProperty && !p.IsVirtualProperty);
 
         if (innerProp is null) return propValue.ToString() ?? string.Empty;
         return await DisplayProperty(propValue, innerProp);

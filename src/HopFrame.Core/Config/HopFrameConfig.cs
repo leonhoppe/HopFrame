@@ -15,7 +15,7 @@ public class HopFrameConfig {
 /// <summary>
 /// A helper class for editing the <see cref="HopFrameConfig"/>
 /// </summary>
-public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection collection = null!) {
+public sealed class HopFrameConfigurator(HopFrameConfig config, IServiceCollection collection = null!) {
     
     /// <summary>
     /// The Internal HopFrame configuration that's modified by the helper functions

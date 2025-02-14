@@ -63,7 +63,7 @@ public class TableConfiguratorTests {
         var virtualProperty = tableConfig.Properties.SingleOrDefault(p => p.Name == "VirtualName");
         Assert.NotNull(virtualProperty);
         Assert.NotNull(propertyConfigurator);
-        Assert.True(virtualProperty.IsListingProperty);
+        Assert.True(virtualProperty.IsVirtualProperty);
         Assert.Equal("VirtualName", virtualProperty.Name);
     }
     
@@ -84,7 +84,7 @@ public class TableConfiguratorTests {
         var virtualProperty = tableConfig.Properties.SingleOrDefault(p => p.Name == "VirtualName");
         Assert.NotNull(virtualProperty);
         Assert.NotNull(propertyConfigurator);
-        Assert.True(virtualProperty.IsListingProperty);
+        Assert.True(virtualProperty.IsVirtualProperty);
         Assert.Equal("VirtualName", virtualProperty.Name);
     }
 

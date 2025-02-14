@@ -11,7 +11,7 @@
 @using HopFrame.Web.Plugins.Events
 
 <FluentDialogBody>
-    @foreach (var property in Content.Config.Properties.Where(prop => !prop.IsListingProperty).OrderBy(prop => prop.Order)) {
+    @foreach (var property in GetEditorProperties()) {
         if (!_currentlyEditing && !property.Creatable) continue;
 
         <div style="margin-bottom: 20px">
@@ -158,7 +158,7 @@
                     ValueChanged="@(async v => await SetPropertyValue(property, v, InputType.Text))" />
             }
             
-            @foreach (var error in _validationErrors[property.Info.Name]) {
+            @foreach (var error in _validationErrors[property.Name]) {
                 <FluentLabel Color="@Color.Error">@error</FluentLabel>
             }
         </div>
@@ -197,9 +197,14 @@
         Content.CurrentObject ??= Activator.CreateInstance(Content.Config.TableType);
         
         foreach (var property in Content.Config.Properties) {
-            if (property.IsListingProperty) continue;
-            _validationErrors.Add(property.Info.Name, []);
+            _validationErrors.Add(property.Name, []);
         }
+    }
+
+    private IEnumerable<PropertyConfig> GetEditorProperties() {
+        return Content.Config.Properties
+            .Where(prop => prop is not VirtualPropertyConfig { VirtualParser: null })
+            .OrderBy(prop => prop.Order);
     }
 
     private TValue? GetPropertyValue<TValue>(PropertyConfig config, object? listItem = null) {
@@ -315,12 +320,12 @@
     private void ApplyChanges(object entry) {
         foreach (var prop in Content.Config.Properties) {
             var newValue = GetNewestValue(prop);
-            prop.Info.SetValue(entry, newValue);
+            prop.SetValue(entry, newValue, Provider);
         }
     }
 
     private object? GetNewestValue(PropertyConfig config) {
-        var value = config.Info.GetValue(Content.CurrentObject);
+        var value = config.GetValue(Content.CurrentObject, Provider);
 
         var change = _changes.LastOrDefault(c => c.Property == config.Info);
         if (change is not null)
@@ -366,9 +371,9 @@
             return false;
         
         foreach (var property in Content.Config.Properties) {
-            if (property.IsListingProperty) continue;
+            if (property.IsVirtualProperty) continue;
             
-            var errorList = _validationErrors[property.Info.Name];
+            var errorList = _validationErrors[property.Name];
             errorList.Clear();
             var value = GetNewestValue(property);
 
