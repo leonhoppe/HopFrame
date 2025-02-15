@@ -61,7 +61,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         var entity = dbContext.Model.FindEntityType(table.TableType)!;
         
         foreach (var propertyConfig in table.Properties) {
-            if (propertyConfig.IsListingProperty) continue;
+            if (propertyConfig.IsVirtualProperty) continue;
             if (propertyConfig.IsRelation) continue;
             
             var prop = entity.FindProperty(propertyConfig.Info.Name);
@@ -93,7 +93,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         
         foreach (var property in entity.GetProperties()) {
             var propConfig = table.Properties
-                .Where(prop => !prop.IsListingProperty)
+                .Where(prop => !prop.IsVirtualProperty)
                 .SingleOrDefault(prop => prop.Info == property.PropertyInfo);
             if (propConfig is null || propConfig.IsRequired) continue;
             propConfig.IsRequired = !property.IsNullable;

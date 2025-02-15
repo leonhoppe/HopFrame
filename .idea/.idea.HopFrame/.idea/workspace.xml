@@ -12,10 +12,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/docs/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Writerside/hopframe.tree" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/hopframe.tree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/starter.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Overview.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +42,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/plugins" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -74,6 +81,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/558c1d46e1e21d2e78ee2ab67a674f6927bf95355b2f245f35d74bb5ec0f92/CancellationTokenSource.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5a69b82eed595b731b82667db08722b69b82482e275cf32dfb219190e3dc49/CollectionEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/60e7b22380df80ef6fefe43138047f49ec6eff4b25c12b42ce3d6ed5aac/MethodInvokerCommon.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6354a7b35d7821629924d3676acd7e67a6f7f94343e0e66ec439aa2bd6ed5/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/642391624bd5c30b3411a11434588aba4906207335166b784bf3a4325f6c7/NavigationEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6d1d64f05e7045295fa180276a8c2aef0302c9e96eb53b3431ab13db4579/FluentAppBarItem.razor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fe785cceb29ca2d1da78e157315815a7c4372b582a20a71c28b210f9d56e/IconsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
@@ -97,8 +105,6 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fd57398b7dc3a8ce7da2786f2c67289c3d974658a9e90d0c1e84db3d965fbf1/Console.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ff37d54b3bf4d2756237fb789635831532603376e940f63d634b869d26d74c/Regular16.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/leon/Documents/Projekte/HopFrame/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -117,28 +123,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.Api: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
-    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
-    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;!31 on feature/docs&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
+    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
+    ".NET Project.HopFrame.Testing.executor": "Run",
+    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
+    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
+    "git-widget-placeholder": "!32 on feature/virtual-properties",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -248,6 +254,7 @@
       <workItem from="1739352479748" duration="3047000" />
       <workItem from="1739369355001" duration="1751000" />
       <workItem from="1739461452173" duration="5533000" />
+      <workItem from="1739550750776" duration="3388000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />

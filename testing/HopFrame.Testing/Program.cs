@@ -34,6 +34,11 @@ builder.Services.AddHopFrame(options => {
                 .SetOrderIndex(3);
 
             table.AddVirtualProperty("Name", (user, _) => $"{user.FirstName} {user.LastName}")
+                /*.SetVirtualParser((model, input, _) => {
+                    var split = input.Split(' ');
+                    model.FirstName = split.FirstOrDefault();
+                    model.LastName = split.LastOrDefault();
+                })*/
                 .SetOrderIndex(2);
 
             table.SetDisplayName("Benutzer");

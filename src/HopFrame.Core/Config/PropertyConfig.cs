@@ -23,9 +23,37 @@ public class PropertyConfig(PropertyInfo info, TableConfig table, int nthPropert
     public bool IsRelation { get; internal set; }
     public bool IsRequired { get; internal set; }
     public bool IsEnumerable { get; internal set; }
-    public bool IsListingProperty { get; set; }
+    public bool IsVirtualProperty { get; set; }
     public int Order { get; set; } = nthProperty;
     public int DisplayLength { get; set; } = 32;
+
+    public virtual object? GetValue(object? source, IServiceProvider provider) {
+        return Info.GetValue(source);
+    }
+
+    public virtual void SetValue(object? source, object? value, IServiceProvider provider) {
+        Info.SetValue(source, value);
+    }
+}
+
+public sealed class VirtualPropertyConfig(TableConfig table, int nthProperty) : PropertyConfig(GetDummyProperty(), table, nthProperty) {
+    public string? DummyProperty { get; set; } = null;
+
+    public Func<object, string, IServiceProvider, Task>? VirtualParser { get; set; }
+
+    public override object? GetValue(object? source, IServiceProvider provider) {
+        return Formatter!.Invoke(source!, provider).Result;
+    }
+
+    public override void SetValue(object? source, object? value, IServiceProvider provider) {
+        VirtualParser?.Invoke(source!, (string)value!, provider).Wait();
+    }
+
+    private static PropertyInfo GetDummyProperty() {
+        return typeof(VirtualPropertyConfig)
+            .GetProperties()
+            .First(prop => prop.Name == nameof(DummyProperty));
+    }
 }
 
 /// <summary>
@@ -210,6 +238,31 @@ public class PropertyConfigurator<TProp>(PropertyConfig config) {
         InnerConfig.IsRelation = true;
         InnerConfig.IsEnumerable = isEnumerable;
         InnerConfig.IsRequired = isRequired;
+        return this;
+    }
+}
+
+public sealed class VirtualPropertyConfigurator<TModel>(VirtualPropertyConfig config) : PropertyConfigurator<string>(config) {
+    /// <summary>
+    /// Determines the function used for parsing the value provided in the editor dialog to the actual model value
+    /// </summary>
+    public VirtualPropertyConfigurator<TModel> SetVirtualParser(Action<TModel, string, IServiceProvider> parser) {
+        var cfg = InnerConfig as VirtualPropertyConfig;
+
+        cfg!.VirtualParser = (model, input, services) => {
+            parser.Invoke((TModel)model, input, services);
+            return Task.CompletedTask;
+        };
+        
+        return this;
+    }
+    
+    /// <inheritdoc cref="SetVirtualParser{TModel}(System.Action{TModel,string,System.IServiceProvider})"/>
+    public VirtualPropertyConfigurator<TModel> SetVirtualParser(Func<TModel, string, IServiceProvider, Task> parser) {
+        var cfg = InnerConfig as VirtualPropertyConfig;
+        
+        cfg!.VirtualParser = (model, input, services) => parser.Invoke((TModel)model, input, services);
+        
         return this;
     }
 }

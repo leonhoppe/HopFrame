@@ -52,7 +52,7 @@ public class TableConfig {
 /// <summary>
 /// A helper class for editing the <see cref="TableConfig"/>
 /// </summary>
-public class TableConfigurator<TModel>(TableConfig config) {
+public sealed class TableConfigurator<TModel>(TableConfig config) {
     
     /// <summary>
     /// The Internal property configuration that's modified by the helper functions
@@ -76,7 +76,7 @@ public class TableConfigurator<TModel>(TableConfig config) {
     public PropertyConfigurator<TProp> Property<TProp>(Expression<Func<TModel, TProp>> propertyExpression) {
         var info = GetPropertyInfo(propertyExpression);
         var prop = InnerConfig.Properties
-            .Single(prop => prop.Info.Name == info.Name);
+            .Single(prop => prop.Info == info);
         return new PropertyConfigurator<TProp>(prop);
     }
     
@@ -99,25 +99,25 @@ public class TableConfigurator<TModel>(TableConfig config) {
     /// <param name="template">The template used for generating the property value</param>
     /// <returns>The configurator for the virtual property</returns>
     /// <seealso cref="PropertyConfigurator{TProp}"/>
-    public PropertyConfigurator<string> AddVirtualProperty(string name, Func<TModel, IServiceProvider, string> template) {
-        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count) {
+    public VirtualPropertyConfigurator<TModel> AddVirtualProperty(string name, Func<TModel, IServiceProvider, string> template) {
+        var prop = new VirtualPropertyConfig(InnerConfig, InnerConfig.Properties.Count) {
             Name = name,
-            IsListingProperty = true,
+            IsVirtualProperty = true,
             Formatter = (obj, provider) => Task.FromResult(template.Invoke((TModel)obj, provider))
         };
         InnerConfig.Properties.Add(prop);
-        return new PropertyConfigurator<string>(prop);
+        return new VirtualPropertyConfigurator<TModel>(prop);
     }
     
     /// <inheritdoc cref="AddVirtualProperty(string,System.Func{TModel,System.IServiceProvider,string})"/>
-    public PropertyConfigurator<string> AddVirtualProperty(string name, Func<TModel, IServiceProvider, Task<string>> template) {
-        var prop = new PropertyConfig(InnerConfig.Properties.First().Info, InnerConfig, InnerConfig.Properties.Count) {
+    public VirtualPropertyConfigurator<TModel> AddVirtualProperty(string name, Func<TModel, IServiceProvider, Task<string>> template) {
+        var prop = new VirtualPropertyConfig(InnerConfig, InnerConfig.Properties.Count) {
             Name = name,
-            IsListingProperty = true,
+            IsVirtualProperty = true,
             Formatter = (obj, provider) => template.Invoke((TModel)obj, provider)
         };
         InnerConfig.Properties.Add(prop);
-        return new PropertyConfigurator<string>(prop);
+        return new VirtualPropertyConfigurator<TModel>(prop);
     }
     
     /// <summary>
@@ -229,7 +229,7 @@ public class TableConfigurator<TModel>(TableConfig config) {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
         }
 
-        Type type = typeof(TSource);
+        var type = typeof(TSource);
         if (propInfo.ReflectedType != null && type != propInfo.ReflectedType &&
             !type.IsSubclassOf(propInfo.ReflectedType)) {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");

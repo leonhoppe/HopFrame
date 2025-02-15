@@ -39,7 +39,7 @@ public class DisplayPropertyTests {
         // Arrange
         var item = "test";
         var prop = new PropertyConfig(typeof(string).GetProperty("Length")!, _config, 0) {
-            IsListingProperty = true,
+            IsVirtualProperty = true,
             Formatter = (obj, provider) => Task.FromResult(((string)obj).ToUpper())
         };
 

@@ -26,7 +26,7 @@ public class DbContextConfig {
 /// <summary>
 /// A helper class for editing the <see cref="DbContextConfig"/>
 /// </summary>
-public class DbContextConfigurator<TDbContext>(DbContextConfig config) {
+public sealed class DbContextConfigurator<TDbContext>(DbContextConfig config) {
     
     /// <summary>
     /// The Internal DbContext configuration that's modified by the helper functions
