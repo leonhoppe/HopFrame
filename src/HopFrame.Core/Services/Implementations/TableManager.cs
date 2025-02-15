@@ -49,6 +49,12 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
         await context.SaveChangesAsync();
     }
 
+    public async Task AddAll(IEnumerable<object> items) {
+        var table = context.Set<TModel>();
+        await table.AddRangeAsync(items.Cast<TModel>());
+        await context.SaveChangesAsync();
+    }
+
     public async Task RevertChanges(object item) {
         var entry = context.Entry((TModel)item);
         await entry.ReloadAsync();

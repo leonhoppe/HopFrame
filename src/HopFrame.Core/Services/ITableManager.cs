@@ -10,6 +10,7 @@ public interface ITableManager {
     public Task DeleteItem(object item);
     public Task EditItem(object item);
     public Task AddItem(object item);
+    public Task AddAll(IEnumerable<object> items);
     public Task RevertChanges(object item);
     
     public Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null);

@@ -55,5 +55,10 @@ public static class HopFrameConfiguratorExtensions {
             
         return configurator;
     }
+
+    public static HopFrameConfigurator AddExporters(this HopFrameConfigurator configurator) {
+        configurator.AddPlugin<ExporterPlugin>();
+        return configurator;
+    }
     
 }
