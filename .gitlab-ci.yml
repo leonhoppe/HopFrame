@@ -11,6 +11,7 @@ publish-help:
       alias: docker
   script:
     - export VERSION=$(echo $CI_COMMIT_TAG | sed 's/^v//')
+    - cd docs
     - docker login -u leon.hoppe -p ${CI_REGISTRY_PASSWORD} registry.leon-hoppe.de
     - docker build -t registry.leon-hoppe.de/leon.hoppe/hopframe:$VERSION -t registry.leon-hoppe.de/leon.hoppe/hopframe:latest .
     - docker push registry.leon-hoppe.de/leon.hoppe/hopframe:$VERSION
