@@ -6,10 +6,6 @@ stages:
   - publish
   - publish-help
 
-before_script:
-  - echo "Setting up environment"
-  - 'dotnet --version'
-
 build:
   stage: build
   script:
