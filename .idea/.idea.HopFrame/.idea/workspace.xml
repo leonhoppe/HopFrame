@@ -11,10 +11,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Fixed directory in pipeline">
+      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +33,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/virtual-properties" />
+        <entry key="$PROJECT_DIR$" value="feature/exporters" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -130,7 +129,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
     &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;!33 on feature/exporters&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -258,6 +257,8 @@
       <workItem from="1740736919561" duration="191000" />
       <workItem from="1740738257628" duration="3216000" />
       <workItem from="1740741585276" duration="17000" />
+      <workItem from="1740742098571" duration="78000" />
+      <workItem from="1740742471317" duration="413000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -611,7 +612,39 @@
       <option name="project" value="LOCAL" />
       <updated>1740741334420</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Patched CI">
+      <option name="closed" value="true" />
+      <created>1740742170465</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1740742170465</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Prepared CI for v3.2.0">
+      <option name="closed" value="true" />
+      <created>1740742538991</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1740742538991</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Removed unused dependency">
+      <option name="closed" value="true" />
+      <created>1740742606152</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1740742606152</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Fixed directory in pipeline">
+      <option name="closed" value="true" />
+      <created>1740742749325</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1740742749325</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -662,10 +695,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Tested login functionality" />
-    <MESSAGE value="prepared project for release" />
-    <MESSAGE value="Included readme file in projects" />
-    <MESSAGE value="Added missing files" />
     <MESSAGE value="Added a simple web api abstraction method" />
     <MESSAGE value="Implemented async delegates" />
     <MESSAGE value="Added maximum display length" />
@@ -687,6 +716,10 @@
     <MESSAGE value="Added fully virtual properties" />
     <MESSAGE value="Added basic export and import feature" />
     <MESSAGE value="Finished converter plugin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished converter plugin" />
+    <MESSAGE value="Patched CI" />
+    <MESSAGE value="Prepared CI for v3.2.0" />
+    <MESSAGE value="Removed unused dependency" />
+    <MESSAGE value="Fixed directory in pipeline" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed directory in pipeline" />
   </component>
 </project>
