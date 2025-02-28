@@ -17,5 +17,3 @@ publish-help:
     - docker push registry.leon-hoppe.de/leon.hoppe/hopframe:latest
   only:
     - tags
-  dependencies:
-    - publish
