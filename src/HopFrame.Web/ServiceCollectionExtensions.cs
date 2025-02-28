@@ -5,6 +5,8 @@ using HopFrame.Web.Components;
 using HopFrame.Web.Components.Pages;
 using HopFrame.Web.Plugins;
 using HopFrame.Web.Plugins.Internal;
+using HopFrame.Web.Services;
+using HopFrame.Web.Services.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +43,7 @@ public static class ServiceCollectionExtensions {
         services.AddFluentUIComponents(fluentUiLibraryConfiguration);
 
         services.AddScoped<IPluginOrchestrator, PluginOrchestrator>();
+        services.AddScoped<IFileService, FileService>();
 
         if (addRazorComponents) {
             services.AddRazorComponents()

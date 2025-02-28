@@ -12,15 +12,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/IFileService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/Implementation/FileService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +68,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/5b/a350be00/IEnumerable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/62/1fb63ed0/IDisposable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/8b/db8582a3/IList`1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/a0/0a968c53/IEnumerable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/ad/ba9a50e7/ICollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/fc/6f7933d2/ICollection`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/10c66a9a1e137111895f7182a2ae246eabe06a261578c3fa495a45f6f177d35/IconVariant.cs" root0="FORCE_HIGHLIGHTING" />
@@ -123,28 +126,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Debug",
-    ".NET Project.HopFrame.Testing.executor": "Run",
-    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
-    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!33 on feature/exporters",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.Api: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
+    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!33 on feature/exporters&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -255,7 +258,12 @@
       <workItem from="1739369355001" duration="1751000" />
       <workItem from="1739461452173" duration="5533000" />
       <workItem from="1739550750776" duration="3613000" />
-      <workItem from="1739617785048" duration="5712000" />
+      <workItem from="1739617785048" duration="5992000" />
+      <workItem from="1739975843065" duration="1921000" />
+      <workItem from="1740168829540" duration="1382000" />
+      <workItem from="1740595969750" duration="34000" />
+      <workItem from="1740736919561" duration="191000" />
+      <workItem from="1740738257628" duration="589000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -593,7 +601,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739554261551</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Added basic export and import feature">
+      <option name="closed" value="true" />
+      <created>1739623781007</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1739623781007</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -644,7 +660,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added more tests" />
     <MESSAGE value="Added web module tests" />
     <MESSAGE value="Tested login functionality" />
     <MESSAGE value="prepared project for release" />
@@ -669,6 +684,7 @@
     <MESSAGE value="Added default button removal feature" />
     <MESSAGE value="Added custom search functionality" />
     <MESSAGE value="Added fully virtual properties" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added fully virtual properties" />
+    <MESSAGE value="Added basic export and import feature" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added basic export and import feature" />
   </component>
 </project>

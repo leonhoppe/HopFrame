@@ -202,7 +202,10 @@
     private List<PluginButton> _pluginButtons = new();
     private DefaultButtonToggles _buttonToggles = new();
 
+    internal static HopFrameTablePage? CurrentInstance { get; private set; }
+
     protected override void OnInitialized() {
+        CurrentInstance = this;
         _config ??= Explorer.GetTable(TableDisplayName);
 
         if (_config is null || (_config.Ignored && DialogData is null)) {

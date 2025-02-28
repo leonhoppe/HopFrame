@@ -11,7 +11,7 @@ public interface ITableManager {
     public Task EditItem(object item);
     public Task AddItem(object item);
     public Task AddAll(IEnumerable<object> items);
-    public Task RevertChanges(object item);
+    public Task<object?> GetOne(object key);
     
     public Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null);
 }

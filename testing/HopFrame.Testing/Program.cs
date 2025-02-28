@@ -52,7 +52,8 @@ builder.Services.AddHopFrame(options => {
 
         context.Table<Post>()
             .Property(p => p.Author)
-            .Format((user, _) => $"{user.FirstName} {user.LastName}");
+            .Format((user, _) => $"{user.FirstName} {user.LastName}")
+            .SetValidator((_, _) => []);
 
         context.Table<Post>()
             .Property(p => p.Id)
@@ -77,9 +78,9 @@ builder.Services.AddHopFrame(options => {
                 return errors;
             })*/;
 
-        context.Table<Post>()
+        /*context.Table<Post>()
             .SetOrderIndex(-1)
-            .Ignore(true);
+            .Ignore(true);*/
     });
 
     options.AddCustomView("Counter", "/counter")
