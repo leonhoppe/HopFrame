@@ -135,7 +135,25 @@
     }
     
     removeBg();
+
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    window.triggerClick = (elt) => elt.click();
 </script>
+
+<FluentToastProvider MaxToastCount="10" />
+
+<InputFile style="display: none" @ref="FileInputElement" OnChange="OnInputFiles"></InputFile>
 
 @inject IContextExplorer Explorer
 @inject NavigationManager Navigator
@@ -184,7 +202,10 @@
     private List<PluginButton> _pluginButtons = new();
     private DefaultButtonToggles _buttonToggles = new();
 
+    internal static HopFrameTablePage? CurrentInstance { get; private set; }
+
     protected override void OnInitialized() {
+        CurrentInstance = this;
         _config ??= Explorer.GetTable(TableDisplayName);
 
         if (_config is null || (_config.Ignored && DialogData is null)) {
@@ -254,7 +275,7 @@
         await Reload();
     }
 
-    private async Task Reload() {
+    public async Task Reload() {
         _loading = true;
 
         var eventResult = await PluginOrchestrator.DispatchEvent(new ReloadEvent(this) {
@@ -275,7 +296,7 @@
         _loading = false;
     }
 
-    private async Task ChangePage(int page) {
+    public async Task ChangePage(int page) {
         var eventResult = await PluginOrchestrator.DispatchEvent(new PageChangeEvent(this) {
             CurrentPage = _currentPage,
             NewPage = page,
@@ -382,5 +403,22 @@
             display = display[..config.DisplayLength] + "...";
 
         return display;
+    }
+    
+    public InputFile? FileInputElement;
+    public Func<IEnumerable<IBrowserFile>, Task>? OnFileUpload;
+    private async Task OnInputFiles(InputFileChangeEventArgs e) {
+        if (OnFileUpload is null) return;
+        
+        if (e.FileCount == 1) {
+            await OnFileUpload.Invoke([e.File]);
+        }
+        else {
+            await OnFileUpload.Invoke(e.GetMultipleFiles());
+        }
+    }
+
+    public void RequestRender() {
+        StateHasChanged();
     }
 }

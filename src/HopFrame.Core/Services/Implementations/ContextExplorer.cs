@@ -55,6 +55,21 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
         return null;
     }
 
+    public ITableManager? GetTableManager(Type tableType) {
+        foreach (var context in config.Contexts) {
+            var table = context.Tables.FirstOrDefault(table => table.TableType == tableType);
+            if (table is null) continue;
+            
+            var dbContext = provider.GetService(context.ContextType) as DbContext;
+            if (dbContext is null) return null;
+
+            var type = typeof(TableManager<>).MakeGenericType(table.TableType);
+            return Activator.CreateInstance(type, dbContext, table, this, provider) as ITableManager;
+        }
+
+        return null;
+    }
+
     private void SeedTableData(TableConfig table) {
         if (table.Seeded) return;
         var dbContext = (provider.GetRequiredService(table.ContextConfig.ContextType) as DbContext)!;

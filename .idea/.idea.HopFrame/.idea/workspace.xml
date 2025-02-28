@@ -13,16 +13,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/DbContextConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Config/TableConfiguratorTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="dev" />
+        <entry key="$PROJECT_DIR$" value="feature/virtual-properties" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -68,6 +60,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/5b/a350be00/IEnumerable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/62/1fb63ed0/IDisposable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/8b/db8582a3/IList`1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/a0/0a968c53/IEnumerable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/ad/ba9a50e7/ICollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/fc/6f7933d2/ICollection`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/10c66a9a1e137111895f7182a2ae246eabe06a261578c3fa495a45f6f177d35/IconVariant.cs" root0="FORCE_HIGHLIGHTING" />
@@ -75,6 +68,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/24dd1164ba47541cb1d3eb011e638e16953dbea3ae3f4dc208c3bbf3e96298a/ServiceCollectionServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/26c9a2fb5243863babc926e4be763daf4128d4f97c4a769cdce1e2e3e5c532/FluentButton.razor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2751d5afefca5424bfc4b21347f581372f7a739c0ae4df661ea557fcb97ef20/EnumExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2a4d2ce4c06ab596b3676c5cf06066b4391ec7dd93cdf8f0334b69dc1a9de/TextReader.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/439c4ee753b23e743cc14119593bc889751f9eb0b38997577d8e4c47c4fed/ToCollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4c41a7d338749915157d56585365d1693fbad6be8231d3d583b1cf10d16896d9/FluentIcon.razor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4ee221fd7e91e9a4c14ff82aae2ee938edecde35a934133e991aba56aa9499/Icon.cs" root0="FORCE_HIGHLIGHTING" />
@@ -88,12 +82,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ad7d2d0ae865063993eb8a03427815ea3bdb6a774e0a2f95512e9f669a4f489/MemberEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8d5d6cbff46ddc7b152381f92ae1ae51d3e7b57b14dd23840a11f5aaaaed396/InternalEntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a882d183338544fdbcbdfc7b6d3dcb78916630765551644a221b5be9c45a121b/Int32.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/aa3ea54f92373c58ec1149fbd41215869a98bd385c30584bc6db2fa3c6e88443/Filled24.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/adcd2c45092dd8e4fc412325c8adb75d6e7d8b3e90a9523f167583fb9c60/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bfff78ecaa39c818519fc918bb2d4bbdca6ad93d7170f5cf325f67ccd0b97d43/BooleanAsserts.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d0165cb640e16fb3b8fe6932c042fc2917cd7f2770ff123cf7b9d11b5bfc6/Task.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d04a416cac8afac0341a8be0e859b230f2eae64924298eef48c317ba35916/RenderTreeBuilder.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d1287462d4ec4078c61b8e92a0952fb7de3e7e877d279e390a4c136a6365126/Stream.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d39923abb31e6a6e7a9e8173e217da584c54925ce63e568126a2b89b9ab/DefaultRazorComponentsServiceOptionsConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d858ddb35a8e36df5573b7612542f9ad50f426b8ab43818587d1ac65fab14829/DatabaseGeneratedAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dac3553c90d47a746e7e7f02faecb1a5e581090/Components_AppBar_FluentAppBarItem_razor.g.cs" root0="FORCE_HIGHLIGHTING" />
@@ -123,28 +119,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HopFrame.Testing.Api: https.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing.executor": "Run",
-    ".NET Launch Settings Profile.HopFrame.Testing: https.executor": "Run",
-    ".NET Project.HopFrame.Testing.executor": "Run",
-    "72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
-    "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!32 on feature/virtual-properties",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.Api: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.HopFrame.Testing: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.HopFrame.Testing.executor&quot;: &quot;Run&quot;,
+    &quot;72b118b0-a6fc-4561-acdf-74f0b454dbb8.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
+    &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!33 on feature/exporters&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HopFrame.Testing: https">
     <configuration name="HopFrame.Testing: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/testing/HopFrame.Testing/HopFrame.Testing.csproj" />
@@ -254,7 +250,14 @@
       <workItem from="1739352479748" duration="3047000" />
       <workItem from="1739369355001" duration="1751000" />
       <workItem from="1739461452173" duration="5533000" />
-      <workItem from="1739550750776" duration="3388000" />
+      <workItem from="1739550750776" duration="3613000" />
+      <workItem from="1739617785048" duration="5992000" />
+      <workItem from="1739975843065" duration="1921000" />
+      <workItem from="1740168829540" duration="1382000" />
+      <workItem from="1740595969750" duration="34000" />
+      <workItem from="1740736919561" duration="191000" />
+      <workItem from="1740738257628" duration="3216000" />
+      <workItem from="1740741585276" duration="17000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -584,7 +587,31 @@
       <option name="project" value="LOCAL" />
       <updated>1738775556256</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Added fully virtual properties">
+      <option name="closed" value="true" />
+      <created>1739554261551</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1739554261551</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Added basic export and import feature">
+      <option name="closed" value="true" />
+      <created>1739623781007</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1739623781007</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Finished converter plugin">
+      <option name="closed" value="true" />
+      <created>1740741334420</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1740741334420</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -635,9 +662,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Created tests for the core module" />
-    <MESSAGE value="Added more tests" />
-    <MESSAGE value="Added web module tests" />
     <MESSAGE value="Tested login functionality" />
     <MESSAGE value="prepared project for release" />
     <MESSAGE value="Included readme file in projects" />
@@ -660,6 +684,9 @@
     <MESSAGE value="Added plugin buttons" />
     <MESSAGE value="Added default button removal feature" />
     <MESSAGE value="Added custom search functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added custom search functionality" />
+    <MESSAGE value="Added fully virtual properties" />
+    <MESSAGE value="Added basic export and import feature" />
+    <MESSAGE value="Finished converter plugin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished converter plugin" />
   </component>
 </project>

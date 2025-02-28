@@ -41,6 +41,10 @@ publish:
 
 publish-help:
   stage: publish-help
+  image: docker:latest
+  services:
+    - name: docker:dind
+      alias: docker
   script:
     - export VERSION=$(echo $CI_COMMIT_TAG | sed 's/^v//')
     - docker login -u leon.hoppe -p ${CI_REGISTRY_PASSWORD} registry.leon-hoppe.de

@@ -7,4 +7,5 @@ public interface IContextExplorer {
     public TableConfig? GetTable(string tableDisplayName);
     public TableConfig? GetTable(Type tableEntity);
     public ITableManager? GetTableManager(string tablePropertyName);
+    public ITableManager? GetTableManager(Type tableType);
 }
