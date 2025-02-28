@@ -5,10 +5,10 @@ by using Plugins. They are registered as scoped services so you can use DI like 
 
 ## Add a plugin
 
-Create a class that extends the `HopFramePlugin` class:
+Create a class that represents the plugin:
 
 ```C#
-public class SearchExtension : HopFramePlugin {
+public class SearchExtension {
     
 }
 ```
@@ -58,5 +58,21 @@ public async Task OnSearch(SearchEvent e) {
 [EventHandler]
 public void OnDelete(DeleteEntryEvent e) {
     cacheHandler.ClearCache(e.Entity);
+}
+```
+
+## Useful services
+
+### IFileService
+
+If you want to deal with file uploading / downloading, you can use the `IFileService`:
+
+```C#
+public interface IFileService {
+
+    public Task DownloadFile(string name, byte[] data);
+
+    public Task<IBrowserFile> UploadFile();
+
 }
 ```

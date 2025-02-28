@@ -12,7 +12,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace HopFrame.Web.Plugins.Internal;
 
-internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService toasts, IFileService files, IServiceProvider provider) {
+internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService toasts, IFileService files) {
     public const char Separator = ';';
 
     [EventHandler]

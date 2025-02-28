@@ -4,7 +4,7 @@
 
 Welcome to the **HopFrame**! This project aims to provide a comprehensive and modular framework for easy management of your database.
 The framework is designed to be highly configurable, ensuring that developers either quickly add the framework for simple data editing or
-configure it to their needs to implement it fully in their data management pipeline.
+configure it to their needs to implement it fully in their data management pipeline. Read more in the project [docs](https://hopframe.leon-hoppe.de).
 
 ## Features
 

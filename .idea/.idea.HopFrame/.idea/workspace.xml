@@ -12,17 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/IFileService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/Implementation/FileService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ITableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/HopFrameConfiguratorExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/HopFramePlugin.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Writerside/topics/Plugins.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Internal/ExporterPlugin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +82,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ad7d2d0ae865063993eb8a03427815ea3bdb6a774e0a2f95512e9f669a4f489/MemberEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8d5d6cbff46ddc7b152381f92ae1ae51d3e7b57b14dd23840a11f5aaaaed396/InternalEntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a882d183338544fdbcbdfc7b6d3dcb78916630765551644a221b5be9c45a121b/Int32.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/aa3ea54f92373c58ec1149fbd41215869a98bd385c30584bc6db2fa3c6e88443/Filled24.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/adcd2c45092dd8e4fc412325c8adb75d6e7d8b3e90a9523f167583fb9c60/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b3ccb66df3646cb51df73ad51716136ebd2eefb4edb1308dd52a7e999582d59e/IBindableColumn.cs" root0="SKIP_HIGHLIGHTING" />
@@ -263,7 +256,8 @@
       <workItem from="1740168829540" duration="1382000" />
       <workItem from="1740595969750" duration="34000" />
       <workItem from="1740736919561" duration="191000" />
-      <workItem from="1740738257628" duration="589000" />
+      <workItem from="1740738257628" duration="3216000" />
+      <workItem from="1740741585276" duration="17000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic configuration">
       <option name="closed" value="true" />
@@ -609,7 +603,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739623781007</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Finished converter plugin">
+      <option name="closed" value="true" />
+      <created>1740741334420</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1740741334420</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -660,7 +662,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added web module tests" />
     <MESSAGE value="Tested login functionality" />
     <MESSAGE value="prepared project for release" />
     <MESSAGE value="Included readme file in projects" />
@@ -685,6 +686,7 @@
     <MESSAGE value="Added custom search functionality" />
     <MESSAGE value="Added fully virtual properties" />
     <MESSAGE value="Added basic export and import feature" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added basic export and import feature" />
+    <MESSAGE value="Finished converter plugin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished converter plugin" />
   </component>
 </project>
