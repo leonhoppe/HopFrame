@@ -4,6 +4,7 @@ using HopFrame.Testing.Components;
 using HopFrame.Testing.Models;
 using HopFrame.Web;
 using Microsoft.EntityFrameworkCore;
+using Message = HopFrame.Testing.Models.Message;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,7 +89,30 @@ builder.Services.AddHopFrame(options => {
         .SetPolicy("counter.view");
 
     options.AddExporters();
+
+    options.AddCustomRepository<GuestRepository, Guest, int>(g => g.Id, table => {
+        table.SetDisplayName("Guests");
+
+        table.Property(g => g.Messages)
+            .ForceRelation(true)
+            .FormatEach<Message>((m, _) => m.Content);
+    });
+
+    options.AddCustomRepository<MessageRepository, Message, int>(m => m.MessageIdentifier, table => {
+        table.SetDisplayName("Messages");
+
+        table.Property(m => m.Receiver)
+            .ForceRelation()
+            .Format((u, _) => u.Name);
+
+        table.Property(m => m.Sender)
+            .ForceRelation()
+            .Format((u, _) => u.Username ?? string.Empty);
+    });
 });
+
+builder.Services.AddSingleton<MessageRepository>();
+builder.Services.AddSingleton<GuestRepository>();
 
 var app = builder.Build();
 

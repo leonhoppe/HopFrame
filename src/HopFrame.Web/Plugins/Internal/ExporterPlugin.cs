@@ -17,6 +17,8 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
 
     [EventHandler]
     public void OnInit(TableInitializedEvent e) {
+        if (e.Sender.DialogData is not null) return;
+        
         e.AddPageButton("Export", () => Export(e.Table), icon: new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.ArrowUpload());
         e.AddPageButton("Import", () => Import(e.Table, e.Sender), icon: new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.ArrowDownload());
     }
@@ -29,8 +31,7 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
         }
 
         var data = await manager
-            .LoadPage(0, int.MaxValue)
-            .ToArrayAsync();
+            .LoadPage(0, int.MaxValue);
 
         var properties = table.Properties.Where(prop => !prop.IsVirtualProperty).ToArray();
         
@@ -81,6 +82,7 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
                 if (property is null) continue;
 
                 object? value = rowValues[i];
+                if (string.IsNullOrWhiteSpace((string)value)) continue;
                 
                 if (property.IsEnumerable) {
                     if (!property.Info.PropertyType.IsGenericType) continue;
@@ -102,7 +104,7 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
 
                     var enumerable = Activator.CreateInstance(property.Info.PropertyType);
                     foreach (var key in values) {
-                        var entry = await relationManager.GetOne(ParseString(key, primaryKeyType));
+                        var entry = await relationManager.GetOne(ParseString(key, primaryKeyType)!);
                         if (entry is null) continue;
 
                         addMethod.Invoke(enumerable, [entry]);
@@ -116,7 +118,7 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
                     var relationManager = explorer.GetTableManager(property.Info.PropertyType);
                     var relationPrimaryKeyType = GetPrimaryKeyType(property.Info.PropertyType);
                     if (relationManager is null || relationPrimaryKeyType is null) continue;
-                    value = await relationManager.GetOne(ParseString((string)value, relationPrimaryKeyType));
+                    value = await relationManager.GetOne(ParseString((string)value, relationPrimaryKeyType)!);
                 }
                 else if (property.Info.PropertyType == typeof(Guid)) {
                     var success = Guid.TryParse((string)value, out var guid);
@@ -151,13 +153,20 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
 
         if (property.IsEnumerable) {
             var enumerable = (IEnumerable)value;
-            return '[' + string.Join(',', enumerable.OfType<object>().Select(o => SelectPrimaryKey(o) ?? o.ToString())) + ']';
+            return '[' + string.Join(',', enumerable.OfType<object>().Select(o => SelectPrimaryKey(o, property) ?? o.ToString())) + ']';
         }
 
-        return SelectPrimaryKey(value) ?? value.ToString() ?? string.Empty;
+        return SelectPrimaryKey(value, property) ?? value.ToString() ?? string.Empty;
     }
 
-    private string? SelectPrimaryKey(object entity) {
+    private string? SelectPrimaryKey(object entity, PropertyConfig config) {
+        if (config.IsRelation) {
+            var table = explorer.GetTable(entity.GetType());
+            if (table?.ContextConfig is RepositoryGroupConfig repoConfig) {
+                return repoConfig.KeyProperty.GetValue(entity)?.ToString();
+            }
+        }
+        
         return entity
             .GetType()
             .GetProperties()
@@ -169,6 +178,11 @@ internal sealed class ExporterPlugin(IContextExplorer explorer, IToastService to
     }
 
     private Type? GetPrimaryKeyType(Type tableType) {
+        var table = explorer.GetTable(tableType);
+        if (table?.ContextConfig is RepositoryGroupConfig repoConfig) {
+            return repoConfig.KeyProperty.PropertyType;
+        }
+        
         return tableType
             .GetProperties()
             .FirstOrDefault(prop => prop

@@ -2,7 +2,13 @@
 
 namespace HopFrame.Core.Config;
 
-public class DbContextConfig {
+public interface ITableGroupConfig {
+    public Type ContextType { get; }
+    public List<TableConfig> Tables { get; }
+    public HopFrameConfig ParentConfig { get; }
+}
+
+public class DbContextConfig : ITableGroupConfig {
     public Type ContextType { get; }
     public List<TableConfig> Tables { get; } = new();
     public HopFrameConfig ParentConfig { get; }

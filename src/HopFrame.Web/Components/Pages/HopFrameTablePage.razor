@@ -231,7 +231,7 @@
         _hasCreatePolicy = await Handler.IsAuthenticatedAsync(_config?.CreatePolicy);
         
         _manager ??= Explorer.GetTableManager(_config!.PropertyName);
-        CurrentlyDisplayedModels = await _manager!.LoadPage(_currentPage, PerPage).ToArrayAsync();
+        CurrentlyDisplayedModels = (await _manager!.LoadPage(_currentPage, PerPage)).ToArray();
         _totalPages = await _manager.TotalPages(PerPage);
     }
 

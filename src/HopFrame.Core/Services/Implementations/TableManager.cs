@@ -8,12 +8,13 @@ namespace HopFrame.Core.Services.Implementations;
 
 internal sealed class TableManager<TModel>(DbContext context, TableConfig config, IContextExplorer explorer, IServiceProvider provider) : ITableManager where TModel : class {
     
-    public IQueryable<object> LoadPage(int page, int perPage = 20) {
+    public async Task<IEnumerable<object>> LoadPage(int page, int perPage = 20) {
         var table = context.Set<TModel>();
         var data = IncludeForeignKeys(table);
-        return data
+        return await data
             .Skip(page * perPage)
-            .Take(perPage);
+            .Take(perPage)
+            .ToArrayAsync();
     }
 
     public Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
