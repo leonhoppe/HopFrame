@@ -17,6 +17,7 @@
             <toc-element topic="PropertyConfig.md"/>
         </toc-element>
         <toc-element topic="Callbacks.md"/>
+        <toc-element topic="Custom-Repositories.md"/>
     </toc-element>
     <toc-element toc-title="Web Module">
         <toc-element toc-title="Interface">
@@ -27,6 +28,10 @@
         <toc-element topic="Plugins.md">
             <toc-element topic="Events.md">
             </toc-element>
+            <toc-element topic="Exporter-Plugin.md"/>
         </toc-element>
+    </toc-element>
+    <toc-element toc-title="Services">
+        <toc-element topic="IFileService.md"/>
     </toc-element>
 </instance-profile>
