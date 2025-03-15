@@ -53,7 +53,8 @@ builder.Services.AddHopFrame(options => {
 
         context.Table<Post>()
             .Property(p => p.Author)
-            .Format((user, _) => $"{user.FirstName} {user.LastName}")
+            //.Format((user, _) => $"{user.FirstName} {user.LastName}")
+            .SetDisplayedProperty(u => u.Username)
             .SetValidator((_, _) => []);
 
         context.Table<Post>()

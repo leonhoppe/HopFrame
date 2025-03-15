@@ -11,7 +11,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="" />
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,7 +32,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="dev" />
+        <entry key="$PROJECT_DIR$" value="feature/repositories" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -128,7 +130,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
     &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;!34 on feature/repositories&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -259,14 +261,7 @@
       <workItem from="1740742098571" duration="78000" />
       <workItem from="1740742471317" duration="672000" />
       <workItem from="1741974241977" duration="10854000" />
-    </task>
-    <task id="LOCAL-00002" summary="Added admin page navigation">
-      <option name="closed" value="true" />
-      <created>1736855209077</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1736855209077</updated>
+      <workItem from="1742038098473" duration="990000" />
     </task>
     <task id="LOCAL-00003" summary="Added database loading logic">
       <option name="closed" value="true" />
@@ -652,7 +647,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741985203179</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Added documentation for custom repos and exporter plugin">
+      <option name="closed" value="true" />
+      <created>1742038459077</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1742038459077</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -662,38 +665,17 @@
     <option name="coveragePercentColumnWidth" value="129" />
     <option name="sortOrder" value="DESCENDING" />
     <option name="sortedColumn" value="1" />
-    <option name="symbolColumnWidth" value="451" />
+    <option name="symbolColumnWidth" value="559" />
     <coverage-tree-state>
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 1657/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 53% 1150/2443" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 1657/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 0% 743/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 1657/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 0% 743/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HopFrame.Core 0% 367/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 1657/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 0% 743/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HopFrame.Core 0% 367/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HopFrame.Core 0% 367/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 1657/1657" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Core 0% 743/743" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HopFrame.Core 0% 367/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HopFrame.Core 0% 367/367" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Config 0% 228/228" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 53% 1150/2443" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Core 40% 862/1439" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -703,7 +685,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added maximum display length" />
     <MESSAGE value="Fixed test for table view" />
     <MESSAGE value="Added n-m relation mapping" />
     <MESSAGE value="Fixed wrong element selection for action buttons" />
@@ -728,6 +709,7 @@
     <MESSAGE value="Fixed directory in pipeline" />
     <MESSAGE value="Reverted pipeline to include all jobs" />
     <MESSAGE value="Added support for custom repositories" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added support for custom repositories" />
+    <MESSAGE value="Added documentation for custom repos and exporter plugin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added documentation for custom repos and exporter plugin" />
   </component>
 </project>

@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using System.Reflection.Metadata;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -17,16 +19,84 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
             .ToArrayAsync();
     }
 
-    public Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
+    public async Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
         var table = context.Set<TModel>();
-        var all = IncludeForeignKeys(table)
-            .AsEnumerable()
-            .Where(item => ItemSearched(item, searchTerm))
-            .ToList();
 
-        return Task.FromResult((
-            (IEnumerable<object>)all.Skip(page * perPage).Take(perPage),
-            (int)Math.Ceiling(all.Count / (double)perPage)));
+        var isNegative = searchTerm.StartsWith('!');
+        if (isNegative)
+            searchTerm = searchTerm[1..];
+
+        Type[] validTypes = [typeof(string), typeof(Guid)];
+        
+        var parameter = Expression.Parameter(typeof(TModel), "x");
+        var properties = config.Properties
+            .Where(prop => !prop.IsVirtualProperty)
+            .Where(prop => prop.List)
+            .Where(prop => prop.Info.PropertyType.IsEnum || validTypes.Contains(prop.Info.PropertyType))
+            .Select(prop => prop.Info);
+
+        Expression? combinedExpression = null;
+        
+        foreach (var property in properties) {
+            var propertyAccess = Expression.Property(parameter, property);
+            var toStringCall = Expression.Call(propertyAccess, nameof(ToString), Type.EmptyTypes);
+            var searchExpression = Expression.Call(
+                toStringCall,
+                typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!,
+                Expression.Constant(searchTerm));
+
+            combinedExpression = combinedExpression == null
+                ? searchExpression
+                : Expression.OrElse(combinedExpression, searchExpression);
+        }
+
+        var foreignProperties = config.Properties
+            .Where(prop => prop.List)
+            .Where(prop => prop.IsRelation)
+            .Where(prop => prop.DisplayedProperty != null)
+            .Select(prop => (prop.Info, explorer
+                .GetTable(prop.Info.PropertyType)!.Properties
+                .Find(p => p.Info.Name == prop.DisplayedProperty!.Name)!
+                .Info));
+        
+        foreach (var (navigationProperty, displayedProperty) in foreignProperties) {
+            var navigationAccess = Expression.Property(parameter, navigationProperty);
+            var nullCheck = Expression.NotEqual(navigationAccess, Expression.Constant(null));
+            var displayedPropertyAccess = Expression.Property(navigationAccess, displayedProperty);
+
+            var toStringCall = Expression.Call(displayedPropertyAccess, nameof(ToString), Type.EmptyTypes);
+            var searchExpression = Expression.Call(
+                toStringCall,
+                typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) })!,
+                Expression.Constant(searchTerm));
+
+            var safeSearchExpression = Expression.AndAlso(nullCheck, searchExpression);
+
+            combinedExpression = combinedExpression == null
+                ? safeSearchExpression
+                : Expression.OrElse(combinedExpression, safeSearchExpression);
+        }
+
+        if (combinedExpression == null)
+            return (
+                await LoadPage(page, perPage),
+                await TotalPages(perPage));
+
+        if (isNegative)
+            combinedExpression = Expression.Not(combinedExpression);
+
+        var lambda = Expression.Lambda<Func<TModel, bool>>(combinedExpression, parameter);
+        var result = await IncludeForeignKeys(table)
+            .Where(lambda)
+            .Skip(page * perPage)
+            .Take(perPage)
+            .ToListAsync();
+
+        var totalEntries = await table
+            .Where(lambda)
+            .CountAsync();
+
+        return (result, (int)Math.Ceiling(totalEntries / (double)perPage));
     }
 
     public async Task<int> TotalPages(int perPage = 20) {
@@ -59,31 +129,6 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     public async Task<object?> GetOne(object key) {
         var table = context.Set<TModel>();
         return await table.FindAsync(key);
-    }
-
-    public async Task RevertChanges(object item) {
-        var entry = context.Entry((TModel)item);
-        await entry.ReloadAsync();
-
-        if (entry.Collections.Any()) {
-            context.ChangeTracker.Clear();
-        }
-        
-        await context.SaveChangesAsync();
-    }
-
-    private bool ItemSearched(TModel item, string searchTerm) {
-        foreach (var property in config.Properties) {
-            if (!property.Searchable) continue;
-            var value = property.GetValue(item, provider);
-            if (value is null) continue;
-            
-            var strValue = value.ToString();
-            if (strValue?.Contains(searchTerm) == true) 
-                return true;
-        }
-
-        return false;
     }
 
     public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null) {
