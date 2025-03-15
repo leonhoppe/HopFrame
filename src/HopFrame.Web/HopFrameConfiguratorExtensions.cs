@@ -56,6 +56,10 @@ public static class HopFrameConfiguratorExtensions {
         return configurator;
     }
 
+    /// <summary>
+    /// Registers the Exporter Plugin for data import/export functionality.
+    /// </summary>
+    /// <param name="configurator">The configurator for the HopFrame configuration.</param>
     public static HopFrameConfigurator AddExporters(this HopFrameConfigurator configurator) {
         configurator.AddPlugin<ExporterPlugin>();
         return configurator;

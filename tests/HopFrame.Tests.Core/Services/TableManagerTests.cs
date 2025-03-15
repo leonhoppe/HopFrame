@@ -40,7 +40,7 @@ public class TableManagerTests {
     }
 
     [Fact]
-    public void LoadPage_ReturnsPagedData() {
+    public async Task LoadPage_ReturnsPagedData() {
         // Arrange
         var data = new List<MockModel> {
             new MockModel { Id = 1, Name = "Item1" },
@@ -54,7 +54,7 @@ public class TableManagerTests {
         var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
 
         // Act
-        var result = manager.LoadPage(1, 2).ToList();
+        var result = (await manager.LoadPage(1, 2)).ToArray();
 
         // Assert
         Assert.Single(result);

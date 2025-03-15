@@ -45,11 +45,18 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             var table = context.Tables.FirstOrDefault(table => table.PropertyName == tablePropertyName);
             if (table is null) continue;
             
-            var dbContext = provider.GetService(context.ContextType) as DbContext;
-            if (dbContext is null) return null;
+            var repo = provider.GetService(context.ContextType);
+            if (repo is null) return null;
 
-            var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-            return Activator.CreateInstance(type, dbContext, table, this, provider) as ITableManager;
+            if (context is DbContextConfig) {
+                var type = typeof(TableManager<>).MakeGenericType(table.TableType);
+                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider) as ITableManager;
+            }
+            
+            if (context is RepositoryGroupConfig repoConfig) {
+                var type = typeof(RepositoryTableManager<,>).MakeGenericType(table.TableType, repoConfig.KeyProperty.PropertyType);
+                return Activator.CreateInstance(type, repo, this, provider) as ITableManager;
+            }
         }
 
         return null;
@@ -60,11 +67,18 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
             var table = context.Tables.FirstOrDefault(table => table.TableType == tableType);
             if (table is null) continue;
             
-            var dbContext = provider.GetService(context.ContextType) as DbContext;
-            if (dbContext is null) return null;
+            var repo = provider.GetService(context.ContextType);
+            if (repo is null) return null;
 
-            var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-            return Activator.CreateInstance(type, dbContext, table, this, provider) as ITableManager;
+            if (context is DbContextConfig) {
+                var type = typeof(TableManager<>).MakeGenericType(table.TableType);
+                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider) as ITableManager;
+            }
+            
+            if (context is RepositoryGroupConfig repoConfig) {
+                var type = typeof(RepositoryTableManager<,>).MakeGenericType(table.TableType, repoConfig.KeyProperty.PropertyType);
+                return Activator.CreateInstance(type, repo, this, provider) as ITableManager;
+            }
         }
 
         return null;
@@ -72,6 +86,7 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
 
     private void SeedTableData(TableConfig table) {
         if (table.Seeded) return;
+        if (table.ContextConfig is not DbContextConfig) return;
         var dbContext = (provider.GetRequiredService(table.ContextConfig.ContextType) as DbContext)!;
         var entity = dbContext.Model.FindEntityType(table.TableType)!;
         

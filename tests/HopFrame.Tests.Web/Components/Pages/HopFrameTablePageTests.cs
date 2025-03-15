@@ -33,7 +33,7 @@ public class HopFrameTablePageTests : TestContext {
         contextExplorerMock.Setup(e => e.GetTable("Table1")).Returns(tableConfig);
         contextExplorerMock.Setup(e => e.GetTableManager("Table1")).Returns(managerMock.Object);
         authHandlerMock.Setup(h => h.IsAuthenticatedAsync(It.IsAny<string>())).ReturnsAsync(true);
-        managerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).Returns(Enumerable.Empty<object>().AsAsyncQueryable());
+        managerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync([]);
 
         Services.AddHopFrame(config, null, false);
         Services.AddSingleton(contextExplorerMock.Object);
@@ -71,7 +71,7 @@ public class HopFrameTablePageTests : TestContext {
 
         var tableManagerMock = new Mock<ITableManager>();
         var items = new List<object> { new MyTable(), new MyTable() };
-        tableManagerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).Returns(items.AsAsyncQueryable());
+        tableManagerMock.Setup(m => m.LoadPage(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(items);
         tableManagerMock.Setup(t => t.DisplayProperty(It.IsAny<object>(), It.IsAny<PropertyConfig>(), null, null))
             .ReturnsAsync(string.Empty);
 

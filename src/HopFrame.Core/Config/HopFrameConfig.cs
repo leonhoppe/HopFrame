@@ -1,11 +1,13 @@
-﻿using HopFrame.Core.Callbacks;
+﻿using System.Linq.Expressions;
+using HopFrame.Core.Callbacks;
+using HopFrame.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Core.Config;
 
 public class HopFrameConfig {
-    public List<DbContextConfig> Contexts { get; } = new();
+    public List<ITableGroupConfig> Contexts { get; } = new();
     public bool DisplayUserInfo { get; set; } = true;
     public string? BasePolicy { get; set; }
     public string? LoginPageRewrite { get; set; }
@@ -49,6 +51,36 @@ public sealed class HopFrameConfigurator(HopFrameConfig config, IServiceCollecti
     }
 
     /// <summary>
+    /// Adds a table of the desired type and configures it to use a custom repository
+    /// </summary>
+    /// <param name="keyExpression">The key of the model</param>
+    /// <param name="configurator">The configurator used for configuring the table page</param>
+    /// <typeparam name="TRepository">The repository class that inherits from the <see cref="IHopFrameRepository{TModel,TKey}"/> (needs to be registered as a service)</typeparam>
+    /// <typeparam name="TModel">The model of the table</typeparam>
+    /// <typeparam name="TKey">The type of the primary key</typeparam>
+    public HopFrameConfigurator AddCustomRepository<TRepository, TModel, TKey>(Expression<Func<TModel, TKey>> keyExpression, Action<TableConfigurator<TModel>> configurator) {
+        var context = AddCustomRepository<TRepository, TModel, TKey>(keyExpression);
+        configurator.Invoke(context);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a table of the desired type and configures it to use a custom repository
+    /// </summary>
+    /// <param name="keyExpression">The key of the model</param>
+    /// <typeparam name="TRepository">The repository class that inherits from the <see cref="IHopFrameRepository{TModel,TKey}"/> (needs to be registered as a service)</typeparam>
+    /// <typeparam name="TModel">The model of the table</typeparam>
+    /// <typeparam name="TKey">The type of the primary key</typeparam>
+    /// <returns>The configurator used for configuring the table page</returns>
+    public TableConfigurator<TModel> AddCustomRepository<TRepository, TModel, TKey>(Expression<Func<TModel, TKey>> keyExpression) {
+        var keyProperty = TableConfigurator<TModel>.GetPropertyInfo(keyExpression);
+        var context = new RepositoryGroupConfig(typeof(TRepository), keyProperty, InnerConfig);
+        context.Tables.Add(new TableConfig(context, typeof(TModel), typeof(TRepository).Name, 0));
+        InnerConfig.Contexts.Add(context);
+        return new TableConfigurator<TModel>(context.Tables[0]);
+    }
+
+    /// <summary>
     /// Check if a context is already registered in the HopFrame
     /// </summary>
     /// <typeparam name="TDbContext">The context that should be checked</typeparam>
@@ -64,6 +96,7 @@ public sealed class HopFrameConfigurator(HopFrameConfig config, IServiceCollecti
     /// <returns>The configurator of the context if it already was defined, null if not</returns>
     public DbContextConfigurator<TDbContext>? GetDbContext<TDbContext>() where TDbContext : DbContext {
         var config = InnerConfig.Contexts
+            .OfType<DbContextConfig>()
             .SingleOrDefault(context => context.ContextType == typeof(TDbContext));
         if (config is null) return null;
 

@@ -11,10 +11,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="Fixed directory in pipeline">
-      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/exporters" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -62,6 +59,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/a0/0a968c53/IEnumerable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/ad/ba9a50e7/ICollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c73b3c6c598640c592fd3c6fa226c286e90908/fc/6f7933d2/ICollection`1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/0f73968de5cdfe0aa57817b8dd2a3c5d1db615ba4ae4629a5af59bb6c8922/RemoteNavigationManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/10c66a9a1e137111895f7182a2ae246eabe06a261578c3fa495a45f6f177d35/IconVariant.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1b81cb3be224213a6a73519b6e340a628d9a1fb8629c351a186a26f6376669/List.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/24dd1164ba47541cb1d3eb011e638e16953dbea3ae3f4dc208c3bbf3e96298a/ServiceCollectionServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
@@ -79,6 +77,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6d1d64f05e7045295fa180276a8c2aef0302c9e96eb53b3431ab13db4579/FluentAppBarItem.razor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fe785cceb29ca2d1da78e157315815a7c4372b582a20a71c28b210f9d56e/IconsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ad7d2d0ae865063993eb8a03427815ea3bdb6a774e0a2f95512e9f669a4f489/MemberEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876cd892fc66a9dc8f6afd3704c264acebdfc46aed08089463e8117c21a532/String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/87c584767b46b5fd42769be76547105558e6690f785614efddca134b2d682/Type.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8d5d6cbff46ddc7b152381f92ae1ae51d3e7b57b14dd23840a11f5aaaaed396/InternalEntityEntry.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a882d183338544fdbcbdfc7b6d3dcb78916630765551644a221b5be9c45a121b/Int32.cs" root0="FORCE_HIGHLIGHTING" />
@@ -129,7 +128,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
     &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!34 on feature/repositories&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -258,15 +257,8 @@
       <workItem from="1740738257628" duration="3216000" />
       <workItem from="1740741585276" duration="17000" />
       <workItem from="1740742098571" duration="78000" />
-      <workItem from="1740742471317" duration="413000" />
-    </task>
-    <task id="LOCAL-00001" summary="Added basic configuration">
-      <option name="closed" value="true" />
-      <created>1736850899254</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1736850899254</updated>
+      <workItem from="1740742471317" duration="672000" />
+      <workItem from="1741974241977" duration="10854000" />
     </task>
     <task id="LOCAL-00002" summary="Added admin page navigation">
       <option name="closed" value="true" />
@@ -644,7 +636,23 @@
       <option name="project" value="LOCAL" />
       <updated>1740742749325</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Reverted pipeline to include all jobs">
+      <option name="closed" value="true" />
+      <created>1740743139064</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1740743139064</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Added support for custom repositories">
+      <option name="closed" value="true" />
+      <created>1741985203179</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1741985203179</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -695,8 +703,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added a simple web api abstraction method" />
-    <MESSAGE value="Implemented async delegates" />
     <MESSAGE value="Added maximum display length" />
     <MESSAGE value="Fixed test for table view" />
     <MESSAGE value="Added n-m relation mapping" />
@@ -720,6 +726,8 @@
     <MESSAGE value="Prepared CI for v3.2.0" />
     <MESSAGE value="Removed unused dependency" />
     <MESSAGE value="Fixed directory in pipeline" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed directory in pipeline" />
+    <MESSAGE value="Reverted pipeline to include all jobs" />
+    <MESSAGE value="Added support for custom repositories" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added support for custom repositories" />
   </component>
 </project>

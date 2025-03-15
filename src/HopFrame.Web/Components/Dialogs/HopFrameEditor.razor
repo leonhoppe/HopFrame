@@ -340,7 +340,7 @@
 
         var relationType = config.Info.PropertyType;
         if (config.IsEnumerable) {
-            relationType = config.Info.PropertyType.GetGenericArguments().First();
+            relationType = relationType.GetGenericArguments().First();
         }
         
         var relationTable = Explorer.GetTable(relationType);

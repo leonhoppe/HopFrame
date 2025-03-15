@@ -118,6 +118,50 @@ DbContextConfigurator<TDbContext>? GetDbContext<TDbContext>() where TDbContext :
 
 - **Returns:** The configurator of the context if it already was defined, `null` if not.
 
+### AddCustomRepository (With configurator)
+
+Adds a table of the desired type and configures it to use a custom repository.
+
+```c#
+HopFrameConfigurator AddCustomRepository<TRepository, TModel, TKey>(
+    Expression<Func<TModel, TKey>> keyExpression, 
+    Action<TableConfigurator<TModel>> configurator
+)
+    where TRepository : IHopFrameRepository<TModel, TKey>
+```
+
+- **Type Parameters:**
+    - `TRepository`: The repository class that inherits from `IHopFrameRepository<TModel, TKey>` (needs to be registered as a service).
+    - `TModel`: The model of the table.
+    - `TKey`: The type of the primary key.
+
+- **Parameters:**
+    - `keyExpression`: The key of the model.
+    - `configurator`: The configurator used for configuring the table page.
+
+- **Returns:** `HopFrameConfigurator`
+
+### AddCustomRepository (Without configurator)
+
+Adds a table of the desired type and configures it to use a custom repository.
+
+```c#
+TableConfigurator<TModel> AddCustomRepository<TRepository, TModel, TKey>(
+    Expression<Func<TModel, TKey>> keyExpression
+)
+    where TRepository : IHopFrameRepository<TModel, TKey>
+```
+
+- **Type Parameters:**
+    - `TRepository`: The repository class that inherits from `IHopFrameRepository<TModel, TKey>` (needs to be registered as a service).
+    - `TModel`: The model of the table.
+    - `TKey`: The type of the primary key.
+
+- **Parameters:**
+    - `keyExpression`: The key of the model.
+
+- **Returns:** The configurator used for configuring the table page: `TableConfigurator<TModel>`.
+
 ### DisplayUserInfo
 
 Determines if the name of the currently logged-in user should be displayed in the top right corner of the admin UI.

@@ -11,7 +11,7 @@ public class TableConfig {
     public string PropertyName { get; }
     public string DisplayName { get; set; }
     public string? Description { get; set; }
-    public DbContextConfig ContextConfig { get; }
+    public ITableGroupConfig ContextConfig { get; }
     public bool Ignored { get; set; }
     public int Order { get; set; }
     internal bool Seeded { get; set; }
@@ -23,7 +23,7 @@ public class TableConfig {
     
     public List<PropertyConfig> Properties { get; } = new();
 
-    public TableConfig(DbContextConfig config, Type tableType, string propertyName, int nthTable) {
+    public TableConfig(ITableGroupConfig config, Type tableType, string propertyName, int nthTable) {
         TableType = tableType;
         PropertyName = propertyName;
         ContextConfig = config;
