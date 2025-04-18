@@ -10,6 +10,7 @@ using HopFrame.Web.Services.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HopFrame.Web;
 
@@ -44,6 +45,7 @@ public static class ServiceCollectionExtensions {
 
         services.AddScoped<IPluginOrchestrator, PluginOrchestrator>();
         services.AddScoped<IFileService, FileService>();
+        services.TryAddScoped<ISearchSuggestionProvider, SearchSuggestionProvider>();
 
         if (addRazorComponents) {
             services.AddRazorComponents()

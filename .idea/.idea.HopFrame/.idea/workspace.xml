@@ -12,7 +12,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/ISearchSuggestionProvider.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/Implementation/SearchSuggestionProvider.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Models/User.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +38,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/repositories" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -130,7 +136,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;b5f11219-dfc4-47a1-b02c-90ab603034fb.executor&quot;: &quot;Debug&quot;,
     &quot;dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;!35 on feature/advanced-search&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -262,14 +268,11 @@
       <workItem from="1740742471317" duration="672000" />
       <workItem from="1741974241977" duration="10854000" />
       <workItem from="1742038098473" duration="990000" />
-    </task>
-    <task id="LOCAL-00003" summary="Added database loading logic">
-      <option name="closed" value="true" />
-      <created>1736859917232</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1736859917232</updated>
+      <workItem from="1742059898156" duration="3488000" />
+      <workItem from="1744725284649" duration="60000" />
+      <workItem from="1744916016381" duration="66000" />
+      <workItem from="1744916106166" duration="49000" />
+      <workItem from="1744966207145" duration="5064000" />
     </task>
     <task id="LOCAL-00004" summary="Started working on listing page">
       <option name="closed" value="true" />
@@ -655,7 +658,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742038459077</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Implemented sql search + negatable searches">
+      <option name="closed" value="true" />
+      <created>1742063374318</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1742063374318</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -685,7 +696,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fixed test for table view" />
     <MESSAGE value="Added n-m relation mapping" />
     <MESSAGE value="Fixed wrong element selection for action buttons" />
     <MESSAGE value="Implemented primitive change reversion" />
@@ -710,6 +720,7 @@
     <MESSAGE value="Reverted pipeline to include all jobs" />
     <MESSAGE value="Added support for custom repositories" />
     <MESSAGE value="Added documentation for custom repos and exporter plugin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added documentation for custom repos and exporter plugin" />
+    <MESSAGE value="Implemented sql search + negatable searches" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented sql search + negatable searches" />
   </component>
 </project>

@@ -20,3 +20,13 @@
     place-items: center;
     border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-divider-rest);
 }
+
+.hopframe-search ::deep fluent-listbox {
+    width: 500px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--fill-color);
+    z-index: 1;
+    outline: none !important;
+}
