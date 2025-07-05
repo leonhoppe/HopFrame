@@ -19,7 +19,7 @@ public class DisplayPropertyTests {
         _explorerMock = new Mock<IContextExplorer>();
         _config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         _tableManager =
-            new TableManager<object>(contextMock.Object, _config, _explorerMock.Object, _providerMock.Object);
+            new TableManager<object>(contextMock.Object, _config, _explorerMock.Object, _providerMock.Object, new SearchExpressionBuilder(_explorerMock.Object));
     }
 
     [Fact]

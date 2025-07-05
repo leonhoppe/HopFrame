@@ -50,12 +50,12 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
 
             if (context is DbContextConfig) {
                 var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider) as ITableManager;
+                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider, provider.GetRequiredService<ISearchExpressionBuilder>()) as ITableManager;
             }
             
             if (context is RepositoryGroupConfig repoConfig) {
                 var type = typeof(RepositoryTableManager<,>).MakeGenericType(table.TableType, repoConfig.KeyProperty.PropertyType);
-                return Activator.CreateInstance(type, repo, this, provider) as ITableManager;
+                return Activator.CreateInstance(type, repo, this, provider, provider.GetRequiredService<ISearchExpressionBuilder>()) as ITableManager;
             }
         }
 
@@ -72,12 +72,12 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
 
             if (context is DbContextConfig) {
                 var type = typeof(TableManager<>).MakeGenericType(table.TableType);
-                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider) as ITableManager;
+                return Activator.CreateInstance(type, (DbContext)repo, table, this, provider, provider.GetRequiredService<ISearchExpressionBuilder>()) as ITableManager;
             }
             
             if (context is RepositoryGroupConfig repoConfig) {
                 var type = typeof(RepositoryTableManager<,>).MakeGenericType(table.TableType, repoConfig.KeyProperty.PropertyType);
-                return Activator.CreateInstance(type, repo, this, provider) as ITableManager;
+                return Activator.CreateInstance(type, repo, this, provider, provider.GetRequiredService<ISearchExpressionBuilder>()) as ITableManager;
             }
         }
 

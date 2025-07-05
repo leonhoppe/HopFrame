@@ -12,8 +12,4 @@ public class User {
     public string? LastName { get; set; }
 
     public virtual List<Post> Posts { get; set; } = new();
-
-    public override string ToString() {
-        return Username;
-    }
 }

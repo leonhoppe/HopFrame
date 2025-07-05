@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Reflection.Metadata;
 using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HopFrame.Core.Services.Implementations;
 
-internal sealed class TableManager<TModel>(DbContext context, TableConfig config, IContextExplorer explorer, IServiceProvider provider) : ITableManager where TModel : class {
+internal sealed class TableManager<TModel>(DbContext context, TableConfig config, IContextExplorer explorer, IServiceProvider provider, ISearchExpressionBuilder searchExpressionBuilder) : ITableManager where TModel : class {
     
     public async Task<IEnumerable<object>> LoadPage(int page, int perPage = 20) {
         var table = context.Set<TModel>();
@@ -17,18 +20,29 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
             .ToArrayAsync();
     }
 
-    public Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
+    public async Task<(IEnumerable<object>, int)> Search(string searchTerm, int page = 0, int perPage = 20) {
         var table = context.Set<TModel>();
-        var all = IncludeForeignKeys(table)
-            .AsEnumerable()
-            .Where(item => ItemSearched(item, searchTerm))
-            .ToList();
 
-        return Task.FromResult((
-            (IEnumerable<object>)all.Skip(page * perPage).Take(perPage),
-            (int)Math.Ceiling(all.Count / (double)perPage)));
+        var parameter = Expression.Parameter(typeof(TModel), "x");
+        var exp = searchExpressionBuilder.BuildSearchExpression(config, searchTerm, parameter);
+        
+        if (exp is null)
+            return ([], 0);
+        
+        var lambda = Expression.Lambda<Func<TModel, bool>>(exp, parameter);
+        var result = await IncludeForeignKeys(table)
+            .Where(lambda)
+            .Skip(page * perPage)
+            .Take(perPage)
+            .ToListAsync();
+
+        var totalEntries = await table
+            .Where(lambda)
+            .CountAsync();
+
+        return (result, (int)Math.Ceiling(totalEntries / (double)perPage));
     }
-
+    
     public async Task<int> TotalPages(int perPage = 20) {
         var table = context.Set<TModel>();
         return (int)Math.Ceiling(await table.CountAsync() / (double)perPage);
@@ -59,31 +73,6 @@ internal sealed class TableManager<TModel>(DbContext context, TableConfig config
     public async Task<object?> GetOne(object key) {
         var table = context.Set<TModel>();
         return await table.FindAsync(key);
-    }
-
-    public async Task RevertChanges(object item) {
-        var entry = context.Entry((TModel)item);
-        await entry.ReloadAsync();
-
-        if (entry.Collections.Any()) {
-            context.ChangeTracker.Clear();
-        }
-        
-        await context.SaveChangesAsync();
-    }
-
-    private bool ItemSearched(TModel item, string searchTerm) {
-        foreach (var property in config.Properties) {
-            if (!property.Searchable) continue;
-            var value = property.GetValue(item, provider);
-            if (value is null) continue;
-            
-            var strValue = value.ToString();
-            if (strValue?.Contains(searchTerm) == true) 
-                return true;
-        }
-
-        return false;
     }
 
     public async Task<string> DisplayProperty(object? item, PropertyConfig prop, object? value = null, object? enumerableValue = null) {

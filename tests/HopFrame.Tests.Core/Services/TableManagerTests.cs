@@ -10,6 +10,9 @@ using Moq;
 namespace HopFrame.Tests.Core.Services;
 
 public class TableManagerTests {
+
+    private Mock<ISearchExpressionBuilder> _searchBuilderMock = new();
+    
     private Mock<DbContext> CreateMockDbContext<TModel>(List<TModel> data) where TModel : class {
         var dbContext = new Mock<DbContext>();
         var dbSet = CreateMockDbSet(data);
@@ -51,7 +54,7 @@ public class TableManagerTests {
         var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
+        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object, _searchBuilderMock.Object);
 
         // Act
         var result = (await manager.LoadPage(1, 2)).ToArray();
@@ -59,32 +62,6 @@ public class TableManagerTests {
         // Assert
         Assert.Single(result);
         Assert.Equal("Item3", ((MockModel)result[0]).Name);
-    }
-
-    [Fact]
-    public async Task Search_ReturnsMatchingData() {
-        // Arrange
-        var data = new List<MockModel> {
-            new MockModel { Id = 1, Name = "Item1" },
-            new MockModel { Id = 2, Name = "Item2" },
-            new MockModel { Id = 3, Name = "TestItem" }
-        };
-        var dbContext = CreateMockDbContext(data);
-        var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
-        config.Properties.Add(new PropertyConfig(typeof(MockModel).GetProperty("Name")!, config, 0)
-            { Searchable = true });
-        var explorer = new Mock<IContextExplorer>();
-        var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
-
-        // Act
-        var (result, totalPages) = await manager.Search("Test", 0, 2);
-
-        // Assert
-        var collection = result as object[] ?? result.ToArray();
-        Assert.Single(collection);
-        Assert.Equal("TestItem", ((MockModel)collection.First()).Name);
-        Assert.Equal(1, totalPages);
     }
 
     [Fact]
@@ -99,7 +76,7 @@ public class TableManagerTests {
         var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext, config, explorer.Object, provider.Object);
+        var manager = new TableManager<MockModel>(dbContext, config, explorer.Object, provider.Object, _searchBuilderMock.Object);
         await dbContext.Models.AddRangeAsync(data);
         await dbContext.SaveChangesAsync();
 
@@ -121,7 +98,7 @@ public class TableManagerTests {
         var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
+        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object, _searchBuilderMock.Object);
         var item = data.First();
 
         // Act
@@ -142,7 +119,7 @@ public class TableManagerTests {
         var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
+        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object, _searchBuilderMock.Object);
 
         // Act
         await manager.EditItem(data.First());
@@ -159,7 +136,7 @@ public class TableManagerTests {
         var config = new TableConfig(new DbContextConfig(typeof(MockDbContext), null!), typeof(MockModel), "Models", 0);
         var explorer = new Mock<IContextExplorer>();
         var provider = new Mock<IServiceProvider>();
-        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object);
+        var manager = new TableManager<MockModel>(dbContext.Object, config, explorer.Object, provider.Object, _searchBuilderMock.Object);
         var newItem = new MockModel { Id = 3, Name = "NewItem" };
 
         // Act

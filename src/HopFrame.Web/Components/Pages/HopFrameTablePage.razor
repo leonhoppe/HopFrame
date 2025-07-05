@@ -9,8 +9,8 @@
 @using HopFrame.Web.Models
 @using HopFrame.Web.Plugins
 @using HopFrame.Web.Plugins.Events
+@using HopFrame.Web.Services
 @using Microsoft.JSInterop
-@using Microsoft.EntityFrameworkCore
 
 @if (!DisplaySelection) {
     <PageTitle>@_config?.DisplayName</PageTitle>
@@ -40,7 +40,27 @@
         }
         
         <FluentSpacer />
-        <FluentSearch @oninput="OnSearch" @onchange="OnSearch" Style="width: 350px" />
+        <div
+            style="position: relative; height: 32px"
+            class="hopframe-search">
+            
+            <FluentSearch
+                @ref="_searchBox"
+                @oninput="OnSearch"
+                @onchange="OnSearch"
+                @onfocusin="() => { SearchFocus(); UpdateSearchSuggestions(); }"
+                @onfocusout="SearchUnfocus"
+                Style="width: 500px"/>
+
+            @if (_isSearchActive && _searchSuggestions.Count > 0) {
+                <FluentListbox
+                    TOption="string"
+                    Items="_searchSuggestions"
+                    SelectedOptionChanged="SearchSuggestionSelected"
+                    @onfocusin="SearchFocus"
+                    @onfocusout="SearchUnfocus"/>
+            }
+        </div>
         
         @if (_hasCreatePolicy && DisplayActions && _buttonToggles.ShowAddEntityButton) {
             <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entity</FluentButton>
@@ -162,6 +182,7 @@
 @inject IHopFrameAuthHandler Handler
 @inject ICallbackEmitter Emitter
 @inject IPluginOrchestrator PluginOrchestrator
+@inject ISearchSuggestionProvider SearchSuggestions
 
 @code {
     
@@ -191,6 +212,9 @@
     private int _totalPages;
     private string? _searchTerm;
     private bool _loading;
+    private bool _isSearchActive;
+    private IList<string> _searchSuggestions = [];
+    private FluentSearch? _searchBox;
 
     private bool _hasUpdatePolicy;
     private bool _hasDeletePolicy;
@@ -255,6 +279,7 @@
         _searchTerm = eventArgs.Value?.ToString();
         if (_searchTerm is null) return;
         _searchCancel = new();
+        UpdateSearchSuggestions();
         
         await Task.Delay(500, _searchCancel.Token);
 
@@ -273,6 +298,36 @@
         _searchTerm = eventResult.SearchTerm;
         
         await Reload();
+    }
+    
+    private async Task SearchSuggestionSelected(string? suggestion) {
+        if (string.IsNullOrWhiteSpace(suggestion)) return;
+        _searchTerm = SearchSuggestions.CompleteSearchSuggestion(_config!, _searchTerm ?? string.Empty, suggestion);
+        _searchBox!.Value = _searchTerm;
+        _searchBox.FocusAsync();
+        UpdateSearchSuggestions();
+
+        if (!suggestion.EndsWith('='))
+            await OnSearch(new() {
+                Value = _searchTerm
+            });
+    }
+
+    private void UpdateSearchSuggestions() {
+        if (_config is null || !_config.ShowSearchSuggestions) return;
+        _searchSuggestions = SearchSuggestions.GenerateSearchSuggestions(_config, _searchTerm ?? string.Empty).ToList();
+    }
+
+    private CancellationTokenSource _searchFocusCancel = new();
+    private async Task SearchFocus() {
+        _isSearchActive = true;
+        await _searchFocusCancel.CancelAsync();
+        _searchFocusCancel = new();
+    }
+
+    private async Task SearchUnfocus() {
+        await Task.Delay(10, _searchFocusCancel.Token);
+        _isSearchActive = false;
     }
 
     public async Task Reload() {
@@ -421,4 +476,5 @@
     public void RequestRender() {
         StateHasChanged();
     }
+
 }

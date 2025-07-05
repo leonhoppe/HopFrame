@@ -1,6 +1,8 @@
 ﻿using HopFrame.Core.Config;
+using HopFrame.Core.Services;
 using HopFrame.Core.Services.Implementations;
 using HopFrame.Tests.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -121,6 +123,7 @@ public class ContextExplorerTests {
         var dbContext = new MockDbContext();
         var provider = new Mock<IServiceProvider>();
         provider.Setup(p => p.GetService(typeof(MockDbContext))).Returns(dbContext);
+        provider.Setup(p => p.GetService(typeof(ISearchExpressionBuilder))).Returns(new Mock<ISearchExpressionBuilder>().Object);
         var contextExplorer = new ContextExplorer(config, provider.Object, new Logger<ContextExplorer>(new LoggerFactory()));
 
         // Act
