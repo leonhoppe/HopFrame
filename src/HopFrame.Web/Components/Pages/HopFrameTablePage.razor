@@ -314,7 +314,7 @@
     }
 
     private void UpdateSearchSuggestions() {
-        if (_config is null) return;
+        if (_config is null || !_config.ShowSearchSuggestions) return;
         _searchSuggestions = SearchSuggestions.GenerateSearchSuggestions(_config, _searchTerm ?? string.Empty).ToList();
     }
 

@@ -7,8 +7,6 @@ namespace HopFrame.Web.Services.Implementation;
 public sealed class SearchSuggestionProvider : ISearchSuggestionProvider {
     
     public IEnumerable<string> GenerateSearchSuggestions(TableConfig table, string searchText) {
-        if (table.ContextConfig is not DbContextConfig) return [];
-
         var searchParts = searchText.Trim().Split(' ');
         if (searchParts.Length != 0 && searchParts.Last().EndsWith('=') && !searchText.EndsWith(' ')) {
             var part = searchParts.Last()[..^1];

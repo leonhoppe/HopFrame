@@ -15,6 +15,7 @@ public class TableConfig {
     public bool Ignored { get; set; }
     public int Order { get; set; }
     internal bool Seeded { get; set; }
+    public bool ShowSearchSuggestions { get; set; } = true;
 
     public string? ViewPolicy { get; set; }
     public string? CreatePolicy { get; set; }
@@ -64,6 +65,13 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// </summary>
     public TableConfigurator<TModel> Ignore(bool ignore) {
         InnerConfig.Ignored = ignore;
+        return this;
+    }
+    /// <summary>
+    /// Determines if search suggestions should be displayed in the ui (Advanced Search)
+    /// </summary>
+    public TableConfigurator<TModel> ShowSearchSuggestions(bool show = true) {
+        InnerConfig.ShowSearchSuggestions = show;
         return this;
     }
 

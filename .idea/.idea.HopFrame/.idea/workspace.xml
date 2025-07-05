@@ -12,19 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/ISearchExpressionBuilder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/SearchExpressionBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/RepositoryTableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/RepositoryTableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Services/Implementation/SearchSuggestionProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/Implementation/SearchSuggestionProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/ContextExplorerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/ContextExplorerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/DisplayPropertyTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/HopFrame.Tests.Core/Services/TableManagerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,15 +269,7 @@
       <workItem from="1744916016381" duration="66000" />
       <workItem from="1744916106166" duration="49000" />
       <workItem from="1744966207145" duration="5231000" />
-      <workItem from="1751713720880" duration="7160000" />
-    </task>
-    <task id="LOCAL-00005" summary="Added entry saving support">
-      <option name="closed" value="true" />
-      <created>1736970238802</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1736970238802</updated>
+      <workItem from="1751713720880" duration="7712000" />
     </task>
     <task id="LOCAL-00006" summary="Added reload button and animation">
       <option name="closed" value="true" />
@@ -673,7 +655,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744971440348</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Finished advanced search functionality">
+      <option name="closed" value="true" />
+      <created>1751721064458</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1751721064458</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -703,7 +693,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fixed wrong element selection for action buttons" />
     <MESSAGE value="Implemented primitive change reversion" />
     <MESSAGE value="Implemented deferred entry manipulation" />
     <MESSAGE value="Removed select all button" />
@@ -728,7 +717,8 @@
     <MESSAGE value="Added documentation for custom repos and exporter plugin" />
     <MESSAGE value="Implemented sql search + negatable searches" />
     <MESSAGE value="Started working on search suggestions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Started working on search suggestions" />
+    <MESSAGE value="Finished advanced search functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished advanced search functionality" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
