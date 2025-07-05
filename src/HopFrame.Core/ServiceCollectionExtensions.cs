@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions {
         services.AddScoped<IContextExplorer, ContextExplorer>();
         services.TryAddScoped<IHopFrameAuthHandler, DefaultAuthHandler>();
         services.TryAddScoped<ICallbackEmitter, CallbackEmitter>();
+        services.AddScoped<ISearchExpressionBuilder, SearchExpressionBuilder>();
         return services;
     }
     

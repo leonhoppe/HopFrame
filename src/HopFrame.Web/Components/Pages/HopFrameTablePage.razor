@@ -300,12 +300,17 @@
         await Reload();
     }
     
-    private void SearchSuggestionSelected(string? suggestion) {
+    private async Task SearchSuggestionSelected(string? suggestion) {
         if (string.IsNullOrWhiteSpace(suggestion)) return;
         _searchTerm = SearchSuggestions.CompleteSearchSuggestion(_config!, _searchTerm ?? string.Empty, suggestion);
         _searchBox!.Value = _searchTerm;
         _searchBox.FocusAsync();
         UpdateSearchSuggestions();
+
+        if (!suggestion.EndsWith('='))
+            await OnSearch(new() {
+                Value = _searchTerm
+            });
     }
 
     private void UpdateSearchSuggestions() {

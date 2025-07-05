@@ -4,7 +4,7 @@ using HopFrame.Web.Helpers;
 
 namespace HopFrame.Web.Services.Implementation;
 
-public sealed class SearchSuggestionProvider(IContextExplorer explorer, IServiceProvider provider) : ISearchSuggestionProvider {
+public sealed class SearchSuggestionProvider : ISearchSuggestionProvider {
     
     public IEnumerable<string> GenerateSearchSuggestions(TableConfig table, string searchText) {
         if (table.ContextConfig is not DbContextConfig) return [];
@@ -27,15 +27,6 @@ public sealed class SearchSuggestionProvider(IContextExplorer explorer, IService
 
             if (property.Info.PropertyType == typeof(TimeOnly))
                 return [TimeOnly.FromDateTime(DateTime.Now).ToString()];
-
-            if (property.IsRelation) {
-                var manager = explorer.GetTableManager(table.TableType);
-                var entries = manager!.LoadPage(0, 100).Result;
-                return entries
-                    .Select(e => manager.DisplayProperty(e, property).Result)
-                    .Distinct()
-                    .Take(10);
-            }
         }
 
         if (searchText.Length != 0 && !searchText.EndsWith(' '))
@@ -45,6 +36,7 @@ public sealed class SearchSuggestionProvider(IContextExplorer explorer, IService
         var searchableProperties = table.Properties
             .Where(p => !p.IsVirtualProperty)
             .Where(p => p.List)
+            .Where(p => p.Searchable)
             .Where(p => 
                 p.Info.PropertyType.IsEnum || 
                 p.Info.PropertyType.IsNumeric() ||
