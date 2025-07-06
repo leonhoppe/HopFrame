@@ -11,11 +11,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
-    </list>
+    <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,7 +128,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "b5f11219-dfc4-47a1-b02c-90ab603034fb.executor": "Debug",
     "dcdf1689-dc07-47e4-8824-2e60a4fbf301.executor": "Debug",
-    "git-widget-placeholder": "!35 on feature/advanced-search",
+    "git-widget-placeholder": "feature/test-reports",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -269,87 +265,8 @@
       <workItem from="1744916016381" duration="66000" />
       <workItem from="1744916106166" duration="49000" />
       <workItem from="1744966207145" duration="5231000" />
-      <workItem from="1751713720880" duration="7712000" />
-    </task>
-    <task id="LOCAL-00006" summary="Added reload button and animation">
-      <option name="closed" value="true" />
-      <created>1737023058093</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1737023058093</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Added relation picker dialog">
-      <option name="closed" value="true" />
-      <created>1737035288104</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1737035288104</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Added automatic relation mapping">
-      <option name="closed" value="true" />
-      <created>1737037853482</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1737037853482</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Added property validation">
-      <option name="closed" value="true" />
-      <created>1737040612038</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1737040612038</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Added creation/modification confirmation">
-      <option name="closed" value="true" />
-      <created>1737040946489</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1737040946489</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Removed Template">
-      <option name="closed" value="true" />
-      <created>1737042229086</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1737042229086</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Added policy validation, ordering and virtual listing properties">
-      <option name="closed" value="true" />
-      <created>1737055409534</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1737055409535</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Added n -&gt; m relation support">
-      <option name="closed" value="true" />
-      <created>1737129518866</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1737129518866</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Added text area support and DI support for modifier functions">
-      <option name="closed" value="true" />
-      <created>1737202192471</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1737202192471</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Addressed all build warnings">
-      <option name="closed" value="true" />
-      <created>1737203441319</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1737203441319</updated>
+      <workItem from="1751713720880" duration="8243000" />
+      <workItem from="1751741813788" duration="4623000" />
     </task>
     <task id="LOCAL-00016" summary="Added documentation for the configurators and service extensions methods">
       <option name="closed" value="true" />
@@ -663,7 +580,87 @@
       <option name="project" value="LOCAL" />
       <updated>1751721064458</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Made search suggestions togglable">
+      <option name="closed" value="true" />
+      <created>1751721576913</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1751721576913</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Updated test pipeline">
+      <option name="closed" value="true" />
+      <created>1751747279843</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1751747279844</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Fixed typo in .gitlab-ci.yml">
+      <option name="closed" value="true" />
+      <created>1751747347169</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1751747347169</updated>
+    </task>
+    <task id="LOCAL-00058" summary="updated test job">
+      <option name="closed" value="true" />
+      <created>1751747836791</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1751747836791</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Combined coverage reports in test job">
+      <option name="closed" value="true" />
+      <created>1751748307061</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1751748307061</updated>
+    </task>
+    <task id="LOCAL-00060" summary="combined test results">
+      <option name="closed" value="true" />
+      <created>1751748936783</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1751748936783</updated>
+    </task>
+    <task id="LOCAL-00061" summary="added coverage to test job">
+      <option name="closed" value="true" />
+      <created>1751749638139</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1751749638139</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Updated coverage extraction">
+      <option name="closed" value="true" />
+      <created>1751750081208</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1751750081208</updated>
+    </task>
+    <task id="LOCAL-00063" summary="fixed coverage percentage printing">
+      <option name="closed" value="true" />
+      <created>1751750341741</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1751750341742</updated>
+    </task>
+    <task id="LOCAL-00064" summary="fixed echo cmd">
+      <option name="closed" value="true" />
+      <created>1751750495636</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1751750495636</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -693,16 +690,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Implemented primitive change reversion" />
-    <MESSAGE value="Implemented deferred entry manipulation" />
-    <MESSAGE value="Removed select all button" />
-    <MESSAGE value="Added missing installation instructions" />
-    <MESSAGE value="Added modular event system" />
-    <MESSAGE value="Fixed event emitter service scope" />
-    <MESSAGE value="Added custom views" />
-    <MESSAGE value="Added plugin events" />
-    <MESSAGE value="Passed cancellation tokens to event handlers if needed" />
-    <MESSAGE value="Added plugin buttons" />
     <MESSAGE value="Added default button removal feature" />
     <MESSAGE value="Added custom search functionality" />
     <MESSAGE value="Added fully virtual properties" />
@@ -718,37 +705,16 @@
     <MESSAGE value="Implemented sql search + negatable searches" />
     <MESSAGE value="Started working on search suggestions" />
     <MESSAGE value="Finished advanced search functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished advanced search functionality" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
-          <option name="timeStamp" value="1" />
-        </breakpoint>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
-          <option name="timeStamp" value="2" />
-        </breakpoint>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
-          <option name="timeStamp" value="3" />
-        </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/SearchExpressionBuilder.cs</url>
-          <line>102</line>
-          <properties documentPath="C:\Users\leon\Documents\Projekte\HopFrame\src\HopFrame.Core\Services\Implementations\SearchExpressionBuilder.cs" containingFunctionPresentation="Method 'BuildSearchExpression'">
-            <startOffsets>
-              <option value="4460" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4503" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Made search suggestions togglable" />
+    <MESSAGE value="Updated test pipeline" />
+    <MESSAGE value="Fixed typo in .gitlab-ci.yml" />
+    <MESSAGE value="updated test job" />
+    <MESSAGE value="Combined coverage reports in test job" />
+    <MESSAGE value="combined test results" />
+    <MESSAGE value="added coverage to test job" />
+    <MESSAGE value="Updated coverage extraction" />
+    <MESSAGE value="fixed coverage percentage printing" />
+    <MESSAGE value="fixed echo cmd" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed echo cmd" />
   </component>
 </project>
