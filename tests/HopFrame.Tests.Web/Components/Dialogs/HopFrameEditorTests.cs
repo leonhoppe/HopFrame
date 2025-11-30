@@ -47,7 +47,7 @@ public class HopFrameEditorTests : TestContext {
 
         var dialogData = new EditorDialogData(tableConfig, new MyTable());
         var dialog = new FluentDialog() {
-            Instance = new DialogInstance(typeof(HopFrameEditor), new DialogParameters(), dialogData)
+            Instance = new DialogInstance(typeof(HopFrameEditor), new DialogParameters(), dialogData, null)
         };
 
         // Act

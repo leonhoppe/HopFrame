@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using HopFrame.Core.Config;
+﻿using HopFrame.Core.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
