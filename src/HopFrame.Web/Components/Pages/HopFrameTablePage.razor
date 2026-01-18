@@ -24,7 +24,7 @@
         @if (!DisplaySelection && _buttonToggles.ShowRefreshButton) {
             <FluentButton
                 IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
-                OnClick="Reload"
+                OnClick="@(Reload)"
                 Loading="_loading"
                 Style="margin-left: 10px">
                 Refresh
@@ -34,7 +34,7 @@
         @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopLeft)) {
             <FluentButton
                 IconStart="@(button.Icon?.GetInstance())"
-                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                OnClick="@(() => button.Handler.Invoke(null!, _config!))">
                 @button.Title
             </FluentButton>
         }
@@ -44,32 +44,33 @@
             style="position: relative; height: 32px"
             class="hopframe-search">
             
+            @* ReSharper disable once CSharpWarnings::CS4014 *@
             <FluentSearch
                 @ref="_searchBox"
                 @oninput="OnSearch"
                 @onchange="OnSearch"
                 @onfocusin="() => { SearchFocus(); UpdateSearchSuggestions(); }"
-                @onfocusout="SearchUnfocus"
+                @onfocusout="@(SearchUnfocus)"
                 Style="width: 500px"/>
 
             @if (_isSearchActive && _searchSuggestions.Count > 0) {
                 <FluentListbox
                     TOption="string"
                     Items="_searchSuggestions"
-                    SelectedOptionChanged="SearchSuggestionSelected"
-                    @onfocusin="SearchFocus"
-                    @onfocusout="SearchUnfocus"/>
+                    SelectedOptionChanged="@(SearchSuggestionSelected)"
+                    @onfocusin="@(SearchFocus)"
+                    @onfocusout="@(SearchUnfocus)"/>
             }
         </div>
         
         @if (_hasCreatePolicy && DisplayActions && _buttonToggles.ShowAddEntityButton) {
-            <FluentButton OnClick="async () => { await CreateOrEdit(null); }">Add Entity</FluentButton>
+            <FluentButton OnClick="@(async () => { await CreateOrEdit(null); })">Add Entity</FluentButton>
         }
 
         @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.TopRight)) {
             <FluentButton
                 IconStart="@(button.Icon?.GetInstance())"
-                OnClick="() => button.Handler.Invoke(null!, _config!)">
+                OnClick="@(() => button.Handler.Invoke(null!, _config!))">
                 @button.Title
             </FluentButton>
         }
@@ -84,7 +85,7 @@
                         TGridItem="object"
                         SelectMode="SelectionMode"
                         SelectFromEntireRow="true"
-                        OnSelect="data => SelectItem(data.Item, data.Selected)"
+                        OnSelect="@(data => SelectItem(data.Item, data.Selected))"
                         SelectAllDisabled="true"
                         Property="o => DialogData!.SelectedObjects.Contains(o)"
                         Style="min-width: max-content; height: 44px; display: grid; align-items: center" />
@@ -100,19 +101,19 @@
                 @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
                         @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.OnEntry)) {
-                            <FluentButton OnClick="() => button.Handler.Invoke(context, _config!)">
+                            <FluentButton OnClick="@(() => button.Handler.Invoke(context, _config!))">
                                 <FluentIcon Value="@(button.Icon!.GetInstance())" />
                             </FluentButton>
                         }
                         
                         @if (_hasUpdatePolicy && _buttonToggles.ShowEditButton) {
-                            <FluentButton aria-label="Edit entry" OnClick="async () => { await CreateOrEdit(context); }">
+                            <FluentButton aria-label="Edit entry" OnClick="@(async () => { await CreateOrEdit(context); })">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Edit())"/>
                             </FluentButton>
                         }
 
                         @if (_hasDeletePolicy && _buttonToggles.ShowDeleteButton) {
-                            <FluentButton aria-label="Delete entry" OnClick="async () => { await DeleteEntry(context); }">
+                            <FluentButton aria-label="Delete entry" OnClick="@(async () => { await DeleteEntry(context); })">
                                 <FluentIcon Value="@(new Icons.Regular.Size16.Delete())" Color="Color.Warning"/>
                             </FluentButton>
                         }
@@ -124,7 +125,7 @@
 
     @if (_totalPages > 1) {
         <div class="hopframe-paginator">
-            <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage - 1)">
+            <FluentButton BackgroundColor="transparent" OnClick="@(async () => await ChangePage(_currentPage - 1))">
                 <FluentIcon Value="@(new Icons.Regular.Size20.ArrowPrevious())" Color="Color.Neutral" />
             </FluentButton>
 
@@ -139,7 +140,7 @@
 
             <span>of @_totalPages</span>
 
-            <FluentButton BackgroundColor="transparent" OnClick="async () => await ChangePage(_currentPage + 1)">
+            <FluentButton BackgroundColor="transparent" OnClick="@(async () => await ChangePage(_currentPage + 1))">
                 <FluentIcon Value="@(new Icons.Regular.Size20.ArrowNext())" Color="Color.Neutral" />
             </FluentButton>
         </div>
@@ -173,7 +174,7 @@
 
 <FluentToastProvider MaxToastCount="10" />
 
-<InputFile style="display: none" @ref="FileInputElement" OnChange="OnInputFiles"></InputFile>
+<InputFile style="display: none" @ref="FileInputElement" OnChange="@(OnInputFiles)"></InputFile>
 
 @inject IContextExplorer Explorer
 @inject NavigationManager Navigator
@@ -219,8 +220,6 @@
     private bool _hasUpdatePolicy;
     private bool _hasDeletePolicy;
     private bool _hasCreatePolicy;
-
-    private bool _allSelected;
 
     private readonly CancellationTokenSource _tokenSource = new();
     private List<PluginButton> _pluginButtons = new();
@@ -441,14 +440,6 @@
         if (!selected)
             DialogData!.SelectedObjects.Remove(item);
         else DialogData!.SelectedObjects.Add(item);
-    }
-
-    private void SelectAll() {
-        var selected = CurrentlyDisplayedModels.All(DialogData!.SelectedObjects.Contains);
-        foreach (var displayedModel in CurrentlyDisplayedModels) {
-            SelectItem(displayedModel, !selected);
-        }
-        _allSelected = selected;
     }
 
     private async Task<string> DisplayProperty(PropertyConfig config, object entry) {
