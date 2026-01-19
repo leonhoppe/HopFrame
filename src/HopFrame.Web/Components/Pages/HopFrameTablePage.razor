@@ -135,7 +135,7 @@
                           Items="Enumerable.Range(0, _totalPages)"
                           OptionValue="@(p => p.ToString())"
                           OptionText="@(p => (p + 1).ToString())"
-                          ValueChanged="async s => await ChangePage(Convert.ToInt32(s))"
+                          ValueChanged="@(async s => await ChangePage(Convert.ToInt32(s)))"
                           Width="max-content" SelectedOption="@_currentPage"/>
 
             <span>of @_totalPages</span>

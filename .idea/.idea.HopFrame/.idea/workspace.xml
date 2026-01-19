@@ -12,10 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Dialogs/HopFrameEditor.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,15 +276,8 @@
       <workItem from="1751713720880" duration="8243000" />
       <workItem from="1751741813788" duration="4623000" />
       <workItem from="1768753475773" duration="455000" />
-      <workItem from="1768753946559" duration="344000" />
-    </task>
-    <task id="LOCAL-00016" summary="Added documentation for the configurators and service extensions methods">
-      <option name="closed" value="true" />
-      <created>1737208088933</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1737208088933</updated>
+      <workItem from="1768753946559" duration="690000" />
+      <workItem from="1768756619311" duration="94000" />
     </task>
     <task id="LOCAL-00017" summary="Created tests for the core module">
       <option name="closed" value="true" />
@@ -673,7 +663,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751750495636</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Code cleanup + new pipeline setup">
+      <option name="closed" value="true" />
+      <created>1768754560236</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1768754560236</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -714,7 +712,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added default button removal feature" />
     <MESSAGE value="Added custom search functionality" />
     <MESSAGE value="Added fully virtual properties" />
     <MESSAGE value="Added basic export and import feature" />
@@ -739,6 +736,7 @@
     <MESSAGE value="Updated coverage extraction" />
     <MESSAGE value="fixed coverage percentage printing" />
     <MESSAGE value="fixed echo cmd" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed echo cmd" />
+    <MESSAGE value="Code cleanup + new pipeline setup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code cleanup + new pipeline setup" />
   </component>
 </project>
