@@ -18,7 +18,9 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
     
     public TableConfig? GetTable(string tableDisplayName) {
         foreach (var context in config.Contexts) {
-            var table = context.Tables.FirstOrDefault(table => table.DisplayName.Equals(tableDisplayName, StringComparison.CurrentCultureIgnoreCase));
+            var table = context.Tables
+                .Where(t => !t.Ignored)
+                .FirstOrDefault(table => table.DisplayName.Equals(tableDisplayName, StringComparison.CurrentCultureIgnoreCase));
             if (table is null) continue;
             
             SeedTableData(table);
@@ -30,7 +32,9 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
 
     public TableConfig? GetTable(Type tableEntity) {
         foreach (var context in config.Contexts) {
-            var table = context.Tables.FirstOrDefault(table => table.TableType == tableEntity);
+            var table = context.Tables
+                .Where(t => !t.Ignored)
+                .FirstOrDefault(table => table.TableType == tableEntity);
             if (table is null) continue;
             
             SeedTableData(table);

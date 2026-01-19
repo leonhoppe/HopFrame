@@ -63,7 +63,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines if the table should be ignored in the admin ui
     /// </summary>
-    public TableConfigurator<TModel> Ignore(bool ignore) {
+    public TableConfigurator<TModel> Ignore(bool ignore = true) {
         InnerConfig.Ignored = ignore;
         return this;
     }
