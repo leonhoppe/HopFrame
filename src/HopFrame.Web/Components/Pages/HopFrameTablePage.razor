@@ -186,9 +186,12 @@
 @inject ISearchSuggestionProvider SearchSuggestions
 
 @code {
+
+    [Parameter]
+    public string TableDisplayName { get; set; } = null!;
     
     [Parameter]
-    public required string TableDisplayName { get; set; }
+    public Type? TableType { get; set; }
     
     [Parameter]
     public bool DisplaySelection { get; set; }
@@ -229,6 +232,11 @@
 
     protected override void OnInitialized() {
         CurrentInstance = this;
+
+        if (TableType is not null) {
+            _config ??= Explorer.GetTable(TableType);
+        }
+        
         _config ??= Explorer.GetTable(TableDisplayName);
 
         if (_config is null || (_config.Ignored && DialogData is null)) {

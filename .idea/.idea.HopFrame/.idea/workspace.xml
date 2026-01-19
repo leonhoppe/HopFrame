@@ -12,8 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -280,15 +280,7 @@
       <workItem from="1768753475773" duration="455000" />
       <workItem from="1768753946559" duration="690000" />
       <workItem from="1768756619311" duration="94000" />
-      <workItem from="1768847832546" duration="354000" />
-    </task>
-    <task id="LOCAL-00018" summary="Added more tests">
-      <option name="closed" value="true" />
-      <created>1737285123218</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1737285123218</updated>
+      <workItem from="1768847832546" duration="758000" />
     </task>
     <task id="LOCAL-00019" summary="Added web module tests">
       <option name="closed" value="true" />
@@ -674,7 +666,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768847968844</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="Fixed #37">
+      <option name="closed" value="true" />
+      <created>1768848267710</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1768848267710</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -715,7 +715,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added fully virtual properties" />
     <MESSAGE value="Added basic export and import feature" />
     <MESSAGE value="Finished converter plugin" />
     <MESSAGE value="Patched CI" />
@@ -740,6 +739,7 @@
     <MESSAGE value="fixed echo cmd" />
     <MESSAGE value="Code cleanup + new pipeline setup" />
     <MESSAGE value="Fixed #38" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed #38" />
+    <MESSAGE value="Fixed #37" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed #37" />
   </component>
 </project>

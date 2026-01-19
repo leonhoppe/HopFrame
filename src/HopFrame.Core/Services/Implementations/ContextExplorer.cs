@@ -33,7 +33,6 @@ internal sealed class ContextExplorer(HopFrameConfig config, IServiceProvider pr
     public TableConfig? GetTable(Type tableEntity) {
         foreach (var context in config.Contexts) {
             var table = context.Tables
-                .Where(t => !t.Ignored)
                 .FirstOrDefault(table => table.TableType == tableEntity);
             if (table is null) continue;
             
