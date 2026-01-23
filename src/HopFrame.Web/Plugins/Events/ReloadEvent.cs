@@ -2,6 +2,7 @@
 
 namespace HopFrame.Web.Plugins.Events;
 
-public sealed class ReloadEvent(HopFrameTablePage sender) : HopFrameTablePageEventArgs(sender) {
-    
-}
+/// <summary>
+/// Raised before the table is about to reload its data
+/// </summary>
+public sealed class ReloadEvent(HopFrameTablePage sender) : HopFrameTablePageEventArgs(sender);

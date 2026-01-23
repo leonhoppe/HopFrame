@@ -3,9 +3,21 @@ using HopFrame.Web.Components.Pages;
 
 namespace HopFrame.Web.Plugins.Events;
 
+/// <summary>
+/// Raised before the search results are loaded
+/// </summary>
+/// <param name="sender"></param>
 public sealed class SearchEvent(HopFrameTablePage sender) : HopFrameTablePageEventArgs(sender) {
+    /// <summary>
+    /// The search term the user entered
+    /// </summary>
     public required string SearchTerm { get; set; }
+    
+    /// <summary>
+    /// The page the user is currently on
+    /// </summary>
     public required int CurrentPage { get; init; }
+    
     internal IEnumerable<object>? SearchResult { get; set; }
     internal int TotalPages { get; set; }
 

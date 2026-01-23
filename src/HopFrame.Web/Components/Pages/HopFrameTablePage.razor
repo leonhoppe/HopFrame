@@ -98,7 +98,7 @@
                         Sortable="@property.Sortable"/>
                 }
 
-                @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy)) {
+                @if (DisplayActions && (_hasDeletePolicy || _hasUpdatePolicy || _pluginButtons.Where(pb => pb.IsForTable(_config)).Any(pb => pb.Position == PluginButtonPosition.OnEntry))) {
                     <TemplateColumn Title="Actions" Align="@Align.End" Style="min-height: 44px; min-width: max-content">
                         @foreach (var button in _pluginButtons.Where(pb => pb.IsForTable(_config)).Where(pb => pb.Position == PluginButtonPosition.OnEntry)) {
                             <FluentButton OnClick="@(() => button.Handler.Invoke(context, _config!))">

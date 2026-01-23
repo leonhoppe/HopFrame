@@ -24,6 +24,10 @@ public sealed class HopFrameConfigurator(HopFrameConfig config, IServiceCollecti
     /// </summary>
     public HopFrameConfig InnerConfig { get; } = config;
 
+    /// <summary>
+    /// The <see cref="ServiceCollection"/> of the application.
+    /// WARNING: Only use this during application building phase
+    /// </summary>
     public IServiceCollection ServiceCollection { get; } = collection;
     
     /// <summary>

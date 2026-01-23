@@ -63,6 +63,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines if the table should be ignored in the admin ui
     /// </summary>
+    /// <param name="ignore">The toggle for the option</param>
     public TableConfigurator<TModel> Ignore(bool ignore = true) {
         InnerConfig.Ignored = ignore;
         return this;
@@ -70,6 +71,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines if search suggestions should be displayed in the ui (Advanced Search)
     /// </summary>
+    /// <param name="show">The toggle for the option</param>
     public TableConfigurator<TModel> ShowSearchSuggestions(bool show = true) {
         InnerConfig.ShowSearchSuggestions = show;
         return this;
@@ -144,6 +146,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the name for the table used in the admin ui and url for the table page
     /// </summary>
+    /// <param name="name">The value for the option</param>
     public TableConfigurator<TModel> SetDisplayName(string name) {
         InnerConfig.DisplayName = name;
         return this;
@@ -152,6 +155,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the description displayed in the admin ui
     /// </summary>
+    /// <param name="description">The value for the option</param>
     public TableConfigurator<TModel> SetDescription(string description) {
         InnerConfig.Description = description;
         return this;
@@ -160,6 +164,7 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the order index for the table in the admin ui
     /// </summary>
+    /// <param name="index">The value for the option</param>
     /// <seealso cref="PropertyConfigurator{TProp}.SetOrderIndex"/>
     public TableConfigurator<TModel> SetOrderIndex(int index) {
         InnerConfig.Order = index;
@@ -169,6 +174,8 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the policy needed by a user in order to view the table
     /// </summary>
+    /// <param name="policy">The value for the option</param>
+    /// <seealso cref="SetCombinedPolicy"/>
     public TableConfigurator<TModel> SetViewPolicy(string policy) {
         InnerConfig.ViewPolicy = policy;
         return this;
@@ -177,6 +184,8 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the policy needed by a user in order to edit the entries
     /// </summary>
+    /// <param name="policy">The value for the option</param>
+    /// <seealso cref="SetCombinedPolicy"/>
     public TableConfigurator<TModel> SetUpdatePolicy(string policy) {
         InnerConfig.UpdatePolicy = policy;
         return this;
@@ -185,6 +194,8 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the policy needed by a user in order to create entries
     /// </summary>
+    /// <param name="policy">The value for the option</param>
+    /// <seealso cref="SetCombinedPolicy"/>
     public TableConfigurator<TModel> SetCreatePolicy(string policy) {
         InnerConfig.CreatePolicy = policy;
         return this;
@@ -193,7 +204,21 @@ public sealed class TableConfigurator<TModel>(TableConfig config) {
     /// <summary>
     /// Determines the policy needed by a user in order to delete entries
     /// </summary>
+    /// <param name="policy">The value for the option</param>
+    /// <seealso cref="SetCombinedPolicy"/>
     public TableConfigurator<TModel> SetDeletePolicy(string policy) {
+        InnerConfig.DeletePolicy = policy;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the view, update, create and delete policies to the same value
+    /// </summary>
+    /// <param name="policy">The value for the options</param>
+    public TableConfigurator<TModel> SetCombinedPolicy(string policy) {
+        InnerConfig.ViewPolicy = policy;
+        InnerConfig.UpdatePolicy = policy;
+        InnerConfig.CreatePolicy = policy;
         InnerConfig.DeletePolicy = policy;
         return this;
     }

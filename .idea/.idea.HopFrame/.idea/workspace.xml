@@ -12,9 +12,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0648788e-7696-4e60-bf12-5d5601f33d8c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Services/Implementations/ContextExplorer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HopFrame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/HopFrameConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/PropertyConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Config/TableConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Core/Repositories/IHopFrameRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Core/Repositories/IHopFrameRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Components/Pages/HopFrameTablePage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/testing/HopFrame.Testing/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Annotations/EventHandlerAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Annotations/EventHandlerAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/EntryEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/EntryEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/HopFrameEventArgs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/HopFrameEventArgs.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageChangeEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/PageChangeEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ReloadEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ReloadEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/SearchEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/TableInitializedEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/TableInitializedEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ValidationEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Plugins/Events/ValidationEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HopFrame.Web/Services/ISearchSuggestionProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/HopFrame.Web/Services/ISearchSuggestionProvider.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,15 +293,8 @@
       <workItem from="1768753475773" duration="455000" />
       <workItem from="1768753946559" duration="690000" />
       <workItem from="1768756619311" duration="94000" />
-      <workItem from="1768847832546" duration="758000" />
-    </task>
-    <task id="LOCAL-00019" summary="Added web module tests">
-      <option name="closed" value="true" />
-      <created>1737298835225</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1737298835225</updated>
+      <workItem from="1768847832546" duration="1238000" />
+      <workItem from="1769196883500" duration="5779000" />
     </task>
     <task id="LOCAL-00020" summary="Tested login functionality">
       <option name="closed" value="true" />
@@ -674,7 +680,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768848267710</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="Added ability to use ignored tables in relation picker">
+      <option name="closed" value="true" />
+      <created>1768848702981</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1768848702981</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -715,7 +729,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added basic export and import feature" />
     <MESSAGE value="Finished converter plugin" />
     <MESSAGE value="Patched CI" />
     <MESSAGE value="Prepared CI for v3.2.0" />
@@ -740,6 +753,7 @@
     <MESSAGE value="Code cleanup + new pipeline setup" />
     <MESSAGE value="Fixed #38" />
     <MESSAGE value="Fixed #37" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed #37" />
+    <MESSAGE value="Added ability to use ignored tables in relation picker" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added ability to use ignored tables in relation picker" />
   </component>
 </project>

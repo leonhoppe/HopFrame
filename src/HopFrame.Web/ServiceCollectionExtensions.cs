@@ -59,7 +59,7 @@ public static class ServiceCollectionExtensions {
     /// Adds the HopFrame admin ui endpoints
     /// </summary>
     /// <seealso cref="AddHopFramePages"/>
-    [Obsolete($"Use '{nameof(AddHopFramePages)}' instead")]
+    [Obsolete($"Use {nameof(AddHopFramePages)} instead")]
     public static RazorComponentsEndpointConventionBuilder MapHopFramePages(this RazorComponentsEndpointConventionBuilder builder) {
         return AddHopFramePages(builder);
     }
@@ -74,6 +74,9 @@ public static class ServiceCollectionExtensions {
         return builder;
     }
 
+    /// <summary>
+    /// Adds the HopFrame admin ui endpoints
+    /// </summary>
     public static WebApplication MapHopFrame(this WebApplication app) {
         app.UseAntiforgery();
         app.MapStaticAssets();
