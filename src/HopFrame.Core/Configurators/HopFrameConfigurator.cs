@@ -1,0 +1,51 @@
+﻿using HopFrame.Core.Configuration;
+using HopFrame.Core.Helpers;
+using HopFrame.Core.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace HopFrame.Core.Configurators;
+
+/**
+ * The configurator for the <see cref="HopFrameConfig"/>
+ */
+public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection services) {
+    /** The internal config that is modified */
+    public HopFrameConfig Config { get; } = config;
+
+    /// <summary>
+    /// Adds a new table to the configuration based on the provided repository
+    /// </summary>
+    /// <typeparam name="TRepository">The repository that handles the table</typeparam>
+    /// <typeparam name="TModel">The type of the model</typeparam>
+    /// <param name="configurator">The configurator for the table</param>
+    public HopFrameConfigurator AddRepository<TRepository, TModel>(Action<TableConfigurator<TModel>>? configurator = null) where TRepository : IHopFrameRepository where TModel : notnull {
+        var table = ConfigurationHelper.InitializeTable(Config, typeof(TRepository), typeof(TModel));
+        Config.Tables.Add(table);
+        services.TryAddScoped(typeof(TRepository));
+        configurator?.Invoke(new TableConfigurator<TModel>(table));
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a new table to the configuration
+    /// </summary>
+    /// <param name="config">The configuration for the table</param>
+    /// <param name="configurator">The configurator for the table</param>
+    /// <typeparam name="TModel">The model of the table</typeparam>
+    /// <exception cref="ArgumentException">Is thrown when configuration validation fails</exception>
+    public HopFrameConfigurator AddTable<TModel>(TableConfig config, Action<TableConfigurator<TModel>>? configurator = null) where TModel : notnull {
+        if (typeof(TModel) != config.TableType)
+            throw new ArgumentException($"Table type for table '{config.Identifier}' does not mach requested type '{typeof(TModel).Name}'!");
+        
+        var errors = ConfigurationHelper.ValidateTable(Config, config).ToArray();
+
+        if (errors.Length != 0)
+            throw new ArgumentException($"Table '{config.Identifier}' has some validation errors:\n\t{string.Join("\n\t", errors)}");
+        
+        Config.Tables.Add(config);
+        services.TryAddScoped(config.RepositoryType);
+        configurator?.Invoke(new TableConfigurator<TModel>(config));
+        return this;
+    }
+}

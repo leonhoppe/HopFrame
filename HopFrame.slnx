@@ -1,1 +1,11 @@
-<Solution />
+<Solution>
+  <Folder Name="/debug/">
+    <Project Path="debug/TestApplication/TestApplication.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/HopFrame.Core/HopFrame.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/HopFrame.Tests.Core/HopFrame.Tests.Core.csproj" />
+  </Folder>
+</Solution>
