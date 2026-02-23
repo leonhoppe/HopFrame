@@ -4,7 +4,6 @@ using Moq;
 namespace HopFrame.Tests.Core.Repositories;
 
 public class HopFrameRepositoryTests {
-    
     private Mock<HopFrameRepository<TestModel>> CreateMock()
         => new(MockBehavior.Strict);
 
@@ -21,7 +20,7 @@ public class HopFrameRepositoryTests {
         mock.Setup(r => r.LoadPageAsync(2, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await mock.Object.LoadPageGenericAsync(2, 10);
+        var result = await mock.Object.LoadPageGenericAsync(2, 10, CancellationToken.None);
 
         Assert.Equal(expected, result);
     }
@@ -39,7 +38,7 @@ public class HopFrameRepositoryTests {
         mock.Setup(r => r.SearchAsync("abc", 1, 20, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await mock.Object.SearchGenericAsync("abc", 1, 20);
+        var result = await mock.Object.SearchGenericAsync("abc", 1, 20, CancellationToken.None);
 
         Assert.Equal(expected, result);
     }
@@ -60,6 +59,24 @@ public class HopFrameRepositoryTests {
         await mock.Object.CreateGenericAsync(model, CancellationToken.None);
 
         mock.Verify(r => r.CreateAsync(model, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    // -------------------------------------------------------------
+    // UpdateGenericAsync
+    // -------------------------------------------------------------
+
+    [Fact]
+    public async Task UpdateGenericAsync_CastsAndDelegates() {
+        var mock = CreateMock();
+
+        var model = new TestModel { Id = 77 };
+
+        mock.Setup(r => r.UpdateAsync(model, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await mock.Object.UpdateGenericAsync(model, CancellationToken.None);
+
+        mock.Verify(r => r.UpdateAsync(model, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     // -------------------------------------------------------------

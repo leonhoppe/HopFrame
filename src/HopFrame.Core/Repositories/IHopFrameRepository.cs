@@ -11,12 +11,12 @@ public interface IHopFrameRepository {
     /// </summary>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct = default);
+    public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct);
     
     /// <summary>
     /// Returns the total amount of entries in the dataset
     /// </summary>
-    public Task<int> CountAsync(CancellationToken ct = default);
+    public Task<int> CountAsync(CancellationToken ct);
     
     /// <summary>
     /// Searches through the whole dataset and returns a page of matching entries
@@ -24,7 +24,7 @@ public interface IHopFrameRepository {
     /// <param name="searchTerm">The search text provided by the user</param>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct = default);
+    public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
 
     
     /// <summary>
@@ -32,6 +32,12 @@ public interface IHopFrameRepository {
     /// </summary>
     /// <param name="entry">The entry that needs to be saved</param>
     public Task CreateGenericAsync(object entry, CancellationToken ct);
+
+    /// <summary>
+    /// Saves the changes made to the entry to the dataset
+    /// </summary>
+    /// <param name="entry">The modified entry</param>
+    public Task UpdateGenericAsync(object entry, CancellationToken ct);
     
     /// <summary>
     /// Deletes the provided entry from the dataset

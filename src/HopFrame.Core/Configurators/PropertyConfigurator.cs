@@ -45,15 +45,18 @@ public class PropertyConfigurator(PropertyConfig config) {
         return this;
     }
 
-    /** <inheritdoc cref="PropertyConfig.DisplayValue" /> */
-    public PropertyConfigurator DisplayValue(bool displayValue) {
-        Config.DisplayValue = displayValue;
-        return this;
-    }
-
     /** <inheritdoc cref="PropertyConfig.OrderIndex" /> */
     public PropertyConfigurator SetOrderIndex(int index) {
         Config.OrderIndex = index;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the property type. The predefined modifiers (like nullable) persist.
+    /// If the property is a list or any other generic type, please use the enumerated type.
+    /// </summary>
+    public PropertyConfigurator SetType(PropertyType type) {
+        Config.PropertyType = (PropertyType)(((byte)Config.PropertyType & 0xF0) | ((byte)type & 0x0F));
         return this;
     }
 }

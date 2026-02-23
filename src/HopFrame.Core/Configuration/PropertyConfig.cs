@@ -4,14 +4,17 @@
  * The configuration for a single property
  */
 public class PropertyConfig {
-    /** The unique identifier for the property (usually the real property name in the model) */
+    /** [GENERATED] The unique identifier for the property (usually the real property name in the model) */
     public required string Identifier { get; init; }
     
-    /** The displayed name of the Property */
+    /** [GENERATED] The displayed name of the Property */
     public required string DisplayName { get; set; }
     
-    /** The type of the property */
+    /** [GENERATED] The real type of the property */
     public required Type Type { get; set; }
+
+    /** [GENERATED] The type as wich the property should be treated */
+    public required PropertyType PropertyType { get; set; }
     
     /** Determines if the property will appear in the table */
     public bool Listable { get; set; } = true;
@@ -30,12 +33,58 @@ public class PropertyConfig {
     
     /** Determines if the property is visible in the creation or edit dialog */
     public bool Creatable { get; set; } = true;
-    
-    /** Determines if the actual value should be displayed (useful for passwords) */
-    public bool DisplayValue { get; set; } = true;
 
-    /** The place (from left to right) that the property will appear in the table and editor */
+    /** [GENERATED] The place (from left to right) that the property will appear in the table and editor */
     public int OrderIndex { get; set; }
     
     internal PropertyConfig() {}
+}
+
+/// <summary>
+/// Used to distinguish between different input types in the frontend. <br/>
+/// Binary Format: First byte is used for additional properties, second byte identifies the real type
+/// </summary>
+[Flags]
+public enum PropertyType : byte {
+    /** Used together with another type to indicate that the value can be null */
+    Nullable = 0b10000000,
+    
+    /** Used together with another type to indicate that the property is a relation */
+    Relation = 0b01000000,
+    
+    /** Used together with another type to indicate that the value is enumerable */
+    List = 0b00100000,
+    
+    /** Indicates that the value is numeric */
+    Numeric = 0x01,
+    
+    /** Indicates that the value is a boolean */
+    Boolean = 0x02,
+    
+    /** Indicates that the value is a timestamp */
+    DateTime = 0x03,
+    
+    /** Indicates that the value is a date */
+    DateOnly = 0x04,
+    
+    /** Indicates that the value is a time of day */
+    TimeOnly = 0x05,
+    
+    /** Indicates that the value is a list of fixed values */
+    Enum = 0x06,
+    
+    /** Indicates that the value is a string */
+    Text = 0x07,
+    
+    /** Indicates that the value is an email */
+    Email = 0x08,
+    
+    /** Indicates that the value is a long string */
+    TextArea = 0x09,
+    
+    /** Indicates that the value should be hidden */
+    Password = 0x0A,
+    
+    /** Indicates that the value is a phone number */
+    PhoneNumber = 0x0B
 }

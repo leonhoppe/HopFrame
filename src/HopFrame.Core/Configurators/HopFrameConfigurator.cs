@@ -13,6 +13,8 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
     /** The internal config that is modified */
     public HopFrameConfig Config { get; } = config;
 
+    internal IServiceCollection Services { get; } = services;
+
     /// <summary>
     /// Adds a new table to the configuration based on the provided repository
     /// </summary>
@@ -22,7 +24,7 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
     public HopFrameConfigurator AddRepository<TRepository, TModel>(Action<TableConfigurator<TModel>>? configurator = null) where TRepository : IHopFrameRepository where TModel : notnull {
         var table = ConfigurationHelper.InitializeTable(Config, typeof(TRepository), typeof(TModel));
         Config.Tables.Add(table);
-        services.TryAddScoped(typeof(TRepository));
+        Services.TryAddScoped(typeof(TRepository));
         configurator?.Invoke(new TableConfigurator<TModel>(table));
         return this;
     }
@@ -44,7 +46,7 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
             throw new ArgumentException($"Table '{config.Identifier}' has some validation errors:\n\t{string.Join("\n\t", errors)}");
         
         Config.Tables.Add(config);
-        services.TryAddScoped(config.RepositoryType);
+        Services.TryAddScoped(config.RepositoryType);
         configurator?.Invoke(new TableConfigurator<TModel>(config));
         return this;
     }

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations;
 using HopFrame.Core.Configuration;
 using HopFrame.Core.Helpers;
 
@@ -7,6 +7,28 @@ using HopFrame.Core.Helpers;
 namespace HopFrame.Tests.Core.Helpers;
 
 public class ConfigurationHelperTests {
+    private class PropertyTypeModel {
+        public int Number { get; set; }
+        public int? NullableNumber { get; set; }
+        public string Text { get; set; } = "";
+        public bool Flag { get; set; }
+        public DateTime Timestamp { get; set; }
+        public DateOnly Date { get; set; }
+        public TimeOnly Time { get; set; }
+        public TestEnum EnumValue { get; set; }
+        public List<int> Numbers { get; set; } = new();
+        public IEnumerable<string> Strings { get; set; } = new List<string>();
+
+        [EmailAddress]
+        public string Email { get; set; } = "";
+    }
+
+    private enum TestEnum {
+        A,
+        B
+    }
+
+
     private HopFrameConfig CreateGlobal(params TableConfig[] tables)
         => new HopFrameConfig { Tables = tables.ToList() };
 
@@ -21,7 +43,8 @@ public class ConfigurationHelperTests {
                 new PropertyConfig {
                     Identifier = "Prop1",
                     DisplayName = "Property 1",
-                    Type = typeof(int)
+                    Type = typeof(int),
+                    PropertyType = PropertyType.Numeric
                 }
             }
         };
@@ -93,11 +116,29 @@ public class ConfigurationHelperTests {
     }
 
     [Fact]
+    public void InitializeTable_SetsPropertyTypes_ForAllProperties() {
+        var global = CreateGlobal();
+
+        var config = ConfigurationHelper.InitializeTable(global, typeof(string), typeof(PropertyTypeModel));
+
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.Numeric);
+        Assert.Contains(config.Properties, p => p.PropertyType == (PropertyType.Numeric | PropertyType.Nullable));
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.Boolean);
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.DateTime);
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.DateOnly);
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.TimeOnly);
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.Enum);
+        Assert.Contains(config.Properties, p => p.PropertyType == (PropertyType.Numeric | PropertyType.List));
+        Assert.Contains(config.Properties, p => p.PropertyType == (PropertyType.Text | PropertyType.List));
+        Assert.Contains(config.Properties, p => p.PropertyType == PropertyType.Email);
+    }
+
+    [Fact]
     public void InitializeProperty_UsesPropertyNameAsIdentifier_WhenUnique() {
         var table = CreateDummyTable("T");
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Id))!;
 
-        var config = InvokeInitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property);
 
         Assert.Equal("Id", config.Identifier);
     }
@@ -105,12 +146,14 @@ public class ConfigurationHelperTests {
     [Fact]
     public void InitializeProperty_GeneratesGuid_WhenIdentifierAlreadyExists() {
         var table = CreateDummyTable("T");
-        table.Properties.Add(new PropertyConfig
-            { Identifier = "Id", Type = typeof(int), DisplayName = "Id", OrderIndex = 0 });
+        table.Properties.Add(new PropertyConfig {
+            Identifier = "Id", Type = typeof(int), DisplayName = "Id", OrderIndex = 0,
+            PropertyType = PropertyType.Numeric
+        });
 
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Id))!;
 
-        var config = InvokeInitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property);
 
         Assert.NotEqual("Id", config.Identifier);
         Assert.True(Guid.TryParse(config.Identifier, out _));
@@ -121,7 +164,7 @@ public class ConfigurationHelperTests {
         var table = CreateDummyTable("T");
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Name))!;
 
-        var config = InvokeInitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property);
 
         Assert.Equal("Name", config.DisplayName);
         Assert.Equal(typeof(string), config.Type);
@@ -131,22 +174,27 @@ public class ConfigurationHelperTests {
     [Fact]
     public void InitializeProperty_SetsOrderIndex_ToCurrentPropertyCount() {
         var table = CreateDummyTable("T");
-        table.Properties.Add(new PropertyConfig
-            { Identifier = "X", Type = typeof(int), DisplayName = "X", OrderIndex = 0 });
+        table.Properties.Add(new PropertyConfig {
+            Identifier = "X", Type = typeof(int), DisplayName = "X", OrderIndex = 0, PropertyType = PropertyType.Numeric
+        });
 
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Name))!;
 
-        var config = InvokeInitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property);
 
         Assert.Equal(1, config.OrderIndex);
     }
 
-    private PropertyConfig InvokeInitializeProperty(TableConfig table, PropertyInfo property) {
-        var method = typeof(ConfigurationHelper)
-            .GetMethod("InitializeProperty", BindingFlags.NonPublic | BindingFlags.Static)!;
+    [Fact]
+    public void InitializeProperty_SetsPropertyType_FromInferPropertyType() {
+        var table = CreateDummyTable("T");
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Number))!;
 
-        return (PropertyConfig)method.Invoke(null, [table, property])!;
+        var config = ConfigurationHelper.InitializeProperty(table, prop);
+
+        Assert.Equal(PropertyType.Numeric, config.PropertyType);
     }
+
 
     [Fact]
     public void ValidateTable_ReturnsError_WhenIdentifierNotUnique() {
@@ -210,7 +258,8 @@ public class ConfigurationHelperTests {
         config.Properties.Add(new PropertyConfig {
             Identifier = "Prop1",
             DisplayName = "Duplicate",
-            Type = typeof(int)
+            Type = typeof(int),
+            PropertyType = PropertyType.Numeric
         });
 
         var result = ConfigurationHelper.ValidateTable(CreateGlobal(), config).ToList();
@@ -245,5 +294,85 @@ public class ConfigurationHelperTests {
         var result = ConfigurationHelper.ValidateTable(CreateGlobal(), config).ToList();
 
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesNumeric() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Number))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(int), prop);
+
+        Assert.Equal(PropertyType.Numeric, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesNullableNumeric() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.NullableNumber))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(int?), prop);
+
+        Assert.Equal(PropertyType.Numeric | PropertyType.Nullable, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesBoolean() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Flag))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(bool), prop);
+
+        Assert.Equal(PropertyType.Boolean, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesDateTime() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Timestamp))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(DateTime), prop);
+
+        Assert.Equal(PropertyType.DateTime, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesDateOnly() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Date))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(DateOnly), prop);
+
+        Assert.Equal(PropertyType.DateOnly, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesTimeOnly() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Time))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(TimeOnly), prop);
+
+        Assert.Equal(PropertyType.TimeOnly, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesEnum() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.EnumValue))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(TestEnum), prop);
+
+        Assert.Equal(PropertyType.Enum, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesList() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Numbers))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(List<int>), prop);
+
+        Assert.Equal(PropertyType.Numeric | PropertyType.List, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesEnumerable() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Strings))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(IEnumerable<string>), prop);
+
+        Assert.Equal(PropertyType.Text | PropertyType.List, result);
+    }
+
+    [Fact]
+    public void InferPropertyType_RecognizesEmail() {
+        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Email))!;
+        var result = ConfigurationHelper.InferPropertyType(typeof(string), prop);
+
+        Assert.Equal(PropertyType.Email, result);
     }
 }

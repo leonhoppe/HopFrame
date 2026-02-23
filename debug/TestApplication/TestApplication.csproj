@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\src\HopFrame.Core\HopFrame.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
+    </ItemGroup>
+
 </Project>

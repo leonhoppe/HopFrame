@@ -1,3 +1,7 @@
+using HopFrame.Core;
+using HopFrame.Core.EFCore;
+using Microsoft.EntityFrameworkCore;
+using TestApplication;
 using TestApplication.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddEntityFrameworkInMemoryDatabase();
+builder.Services.AddDbContext<DatabaseContext>(options => {
+    options.UseInMemoryDatabase("testing");
+});
+
+builder.Services.AddHopFrame(config => {
+    config.AddDbContext<DatabaseContext>();
+});
 
 var app = builder.Build();
 

@@ -9,18 +9,23 @@ namespace HopFrame.Tests.Core.Services.Implementation;
 
 public class ConfigAccessorTests {
     private class TestRepository : IHopFrameRepository {
-        public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct = default) {
+        public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
-        public Task<int> CountAsync(CancellationToken ct = default) {
+        public Task<int> CountAsync(CancellationToken ct) {
             throw new NotImplementedException();
         }
-        public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct = default) {
+        public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
         public Task CreateGenericAsync(object entry, CancellationToken ct) {
             throw new NotImplementedException();
         }
+
+        public Task UpdateGenericAsync(object entry, CancellationToken ct) {
+            throw new NotImplementedException();
+        }
+
         public Task DeleteGenericAsync(object entry, CancellationToken ct) {
             throw new NotImplementedException();
         }
@@ -39,7 +44,8 @@ public class ConfigAccessorTests {
                     Identifier = "Id",
                     DisplayName = "Id",
                     Type = typeof(int),
-                    OrderIndex = 0
+                    OrderIndex = 0,
+                    PropertyType = PropertyType.Numeric
                 }
             }
         };
