@@ -6,10 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HopFrame.Core;
 
-/** An extension class to provide access to the setup of the library */
+/// An extension class to provide access to the setup of the library
 public static class ServiceCollectionExtensions {
 
-    /** Configures the library using the provided configurator */
+    /// Configures the library using the provided configurator
     public static void AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
         var config = new HopFrameConfig();
         services.AddSingleton(config);

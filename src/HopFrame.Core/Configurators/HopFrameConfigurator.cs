@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HopFrame.Core.Configurators;
 
-/**
- * The configurator for the <see cref="HopFrameConfig"/>
- */
+/// <summary>
+/// The configurator for the <see cref="HopFrameConfig"/>
+/// </summary>
 public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection services) {
-    /** The internal config that is modified */
+    /// The internal config that is modified
     public HopFrameConfig Config { get; } = config;
 
     internal IServiceCollection Services { get; } = services;
@@ -21,7 +21,7 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
     /// <typeparam name="TRepository">The repository that handles the table</typeparam>
     /// <typeparam name="TModel">The type of the model</typeparam>
     /// <param name="configurator">The configurator for the table</param>
-    public HopFrameConfigurator AddRepository<TRepository, TModel>(Action<TableConfigurator<TModel>>? configurator = null) where TRepository : IHopFrameRepository where TModel : notnull {
+    public HopFrameConfigurator AddRepository<TRepository, TModel>(Action<TableConfigurator<TModel>>? configurator = null) where TRepository : IHopFrameRepository where TModel : class {
         var table = ConfigurationHelper.InitializeTable(Config, typeof(TRepository), typeof(TModel));
         Config.Tables.Add(table);
         Services.TryAddScoped(typeof(TRepository));
@@ -36,7 +36,7 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
     /// <param name="configurator">The configurator for the table</param>
     /// <typeparam name="TModel">The model of the table</typeparam>
     /// <exception cref="ArgumentException">Is thrown when configuration validation fails</exception>
-    public HopFrameConfigurator AddTable<TModel>(TableConfig config, Action<TableConfigurator<TModel>>? configurator = null) where TModel : notnull {
+    public HopFrameConfigurator AddTable<TModel>(TableConfig config, Action<TableConfigurator<TModel>>? configurator = null) where TModel : class {
         if (typeof(TModel) != config.TableType)
             throw new ArgumentException($"Table type for table '{config.Identifier}' does not mach requested type '{typeof(TModel).Name}'!");
         

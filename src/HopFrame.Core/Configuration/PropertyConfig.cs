@@ -1,40 +1,40 @@
 ﻿namespace HopFrame.Core.Configuration;
 
-/**
- * The configuration for a single property
- */
+/// <summary>
+/// The configuration for a single property
+/// </summary>
 public class PropertyConfig {
-    /** [GENERATED] The unique identifier for the property (usually the real property name in the model) */
+    /// [GENERATED] The unique identifier for the property (usually the real property name in the model)
     public required string Identifier { get; init; }
     
-    /** [GENERATED] The displayed name of the Property */
+    /// [GENERATED] The displayed name of the Property
     public required string DisplayName { get; set; }
     
-    /** [GENERATED] The real type of the property */
+    /// [GENERATED] The real type of the property
     public required Type Type { get; set; }
 
-    /** [GENERATED] The type as wich the property should be treated */
+    /// [GENERATED] The type as wich the property should be treated
     public required PropertyType PropertyType { get; set; }
     
-    /** Determines if the property will appear in the table */
+    /// Determines if the property will appear in the table
     public bool Listable { get; set; } = true;
     
-    /** Determines if the table can be sorted by the property */
+    /// Determines if the table can be sorted by the property
     public bool Sortable { get; set; } = true;
     
-    /** Determines if the table can be searched by the property */
+    /// Determines if the table can be searched by the property
     public bool Searchable { get; set; } = true;
     
-    /**
-     * Determines if the value of the property can be edited
-     * (if true the value can still be set during creation)
-     */
+    /// <summary>
+    /// Determines if the value of the property can be edited<br/>
+    /// (if true the value can still be set during creation)
+    /// </summary>
     public bool Editable { get; set; } = true;
     
-    /** Determines if the property is visible in the creation or edit dialog */
+    /// Determines if the property is visible in the creation or edit dialog
     public bool Creatable { get; set; } = true;
 
-    /** [GENERATED] The place (from left to right) that the property will appear in the table and editor */
+    /// [GENERATED] The place (from left to right) that the property will appear in the table and editor
     public int OrderIndex { get; set; }
     
     internal PropertyConfig() {}
@@ -46,45 +46,45 @@ public class PropertyConfig {
 /// </summary>
 [Flags]
 public enum PropertyType : byte {
-    /** Used together with another type to indicate that the value can be null */
+    /// Used together with another type to indicate that the value can be null
     Nullable = 0b10000000,
     
-    /** Used together with another type to indicate that the property is a relation */
+    /// Used together with another type to indicate that the property is a relation
     Relation = 0b01000000,
     
-    /** Used together with another type to indicate that the value is enumerable */
+    /// Used together with another type to indicate that the value is enumerable
     List = 0b00100000,
     
-    /** Indicates that the value is numeric */
+    /// Indicates that the value is numeric
     Numeric = 0x01,
     
-    /** Indicates that the value is a boolean */
+    /// Indicates that the value is a boolean
     Boolean = 0x02,
     
-    /** Indicates that the value is a timestamp */
+    /// Indicates that the value is a timestamp
     DateTime = 0x03,
     
-    /** Indicates that the value is a date */
+    /// Indicates that the value is a date
     DateOnly = 0x04,
     
-    /** Indicates that the value is a time of day */
+    /// Indicates that the value is a time of day
     TimeOnly = 0x05,
     
-    /** Indicates that the value is a list of fixed values */
+    /// Indicates that the value is a list of fixed values
     Enum = 0x06,
     
-    /** Indicates that the value is a string */
+    /// Indicates that the value is a string
     Text = 0x07,
     
-    /** Indicates that the value is an email */
+    /// Indicates that the value is an email
     Email = 0x08,
     
-    /** Indicates that the value is a long string */
+    /// Indicates that the value is a long string
     TextArea = 0x09,
     
-    /** Indicates that the value should be hidden */
+    /// Indicates that the value should be hidden
     Password = 0x0A,
     
-    /** Indicates that the value is a phone number */
+    /// Indicates that the value is a phone number
     PhoneNumber = 0x0B
 }

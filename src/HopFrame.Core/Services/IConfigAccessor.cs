@@ -3,7 +3,7 @@ using HopFrame.Core.Repositories;
 
 namespace HopFrame.Core.Services;
 
-/** A service used to access configs and repositories provided by the <see cref="HopFrameConfig"/> */
+/// A service used to access configs and repositories provided by the <see cref="HopFrameConfig"/>
 public interface IConfigAccessor {
 
     /// <summary>

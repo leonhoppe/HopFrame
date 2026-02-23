@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HopFrame.Core.EFCore;
 
-/** Adds useful extensions to the <see cref="HopFrameConfigurator"/> to add managed <see cref="DbContext"/> repositories  */
+/// Adds useful extensions to the <see cref="HopFrameConfigurator"/> to add managed <see cref="DbContext"/> repositories
 public static class HopFrameConfiguratorExtensions {
 
     /// <summary>

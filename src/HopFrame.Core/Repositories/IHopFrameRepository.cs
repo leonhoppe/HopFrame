@@ -3,7 +3,7 @@
 #pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 namespace HopFrame.Core.Repositories;
 
-/** The generic repository that provides access to the model dataset */
+/// The generic repository that provides access to the model dataset
 public interface IHopFrameRepository {
 
     /// <summary>
