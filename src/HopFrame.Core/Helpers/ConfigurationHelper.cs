@@ -19,8 +19,8 @@ internal static class ConfigurationHelper {
             RepositoryType = repositoryType,
             TableType = modelType,
             Identifier = identifier,
-            Route = modelType.Name.ToLower(),
-            DisplayName = modelType.Name,
+            Route = modelType.Name.ToLower() + 's',
+            DisplayName = modelType.Name + 's',
             OrderIndex = global.Tables.Count
         };
         

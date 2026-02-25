@@ -1,0 +1,13 @@
+﻿@page "/admin/{TableRoute}"
+@using HopFrame.Web.Components.Components
+@inherits CancellableComponent
+@rendermode InteractiveServer
+@layout HopFrameLayout
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider/>
+
+<PageTitle>HopFrame - @Table.DisplayName</PageTitle>
+
+<Table Config="Table"></Table>

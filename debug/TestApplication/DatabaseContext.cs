@@ -12,6 +12,12 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Post>()
+            .HasKey(p => p.Id);
+        
+        modelBuilder.Entity<User>()
+            .HasKey(u => u.Id);
+
         modelBuilder.Entity<User>()
             .HasMany(u => u.Posts)
             .WithOne(p => p.Sender)

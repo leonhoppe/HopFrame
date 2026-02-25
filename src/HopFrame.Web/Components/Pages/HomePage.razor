@@ -1,0 +1,51 @@
+﻿@page "/admin"
+@using HopFrame.Core.Configuration
+@using HopFrame.Web.Components.Components
+@layout HopFrameLayout
+
+<PageTitle>HopFrame</PageTitle>
+
+<section style="padding: 1.5rem">
+    <MudText Typo="Typo.h5">Pages</MudText>
+
+    <br>
+    
+    <MudStack Wrap="Wrap.Wrap" Row="true">
+        @foreach (var route in Routes) {
+            <Card
+                Title="@route.Name"
+                Href="@route.Route"
+                Icon="@route.Icon"
+                Description="@route.Description"/>
+        }
+    </MudStack>
+</section>
+
+@inject HopFrameConfig Config
+
+@code {
+    
+    private readonly struct RouteDefinition {
+        public required string Route { get; init; }
+        public required string Icon { get; init; }
+        public required string Name { get; init; }
+        public string? Description { get; init; }
+    }
+
+    private RouteDefinition[] Routes { get; set; } = null!;
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        Routes = Config.Tables
+            .OrderBy(t => t.OrderIndex)
+            .Select(table => new RouteDefinition {
+                Route = "admin/" + table.Route,
+                Icon = Icons.Material.Filled.TableChart,
+                Name = table.DisplayName,
+                Description = table.Description,
+            })
+            .ToArray();
+    }
+
+}

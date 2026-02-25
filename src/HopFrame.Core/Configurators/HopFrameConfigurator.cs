@@ -50,4 +50,21 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         configurator?.Invoke(new TableConfigurator<TModel>(config));
         return this;
     }
+
+    /// <summary>
+    /// Loads the configurator for an existing table in the configuration
+    /// </summary>
+    /// <param name="configurator">The configurator for the table</param>
+    /// <typeparam name="TModel">The model of the table</typeparam>
+    /// <exception cref="ArgumentException">Is thrown when no table with the requested type was found</exception>
+    public TableConfigurator<TModel> Table<TModel>(Action<TableConfigurator<TModel>>? configurator = null) where TModel : class {
+        var table = Config.Tables.FirstOrDefault(t => t.TableType == typeof(TModel));
+
+        if (table is null)
+            throw new ArgumentException($"Table '{typeof(TModel).Name}' not found");
+
+        var modeller = new TableConfigurator<TModel>(table);
+        configurator?.Invoke(modeller);
+        return modeller;
+    }
 }

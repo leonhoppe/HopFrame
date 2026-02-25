@@ -2,7 +2,7 @@
 
 public class TestModel {
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public int Method() => 42;
 

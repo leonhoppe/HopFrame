@@ -9,9 +9,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\HopFrame.Core\HopFrame.Core.csproj" />
+      <ProjectReference Include="..\..\src\HopFrame.Web\HopFrame.Web.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Faker.Net" Version="2.0.163" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
     </ItemGroup>
 

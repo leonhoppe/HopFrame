@@ -1,0 +1,40 @@
+﻿@using HopFrame.Core.Configuration
+
+<MudDrawer Open="true" Fixed="true" ClipMode="DrawerClipMode.Docked" Width="200px">
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SpaceDashboard" Href="admin">Dashboard</MudNavLink>
+        
+        <br>
+        
+        @foreach (var route in Routes) {
+            <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route">@route.Name</MudNavLink>
+        }
+    </MudNavMenu>
+</MudDrawer>
+
+@inject HopFrameConfig Config
+
+@code {
+    
+    private readonly struct RouteDefinition {
+        public required string Route { get; init; }
+        public required string Icon { get; init; }
+        public required string Name { get; init; }
+    }
+
+    private RouteDefinition[] Routes { get; set; } = null!;
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        Routes = Config.Tables
+            .OrderBy(t => t.OrderIndex)
+            .Select(table => new RouteDefinition {
+                Route = "admin/" + table.Route,
+                Icon = Icons.Material.Filled.TableChart,
+                Name = table.DisplayName
+            })
+            .ToArray();
+    }
+
+}

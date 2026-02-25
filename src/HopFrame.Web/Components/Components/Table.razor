@@ -1,0 +1,59 @@
+﻿@rendermode InteractiveServer
+
+<MudTable ServerData="Reload"
+          @ref="Manager"
+          Hover="true"
+          Breakpoint="Breakpoint.Sm"
+          LoadingProgressColor="Color.Info"
+          HorizontalScrollbar="true"
+          FixedHeader="true"
+          FixedFooter="true"
+          Height="calc(100vh - 164px)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">@Config.DisplayName</MudText>
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2" Style="min-width: 500px">
+            <MudTextField
+                T="string"
+                Placeholder="Search"
+                Adornment="Adornment.Start"
+                AdornmentIcon="@Icons.Material.Filled.Search"
+                IconSize="Size.Medium"
+                Class="mt-0"
+                FullWidth="true"
+                Clearable="true"
+                DebounceInterval="200"
+                OnDebounceIntervalElapsed="@(s => OnSearch(s))"/>
+            <MudButton EndIcon="@Icons.Material.Filled.Add" Style="margin-right: 0.5rem">Add</MudButton>
+        </MudStack>
+    </ToolBarContent>
+    <HeaderContent>
+        @foreach (var prop in OrderedProperties) {
+            <MudTh>
+                @if (prop.Sortable) {
+                    <MudTableSortLabel SortLabel="@prop.Identifier" T="string">@prop.DisplayName</MudTableSortLabel>
+                }
+                else {
+                    @prop.DisplayName
+                }
+            </MudTh>
+        }
+
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @foreach (var prop in OrderedProperties) {
+            <MudTd DataLabel="@prop.DisplayName" Style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 500px">@context[prop.Identifier]</MudTd>
+        }
+        
+        <MudTd DataLabel="Actions">
+            <MudStack Row="true" Spacing="1">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" />
+            </MudStack>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>

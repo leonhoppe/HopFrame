@@ -10,13 +10,15 @@ namespace HopFrame.Core;
 public static class ServiceCollectionExtensions {
 
     /// Configures the library using the provided configurator
-    public static void AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
+    public static IServiceCollection AddHopFrameServices(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
         var config = new HopFrameConfig();
         services.AddSingleton(config);
 
         services.AddTransient<IConfigAccessor, ConfigAccessor>();
+        services.AddTransient<IEntityAccessor, EntityAccessor>();
         
         configurator.Invoke(new HopFrameConfigurator(config, services));
+        return services;
     }
     
 }

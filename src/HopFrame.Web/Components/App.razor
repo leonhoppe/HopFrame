@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="/"/>
+    <ImportMap/>
+    <HeadOutlet/>
+
+</head>
+<body>
+
+<Router AppAssembly="typeof(ServiceCollectionExtensions).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData"/>
+    </Found>
+</Router>
+<script src="@Assets["_framework/blazor.web.js"]"></script>
+
+</body>
+</html>
