@@ -36,6 +36,9 @@ public class PropertyConfig {
 
     /// [GENERATED] The place (from left to right) that the property will appear in the table and editor
     public int OrderIndex { get; set; }
+
+    /// [GENERATED] The table that owns this property
+    public TableConfig Table { get; set; }
     
     internal PropertyConfig() {}
 }

@@ -24,12 +24,12 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     public abstract Task DeleteAsync(TModel entry, CancellationToken ct = default);
     
     /// <inheritdoc/>
-    public async Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
+    public async Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
         return await LoadPageAsync(page, perPage, ct);
     }
     
     /// <inheritdoc/>
-    public async Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
+    public async Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
         return await SearchAsync(searchTerm, page, perPage, ct);
     }
     

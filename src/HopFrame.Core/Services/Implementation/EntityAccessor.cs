@@ -1,25 +1,91 @@
-﻿using HopFrame.Core.Configuration;
+﻿using System.Linq.Expressions;
+using System.Reflection;
+using HopFrame.Core.Configuration;
 
 namespace HopFrame.Core.Services.Implementation;
 
-internal class EntityAccessor : IEntityAccessor {
+internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     
-    public async Task<string?> GetValue(object model, PropertyConfig property) {
+    public string? GetValue(object model, PropertyConfig property) {
         var prop = model.GetType().GetProperty(property.Identifier);
-
         if (prop is null)
             return null;
 
-        return prop.GetValue(model)?.ToString();
+        var value = prop.GetValue(model);
+        return FormatValue(value, property);
     }
-    
-    public async Task SetValue(object model, PropertyConfig property, object value) {
-        var prop = model.GetType().GetProperty(property.Identifier);
 
+    public string? FormatValue(object? value, PropertyConfig property) {
+        if (value is null)
+            return null;
+        
+        if ((property.PropertyType & PropertyType.List) != 0) {
+            return (value as IEnumerable<object>)!.Count().ToString();
+        }
+
+        if ((property.PropertyType & PropertyType.Relation) != 0) {
+            var table = accessor.GetTableByType(property.Type);
+            if (table?.PreferredProperty != null) {
+                var tableProp = table.Properties.First(p => p.Identifier == table.PreferredProperty);
+                return GetValue(value, tableProp);
+            }
+        }
+
+        return value.ToString();
+    }
+
+    public void SetValue(object model, PropertyConfig property, object value) {
+        var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return;
+
+        if (value.GetType() != property.Type)
+            value = Convert.ChangeType(value, property.Type);
         
-        prop.SetValue(model, Convert.ChangeType(value, property.Type));
+        prop.SetValue(model, value);
+    }
+
+    public IEnumerable<object> SortDataByProperty(IEnumerable<object> data, PropertyConfig property, bool descending = false) {
+        var prop = property.Table.TableType.GetProperty(property.Identifier);
+        if (prop is null)
+            return data;
+
+        var parameter = Expression.Parameter(property.Table.TableType);
+        Expression expression = Expression.Property(parameter, prop);
+        var targetType = prop.PropertyType;
+
+        if ((property.PropertyType & PropertyType.Relation) != 0) {
+            var relationTable = accessor.GetTableByType(property.Type);
+            PropertyInfo? relationPropInfo = null;
+
+            if (relationTable?.PreferredProperty != null) {
+                var relationProp = relationTable.Properties.First(p => p.Identifier == relationTable.PreferredProperty);
+                
+                if ((relationProp.PropertyType & PropertyType.List) == 0)
+                    relationPropInfo = relationProp.Type.GetProperty(relationProp.Identifier);
+            }
+            
+            if (relationPropInfo == null) {
+                var formatMethod = GetType().GetMethod(nameof(FormatValue))!;
+                targetType = typeof(string);
+                expression = Expression.Call(Expression.Constant(this), formatMethod, expression, Expression.Constant(property));
+            }
+            else {
+                targetType = relationPropInfo.PropertyType;
+                expression = Expression.Property(expression, relationPropInfo);
+            }
+        }
+        
+        var lambda = Expression.Lambda(expression, parameter);
+
+        var methodName = descending ? nameof(Enumerable.OrderByDescending) : nameof(Enumerable.OrderBy);
+        var method = typeof(Enumerable)
+            .GetMethods()
+            .Single(m => m.Name == methodName && m.GetParameters().Length == 2)
+            .MakeGenericMethod(property.Table.TableType, targetType);
+
+        var result = method.Invoke(null, [data, lambda.Compile()]);
+        return (IEnumerable<object>)result!;
     }
     
 }

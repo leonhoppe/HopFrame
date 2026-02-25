@@ -17,6 +17,12 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
 
     private MudTable<Dictionary<string, string>> Manager { get; set; } = null!;
 
+    private Dictionary<string, MudTableSortLabel<object>> SortDirections { get; set; } = new();
+
+    private KeyValuePair<string, SortDirection>? _currentSort;
+
+    private string _searchText = string.Empty;
+
     protected override void OnInitialized() {
         base.OnInitialized();
 
@@ -26,22 +32,19 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
             .Where(p => p.Listable)
             .OrderBy(p => p.OrderIndex)
             .ToArray();
+        
+        foreach (var property in OrderedProperties) {
+            SortDirections.Add(property.Identifier, null!);
+        }
     }
 
-    private async Task<List<Dictionary<string, string>>> PrepareData(object[] entries) {
+    private List<Dictionary<string, string>> PrepareData(object[] entries) {
         var list = new List<Dictionary<string, string>>();
         
         foreach (var entry in entries) {
-            var taskDict = new Dictionary<string, Task<string?>>();
-            foreach (var prop in OrderedProperties) {
-                taskDict.Add(prop.Identifier, accessor.GetValue(entry, prop));
-            }
-
-            await Task.WhenAll(taskDict.Values);
-
             var dict = new Dictionary<string, string>();
-            foreach (var prop in taskDict) {
-                dict.Add(prop.Key, prop.Value.Result ?? string.Empty);
+            foreach (var prop in OrderedProperties) {
+                dict.Add(prop.Identifier, accessor.GetValue(entry, prop) ?? string.Empty);
             }
             
             list.Add(dict);
@@ -51,8 +54,19 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     }
 
     private async Task<TableData<Dictionary<string, string>>> Reload(TableState state, CancellationToken ct) {
-        var entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, ct);
-        var data = await PrepareData(entries.Cast<object>().ToArray());
+        IEnumerable<object> entries;
+
+        if (string.IsNullOrWhiteSpace(_searchText))
+            entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, ct);
+        else
+            entries = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, ct);
+
+        if (_currentSort.HasValue) {
+            var sortProp = Config.Properties.First(p => p.Identifier == _currentSort.Value.Key);
+            entries = accessor.SortDataByProperty(entries, sortProp, _currentSort.Value.Value == SortDirection.Descending);
+        }
+        
+        var data = PrepareData(entries.ToArray());
         var total = await Repository.CountAsync(ct);
 
         return new TableData<Dictionary<string, string>> {
@@ -62,7 +76,27 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     }
 
     private async Task OnSearch(string searchText) {
-        Console.WriteLine(searchText);
+        _searchText = searchText;
+        await Manager.ReloadServerData();
     }
-    
+
+    private async Task OnSort(PropertyConfig property, SortDirection direction) {
+        if (direction != SortDirection.None) {
+            foreach (var reference in SortDirections
+                         .Where(d => d.Key != property.Identifier)) {
+#pragma warning disable BL0005
+                reference.Value.SortDirection = SortDirection.None;
+#pragma warning restore BL0005
+            }
+        }
+        
+        if (direction == SortDirection.None) {
+            _currentSort = null;
+        }
+        else {
+            _currentSort = new(property.Identifier, direction);
+        }
+
+        await Manager.ReloadServerData();
+    }
 }

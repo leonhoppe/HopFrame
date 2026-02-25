@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace HopFrame.Web.Components.Pages;
 
-public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator) : CancellableComponent {
+public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator) : ComponentBase {
     private const int PerPage = 25;
     
     [Parameter]

@@ -5,6 +5,8 @@ namespace TestApplication.Models;
 public class User {
     [Key]
     public Guid Id { get; } = Guid.CreateVersion7();
+
+    public int Index { get; set; }
     
     [EmailAddress, MaxLength(25)]
     public required string Email { get; set; }

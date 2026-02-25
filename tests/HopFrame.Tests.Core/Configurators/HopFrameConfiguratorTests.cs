@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using HopFrame.Core.Configuration;
+﻿using HopFrame.Core.Configuration;
 using HopFrame.Core.Configurators;
 using HopFrame.Core.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,13 +7,13 @@ namespace HopFrame.Tests.Core.Configurators;
 
 public class HopFrameConfiguratorTests {
     private class TestRepository : IHopFrameRepository {
-        public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
+        public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
         public Task<int> CountAsync(CancellationToken ct) {
             throw new NotImplementedException();
         }
-        public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
+        public Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
         public Task CreateGenericAsync(object entry, CancellationToken ct) {

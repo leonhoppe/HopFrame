@@ -42,8 +42,12 @@ internal static class ConfigurationHelper {
             Type = property.PropertyType,
             DisplayName = property.Name,
             OrderIndex = table.Properties.Count,
-            PropertyType = InferPropertyType(property.PropertyType, property)
+            PropertyType = InferPropertyType(property.PropertyType, property),
+            Table = table
         };
+
+        if (property.CustomAttributes.Any(a => a.AttributeType == typeof(KeyAttribute)))
+            table.PreferredProperty = config.Identifier;
 
         return config;
     }

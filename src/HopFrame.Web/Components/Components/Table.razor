@@ -12,7 +12,8 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">@Config.DisplayName</MudText>
         <MudSpacer />
-        <MudStack Row="true" Spacing="2" Style="min-width: 500px">
+        <MudStack Row="true" Spacing="2" Style="min-width: 600px">
+            <MudButton OnClick="@(Manager.ReloadServerData)">Reload</MudButton>
             <MudTextField
                 T="string"
                 Placeholder="Search"
@@ -30,12 +31,13 @@
     <HeaderContent>
         @foreach (var prop in OrderedProperties) {
             <MudTh>
-                @if (prop.Sortable) {
-                    <MudTableSortLabel SortLabel="@prop.Identifier" T="string">@prop.DisplayName</MudTableSortLabel>
-                }
-                else {
+                <MudTableSortLabel
+                    T="object"
+                    @ref="SortDirections[prop.Identifier]"
+                    SortDirectionChanged="@(dir => OnSort(prop, dir))"
+                    Enabled="@prop.Sortable">
                     @prop.DisplayName
-                }
+                </MudTableSortLabel>
             </MudTh>
         }
 

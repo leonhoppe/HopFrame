@@ -23,6 +23,8 @@ builder.Services.AddHopFrame(config => {
 
         table.Property(u => u.Password)
             .Listable(false);
+
+        table.SetPreferredProperty(u => u.Username);
     });
 
     config.Table<Post>(table => {
@@ -42,7 +44,7 @@ if (!app.Environment.IsDevelopment()) {
 await using (var scope = app.Services.CreateAsyncScope()) {
     var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-    foreach (var _ in Enumerable.Range(1, 100)) {
+    foreach (var i in Enumerable.Range(1, 100)) {
         var firstName = Faker.Name.First();
         var lastName = Faker.Name.Last();
 
@@ -53,9 +55,22 @@ await using (var scope = app.Services.CreateAsyncScope()) {
             LastName = lastName,
             Description = Faker.Lorem.Paragraph(),
             Birth = DateOnly.FromDateTime(Faker.Identification.DateOfBirth()),
-            Password = Faker.RandomNumber.Next(100000L, 99999999999999999L).ToString()
+            Password = Faker.RandomNumber.Next(100000L, 99999999999999999L).ToString(),
+            Index = i
         });
     }
+    
+    await context.SaveChangesAsync();
+
+    context.Posts.Add(new() {
+        Message = Faker.Lorem.Paragraph(),
+        Sender = context.Users.First()
+    });
+    
+    context.Posts.Add(new() {
+        Message = Faker.Lorem.Paragraph(),
+        Sender = context.Users.Skip(1).First()
+    });
 
     await context.SaveChangesAsync();
 }

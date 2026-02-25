@@ -28,5 +28,8 @@ public class TableConfig {
     /// [GENERATED] The place (from top to bottom) that the table will appear in on the sidebar
     public int OrderIndex { get; set; }
     
+    /// [GENERATED] The identifier of the property that should be displayed if the model is used as a relation
+    public string? PreferredProperty { get; set; }
+    
     internal TableConfig() {}
 }

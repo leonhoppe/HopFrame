@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
+﻿#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 namespace HopFrame.Core.Repositories;
 
 /// The generic repository that provides access to the model dataset
@@ -11,7 +9,7 @@ public interface IHopFrameRepository {
     /// </summary>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable> LoadPageGenericAsync(int page, int perPage, CancellationToken ct);
+    public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct);
     
     /// <summary>
     /// Returns the total amount of entries in the dataset
@@ -24,7 +22,7 @@ public interface IHopFrameRepository {
     /// <param name="searchTerm">The search text provided by the user</param>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
+    public Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
 
     
     /// <summary>

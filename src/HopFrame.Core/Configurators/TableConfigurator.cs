@@ -46,8 +46,8 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
         return new PropertyConfigurator(prop);
     }
 
-    /// <inheritdoc cref="Property"/>
-    public PropertyConfigurator Property<TProp>(Expression<Func<TModel, TProp>> propertyExpression) {
+    /// <inheritdoc cref="Property(string)"/>
+    public PropertyConfigurator Property(Expression<Func<TModel, object>> propertyExpression) {
         var propertyName = ExpressionHelper.GetPropertyInfo(propertyExpression).Name;
         var prop = Config.Properties.FirstOrDefault(p => p.Identifier == propertyName);
         
@@ -55,5 +55,17 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
             throw new ArgumentException($"No attribute '{propertyName}' found in '{Config.Identifier}'!");
         
         return new PropertyConfigurator(prop);
+    }
+
+    /// <inheritdoc cref="TableConfig.PreferredProperty"/>
+    public TableConfigurator<TModel> SetPreferredProperty(Expression<Func<TModel, object>> propertyExpression) {
+        var propertyName = ExpressionHelper.GetPropertyInfo(propertyExpression).Name;
+        var prop = Config.Properties.FirstOrDefault(p => p.Identifier == propertyName);
+        
+        if (prop is null)
+            throw new ArgumentException($"No attribute '{propertyName}' found in '{Config.Identifier}'!");
+
+        Config.PreferredProperty = prop.Identifier;
+        return this;
     }
 }
