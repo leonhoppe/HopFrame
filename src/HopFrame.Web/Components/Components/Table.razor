@@ -1,6 +1,6 @@
 ﻿@rendermode InteractiveServer
 
-<MudTable ServerData="Reload"
+<MudTable ServerData="ReloadTable"
           @ref="Manager"
           Hover="true"
           Breakpoint="Breakpoint.Sm"
@@ -25,7 +25,11 @@
                 Clearable="true"
                 DebounceInterval="200"
                 OnDebounceIntervalElapsed="@(s => OnSearch(s))"/>
-            <MudButton EndIcon="@Icons.Material.Filled.Add" Style="margin-right: 0.5rem">Add</MudButton>
+            <MudButton EndIcon="@Icons.Material.Filled.Add"
+                       Style="margin-right: 0.5rem"
+                       OnClick="@(OnAddClick)">
+                Add
+            </MudButton>
         </MudStack>
     </ToolBarContent>
     <HeaderContent>
@@ -45,13 +49,13 @@
     </HeaderContent>
     <RowTemplate>
         @foreach (var prop in OrderedProperties) {
-            <MudTd DataLabel="@prop.DisplayName" Style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 500px">@context[prop.Identifier]</MudTd>
+            <MudTd DataLabel="@prop.DisplayName" Style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 500px">@context.Columns[prop.Identifier]</MudTd>
         }
         
         <MudTd DataLabel="Actions">
             <MudStack Row="true" Spacing="1">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" />
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(async () => await OnEditClick(context.Entry))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await OnDeleteClick(context.Entry))" />
             </MudStack>
         </MudTd>
     </RowTemplate>

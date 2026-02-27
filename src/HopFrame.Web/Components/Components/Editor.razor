@@ -1,0 +1,35 @@
+﻿<MudDrawer
+    Anchor="Anchor.Right"
+    Elevation="1"
+    Variant="DrawerVariant.Temporary"
+    OverlayAutoClose="false"
+    @bind-Open="IsVisible"
+    Width="500px"
+    Breakpoint="Breakpoint.Always"
+    Style="@(IsVisible ? "display: flex" : "display: none")">
+    
+    <MudStack Style="padding: 24px; height: 100%" Spacing="10">
+        <MudText Typo="Typo.h6">
+            @if (Mode == EditorMode.Creator) {
+                <span>Add @Config.TableType.Name</span>
+            }
+            else {
+                <span>Edit @Config.TableType.Name</span>
+            }
+        </MudText>
+        
+        <MudStack Spacing="5" Style="overflow-y: auto">
+            <MudFocusTrap>
+                @foreach (var property in GetProperties()) {
+                    <PropertyInput Config="property" Variant="Variant.Filled" />
+                }
+            </MudFocusTrap>
+        </MudStack>
+
+        <MudStack Row="true" Style="margin-top: auto">
+            <MudButton Color="Color.Primary" OnClick="@(Submit)">Save</MudButton>
+            <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        </MudStack>
+    </MudStack>
+    
+</MudDrawer>

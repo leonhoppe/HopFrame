@@ -8,14 +8,28 @@ namespace HopFrame.Web.Components.Components;
 
 public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor) : ComponentBase {
     
+    private readonly struct TableEntry {
+        public object Entry { get; init; }
+        public Dictionary<string, string> Columns { get; init; }
+    }
+    
     [Parameter]
     public required TableConfig Config { get; set; }
+
+    [Parameter]
+    public EventCallback OnAdd { get; set; }
+
+    [Parameter]
+    public EventCallback<object> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<object> OnEdit { get; set; }
 
     private IHopFrameRepository Repository { get; set; } = null!;
 
     private PropertyConfig[] OrderedProperties { get; set; } = null!;
 
-    private MudTable<Dictionary<string, string>> Manager { get; set; } = null!;
+    private MudTable<TableEntry> Manager { get; set; } = null!;
 
     private Dictionary<string, MudTableSortLabel<object>> SortDirections { get; set; } = new();
 
@@ -38,22 +52,18 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         }
     }
 
-    private List<Dictionary<string, string>> PrepareData(object[] entries) {
-        var list = new List<Dictionary<string, string>>();
-        
-        foreach (var entry in entries) {
-            var dict = new Dictionary<string, string>();
-            foreach (var prop in OrderedProperties) {
-                dict.Add(prop.Identifier, accessor.GetValue(entry, prop) ?? string.Empty);
-            }
-            
-            list.Add(dict);
+    public Task Reload() => Manager.ReloadServerData();
+
+    private Dictionary<string, string> PrepareData(object entry) {
+        var dict = new Dictionary<string, string>();
+        foreach (var prop in OrderedProperties) {
+            dict.Add(prop.Identifier, accessor.GetValue(entry, prop) ?? string.Empty);
         }
 
-        return list;
+        return dict;
     }
 
-    private async Task<TableData<Dictionary<string, string>>> Reload(TableState state, CancellationToken ct) {
+    private async Task<TableData<TableEntry>> ReloadTable(TableState state, CancellationToken ct) {
         IEnumerable<object> entries;
 
         if (string.IsNullOrWhiteSpace(_searchText))
@@ -65,11 +75,14 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
             var sortProp = Config.Properties.First(p => p.Identifier == _currentSort.Value.Key);
             entries = accessor.SortDataByProperty(entries, sortProp, _currentSort.Value.Value == SortDirection.Descending);
         }
-        
-        var data = PrepareData(entries.ToArray());
+
+        var data = entries.Select(e => new TableEntry {
+            Entry = e,
+            Columns = PrepareData(e)
+        });
         var total = await Repository.CountAsync(ct);
 
-        return new TableData<Dictionary<string, string>> {
+        return new TableData<TableEntry> {
             TotalItems = total,
             Items = data
         };
@@ -80,7 +93,11 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         await Manager.ReloadServerData();
     }
 
+    private bool _currentlyReloading;
     private async Task OnSort(PropertyConfig property, SortDirection direction) {
+        if (_currentlyReloading) return;
+        _currentlyReloading = true;
+        
         if (direction != SortDirection.None) {
             foreach (var reference in SortDirections
                          .Where(d => d.Key != property.Identifier)) {
@@ -98,5 +115,21 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         }
 
         await Manager.ReloadServerData();
+        _currentlyReloading = false;
+    }
+
+    private async Task OnAddClick() {
+        if (OnAdd.HasDelegate)
+            await OnAdd.InvokeAsync();
+    }
+
+    private async Task OnEditClick(object entry) {
+        if (OnEdit.HasDelegate)
+            await OnEdit.InvokeAsync(entry);
+    }
+
+    private async Task OnDeleteClick(object entry) {
+        if (OnDelete.HasDelegate)
+            await OnDelete.InvokeAsync(entry);
     }
 }

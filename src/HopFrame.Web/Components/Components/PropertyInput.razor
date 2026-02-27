@@ -1,0 +1,106 @@
+﻿@using HopFrame.Core.Configuration
+
+@switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
+    case PropertyType.Numeric:
+        <MudNumericField
+            T="double"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    case PropertyType.Boolean:
+        <MudSwitch
+            T="bool"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"/>
+        break;
+        
+    case PropertyType.DateTime:
+        <MudField Label="@Config.DisplayName" Variant="Variant.Outlined" Style="display: flex">
+            <MudStack Row="true">
+                <MudDatePicker
+                    Label="Date"
+                    Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+                    Disabled="@(!Config.Editable)"
+                    Variant="Variant"/>
+            
+                <MudTimePicker
+                    Label="Time"
+                    Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+                    Disabled="@(!Config.Editable)"
+                    Variant="Variant"/>
+            </MudStack>
+        </MudField>
+        break;
+        
+    case PropertyType.DateOnly:
+        <MudDatePicker
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    case PropertyType.TimeOnly:
+        <MudTimePicker
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    case PropertyType.Email:
+        <MudTextField
+            T="string"
+            InputType="InputType.Email"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    case PropertyType.Password:
+        <MudTextField
+            T="string"
+            InputType="InputType.Password"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    case PropertyType.PhoneNumber:
+        <MudTextField
+            T="string"
+            InputType="InputType.Telephone"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+        
+    default:
+        <MudTextField
+            T="string"
+            Label="@Config.DisplayName"
+            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"/>
+        break;
+}
+
+@code {
+
+    [Parameter]
+    public object? Value { get; set; }
+
+    [Parameter]
+    public required PropertyConfig Config { get; set; }
+    
+    [Parameter]
+    public Variant Variant { get; set; }
+    
+}

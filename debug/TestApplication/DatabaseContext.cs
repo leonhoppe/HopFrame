@@ -9,6 +9,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
     public DbSet<Post> Posts { get; set; }
 
+    public DbSet<Typer> Typers { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
@@ -22,5 +24,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             .HasMany(u => u.Posts)
             .WithOne(p => p.Sender)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Typer>()
+            .HasKey(t => t.Id);
     }
 }

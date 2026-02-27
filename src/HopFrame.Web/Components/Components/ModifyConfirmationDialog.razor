@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <TitleContent>
+        Confirm
+    </TitleContent>
+    <DialogContent>
+        Do you really want to save the changes?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton OnClick="@(Submit)" Color="Color.Primary">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+}

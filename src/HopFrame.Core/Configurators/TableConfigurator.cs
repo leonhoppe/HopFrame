@@ -47,7 +47,7 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
     }
 
     /// <inheritdoc cref="Property(string)"/>
-    public PropertyConfigurator Property(Expression<Func<TModel, object>> propertyExpression) {
+    public PropertyConfigurator Property(Expression<Func<TModel, object?>> propertyExpression) {
         var propertyName = ExpressionHelper.GetPropertyInfo(propertyExpression).Name;
         var prop = Config.Properties.FirstOrDefault(p => p.Identifier == propertyName);
         
@@ -58,7 +58,7 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
     }
 
     /// <inheritdoc cref="TableConfig.PreferredProperty"/>
-    public TableConfigurator<TModel> SetPreferredProperty(Expression<Func<TModel, object>> propertyExpression) {
+    public TableConfigurator<TModel> SetPreferredProperty(Expression<Func<TModel, object?>> propertyExpression) {
         var propertyName = ExpressionHelper.GetPropertyInfo(propertyExpression).Name;
         var prop = Config.Properties.FirstOrDefault(p => p.Identifier == propertyName);
         

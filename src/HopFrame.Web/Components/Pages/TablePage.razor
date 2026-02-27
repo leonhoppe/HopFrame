@@ -2,11 +2,19 @@
 @using HopFrame.Web.Components.Components
 @rendermode InteractiveServer
 @layout HopFrameLayout
+@inherits CancellableComponent
 
 <MudPopoverProvider />
 <MudDialogProvider />
-<MudSnackbarProvider/>
+<MudSnackbarProvider />
 
 <PageTitle>HopFrame - @Table.DisplayName</PageTitle>
 
-<Table Config="Table"></Table>
+<Editor Config="Table" @ref="EditorComponent"></Editor>
+
+<Table 
+    Config="Table"
+    OnAdd="@(OnAdd)"
+    OnEdit="@(OnEdit)"
+    OnDelete="@(OnDelete)"
+    @ref="TableComponent"></Table>

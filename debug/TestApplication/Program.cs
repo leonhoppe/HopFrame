@@ -1,3 +1,4 @@
+using HopFrame.Core.Configuration;
 using HopFrame.Core.EFCore;
 using HopFrame.Web;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,17 @@ builder.Services.AddHopFrame(config => {
 
     config.Table<Post>(table => {
         table.SetDescription("The posts dataset. It contains all posts sent via the application.");
+    });
+
+    config.Table<Typer>(table => {
+        table.Property(t => t.LongText)
+            .SetType(PropertyType.TextArea);
+
+        table.Property(t => t.Password)
+            .SetType(PropertyType.Password);
+
+        table.Property(t => t.PhoneNumber)
+            .SetType(PropertyType.PhoneNumber);
     });
 });
 
