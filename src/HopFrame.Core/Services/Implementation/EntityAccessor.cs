@@ -7,12 +7,19 @@ namespace HopFrame.Core.Services.Implementation;
 internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     
     public string? GetValue(object model, PropertyConfig property) {
+        var value = GetValueRaw(model, property);
+        if (value is null)
+            return null;
+        
+        return FormatValue(value, property);
+    }
+
+    public object? GetValueRaw(object model, PropertyConfig property) {
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return null;
 
-        var value = prop.GetValue(model);
-        return FormatValue(value, property);
+        return prop.GetValue(model);
     }
 
     public string? FormatValue(object? value, PropertyConfig property) {
@@ -34,12 +41,12 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
         return value.ToString();
     }
 
-    public void SetValue(object model, PropertyConfig property, object value) {
+    public void SetValue(object model, PropertyConfig property, object? value) {
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return;
 
-        if (value.GetType() != property.Type)
+        if (value?.GetType() != property.Type)
             value = Convert.ChangeType(value, property.Type);
         
         prop.SetValue(model, value);

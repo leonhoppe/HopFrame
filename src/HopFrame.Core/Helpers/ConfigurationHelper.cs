@@ -46,8 +46,10 @@ internal static class ConfigurationHelper {
             Table = table
         };
 
-        if (property.CustomAttributes.Any(a => a.AttributeType == typeof(KeyAttribute)))
+        if (property.CustomAttributes.Any(a => a.AttributeType == typeof(KeyAttribute))) {
             table.PreferredProperty = config.Identifier;
+            config.Editable = false;
+        }
 
         return config;
     }

@@ -23,7 +23,8 @@ builder.Services.AddHopFrame(config => {
         table.SetDescription("The user dataset. It contains all information for the users of the application.");
 
         table.Property(u => u.Password)
-            .Listable(false);
+            .Listable(false)
+            .SetType(PropertyType.Password);
 
         table.SetPreferredProperty(u => u.Username);
     });

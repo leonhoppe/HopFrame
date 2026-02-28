@@ -1,10 +1,11 @@
 ﻿using HopFrame.Core.Configuration;
+using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class Editor(IDialogService dialogs) : ComponentBase {
+public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : ComponentBase {
     
     private enum EditorMode {
         Editor,
@@ -15,17 +16,20 @@ public partial class Editor(IDialogService dialogs) : ComponentBase {
     public required TableConfig Config { get; set; }
 
     private bool IsVisible { get; set; }
-    
+
     private object? Entry { get; set; }
     
     private EditorMode Mode { get; set; }
 
     private TaskCompletionSource<object?> Completion { get; set; } = null!;
 
+    private Dictionary<string, object?> UpdatedValues { get; set; } = null!;
+
     public Task<object?> Present(object? entry) {
         Completion = new ();
         Mode = entry is null ? EditorMode.Creator : EditorMode.Editor;
-        Entry = entry ?? Activator.CreateInstance(Config.TableType);
+        Entry = entry ?? Activator.CreateInstance(Config.TableType)!;
+        UpdatedValues = new();
         StateHasChanged();
         IsVisible = true;
         return Completion.Task;
@@ -56,8 +60,19 @@ public partial class Editor(IDialogService dialogs) : ComponentBase {
         return query.OrderBy(p => p.OrderIndex);
     }
 
+    private object? GetPropertyValue(PropertyConfig property) {
+        return accessor.GetValueRaw(Entry!, property);
+    }
+
+    private void OnPropertyUpdated(PropertyConfig property, object? value) {
+        UpdatedValues[property.Identifier] = value;
+    }
+
     private void ApplyChanges() {
-        
+        foreach (var propUpdate in UpdatedValues) {
+            var property = Config.Properties.First(p => p.Identifier == propUpdate.Key);
+            accessor.SetValue(Entry!, property, propUpdate.Value);
+        }
     }
     
 }

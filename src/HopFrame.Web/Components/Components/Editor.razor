@@ -18,13 +18,19 @@
             }
         </MudText>
         
-        <MudStack Spacing="5" Style="overflow-y: auto">
-            <MudFocusTrap>
-                @foreach (var property in GetProperties()) {
-                    <PropertyInput Config="property" Variant="Variant.Filled" />
-                }
-            </MudFocusTrap>
-        </MudStack>
+        @if (Entry is not null) {
+            <MudStack Spacing="5" Style="overflow-y: auto">
+                <MudFocusTrap>
+                    @foreach (var property in GetProperties()) {
+                        <PropertyInput 
+                            Config="property"
+                            Variant="Variant.Filled"
+                            Value="@(GetPropertyValue(property))"
+                            ValueChanged="@(v => OnPropertyUpdated(property, v))"/>
+                    }
+                </MudFocusTrap>
+            </MudStack>
+        }
 
         <MudStack Row="true" Style="margin-top: auto">
             <MudButton Color="Color.Primary" OnClick="@(Submit)">Save</MudButton>

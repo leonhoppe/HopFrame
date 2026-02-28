@@ -1,11 +1,14 @@
-﻿@using HopFrame.Core.Configuration
+﻿@using System.Collections
+@using HopFrame.Core.Configuration
 
 @switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
     case PropertyType.Numeric:
         <MudNumericField
             T="double"
+            Value="@(Convert.ToDouble(Value))"
+            ValueChanged="@(v => OnValueChanged(v))"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
         break;
@@ -13,8 +16,9 @@
     case PropertyType.Boolean:
         <MudSwitch
             T="bool"
+            Value="@((bool)(Value ?? false))"
+            ValueChanged="@(v => OnValueChanged(v))"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
             Disabled="@(!Config.Editable)"/>
         break;
         
@@ -22,14 +26,18 @@
         <MudField Label="@Config.DisplayName" Variant="Variant.Outlined" Style="display: flex">
             <MudStack Row="true">
                 <MudDatePicker
+                    Date="_date"
+                    DateChanged="@(v => OnValueChanged(v))"
                     Label="Date"
-                    Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+                    Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                     Disabled="@(!Config.Editable)"
                     Variant="Variant"/>
             
                 <MudTimePicker
+                    Time="_time"
+                    TimeChanged="@(v => OnValueChanged(v))"
                     Label="Time"
-                    Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+                    Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                     Disabled="@(!Config.Editable)"
                     Variant="Variant"/>
             </MudStack>
@@ -38,16 +46,20 @@
         
     case PropertyType.DateOnly:
         <MudDatePicker
+            Date="_date"
+            DateChanged="@(v => OnValueChanged(v))"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
         break;
         
     case PropertyType.TimeOnly:
         <MudTimePicker
+            Time="_time"
+            TimeChanged="@(v => OnValueChanged(v))"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
         break;
@@ -55,9 +67,11 @@
     case PropertyType.Email:
         <MudTextField
             T="string"
+            Value="Value?.ToString()"
+            ValueChanged="@(v => OnValueChanged(v))"
             InputType="InputType.Email"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
         break;
@@ -65,28 +79,61 @@
     case PropertyType.Password:
         <MudTextField
             T="string"
-            InputType="InputType.Password"
+            Value="Value?.ToString()"
+            ValueChanged="@(v => OnValueChanged(v))"
+            InputType="@_passwordInputType"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
-            Variant="Variant"/>
+            Variant="Variant"
+            Adornment="Adornment.End"
+            AdornmentIcon="@_passwordIcon"
+            OnAdornmentClick="@(OnPasswordIconClick)"/>
         break;
         
     case PropertyType.PhoneNumber:
         <MudTextField
             T="string"
+            Value="Value?.ToString()"
+            ValueChanged="@(v => OnValueChanged(v))"
             InputType="InputType.Telephone"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
+        break;
+        
+    case PropertyType.Enum:
+        <MudSelect
+            T="object"
+            Value="Value?.ToString()"
+            ValueChanged="@(v => OnValueChanged(v))"
+            MultiSelection="@((Config.PropertyType & PropertyType.List) != 0)"
+            SelectedValuesChanged="@(v => OnValueChanged(v))"
+            Label="@Config.DisplayName"
+            Clearable="@((Config.PropertyType & (PropertyType.Nullable | PropertyType.List)) != 0)"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant">
+            @if ((Config.PropertyType & PropertyType.List) != 0) {
+                @foreach (var value in Enum.GetValues(Config.Type.GenericTypeArguments[0])) {
+                    <MudSelectItem Value="value">@Enum.GetName(Config.Type.GenericTypeArguments[0], value)</MudSelectItem>
+                }
+            }
+            else {
+                @foreach (var value in Enum.GetValues(Config.Type)) {
+                    <MudSelectItem Value="value">@Enum.GetName(Config.Type, value)</MudSelectItem>
+                }
+            }
+        </MudSelect>
         break;
         
     default:
         <MudTextField
             T="string"
+            Value="Value?.ToString()"
+            ValueChanged="@(v => OnValueChanged(v))"
             Label="@Config.DisplayName"
-            Required="@((Config.PropertyType & PropertyType.Nullable) != 0)"
+            Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
             Disabled="@(!Config.Editable)"
             Variant="Variant"/>
         break;
@@ -95,12 +142,90 @@
 @code {
 
     [Parameter]
-    public object? Value { get; set; }
+    public object? Value {
+        get;
+        set {
+            field = value;
+            
+            if (value is null)
+                return;
+
+            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
+                case PropertyType.DateTime:
+                    _date = (DateTime)value;
+                    _time = TimeOnly.FromDateTime((DateTime)value).ToTimeSpan();
+                    break;
+                    
+                case PropertyType.DateOnly:
+                    _date = ((DateOnly)value).ToDateTime(TimeOnly.MinValue);
+                    break;
+                    
+                case PropertyType.TimeOnly:
+                    _time = ((TimeOnly)value).ToTimeSpan();
+                    break;
+            }
+        }
+    }
 
     [Parameter]
     public required PropertyConfig Config { get; set; }
     
     [Parameter]
     public Variant Variant { get; set; }
-    
+
+    [Parameter]
+    public EventCallback<object?> ValueChanged { get; set; }
+
+    private DateTime _date;
+    private TimeSpan _time;
+
+    private InputType _passwordInputType = InputType.Password;
+    private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
+
+    private async Task OnValueChanged(object? value) {
+        if (value is DateTime dt) {
+            _date = dt;
+            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
+                case PropertyType.DateOnly:
+                    value = DateOnly.FromDateTime(dt);
+                    break;
+                    
+                case PropertyType.DateTime:
+                    value = DateOnly.FromDateTime(dt).ToDateTime(TimeOnly.FromTimeSpan(_time));
+                    break;
+            }
+        }
+
+        if (value is TimeSpan ts) {
+            _time = ts;
+            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
+                case PropertyType.DateOnly:
+                    value = TimeOnly.FromTimeSpan(ts);
+                    break;
+                    
+                case PropertyType.DateTime:
+                    value = DateOnly.FromDateTime(_date).ToDateTime(TimeOnly.FromTimeSpan(ts));
+                    break;
+            }
+        }
+
+        if ((PropertyType)((byte)Config.PropertyType & 0x0F) == PropertyType.Enum && (Config.PropertyType & PropertyType.List) != 0) {
+            var list = value as IReadOnlyCollection<object?>;
+            var newValue = Activator.CreateInstance(Config.Type) as IList;
+            foreach (var entry in list!) {
+                newValue!.Add(entry);
+            }
+
+            value = newValue;
+        }
+
+        if (ValueChanged.HasDelegate)
+            await ValueChanged.InvokeAsync(value);
+    }
+
+    private void OnPasswordIconClick() {
+        _passwordIcon = _passwordInputType == InputType.Password ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+        _passwordInputType = _passwordInputType == InputType.Password ? InputType.Text : InputType.Password;
+    }
+
 }
