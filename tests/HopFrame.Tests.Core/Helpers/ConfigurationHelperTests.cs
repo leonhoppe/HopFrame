@@ -138,7 +138,7 @@ public class ConfigurationHelperTests {
         var table = CreateDummyTable("T");
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Id))!;
 
-        var config = ConfigurationHelper.InitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property.PropertyType, property.Name, property);
 
         Assert.Equal("Id", config.Identifier);
     }
@@ -153,7 +153,7 @@ public class ConfigurationHelperTests {
 
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Id))!;
 
-        var config = ConfigurationHelper.InitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property.PropertyType, property.Name, property);
 
         Assert.NotEqual("Id", config.Identifier);
         Assert.True(Guid.TryParse(config.Identifier, out _));
@@ -164,7 +164,7 @@ public class ConfigurationHelperTests {
         var table = CreateDummyTable("T");
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Name))!;
 
-        var config = ConfigurationHelper.InitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property.PropertyType, property.Name, property);
 
         Assert.Equal("Name", config.DisplayName);
         Assert.Equal(typeof(string), config.Type);
@@ -180,7 +180,7 @@ public class ConfigurationHelperTests {
 
         var property = typeof(TestModel).GetProperty(nameof(TestModel.Name))!;
 
-        var config = ConfigurationHelper.InitializeProperty(table, property);
+        var config = ConfigurationHelper.InitializeProperty(table, property.PropertyType, property.Name, property);
 
         Assert.Equal(1, config.OrderIndex);
     }
@@ -188,9 +188,9 @@ public class ConfigurationHelperTests {
     [Fact]
     public void InitializeProperty_SetsPropertyType_FromInferPropertyType() {
         var table = CreateDummyTable("T");
-        var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Number))!;
+        var property = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Number))!;
 
-        var config = ConfigurationHelper.InitializeProperty(table, prop);
+        var config = ConfigurationHelper.InitializeProperty(table, property.PropertyType, property.Name, property);
 
         Assert.Equal(PropertyType.Numeric, config.PropertyType);
     }

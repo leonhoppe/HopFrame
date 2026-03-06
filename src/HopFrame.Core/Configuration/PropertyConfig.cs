@@ -38,7 +38,13 @@ public class PropertyConfig {
     public int OrderIndex { get; set; }
 
     /// [GENERATED] The table that owns this property
-    public TableConfig Table { get; set; }
+    public TableConfig Table { get; init; } = null!;
+
+    /// If set, the function determines the value that should be displayed
+    public Func<object, object?>? Getter { get; set; }
+
+    /// If set, the function is executed to format the user entered value for the property
+    public Action<object, object?>? Setter { get; set; }
     
     internal PropertyConfig() {}
 }

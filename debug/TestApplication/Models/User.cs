@@ -11,9 +11,6 @@ public class User {
     [EmailAddress, MaxLength(25)]
     public required string Email { get; set; }
     
-    [MaxLength(25)]
-    public required string Username { get; set; }
-    
     [MaxLength(64)]
     public required string Password { get; set; }
     

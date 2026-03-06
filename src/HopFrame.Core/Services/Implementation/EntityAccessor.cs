@@ -15,6 +15,9 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     }
 
     public object? GetValueRaw(object model, PropertyConfig property) {
+        if (property.Getter is not null)
+            return property.Getter.Invoke(model);
+        
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return null;
@@ -42,6 +45,11 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     }
 
     public void SetValue(object model, PropertyConfig property, object? value) {
+        if (property.Setter is not null) {
+            property.Setter.Invoke(model, value);
+            return;
+        }
+        
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return;
@@ -53,33 +61,43 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     }
 
     public IEnumerable<object> SortDataByProperty(IEnumerable<object> data, PropertyConfig property, bool descending = false) {
-        var prop = property.Table.TableType.GetProperty(property.Identifier);
-        if (prop is null)
-            return data;
-
         var parameter = Expression.Parameter(property.Table.TableType);
-        Expression expression = Expression.Property(parameter, prop);
-        var targetType = prop.PropertyType;
+        Expression expression;
+        Type targetType = property.Type;
 
-        if ((property.PropertyType & PropertyType.Relation) != 0) {
-            var relationTable = accessor.GetTableByType(property.Type);
-            PropertyInfo? relationPropInfo = null;
+        if (property.Getter is not null) {
+            var getterProp = typeof(PropertyConfig).GetProperty(nameof(PropertyConfig.Getter))!;
+            var invokeMethod = typeof(Func<object, object?>).GetMethod(nameof(Func<>.Invoke))!;
+            expression = Expression.Call(Expression.Property(Expression.Constant(property), getterProp), invokeMethod, Expression.Convert(parameter, typeof(object)));
+            expression = Expression.Convert(expression, targetType);
+        }
+        else {
+            var prop = property.Table.TableType.GetProperty(property.Identifier);
+            if (prop is null)
+                return data;
 
-            if (relationTable?.PreferredProperty != null) {
-                var relationProp = relationTable.Properties.First(p => p.Identifier == relationTable.PreferredProperty);
+            expression = Expression.Property(parameter, prop);
+
+            if ((property.PropertyType & PropertyType.Relation) != 0) {
+                var relationTable = accessor.GetTableByType(property.Type);
+                PropertyInfo? relationPropInfo = null;
+
+                if (relationTable?.PreferredProperty != null) {
+                    var relationProp = relationTable.Properties.First(p => p.Identifier == relationTable.PreferredProperty);
                 
-                if ((relationProp.PropertyType & PropertyType.List) == 0)
-                    relationPropInfo = relationProp.Type.GetProperty(relationProp.Identifier);
-            }
+                    if ((relationProp.PropertyType & PropertyType.List) == 0)
+                        relationPropInfo = relationProp.Type.GetProperty(relationProp.Identifier);
+                }
             
-            if (relationPropInfo == null) {
-                var formatMethod = GetType().GetMethod(nameof(FormatValue))!;
-                targetType = typeof(string);
-                expression = Expression.Call(Expression.Constant(this), formatMethod, expression, Expression.Constant(property));
-            }
-            else {
-                targetType = relationPropInfo.PropertyType;
-                expression = Expression.Property(expression, relationPropInfo);
+                if (relationPropInfo == null) {
+                    var formatMethod = GetType().GetMethod(nameof(FormatValue))!;
+                    targetType = typeof(string);
+                    expression = Expression.Call(Expression.Constant(this), formatMethod, expression, Expression.Constant(property));
+                }
+                else {
+                    targetType = relationPropInfo.PropertyType;
+                    expression = Expression.Property(expression, relationPropInfo);
+                }
             }
         }
         

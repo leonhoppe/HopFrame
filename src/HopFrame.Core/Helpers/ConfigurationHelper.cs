@@ -25,28 +25,28 @@ internal static class ConfigurationHelper {
         };
         
         foreach (var property in modelType.GetProperties()) {
-            config.Properties.Add(InitializeProperty(config, property));
+            config.Properties.Add(InitializeProperty(config, property.PropertyType, property.Name, property));
         }
 
         return config;
     }
 
-    public static PropertyConfig InitializeProperty(TableConfig table, PropertyInfo property) {
-        var identifier = property.Name;
+    public static PropertyConfig InitializeProperty(TableConfig table, Type type, string name, PropertyInfo? property) {
+        var identifier = name;
 
         if (table.Properties.Any(p => p.Identifier == identifier))
             identifier = Guid.NewGuid().ToString();
 
         var config = new PropertyConfig {
             Identifier = identifier,
-            Type = property.PropertyType,
-            DisplayName = property.Name,
+            Type = type,
+            DisplayName = name,
             OrderIndex = table.Properties.Count,
-            PropertyType = InferPropertyType(property.PropertyType, property),
+            PropertyType = InferPropertyType(type, property),
             Table = table
         };
 
-        if (property.CustomAttributes.Any(a => a.AttributeType == typeof(KeyAttribute))) {
+        if (property?.CustomAttributes.Any(a => a.AttributeType == typeof(KeyAttribute)) == true) {
             table.PreferredProperty = config.Identifier;
             config.Editable = false;
         }
@@ -54,7 +54,7 @@ internal static class ConfigurationHelper {
         return config;
     }
 
-    public static PropertyType InferPropertyType(Type realType, PropertyInfo info) {
+    public static PropertyType InferPropertyType(Type realType, PropertyInfo? info) {
         byte modifiers = 0;
 
         if (Nullable.GetUnderlyingType(realType) != null) {
@@ -62,7 +62,7 @@ internal static class ConfigurationHelper {
             realType = Nullable.GetUnderlyingType(realType)!;
         }
 
-        if (info.CustomAttributes.Any(a => a.AttributeType == typeof(NullableAttribute))) {
+        if (info?.CustomAttributes.Any(a => a.AttributeType == typeof(NullableAttribute)) == true) {
             modifiers |= (byte)PropertyType.Nullable;
         }
 
@@ -95,7 +95,7 @@ internal static class ConfigurationHelper {
         if (realType.IsNumeric())
             type = PropertyType.Numeric;
 
-        if (info.CustomAttributes.Any(a => a.AttributeType == typeof(EmailAddressAttribute)))
+        if (info?.CustomAttributes.Any(a => a.AttributeType == typeof(EmailAddressAttribute)) == true)
             type = PropertyType.Email;
 
         return (PropertyType)((byte)type | modifiers);

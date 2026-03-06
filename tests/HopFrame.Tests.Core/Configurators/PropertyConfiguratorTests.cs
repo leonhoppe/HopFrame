@@ -19,7 +19,7 @@ public class PropertyConfiguratorTests {
         var original = PropertyType.Numeric | PropertyType.Nullable | PropertyType.List;
         var config = CreateConfig(original);
 
-        var configurator = new PropertyConfigurator(config);
+        var configurator = new PropertyConfigurator<object, string>(config);
 
         // Act: change base type to Text
         configurator.SetType(PropertyType.Text);
@@ -36,7 +36,7 @@ public class PropertyConfiguratorTests {
         var original = PropertyType.Boolean | PropertyType.Nullable;
         var config = CreateConfig(original);
 
-        var configurator = new PropertyConfigurator(config);
+        var configurator = new PropertyConfigurator<object, string>(config);
 
         configurator.SetType(PropertyType.Boolean);
 
@@ -48,7 +48,7 @@ public class PropertyConfiguratorTests {
         var original = PropertyType.Enum | PropertyType.List;
         var config = CreateConfig(original);
 
-        var configurator = new PropertyConfigurator(config);
+        var configurator = new PropertyConfigurator<object, string>(config);
 
         configurator.SetType(PropertyType.Numeric);
 
@@ -63,7 +63,7 @@ public class PropertyConfiguratorTests {
         var original = PropertyType.Text | PropertyType.Nullable;
         var config = CreateConfig(original);
 
-        var configurator = new PropertyConfigurator(config);
+        var configurator = new PropertyConfigurator<object, string>(config);
 
         configurator.SetType(PropertyType.Email);
 
@@ -76,7 +76,7 @@ public class PropertyConfiguratorTests {
     [Fact]
     public void SetType_ReturnsConfigurator_ForFluentApi() {
         var config = CreateConfig(PropertyType.Text);
-        var configurator = new PropertyConfigurator(config);
+        var configurator = new PropertyConfigurator<object, string>(config);
 
         var result = configurator.SetType(PropertyType.Numeric);
 

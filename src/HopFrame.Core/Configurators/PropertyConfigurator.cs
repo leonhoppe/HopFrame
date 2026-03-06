@@ -5,49 +5,61 @@ namespace HopFrame.Core.Configurators;
 /// <summary>
 /// The configurator for the <see cref="PropertyConfig"/>
 /// </summary>
-public class PropertyConfigurator(PropertyConfig config) {
+public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TModel : class {
     /// The internal config that is modified
     public PropertyConfig Config { get; } = config;
 
     /// <inheritdoc cref="PropertyConfig.DisplayName" />
-    public PropertyConfigurator SetDisplayName(string displayName) {
+    public PropertyConfigurator<TModel, TProp> SetDisplayName(string displayName) {
         Config.DisplayName = displayName;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.Listable" />
-    public PropertyConfigurator Listable(bool listable) {
+    public PropertyConfigurator<TModel, TProp> Listable(bool listable) {
         Config.Listable = listable;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.Sortable" />
-    public PropertyConfigurator Sortable(bool sortable) {
+    public PropertyConfigurator<TModel, TProp> Sortable(bool sortable) {
         Config.Sortable = sortable;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.Searchable" />
-    public PropertyConfigurator Searchable(bool searchable) {
+    public PropertyConfigurator<TModel, TProp> Searchable(bool searchable) {
         Config.Searchable = searchable;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.Editable" />
-    public PropertyConfigurator Editable(bool editable) {
+    public PropertyConfigurator<TModel, TProp> Editable(bool editable) {
         Config.Editable = editable;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.Creatable" />
-    public PropertyConfigurator Creatable(bool creatable) {
+    public PropertyConfigurator<TModel, TProp> Creatable(bool creatable) {
         Config.Creatable = creatable;
         return this;
     }
 
     /// <inheritdoc cref="PropertyConfig.OrderIndex" />
-    public PropertyConfigurator SetOrderIndex(int index) {
+    public PropertyConfigurator<TModel, TProp> SetOrderIndex(int index) {
         Config.OrderIndex = index;
+        return this;
+    }
+
+    /// <inheritdoc cref="PropertyConfig.Getter" />
+    public PropertyConfigurator<TModel, TProp> SetFormatter(Func<TModel, TProp> formatter) {
+        Config.Getter = model => formatter.Invoke((TModel)model);
+        return this;
+    }
+
+    /// <inheritdoc cref="PropertyConfig.Setter" />
+    public PropertyConfigurator<TModel, TProp> SetParser(Action<TModel, object?> parser) {
+        Config.Setter = (model, value) => parser.Invoke((TModel)model, value);
         return this;
     }
 
@@ -55,7 +67,7 @@ public class PropertyConfigurator(PropertyConfig config) {
     /// Sets the property type. The predefined modifiers (like nullable) persist.
     /// If the property is a list or any other generic type, please use the enumerated type.
     /// </summary>
-    public PropertyConfigurator SetType(PropertyType type) {
+    public PropertyConfigurator<TModel, TProp> SetType(PropertyType type) {
         Config.PropertyType = (PropertyType)(((byte)Config.PropertyType & 0xF0) | ((byte)type & 0x0F));
         return this;
     }

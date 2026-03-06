@@ -26,7 +26,11 @@ builder.Services.AddHopFrame(config => {
             .Listable(false)
             .SetType(PropertyType.Password);
 
-        table.SetPreferredProperty(u => u.Username);
+        table.AddProperty<string>("Username")
+            .SetFormatter(u => $"{u.FirstName}.{u.LastName}".ToLower())
+            .Creatable(false);
+
+        table.SetPreferredProperty("Username");
     });
 
     config.Table<Post>(table => {
@@ -63,7 +67,6 @@ await using (var scope = app.Services.CreateAsyncScope()) {
 
         context.Users.Add(new() {
             Email = $"{firstName}.{lastName}@gmail.com".ToLower(),
-            Username = $"{firstName}.{lastName}".ToLower(),
             FirstName = firstName,
             LastName = lastName,
             Description = Faker.Lorem.Paragraph(),
