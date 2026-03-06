@@ -24,7 +24,8 @@ public interface IEntityAccessor {
     /// </summary>
     /// <param name="value">The value of the property</param>
     /// <param name="property">The property that shall be extracted</param>
-    public string? FormatValue(object? value, PropertyConfig property);
+    /// <param name="fromList">Indicates if the provided value is an entry from the value of the property</param>
+    public string? FormatValue(object? value, PropertyConfig property, bool fromList = false);
     
     /// <summary>
     /// Properly formats and sets the new value of the property

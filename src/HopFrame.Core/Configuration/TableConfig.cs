@@ -30,6 +30,4 @@ public class TableConfig {
     
     /// [GENERATED] The identifier of the property that should be displayed if the model is used as a relation
     public string? PreferredProperty { get; set; }
-    
-    internal TableConfig() {}
 }

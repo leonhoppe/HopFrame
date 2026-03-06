@@ -25,16 +25,16 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
         return prop.GetValue(model);
     }
 
-    public string? FormatValue(object? value, PropertyConfig property) {
+    public string? FormatValue(object? value, PropertyConfig property, bool fromList = false) {
         if (value is null)
             return null;
         
-        if ((property.PropertyType & PropertyType.List) != 0) {
+        if ((property.PropertyType & PropertyType.List) != 0 && !fromList) {
             return (value as IEnumerable<object>)!.Count().ToString();
         }
 
         if ((property.PropertyType & PropertyType.Relation) != 0) {
-            var table = accessor.GetTableByType(property.Type);
+            var table = accessor.GetTableByType(value.GetType());
             if (table?.PreferredProperty != null) {
                 var tableProp = table.Properties.First(p => p.Identifier == table.PreferredProperty);
                 return GetValue(value, tableProp);

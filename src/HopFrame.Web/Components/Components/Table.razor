@@ -2,18 +2,23 @@
 
 <MudTable ServerData="ReloadTable"
           @ref="Manager"
+          T="TableEntry"
           Hover="true"
           Breakpoint="Breakpoint.Sm"
           LoadingProgressColor="Color.Info"
           HorizontalScrollbar="true"
           FixedHeader="true"
           FixedFooter="true"
-          Height="calc(100vh - 164px)">
+          Elevation="0"
+          Height="@(SelectionMode == SelectionMode.None ? "calc(100vh - 164px)" : "70vh")"
+          MultiSelection="@(SelectionMode == SelectionMode.Multiple)"
+          SelectOnRowClick="true"
+          OnRowClick="@(OnSelection)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">@Config.DisplayName</MudText>
+        <MudButton OnClick="@(Manager.ReloadServerData)" Style="margin-left: 0.5rem">Reload</MudButton>
         <MudSpacer />
         <MudStack Row="true" Spacing="2" Style="min-width: 600px">
-            <MudButton OnClick="@(Manager.ReloadServerData)">Reload</MudButton>
             <MudTextField
                 T="string"
                 Placeholder="Search"
@@ -25,11 +30,13 @@
                 Clearable="true"
                 DebounceInterval="200"
                 OnDebounceIntervalElapsed="@(s => OnSearch(s))"/>
-            <MudButton EndIcon="@Icons.Material.Filled.Add"
-                       Style="margin-right: 0.5rem"
-                       OnClick="@(OnAddClick)">
-                Add
-            </MudButton>
+            @if (ShowActionButtons) {
+                <MudButton EndIcon="@Icons.Material.Filled.Add"
+                           Style="margin-right: 0.5rem"
+                           OnClick="@(OnAddClick)">
+                    Add
+                </MudButton>
+            }
         </MudStack>
     </ToolBarContent>
     <HeaderContent>
@@ -45,19 +52,23 @@
             </MudTh>
         }
 
-        <MudTh>Actions</MudTh>
+        @if (ShowActionButtons) {
+            <MudTh>Actions</MudTh>
+        }
     </HeaderContent>
     <RowTemplate>
         @foreach (var prop in OrderedProperties) {
             <MudTd DataLabel="@prop.DisplayName" Style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 500px">@context.Columns[prop.Identifier]</MudTd>
         }
         
-        <MudTd DataLabel="Actions">
-            <MudStack Row="true" Spacing="1">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(async () => await OnEditClick(context.Entry))" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await OnDeleteClick(context.Entry))" />
-            </MudStack>
-        </MudTd>
+        @if (ShowActionButtons) {
+            <MudTd DataLabel="Actions">
+                <MudStack Row="true" Spacing="1">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(async () => await OnEditClick(context.Entry))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(async () => await OnDeleteClick(context.Entry))" />
+                </MudStack>
+            </MudTd>
+        }
     </RowTemplate>
     <PagerContent>
         <MudTablePager />

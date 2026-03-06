@@ -71,6 +71,12 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
     private void ApplyChanges() {
         foreach (var propUpdate in UpdatedValues) {
             var property = Config.Properties.First(p => p.Identifier == propUpdate.Key);
+
+            if ((PropertyType)((byte)property.PropertyType & 0x0F) == PropertyType.Password) {
+                if (propUpdate.Value is not null && string.IsNullOrWhiteSpace((string)propUpdate.Value))
+                    continue;
+            }
+            
             accessor.SetValue(Entry!, property, propUpdate.Value);
         }
     }

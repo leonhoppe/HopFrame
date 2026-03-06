@@ -25,6 +25,14 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     [Parameter]
     public EventCallback<object> OnEdit { get; set; }
 
+    [Parameter]
+    public bool ShowActionButtons { get; set; } = true;
+
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.None;
+
+    public List<object> SelectedEntries { get; } = new();
+
     private IHopFrameRepository Repository { get; set; } = null!;
 
     private PropertyConfig[] OrderedProperties { get; set; } = null!;
@@ -118,6 +126,13 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         _currentlyReloading = false;
     }
 
+    private async Task OnSelection(TableRowClickEventArgs<TableEntry> args) {
+        if (SelectionMode == SelectionMode.Single) {
+            SelectedEntries.Clear();
+            SelectedEntries.Add(args.Item.Entry);
+        }
+    }
+
     private async Task OnAddClick() {
         if (OnAdd.HasDelegate)
             await OnAdd.InvokeAsync();
@@ -132,4 +147,10 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         if (OnDelete.HasDelegate)
             await OnDelete.InvokeAsync(entry);
     }
+}
+
+public enum SelectionMode {
+    None = 0,
+    Single = 1,
+    Multiple = 2
 }

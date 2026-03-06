@@ -45,8 +45,6 @@ public class PropertyConfig {
 
     /// If set, the function is executed to format the user entered value for the property
     public Action<object, object?>? Setter { get; set; }
-    
-    internal PropertyConfig() {}
 }
 
 /// <summary>

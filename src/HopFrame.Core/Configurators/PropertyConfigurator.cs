@@ -42,6 +42,10 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
     /// <inheritdoc cref="PropertyConfig.Creatable" />
     public PropertyConfigurator<TModel, TProp> Creatable(bool creatable) {
         Config.Creatable = creatable;
+
+        if (creatable == false)
+            Config.Editable = false;
+        
         return this;
     }
 

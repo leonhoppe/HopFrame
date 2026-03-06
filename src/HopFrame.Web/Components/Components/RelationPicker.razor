@@ -1,0 +1,41 @@
+﻿@using HopFrame.Core.Configuration
+
+<MudDialog>
+    <DialogContent>
+        <Table @ref="_table" Config="Config" ShowActionButtons="false" SelectionMode="@(Multiple ? SelectionMode.Multiple : SelectionMode.Single)"></Table>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="@(Submit)">Apply</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public TableConfig Config { get; set; } = null!;
+    
+    [Parameter]
+    public bool Multiple { get; set; }
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private Table _table = null!;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_table.SelectedEntries));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+        
+        var options = MudDialog.Options with {
+            FullWidth = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        await MudDialog.SetOptionsAsync(options);
+    }
+
+}
