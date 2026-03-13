@@ -67,4 +67,10 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         configurator?.Invoke(modeller);
         return modeller;
     }
+
+    /// <inheritdoc cref="CustomPage"/>
+    public HopFrameConfigurator AddCustomPage(CustomPage page) {
+        Config.CustomPages.Add(page);
+        return this;
+    }
 }

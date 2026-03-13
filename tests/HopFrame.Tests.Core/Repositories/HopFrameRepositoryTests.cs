@@ -36,11 +36,11 @@ public class HopFrameRepositoryTests {
         var expected = new List<TestModel> { new TestModel { Id = 5 } };
 
         mock.Setup(r => r.SearchAsync("abc", 1, 20, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected);
+            .ReturnsAsync(new SearchResult(expected, 1));
 
         var result = await mock.Object.SearchGenericAsync("abc", 1, 20, CancellationToken.None);
 
-        Assert.Equal(expected, result);
+        Assert.Equal(expected, result.Result);
     }
 
     // -------------------------------------------------------------

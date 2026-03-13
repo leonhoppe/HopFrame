@@ -13,7 +13,7 @@ public class HopFrameConfiguratorTests {
         public Task<int> CountAsync(CancellationToken ct) {
             throw new NotImplementedException();
         }
-        public Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
+        public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
         public Task CreateGenericAsync(object entry, CancellationToken ct) {

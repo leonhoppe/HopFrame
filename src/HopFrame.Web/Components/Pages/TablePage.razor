@@ -4,11 +4,10 @@
 @layout HopFrameLayout
 @inherits CancellableComponent
 
-<MudPopoverProvider />
+<PageTitle>HopFrame - @Table.DisplayName</PageTitle>
+
 <MudDialogProvider />
 <MudSnackbarProvider />
-
-<PageTitle>HopFrame - @Table.DisplayName</PageTitle>
 
 <Editor Config="Table" @ref="EditorComponent"></Editor>
 

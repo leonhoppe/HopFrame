@@ -12,7 +12,7 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     public abstract Task<int> CountAsync(CancellationToken ct = default);
     
     /// <inheritdoc cref="SearchGenericAsync"/>
-    public abstract Task<IEnumerable<TModel>> SearchAsync(string searchTerm, int page, int perPage, CancellationToken ct = default);
+    public abstract Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, CancellationToken ct = default);
 
     /// <inheritdoc cref="CreateGenericAsync"/>
     public abstract Task CreateAsync(TModel entry, CancellationToken ct = default);
@@ -29,7 +29,7 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     }
     
     /// <inheritdoc/>
-    public async Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
+    public async Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
         return await SearchAsync(searchTerm, page, perPage, ct);
     }
     

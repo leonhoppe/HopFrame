@@ -25,11 +25,15 @@
 
 @code {
     
-    private readonly struct RouteDefinition {
+    public readonly struct RouteDefinition {
         public required string Route { get; init; }
         public required string Icon { get; init; }
         public required string Name { get; init; }
         public string? Description { get; init; }
+
+        public override string ToString() {
+            return Name;
+        }
     }
 
     private RouteDefinition[] Routes { get; set; } = null!;
@@ -37,7 +41,21 @@
     protected override void OnInitialized() {
         base.OnInitialized();
 
-        Routes = Config.Tables
+        Routes = GetRoutes(Config);
+    }
+
+    public static RouteDefinition[] GetRoutes(HopFrameConfig config) {
+        var pages = config.CustomPages
+            .OrderBy(p => p.OrderIndex)
+            .Select(p => new RouteDefinition {
+                Route = p.Route,
+                Icon = p.Icon,
+                Name = p.Name,
+                Description = p.Description
+            })
+            .ToList();
+        
+        var tables = config.Tables
             .OrderBy(t => t.OrderIndex)
             .Select(table => new RouteDefinition {
                 Route = "admin/" + table.Route,
@@ -46,6 +64,9 @@
                 Description = table.Description,
             })
             .ToArray();
+        
+        pages.AddRange(tables);
+        return pages.ToArray();
     }
 
 }

@@ -1,3 +1,7 @@
 ﻿.mud-card-header-avatar {
     display: flex;
 }
+
+.no-cursor .mud-table-row-clickable {
+    cursor: unset !important;
+}

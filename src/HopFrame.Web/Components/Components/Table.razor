@@ -11,7 +11,8 @@
           FixedFooter="true"
           Elevation="0"
           Height="@(SelectionMode == SelectionMode.None ? "calc(100vh - 164px)" : "70vh")"
-          OnRowClick="@(OnRowClick)">
+          OnRowClick="@(OnRowClick)"
+          Class="@(SelectionMode == SelectionMode.None ? "no-cursor" : null)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">@Config.DisplayName</MudText>
         <MudButton OnClick="@(Manager.ReloadServerData)" Style="margin-left: 0.5rem">Reload</MudButton>

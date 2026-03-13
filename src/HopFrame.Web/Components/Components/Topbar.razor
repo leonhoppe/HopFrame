@@ -1,3 +1,59 @@
-﻿<MudAppBar Dense="true" Elevation="0">
-    HopFrame
+﻿@using HopFrame.Core.Configuration
+@using HopFrame.Web.Components.Pages
+@rendermode InteractiveServer
+
+<MudPopoverProvider />
+
+<MudAppBar Elevation="0">
+    <MudText Typo="Typo.h6">HopFrame</MudText>
+    
+    <MudSpacer />
+    
+    <MudAutocomplete
+        T="HomePage.RouteDefinition"
+        Placeholder="Search page"
+        SearchFunc="@(Search)"
+        ValueChanged="@(OnRouteClick)"
+        ResetValueOnEmptyText="true"
+        SelectValueOnTab="true"
+        Dense="true"
+        IconSize="Size.Medium"
+        AdornmentIcon="@Icons.Material.Filled.Search"/>
+    
+    <MudSpacer />
+    
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://git.leon-hoppe.de/leon.hoppe/hopframe" Target="_blank" />
 </MudAppBar>
+
+@inject HopFrameConfig Config
+@inject NavigationManager Navigator
+
+@code {
+
+    private HomePage.RouteDefinition[] Routes { get; set; } = null!;
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        Routes = HomePage.GetRoutes(Config);
+    }
+
+    private Task<IEnumerable<HomePage.RouteDefinition>> Search(string value, CancellationToken _) {
+        if (string.IsNullOrWhiteSpace(value))
+            return Task.FromResult(Routes.AsEnumerable());
+
+        var result = Routes
+            .Where(r => r.Name.ToLower().Contains(value.ToLower()));
+
+        return Task.FromResult(result);
+    }
+
+    private void OnRouteClick(HomePage.RouteDefinition route) {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (route.Route is null)
+            return;
+        
+        Navigator.NavigateTo(route.Route);
+    }
+
+}

@@ -2,6 +2,7 @@ using HopFrame.Core.Configuration;
 using HopFrame.Core.EFCore;
 using HopFrame.Web;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using TestApplication;
 using TestApplication.Components;
 using TestApplication.Models;
@@ -39,7 +40,7 @@ builder.Services.AddHopFrame(config => {
                 return [];
             });
 
-        table.SetPreferredProperty("Username");
+        table.SetPreferredProperty(u => u.Email);
     });
 
     config.Table<Post>(table => {
@@ -55,6 +56,13 @@ builder.Services.AddHopFrame(config => {
 
         table.Property(t => t.PhoneNumber)
             .SetType(PropertyType.PhoneNumber);
+    });
+
+    config.AddCustomPage(new() {
+        Name = "Custom Page",
+        Description = "This is a custom page",
+        Icon = Icons.Material.Filled.House,
+        Route = "/"
     });
 });
 

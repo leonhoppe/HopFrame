@@ -82,11 +82,17 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
 
     private async Task<TableData<TableEntry>> ReloadTable(TableState state, CancellationToken ct) {
         IEnumerable<object> entries;
+        int total;
 
-        if (string.IsNullOrWhiteSpace(_searchText))
+        if (string.IsNullOrWhiteSpace(_searchText)) {
             entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, ct);
-        else
-            entries = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, ct);
+            total = await Repository.CountAsync(ct);
+        }
+        else {
+            var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, ct);
+            entries = result.Result;
+            total = result.PageCount;
+        }
 
         if (_currentSort.HasValue) {
             var sortProp = Config.Properties.First(p => p.Identifier == _currentSort.Value.Key);
@@ -97,7 +103,6 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
             Entry = e,
             Columns = PrepareData(e)
         }).ToArray();
-        var total = await Repository.CountAsync(ct);
 
         _currentlyDisplayed.Clear();
         _currentlyDisplayed.AddRange(data);
@@ -149,6 +154,9 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     }
 
     private async Task OnSearch(string searchText) {
+#pragma warning disable BL0005
+        Manager.CurrentPage = 0;
+#pragma warning restore BL0005
         _searchText = searchText;
         await Manager.ReloadServerData();
     }

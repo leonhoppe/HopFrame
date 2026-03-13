@@ -22,7 +22,7 @@ public interface IHopFrameRepository {
     /// <param name="searchTerm">The search text provided by the user</param>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable<object>> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
+    public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
 
     
     /// <summary>
@@ -44,3 +44,10 @@ public interface IHopFrameRepository {
     public Task DeleteGenericAsync(object entry, CancellationToken ct);
 
 }
+
+/// <summary>
+/// The result that is returned when a search is requested
+/// </summary>
+/// <param name="Result">The resulting paginated dataset</param>
+/// <param name="PageCount">The total number of pages of the search results</param>
+public readonly record struct SearchResult(IEnumerable<object> Result, int PageCount);

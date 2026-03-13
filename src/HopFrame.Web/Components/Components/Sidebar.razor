@@ -1,4 +1,5 @@
 ﻿@using HopFrame.Core.Configuration
+@using HopFrame.Web.Components.Pages
 
 <MudDrawer Open="true" Fixed="true" ClipMode="DrawerClipMode.Docked" Width="200px">
     <MudNavMenu>
@@ -15,26 +16,13 @@
 @inject HopFrameConfig Config
 
 @code {
-    
-    private readonly struct RouteDefinition {
-        public required string Route { get; init; }
-        public required string Icon { get; init; }
-        public required string Name { get; init; }
-    }
 
-    private RouteDefinition[] Routes { get; set; } = null!;
+    private HomePage.RouteDefinition[] Routes { get; set; } = null!;
 
     protected override void OnInitialized() {
         base.OnInitialized();
 
-        Routes = Config.Tables
-            .OrderBy(t => t.OrderIndex)
-            .Select(table => new RouteDefinition {
-                Route = "admin/" + table.Route,
-                Icon = Icons.Material.Filled.TableChart,
-                Name = table.DisplayName
-            })
-            .ToArray();
+        Routes = HomePage.GetRoutes(Config);
     }
 
 }
