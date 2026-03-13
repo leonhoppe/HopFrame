@@ -26,7 +26,8 @@
                             Config="property"
                             Variant="Variant.Filled"
                             Value="@(GetPropertyValue(property))"
-                            ValueChanged="@(v => OnPropertyUpdated(property, v))"/>
+                            ValueChanged="@(v => OnPropertyUpdated(property, v))"
+                            Error="@(ErrorMessages[property.Identifier])"/>
                     }
                 </MudFocusTrap>
             </MudStack>

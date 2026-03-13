@@ -10,4 +10,14 @@ public class Post {
     
     [MaxLength(5000)]
     public required string Message { get; set; }
+
+    public override bool Equals(object? obj) {
+        if (obj is Post post) {
+            return post.Id == Id;
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode() => Id.GetHashCode();
 }

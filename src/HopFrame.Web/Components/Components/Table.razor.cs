@@ -8,7 +8,7 @@ namespace HopFrame.Web.Components.Components;
 
 public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor) : ComponentBase {
     
-    private readonly struct TableEntry {
+    private readonly record struct TableEntry {
         public object Entry { get; init; }
         public Dictionary<string, string> Columns { get; init; }
     }
@@ -30,6 +30,9 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
 
     [Parameter]
     public SelectionMode SelectionMode { get; set; } = SelectionMode.None;
+    
+    [Parameter]
+    public List<object>? Preselected { get; set; }
 
     public List<object> SelectedEntries { get; } = new();
 
@@ -45,6 +48,8 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
 
     private string _searchText = string.Empty;
 
+    private List<TableEntry> _currentlyDisplayed = new();
+
     protected override void OnInitialized() {
         base.OnInitialized();
 
@@ -57,6 +62,10 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         
         foreach (var property in OrderedProperties) {
             SortDirections.Add(property.Identifier, null!);
+        }
+
+        if (Preselected is not null) {
+            SelectedEntries.AddRange(Preselected);
         }
     }
 
@@ -87,13 +96,56 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         var data = entries.Select(e => new TableEntry {
             Entry = e,
             Columns = PrepareData(e)
-        });
+        }).ToArray();
         var total = await Repository.CountAsync(ct);
+
+        _currentlyDisplayed.Clear();
+        _currentlyDisplayed.AddRange(data);
 
         return new TableData<TableEntry> {
             TotalItems = total,
             Items = data
         };
+    }
+
+    private bool IsSelected(TableEntry entry) {
+        return SelectedEntries.Contains(entry.Entry);
+    }
+
+    private void ToggleSelect(TableEntry entry) {
+        if (SelectionMode == SelectionMode.Single) {
+            if (IsSelected(entry)) return;
+            
+            SelectedEntries.Clear();
+            SelectedEntries.Add(entry.Entry);
+        }
+        else {
+            if (IsSelected(entry))
+                SelectedEntries.Remove(entry.Entry);
+            else
+                SelectedEntries.Add(entry.Entry);
+        }
+    }
+
+    private void ToggleAll() {
+        if (SelectedEntries.Count != _currentlyDisplayed.Count) {
+            SelectedEntries.AddRange(_currentlyDisplayed
+                .Select(t => t.Entry)
+                .Where(e => !SelectedEntries.Contains(e)));
+        }
+        else {
+            SelectedEntries.RemoveAll(e => _currentlyDisplayed.Any(t => t.Entry == e));
+        }
+    }
+
+    private bool? GetToggleAllValue() {
+        if (SelectedEntries.Count == 0)
+            return false;
+
+        if (SelectedEntries.Count == _currentlyDisplayed.Count)
+            return true;
+
+        return null;
     }
 
     private async Task OnSearch(string searchText) {
@@ -126,13 +178,6 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         _currentlyReloading = false;
     }
 
-    private async Task OnSelection(TableRowClickEventArgs<TableEntry> args) {
-        if (SelectionMode == SelectionMode.Single) {
-            SelectedEntries.Clear();
-            SelectedEntries.Add(args.Item.Entry);
-        }
-    }
-
     private async Task OnAddClick() {
         if (OnAdd.HasDelegate)
             await OnAdd.InvokeAsync();
@@ -146,6 +191,12 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     private async Task OnDeleteClick(object entry) {
         if (OnDelete.HasDelegate)
             await OnDelete.InvokeAsync(entry);
+    }
+
+    private void OnRowClick(TableRowClickEventArgs<TableEntry> e) {
+        if (SelectionMode != SelectionMode.None) {
+            ToggleSelect(e.Item);
+        }
     }
 }
 

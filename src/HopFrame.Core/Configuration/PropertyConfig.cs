@@ -12,6 +12,9 @@ public class PropertyConfig {
     
     /// [GENERATED] The real type of the property
     public required Type Type { get; set; }
+    
+    /// [GENERATED] The underlying type of the relation object
+    public Type? RelationType { get; set; }
 
     /// [GENERATED] The type as wich the property should be treated
     public required PropertyType PropertyType { get; set; }
@@ -34,6 +37,9 @@ public class PropertyConfig {
     /// Determines if the property is visible in the creation or edit dialog
     public bool Creatable { get; set; } = true;
 
+    /// Determines if the property is visible in the creator or editor
+    public bool VisibleInEditor { get; set; } = true;
+
     /// [GENERATED] The place (from left to right) that the property will appear in the table and editor
     public int OrderIndex { get; set; }
 
@@ -45,6 +51,12 @@ public class PropertyConfig {
 
     /// If set, the function is executed to format the user entered value for the property
     public Action<object, object?>? Setter { get; set; }
+    
+    /// <summary>
+    /// If set, the function is executed to validate if the provided value is valid.<br/>
+    /// It should return a list of errors that were found, or an empty list if no error was found
+    /// </summary>
+    public Func<object, IEnumerable<string>>? Validator { get; set; }
 }
 
 /// <summary>

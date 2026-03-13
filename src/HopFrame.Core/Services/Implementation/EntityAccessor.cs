@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using HopFrame.Core.Configuration;
 
 namespace HopFrame.Core.Services.Implementation;
@@ -112,5 +113,35 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
         var result = method.Invoke(null, [data, lambda.Compile()]);
         return (IEnumerable<object>)result!;
     }
-    
+
+    public IEnumerable<string> ValidateProperty(PropertyConfig property, object? value) {
+        var errors = new List<string>();
+
+        if (value is not null && !value.GetType().IsAssignableTo(property.Type)) {
+            errors.Add("Wrong type");
+        }
+
+        if ((property.PropertyType & PropertyType.Nullable) == 0 && value is null) {
+            errors.Add(property.DisplayName + " cannot be empty");
+        }
+
+        if (value is string str) {
+            if ((property.PropertyType & PropertyType.Nullable) == 0 && string.IsNullOrEmpty(str)) {
+                errors.Add(property.DisplayName + " cannot be empty");
+            }
+
+            if ((PropertyType)((byte)property.PropertyType & 0x0F) == PropertyType.Email) {
+                if (!Regex.IsMatch(str, "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,10}$")) {
+                    errors.Add("Address not valid");
+                }
+            }
+        }
+
+        if (property.Validator is not null && value is not null) {
+            var validatorErrors = property.Validator.Invoke(value);
+            errors.AddRange(validatorErrors.ToArray());
+        }
+
+        return errors;
+    }
 }

@@ -2,7 +2,7 @@
 @using HopFrame.Core.Configuration
 @using HopFrame.Core.Services
 
-@if ((Config.PropertyType & PropertyType.Relation) != 0) {
+@if ((Config.PropertyType & PropertyType.Relation) != 0) { //TODO: Value changes are not visible but occur in background
     <MudStack Row="true">
         @if ((Config.PropertyType & PropertyType.List) != 0) {
             <MudField
@@ -10,7 +10,9 @@
                 Variant="Variant"
                 Adornment="Adornment.End"
                 AdornmentIcon="@Icons.Material.Filled.OpenInNew"
-                OnAdornmentClick="@(OnRelationClick)">
+                OnAdornmentClick="@(OnRelationClick)"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error">
                 @foreach (var entry in _relationListDisplay.Take(10)) {
                     <MudChip Value="entry" />
                 }
@@ -29,7 +31,9 @@
                 Variant="Variant"
                 Adornment="Adornment.End"
                 AdornmentIcon="@Icons.Material.Filled.OpenInNew"
-                OnAdornmentClick="@(OnRelationClick)" />
+                OnAdornmentClick="@(OnRelationClick)"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
         }
         
         @if ((Config.PropertyType & PropertyType.Nullable) != 0) {
@@ -47,7 +51,9 @@ else {
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.Boolean:
@@ -56,11 +62,17 @@ else {
                 Value="@((bool)(Value ?? false))"
                 ValueChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
-                Disabled="@(!Config.Editable)"/>
+                Disabled="@(!Config.Editable)"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.DateTime:
-            <MudField Label="@Config.DisplayName" Variant="Variant.Outlined" Style="display: flex">
+            <MudField Label="@Config.DisplayName"
+                      Variant="Variant.Outlined"
+                      Style="display: flex"
+                      Error="@(!string.IsNullOrWhiteSpace(Error))"
+                      @bind-ErrorText="Error">
                 <MudStack Row="true">
                     <MudDatePicker
                         Date="_date"
@@ -88,17 +100,21 @@ else {
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.TimeOnly:
             <MudTimePicker
-                Time="_time"
+                Time="_time" @*TODO: Value cannot be changed*@
                 TimeChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.Email:
@@ -110,7 +126,9 @@ else {
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.Password:
@@ -124,7 +142,9 @@ else {
                 Variant="Variant"
                 Adornment="Adornment.End"
                 AdornmentIcon="@_passwordIcon"
-                OnAdornmentClick="@(OnPasswordIconClick)"/>
+                OnAdornmentClick="@(OnPasswordIconClick)"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.PhoneNumber:
@@ -136,7 +156,9 @@ else {
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
             
         case PropertyType.Enum:
@@ -149,7 +171,9 @@ else {
                 Label="@Config.DisplayName"
                 Clearable="@((Config.PropertyType & (PropertyType.Nullable | PropertyType.List)) != 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant">
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error">
                 @if ((Config.PropertyType & PropertyType.List) != 0) {
                     @foreach (var value in Enum.GetValues(Config.Type.GenericTypeArguments[0])) {
                         <MudSelectItem Value="value">@Enum.GetName(Config.Type.GenericTypeArguments[0], value)</MudSelectItem>
@@ -171,13 +195,16 @@ else {
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
-                Variant="Variant"/>
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"/>
             break;
     }
 }
 
 @inject IEntityAccessor Accessor
 @inject IDialogService Dialogs
+@inject IConfigAccessor ConfigAccessor
 
 @code {
 
@@ -232,6 +259,9 @@ else {
 
     [Parameter]
     public EventCallback<object?> ValueChanged { get; set; }
+    
+    [Parameter]
+    public string? Error { get; set; }
 
     private DateTime _date;
     private TimeSpan _time;
@@ -288,9 +318,24 @@ else {
     }
 
     private async Task OnRelationClick() {
+        var relationTable = ConfigAccessor.GetTableByType(Config.RelationType!);
+        var preselected = new List<object>();
+
+        if (Value is not null) {
+            if ((Config.PropertyType & PropertyType.List) != 0) {
+                foreach (var entry in (Value as IList)!) {
+                    preselected.Add(entry);
+                }
+            }
+            else {
+                preselected.Add(Value);
+            }
+        }
+        
         var parameters = new DialogParameters<RelationPicker> {
-            { x => x.Config, Config.Table },
-            { x => x.Multiple, (Config.PropertyType & PropertyType.List) != 0 }
+            { x => x.Config, relationTable },
+            { x => x.Multiple, (Config.PropertyType & PropertyType.List) != 0 },
+            { x => x.Preselected, preselected }
         };
 
         var dialog = await Dialogs.ShowAsync<RelationPicker>(string.Empty, parameters, new());
@@ -302,17 +347,18 @@ else {
         var data = (List<object>)result.Data!;
 
         if ((Config.PropertyType & PropertyType.List) != 0) {
-            var value = (Activator.CreateInstance(Config.Type) as IList<object>)!;
+            var value = (Activator.CreateInstance(Config.Type) as IList)!;
 
             foreach (var entry in data) {
                 value.Add(entry);
             }
 
             await ValueChanged.InvokeAsync(value);
+            Value = value;
         }
         else {
-            Console.WriteLine(data.FirstOrDefault());
             await ValueChanged.InvokeAsync(data.FirstOrDefault());
+            Value = data.FirstOrDefault();
         }
     }
 

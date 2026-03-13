@@ -2,7 +2,7 @@
 
 <MudDialog>
     <DialogContent>
-        <Table @ref="_table" Config="Config" ShowActionButtons="false" SelectionMode="@(Multiple ? SelectionMode.Multiple : SelectionMode.Single)"></Table>
+        <Table @ref="_table" Config="Config" Preselected="Preselected" ShowActionButtons="false" SelectionMode="@(Multiple ? SelectionMode.Multiple : SelectionMode.Single)"></Table>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="@(Cancel)">Cancel</MudButton>
@@ -17,6 +17,9 @@
     
     [Parameter]
     public bool Multiple { get; set; }
+    
+    [Parameter]
+    public required List<object> Preselected { get; set; }
 
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = null!;

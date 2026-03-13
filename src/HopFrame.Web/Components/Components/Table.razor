@@ -11,9 +11,7 @@
           FixedFooter="true"
           Elevation="0"
           Height="@(SelectionMode == SelectionMode.None ? "calc(100vh - 164px)" : "70vh")"
-          MultiSelection="@(SelectionMode == SelectionMode.Multiple)"
-          SelectOnRowClick="true"
-          OnRowClick="@(OnSelection)">
+          OnRowClick="@(OnRowClick)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">@Config.DisplayName</MudText>
         <MudButton OnClick="@(Manager.ReloadServerData)" Style="margin-left: 0.5rem">Reload</MudButton>
@@ -40,6 +38,14 @@
         </MudStack>
     </ToolBarContent>
     <HeaderContent>
+        @if (SelectionMode != SelectionMode.None) {
+            <MudTh>
+                @if (SelectionMode == SelectionMode.Multiple) {
+                    <MudCheckBox T="bool?" Value="@(GetToggleAllValue())" ValueChanged="@(() => ToggleAll())" />
+                }
+            </MudTh>
+        }
+        
         @foreach (var prop in OrderedProperties) {
             <MudTh>
                 <MudTableSortLabel
@@ -57,6 +63,22 @@
         }
     </HeaderContent>
     <RowTemplate>
+        @switch (SelectionMode) {
+            case SelectionMode.Single:
+                <MudTd Style="padding-block: 0">
+                    <MudRadioGroup T="bool" Value="@(IsSelected(context))" ValueChanged="@(() => ToggleSelect(context))">
+                        <MudRadio T="bool" Value="true" Dense="true" />
+                    </MudRadioGroup>
+                </MudTd>
+                break;
+                
+            case SelectionMode.Multiple:
+                <MudTd>
+                    <MudCheckBox T="bool" Value="@(IsSelected(context))" ValueChanged="@(() => ToggleSelect(context))" />
+                </MudTd>
+                break;
+        }
+        
         @foreach (var prop in OrderedProperties) {
             <MudTd DataLabel="@prop.DisplayName" Style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 500px">@context.Columns[prop.Identifier]</MudTd>
         }

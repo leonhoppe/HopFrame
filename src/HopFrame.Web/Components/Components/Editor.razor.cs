@@ -25,17 +25,28 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
 
     private Dictionary<string, object?> UpdatedValues { get; set; } = null!;
 
+    private Dictionary<string, string?> ErrorMessages { get; set; } = null!;
+
     public Task<object?> Present(object? entry) {
         Completion = new ();
         Mode = entry is null ? EditorMode.Creator : EditorMode.Editor;
         Entry = entry ?? Activator.CreateInstance(Config.TableType)!;
         UpdatedValues = new();
+
+        ErrorMessages = new();
+        foreach (var property in GetProperties()) {
+            ErrorMessages.Add(property.Identifier, null);
+        }
+        
         StateHasChanged();
         IsVisible = true;
         return Completion.Task;
     }
 
     private async Task Submit() {
+        if (!Validate())
+            return;
+        
         var dialog = await dialogs.ShowAsync<ModifyConfirmationDialog>();
         var result = await dialog.Result;
 
@@ -57,7 +68,9 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
         if (Mode == EditorMode.Creator)
             query = query.Where(p => p.Creatable);
 
-        return query.OrderBy(p => p.OrderIndex);
+        return query
+            .Where(p => p.VisibleInEditor)
+            .OrderBy(p => p.OrderIndex);
     }
 
     private object? GetPropertyValue(PropertyConfig property) {
@@ -66,6 +79,7 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
 
     private void OnPropertyUpdated(PropertyConfig property, object? value) {
         UpdatedValues[property.Identifier] = value;
+        Validate(property);
     }
 
     private void ApplyChanges() {
@@ -79,6 +93,26 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
             
             accessor.SetValue(Entry!, property, propUpdate.Value);
         }
+    }
+
+    private bool Validate(PropertyConfig? property = null) {
+        if (property is null) {
+            var valid = true;
+            foreach (var propertyConfig in GetProperties()) {
+                if (!Validate(propertyConfig))
+                    valid = false;
+            }
+
+            return valid;
+        }
+        
+        if (!UpdatedValues.TryGetValue(property.Identifier, out var value)) {
+            value = accessor.GetValueRaw(Entry!, property);
+        }
+
+        var errors = accessor.ValidateProperty(property, value).ToArray();
+        ErrorMessages[property.Identifier] = errors.FirstOrDefault();
+        return errors.Length == 0;
     }
     
 }

@@ -28,7 +28,16 @@ builder.Services.AddHopFrame(config => {
 
         table.AddProperty<string>("Username")
             .SetFormatter(u => $"{u.FirstName}.{u.LastName}".ToLower())
-            .Creatable(false);
+            .VisibleInEditor(false)
+            .Listable(false);
+
+        table.Property(u => u.Email)
+            .SetValidator(input => {
+                if (!input.Contains('.'))
+                    return ["Email needs to contain a '.'"];
+
+                return [];
+            });
 
         table.SetPreferredProperty("Username");
     });

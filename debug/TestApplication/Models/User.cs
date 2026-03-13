@@ -26,4 +26,20 @@ public class User {
     public required DateOnly Birth { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
     public List<Post> Posts { get; set; } = new();
+
+    public override bool Equals(object? obj) {
+        if (obj is User other) {
+            return other.Id == Id;
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode() {
+        return Id.GetHashCode();
+    }
+
+    public override string ToString() {
+        return Email;
+    }
 }

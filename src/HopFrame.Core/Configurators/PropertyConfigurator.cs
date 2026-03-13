@@ -48,6 +48,12 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
         
         return this;
     }
+    
+    /// <inheritdoc cref="PropertyConfig.VisibleInEditor" />
+    public PropertyConfigurator<TModel, TProp> VisibleInEditor(bool visible) {
+        Config.VisibleInEditor = visible;
+        return this;
+    }
 
     /// <inheritdoc cref="PropertyConfig.OrderIndex" />
     public PropertyConfigurator<TModel, TProp> SetOrderIndex(int index) {
@@ -64,6 +70,12 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
     /// <inheritdoc cref="PropertyConfig.Setter" />
     public PropertyConfigurator<TModel, TProp> SetParser(Action<TModel, object?> parser) {
         Config.Setter = (model, value) => parser.Invoke((TModel)model, value);
+        return this;
+    }
+
+    /// <inheritdoc cref="PropertyConfig.Validator" />
+    public PropertyConfigurator<TModel, TProp> SetValidator(Func<TProp, IEnumerable<string>> validator) {
+        Config.Validator = value => validator.Invoke((TProp)value);
         return this;
     }
 

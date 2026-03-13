@@ -201,4 +201,100 @@ public class EntityAccessorTests {
         // Sortiert nach -Number → Reihenfolge: 3, 2, 1
         Assert.Equal([3, 2, 1], result.Select(x => x.Number));
     }
+
+    // -------------------------------------------------------------
+    // ValidateProperty
+    // -------------------------------------------------------------
+
+    [Fact]
+    public void ValidateProperty_ReturnsError_WhenTypeIsWrong() {
+        var property = CreateProperty("Number", typeof(int));
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, "not an int").ToList();
+
+        Assert.Contains("Wrong type", errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_ReturnsError_WhenValueIsNull_AndNotNullable() {
+        var property = CreateProperty("Name", typeof(string), pType: PropertyType.Text);
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, null).ToList();
+
+        Assert.Contains("Name cannot be empty", errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_AllowsNull_WhenNullableFlagIsSet() {
+        var property = CreateProperty("Name", typeof(string), pType: PropertyType.Nullable | PropertyType.Text);
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, null).ToList();
+
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_ReturnsError_WhenStringIsEmpty_AndNotNullable() {
+        var property = CreateProperty("Name", typeof(string), pType: PropertyType.Text);
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, "");
+
+        Assert.Contains("Name cannot be empty", errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_ValidatesEmailFormat() {
+        var property = CreateProperty("Email", typeof(string), pType: PropertyType.Email);
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, "invalid-email").ToList();
+
+        Assert.Contains("Address not valid", errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_AllowsValidEmail() {
+        var property = CreateProperty("Email", typeof(string), pType: PropertyType.Email);
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, "test@example.com").ToList();
+
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_UsesCustomValidator() {
+        var property = CreateProperty(
+            "Number",
+            typeof(int),
+            pType: PropertyType.Numeric,
+            getter: null,
+            setter: null
+        );
+
+        property.Validator = v => ["Custom error"];
+
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, 5).ToList();
+
+        Assert.Contains("Custom error", errors);
+    }
+
+    [Fact]
+    public void ValidateProperty_CombinesMultipleErrors() {
+        var property = CreateProperty("Email", typeof(string), pType: PropertyType.Email);
+        property.Validator = v => ["Custom validation failed"];
+
+        var accessor = CreateAccessor();
+
+        var errors = accessor.ValidateProperty(property, "invalid").ToList();
+
+        Assert.Contains("Address not valid", errors);
+        Assert.Contains("Custom validation failed", errors);
+    }
 }

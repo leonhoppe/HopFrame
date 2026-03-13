@@ -26,8 +26,10 @@ internal static class DbConfigPopulator {
                 type = type.GenericTypeArguments.First();
             }
 
-            if (global.Tables.Any(t => t.TableType == type))
+            if (global.Tables.Any(t => t.TableType == type)) {
                 property.PropertyType |= PropertyType.Relation;
+                property.RelationType = type;
+            }
         }
     }
     

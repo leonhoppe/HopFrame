@@ -43,4 +43,12 @@ public interface IEntityAccessor {
     /// <param name="descending">Determines if the resulting order should be flipped</param>
     public IEnumerable<object> SortDataByProperty(IEnumerable<object> data, PropertyConfig property, bool descending = false);
 
+    /// <summary>
+    /// Checks if the provided value of meets the requirements of the property
+    /// </summary>
+    /// <param name="property">The property that defines the requirements</param>
+    /// <param name="value">The value that should be validated</param>
+    /// <returns>A list of errors or an empty list if no errors were found</returns>
+    public IEnumerable<string> ValidateProperty(PropertyConfig property, object? value);
+
 }
