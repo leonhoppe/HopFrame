@@ -49,7 +49,8 @@ builder.Services.AddHopFrame(config => {
 
     config.Table<Typer>(table => {
         table.Property(t => t.LongText)
-            .SetType(PropertyType.TextArea);
+            .SetType(PropertyType.TextArea)
+            .SetSizeRange(3..10);
 
         table.Property(t => t.Password)
             .SetType(PropertyType.Password);

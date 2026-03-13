@@ -60,6 +60,12 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
         Config.OrderIndex = index;
         return this;
     }
+    
+    /// <inheritdoc cref="PropertyConfig.SizeRange" />
+    public PropertyConfigurator<TModel, TProp> SetSizeRange(Range range) {
+        Config.SizeRange = range;
+        return this;
+    }
 
     /// <inheritdoc cref="PropertyConfig.Getter" />
     public PropertyConfigurator<TModel, TProp> SetFormatter(Func<TModel, TProp> formatter) {

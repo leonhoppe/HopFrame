@@ -106,8 +106,9 @@ else {
             break;
             
         case PropertyType.TimeOnly:
+            @*TODO: Value cannot be changed*@
             <MudTimePicker
-                Time="_time" @*TODO: Value cannot be changed*@
+                Time="_time"
                 TimeChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
@@ -185,6 +186,22 @@ else {
                     }
                 }
             </MudSelect>
+            break;
+            
+        case PropertyType.TextArea:
+            <MudTextField
+                T="string"
+                Value="Value?.ToString()"
+                ValueChanged="@(v => OnValueChanged(v))"
+                Label="@Config.DisplayName"
+                Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
+                Disabled="@(!Config.Editable)"
+                Variant="Variant"
+                Error="@(!string.IsNullOrWhiteSpace(Error))"
+                @bind-ErrorText="Error"
+                Sizing="InputSizing.Auto"
+                Lines="Config.SizeRange.Start.Value"
+                MaxLines="Config.SizeRange.End.Value"/>
             break;
             
         default:

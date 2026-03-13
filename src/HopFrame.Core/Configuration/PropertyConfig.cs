@@ -18,6 +18,9 @@ public class PropertyConfig {
 
     /// [GENERATED] The type as wich the property should be treated
     public required PropertyType PropertyType { get; set; }
+
+    /// The range of lines the input field grows to (only applies to text areas)
+    public Range SizeRange { get; set; } = 1..5;
     
     /// Determines if the property will appear in the table
     public bool Listable { get; set; } = true;
