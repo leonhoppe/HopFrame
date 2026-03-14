@@ -1,6 +1,8 @@
 ﻿using HopFrame.Core;
 using HopFrame.Core.Configurators;
 using HopFrame.Web.Components;
+using HopFrame.Web.Services;
+using HopFrame.Web.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -13,6 +15,9 @@ public static class ServiceCollectionExtensions {
     /// Configures the library using the provided configurator
     public static IServiceCollection AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
         services.AddHopFrameServices(configurator);
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<IAuthProvider, AuthProvider>();
 
         services.AddMudServices();
         return services;

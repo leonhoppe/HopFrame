@@ -1,5 +1,6 @@
 ﻿@using HopFrame.Core.Configuration
 @using HopFrame.Web.Components.Pages
+@using HopFrame.Web.Services
 @rendermode InteractiveServer
 
 <MudPopoverProvider />
@@ -27,15 +28,14 @@
 
 @inject HopFrameConfig Config
 @inject NavigationManager Navigator
+@inject IAuthProvider AuthProvider
 
 @code {
 
     private HomePage.RouteDefinition[] Routes { get; set; } = null!;
 
-    protected override void OnInitialized() {
-        base.OnInitialized();
-
-        Routes = HomePage.GetRoutes(Config);
+    protected override async Task OnInitializedAsync() {
+        Routes = await HomePage.GetRoutes(Config, AuthProvider);
     }
 
     private Task<IEnumerable<HomePage.RouteDefinition>> Search(string value, CancellationToken _) {

@@ -25,9 +25,15 @@ public class TableConfig {
     /// A short description for the table
     public string? Description { get; set; }
     
-    /// [GENERATED] The place (from top to bottom) that the table will appear in on the sidebar
+    /// [GENERATED] The place (from top to bottom) that the table will appear in on the sidebar. By default, it's incremented by 10
     public int OrderIndex { get; set; }
     
     /// [GENERATED] The identifier of the property that should be displayed if the model is used as a relation
     public string? PreferredProperty { get; set; }
+
+    /// The claim the user needs to access the table
+    public string? ViewClaim { get; set; }
+
+    /// The claim the user needs to edit, delete or create entries in the table
+    public string? EditClaim { get; set; }
 }

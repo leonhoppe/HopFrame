@@ -34,6 +34,18 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
         Config.OrderIndex = index;
         return this;
     }
+    
+    /// <inheritdoc cref="TableConfig.ViewClaim"/>
+    public TableConfigurator<TModel> SetViewClaim(string? claim) {
+        Config.ViewClaim = claim;
+        return this;
+    }
+    
+    /// <inheritdoc cref="TableConfig.EditClaim"/>
+    public TableConfigurator<TModel> SetEditClaim(string? claim) {
+        Config.EditClaim = claim;
+        return this;
+    }
 
     /// <summary>
     /// Add a new property that's not inferred by real properties of the model. Please ensure to invoke

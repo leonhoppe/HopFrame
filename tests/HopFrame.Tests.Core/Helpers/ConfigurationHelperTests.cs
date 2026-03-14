@@ -101,7 +101,7 @@ public class ConfigurationHelperTests {
 
         var config = ConfigurationHelper.InitializeTable(global, typeof(string), typeof(TestModel));
 
-        Assert.Equal(2, config.OrderIndex);
+        Assert.Equal(20, config.OrderIndex);
     }
 
     [Fact]

@@ -68,9 +68,22 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         return modeller;
     }
 
-    /// <inheritdoc cref="CustomPage"/>
-    public HopFrameConfigurator AddCustomPage(CustomPage page) {
-        Config.CustomPages.Add(page);
+    /// <inheritdoc cref="HopFrameConfig.BaseClaim"/>
+    public HopFrameConfigurator SetBaseClaim(string? claim) {
+        Config.BaseClaim = claim;
+        Config.AllowAnonymousAccess = false;
+        return this;
+    }
+    
+    /// <inheritdoc cref="HopFrameConfig.ClaimType"/>
+    public HopFrameConfigurator SetClaimType(string claimType) {
+        Config.ClaimType = claimType;
+        return this;
+    }
+    
+    /// <inheritdoc cref="HopFrameConfig.RedirectUnauthorized"/>
+    public HopFrameConfigurator SetRedirect(string redirect) {
+        Config.RedirectUnauthorized = redirect;
         return this;
     }
 }

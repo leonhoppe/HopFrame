@@ -1,5 +1,6 @@
 ﻿@using HopFrame.Core.Configuration
 @using HopFrame.Web.Components.Pages
+@using HopFrame.Web.Services
 
 <MudDrawer Open="true" Fixed="true" ClipMode="DrawerClipMode.Docked" Width="200px">
     <MudNavMenu>
@@ -14,15 +15,14 @@
 </MudDrawer>
 
 @inject HopFrameConfig Config
+@inject IAuthProvider AuthProvider
 
 @code {
 
     private HomePage.RouteDefinition[] Routes { get; set; } = null!;
 
-    protected override void OnInitialized() {
-        base.OnInitialized();
-
-        Routes = HomePage.GetRoutes(Config);
+    protected override async Task OnInitializedAsync() {
+        Routes = await HomePage.GetRoutes(Config, AuthProvider);
     }
 
 }

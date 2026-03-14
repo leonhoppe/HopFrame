@@ -45,6 +45,7 @@ builder.Services.AddHopFrame(config => {
 
     config.Table<Post>(table => {
         table.SetDescription("The posts dataset. It contains all posts sent via the application.");
+        table.SetEditClaim("deny");
     });
 
     config.Table<Typer>(table => {
@@ -57,13 +58,16 @@ builder.Services.AddHopFrame(config => {
 
         table.Property(t => t.PhoneNumber)
             .SetType(PropertyType.PhoneNumber);
+
+        table.SetViewClaim("deny");
     });
 
     config.AddCustomPage(new() {
         Name = "Custom Page",
         Description = "This is a custom page",
         Icon = Icons.Material.Filled.House,
-        Route = "/"
+        Route = "/",
+        OrderIndex = 2
     });
 });
 

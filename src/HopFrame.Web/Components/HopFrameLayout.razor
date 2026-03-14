@@ -1,4 +1,6 @@
-﻿@using HopFrame.Web.Components.Components
+﻿@using HopFrame.Core.Configuration
+@using HopFrame.Web.Components.Components
+@using HopFrame.Web.Services
 @inherits LayoutComponentBase
 
 <link rel="stylesheet" href="@Assets["_content/HopFrame.Web/HopFrame.Web.bundle.scp.css"]"/>
@@ -16,3 +18,23 @@
         @Body
     </MudMainContent>
 </MudLayout>
+
+@inject HopFrameConfig Config
+@inject IAuthProvider AuthProvider
+@inject NavigationManager Navigator
+@implements IDisposable
+
+@code {
+    private CancellationTokenSource TokenSource { get; } = new();
+
+    public void Dispose() {
+        TokenSource.Dispose();
+    }
+
+    protected override async Task OnInitializedAsync() {
+        var authorized = await AuthProvider.IsAuthenticated(Config.BaseClaim, TokenSource.Token);
+        
+        if (!authorized)
+            Navigator.NavigateTo(Config.RedirectUnauthorized, true);
+    }
+}

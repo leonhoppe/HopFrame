@@ -21,7 +21,7 @@ internal static class ConfigurationHelper {
             Identifier = identifier,
             Route = modelType.Name.ToLower() + 's',
             DisplayName = modelType.Name + 's',
-            OrderIndex = global.Tables.Count
+            OrderIndex = global.Tables.Count * 10
         };
         
         foreach (var property in modelType.GetProperties()) {

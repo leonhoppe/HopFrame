@@ -1,6 +1,7 @@
 ﻿@page "/admin"
 @using HopFrame.Core.Configuration
 @using HopFrame.Web.Components.Components
+@using HopFrame.Web.Services
 @layout HopFrameLayout
 
 <PageTitle>HopFrame</PageTitle>
@@ -22,14 +23,18 @@
 </section>
 
 @inject HopFrameConfig Config
+@inject IAuthProvider AuthProvider
 
 @code {
+
+    public static readonly IList<CustomPage> CustomPages = new List<CustomPage>();
     
     public readonly struct RouteDefinition {
         public required string Route { get; init; }
         public required string Icon { get; init; }
         public required string Name { get; init; }
         public string? Description { get; init; }
+        public int OrderIndex { get; init; }
 
         public override string ToString() {
             return Name;
@@ -38,35 +43,36 @@
 
     private RouteDefinition[] Routes { get; set; } = null!;
 
-    protected override void OnInitialized() {
-        base.OnInitialized();
-
-        Routes = GetRoutes(Config);
+    protected override async Task OnInitializedAsync() {
+        Routes = await GetRoutes(Config, AuthProvider);
     }
 
-    public static RouteDefinition[] GetRoutes(HopFrameConfig config) {
-        var pages = config.CustomPages
-            .OrderBy(p => p.OrderIndex)
+    public static async Task<RouteDefinition[]> GetRoutes(HopFrameConfig config, IAuthProvider authProvider) {
+        var pages = CustomPages
             .Select(p => new RouteDefinition {
                 Route = p.Route,
                 Icon = p.Icon,
                 Name = p.Name,
-                Description = p.Description
+                Description = p.Description,
+                OrderIndex = p.OrderIndex
             })
             .ToList();
         
-        var tables = config.Tables
-            .OrderBy(t => t.OrderIndex)
-            .Select(table => new RouteDefinition {
-                Route = "admin/" + table.Route,
-                Icon = Icons.Material.Filled.TableChart,
-                Name = table.DisplayName,
-                Description = table.Description,
-            })
-            .ToArray();
+        var tables = config.Tables;
         
-        pages.AddRange(tables);
-        return pages.ToArray();
+        foreach (var table in tables) {
+            var authorized = await authProvider.IsAuthenticated(table.ViewClaim, CancellationToken.None);
+            if (authorized)
+                pages.Add(new RouteDefinition {
+                    Route = "admin/" + table.Route,
+                    Icon = Icons.Material.Filled.TableChart,
+                    Name = table.DisplayName,
+                    Description = table.Description,
+                    OrderIndex = table.OrderIndex
+                });
+        }
+        
+        return pages.OrderBy(p => p.OrderIndex).ToArray();
     }
 
 }
