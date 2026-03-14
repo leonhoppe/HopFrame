@@ -34,7 +34,7 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     [Parameter]
     public List<object>? Preselected { get; set; }
 
-    public List<object> SelectedEntries { get; } = new();
+    public HashSet<object> SelectedEntries { get; } = new();
 
     private IHopFrameRepository Repository { get; set; } = null!;
 
@@ -47,9 +47,7 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     private KeyValuePair<string, SortDirection>? _currentSort;
 
     private string _searchText = string.Empty;
-
-    private List<TableEntry> _currentlyDisplayed = new();
-
+    
     protected override void OnInitialized() {
         base.OnInitialized();
 
@@ -65,7 +63,9 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         }
 
         if (Preselected is not null) {
-            SelectedEntries.AddRange(Preselected);
+            foreach (var entry in Preselected) {
+                SelectedEntries.Add(entry);
+            }
         }
     }
 
@@ -104,9 +104,6 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
             Columns = PrepareData(e)
         }).ToArray();
 
-        _currentlyDisplayed.Clear();
-        _currentlyDisplayed.AddRange(data);
-
         return new TableData<TableEntry> {
             TotalItems = total,
             Items = data
@@ -130,27 +127,6 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
             else
                 SelectedEntries.Add(entry.Entry);
         }
-    }
-
-    private void ToggleAll() {
-        if (SelectedEntries.Count != _currentlyDisplayed.Count) {
-            SelectedEntries.AddRange(_currentlyDisplayed
-                .Select(t => t.Entry)
-                .Where(e => !SelectedEntries.Contains(e)));
-        }
-        else {
-            SelectedEntries.RemoveAll(e => _currentlyDisplayed.Any(t => t.Entry == e));
-        }
-    }
-
-    private bool? GetToggleAllValue() {
-        if (SelectedEntries.Count == 0)
-            return false;
-
-        if (SelectedEntries.Count == _currentlyDisplayed.Count)
-            return true;
-
-        return null;
     }
 
     private async Task OnSearch(string searchText) {

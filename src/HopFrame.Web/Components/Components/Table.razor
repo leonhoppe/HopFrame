@@ -42,7 +42,7 @@
         @if (SelectionMode != SelectionMode.None) {
             <MudTh>
                 @if (SelectionMode == SelectionMode.Multiple) {
-                    <MudCheckBox T="bool?" Value="@(GetToggleAllValue())" ValueChanged="@(() => ToggleAll())" />
+                    <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => SelectedEntries.Clear())" Size="Size.Small" />
                 }
             </MudTh>
         }

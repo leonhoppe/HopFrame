@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HopFrame.Core.Configuration;
@@ -31,7 +32,7 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
             return null;
         
         if ((property.PropertyType & PropertyType.List) != 0 && !fromList) {
-            return (value as IEnumerable<object>)!.Count().ToString();
+            return (value as IList)!.Count.ToString();
         }
 
         if ((property.PropertyType & PropertyType.Relation) != 0) {

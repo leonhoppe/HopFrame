@@ -1,8 +1,6 @@
-﻿@using System.Collections
-@using HopFrame.Core.Configuration
-@using HopFrame.Core.Services
+﻿@using HopFrame.Core.Configuration
 
-@if ((Config.PropertyType & PropertyType.Relation) != 0) { //TODO: Value changes are not visible but occur in background
+@if ((Config.PropertyType & PropertyType.Relation) != 0) {
     <MudStack Row="true">
         @if ((Config.PropertyType & PropertyType.List) != 0) {
             <MudField
@@ -14,9 +12,9 @@
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error">
                 @foreach (var entry in _relationListDisplay.Take(10)) {
-                    <MudChip Value="entry" />
+                    <MudChip Value="entry"/>
                 }
-                
+
                 @if (_relationListDisplay.Length > 10) {
                     <MudChip T="string">...</MudChip>
                 }
@@ -35,9 +33,9 @@
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
         }
-        
+
         @if ((Config.PropertyType & PropertyType.Nullable) != 0) {
-            <MudIconButton Icon="@Icons.Material.Filled.Clear" />
+            <MudIconButton Icon="@Icons.Material.Filled.Clear"/>
         }
     </MudStack>
 }
@@ -55,7 +53,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.Boolean:
             <MudSwitch
                 T="bool"
@@ -66,7 +64,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.DateTime:
             <MudField Label="@Config.DisplayName"
                       Variant="Variant.Outlined"
@@ -76,15 +74,15 @@ else {
                 <MudStack Row="true">
                     <MudDatePicker
                         Date="_date"
-                        DateChanged="@(v => OnValueChanged(v))"
+                        DateChanged="@(OnDateChanged)"
                         Label="Date"
                         Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                         Disabled="@(!Config.Editable)"
                         Variant="Variant"/>
-                
+
                     <MudTimePicker
                         Time="_time"
-                        TimeChanged="@(v => OnValueChanged(v))"
+                        TimeChanged="@(OnTimeChanged)"
                         Label="Time"
                         Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                         Disabled="@(!Config.Editable)"
@@ -92,11 +90,11 @@ else {
                 </MudStack>
             </MudField>
             break;
-            
+
         case PropertyType.DateOnly:
             <MudDatePicker
                 Date="_date"
-                DateChanged="@(v => OnValueChanged(v))"
+                DateChanged="@(OnDateChanged)"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
@@ -104,12 +102,11 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.TimeOnly:
-            @*TODO: Value cannot be changed*@
             <MudTimePicker
                 Time="_time"
-                TimeChanged="@(v => OnValueChanged(v))"
+                TimeChanged="@(OnTimeChanged)"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
                 Disabled="@(!Config.Editable)"
@@ -117,7 +114,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.Email:
             <MudTextField
                 T="string"
@@ -131,7 +128,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.Password:
             <MudTextField
                 T="string"
@@ -147,7 +144,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.PhoneNumber:
             <MudTextField
                 T="string"
@@ -161,7 +158,7 @@ else {
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
-            
+
         case PropertyType.Enum:
             <MudSelect
                 T="object"
@@ -169,6 +166,7 @@ else {
                 ValueChanged="@(v => OnValueChanged(v))"
                 MultiSelection="@((Config.PropertyType & PropertyType.List) != 0)"
                 SelectedValuesChanged="@(v => OnValueChanged(v))"
+                SelectedValues="_selectedEnums"
                 Label="@Config.DisplayName"
                 Clearable="@((Config.PropertyType & (PropertyType.Nullable | PropertyType.List)) != 0)"
                 Disabled="@(!Config.Editable)"
@@ -177,7 +175,8 @@ else {
                 @bind-ErrorText="Error">
                 @if ((Config.PropertyType & PropertyType.List) != 0) {
                     @foreach (var value in Enum.GetValues(Config.Type.GenericTypeArguments[0])) {
-                        <MudSelectItem Value="value">@Enum.GetName(Config.Type.GenericTypeArguments[0], value)</MudSelectItem>
+                        <MudSelectItem
+                            Value="value">@Enum.GetName(Config.Type.GenericTypeArguments[0], value)</MudSelectItem>
                     }
                 }
                 else {
@@ -187,7 +186,7 @@ else {
                 }
             </MudSelect>
             break;
-            
+
         case PropertyType.TextArea:
             <MudTextField
                 T="string"
@@ -203,7 +202,7 @@ else {
                 Lines="Config.SizeRange.Start.Value"
                 MaxLines="Config.SizeRange.End.Value"/>
             break;
-            
+
         default:
             <MudTextField
                 T="string"
@@ -217,166 +216,4 @@ else {
                 @bind-ErrorText="Error"/>
             break;
     }
-}
-
-@inject IEntityAccessor Accessor
-@inject IDialogService Dialogs
-@inject IConfigAccessor ConfigAccessor
-
-@code {
-
-    [Parameter]
-    public object? Value {
-        get;
-        set {
-            field = value;
-            
-            if (value is null)
-                return;
-
-            if ((Config.PropertyType & PropertyType.Relation) != 0) {
-                if ((Config.PropertyType & PropertyType.List) != 0) {
-                    var enumerable = value as IEnumerable<object>;
-                    var values = new List<string>();
-                    foreach (var entry in enumerable!) {
-                        values.Add(Accessor.FormatValue(entry, Config, true) ?? string.Empty);
-                    }
-
-                    _relationListDisplay = values.ToArray();
-                }
-                else {
-                    _relationDisplay = Accessor.FormatValue(value, Config);
-                }
-                
-                return;
-            }
-
-            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
-                case PropertyType.DateTime:
-                    _date = (DateTime)value;
-                    _time = TimeOnly.FromDateTime((DateTime)value).ToTimeSpan();
-                    break;
-                    
-                case PropertyType.DateOnly:
-                    _date = ((DateOnly)value).ToDateTime(TimeOnly.MinValue);
-                    break;
-                    
-                case PropertyType.TimeOnly:
-                    _time = ((TimeOnly)value).ToTimeSpan();
-                    break;
-            }
-        }
-    }
-
-    [Parameter]
-    public required PropertyConfig Config { get; set; }
-    
-    [Parameter]
-    public Variant Variant { get; set; }
-
-    [Parameter]
-    public EventCallback<object?> ValueChanged { get; set; }
-    
-    [Parameter]
-    public string? Error { get; set; }
-
-    private DateTime _date;
-    private TimeSpan _time;
-    private string? _relationDisplay;
-    private string[] _relationListDisplay = null!;
-
-    private InputType _passwordInputType = InputType.Password;
-    private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
-
-    private async Task OnValueChanged(object? value) {
-        if (value is DateTime dt) {
-            _date = dt;
-            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
-                case PropertyType.DateOnly:
-                    value = DateOnly.FromDateTime(dt);
-                    break;
-                    
-                case PropertyType.DateTime:
-                    value = DateOnly.FromDateTime(dt).ToDateTime(TimeOnly.FromTimeSpan(_time));
-                    break;
-            }
-        }
-
-        if (value is TimeSpan ts) {
-            _time = ts;
-            switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
-                case PropertyType.DateOnly:
-                    value = TimeOnly.FromTimeSpan(ts);
-                    break;
-                    
-                case PropertyType.DateTime:
-                    value = DateOnly.FromDateTime(_date).ToDateTime(TimeOnly.FromTimeSpan(ts));
-                    break;
-            }
-        }
-
-        if ((PropertyType)((byte)Config.PropertyType & 0x0F) == PropertyType.Enum && (Config.PropertyType & PropertyType.List) != 0) {
-            var list = value as IReadOnlyCollection<object?>;
-            var newValue = Activator.CreateInstance(Config.Type) as IList;
-            foreach (var entry in list!) {
-                newValue!.Add(entry);
-            }
-
-            value = newValue;
-        }
-
-        if (ValueChanged.HasDelegate)
-            await ValueChanged.InvokeAsync(value);
-    }
-
-    private void OnPasswordIconClick() {
-        _passwordIcon = _passwordInputType == InputType.Password ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
-        _passwordInputType = _passwordInputType == InputType.Password ? InputType.Text : InputType.Password;
-    }
-
-    private async Task OnRelationClick() {
-        var relationTable = ConfigAccessor.GetTableByType(Config.RelationType!);
-        var preselected = new List<object>();
-
-        if (Value is not null) {
-            if ((Config.PropertyType & PropertyType.List) != 0) {
-                foreach (var entry in (Value as IList)!) {
-                    preselected.Add(entry);
-                }
-            }
-            else {
-                preselected.Add(Value);
-            }
-        }
-        
-        var parameters = new DialogParameters<RelationPicker> {
-            { x => x.Config, relationTable },
-            { x => x.Multiple, (Config.PropertyType & PropertyType.List) != 0 },
-            { x => x.Preselected, preselected }
-        };
-
-        var dialog = await Dialogs.ShowAsync<RelationPicker>(string.Empty, parameters, new());
-        var result = await dialog.Result;
-
-        if (result is null || result.Canceled || !ValueChanged.HasDelegate)
-            return;
-
-        var data = (List<object>)result.Data!;
-
-        if ((Config.PropertyType & PropertyType.List) != 0) {
-            var value = (Activator.CreateInstance(Config.Type) as IList)!;
-
-            foreach (var entry in data) {
-                value.Add(entry);
-            }
-
-            await ValueChanged.InvokeAsync(value);
-            Value = value;
-        }
-        else {
-            await ValueChanged.InvokeAsync(data.FirstOrDefault());
-            Value = data.FirstOrDefault();
-        }
-    }
-
 }

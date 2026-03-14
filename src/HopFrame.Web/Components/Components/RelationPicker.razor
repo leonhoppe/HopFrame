@@ -26,7 +26,7 @@
 
     private Table _table = null!;
 
-    private void Submit() => MudDialog.Close(DialogResult.Ok(_table.SelectedEntries));
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_table.SelectedEntries.ToList()));
 
     private void Cancel() => MudDialog.Cancel();
 

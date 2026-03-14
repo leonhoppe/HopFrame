@@ -66,7 +66,7 @@ internal static class ConfigurationHelper {
             modifiers |= (byte)PropertyType.Nullable;
         }
 
-        if ((realType.IsAssignableTo(typeof(IEnumerable)) || realType.IsAssignableTo(typeof(IEnumerable<>))) && realType != typeof(string)) {
+        if (realType.IsAssignableTo(typeof(IList)) && realType != typeof(string)) {
             modifiers |= (byte)PropertyType.List;
         }
 

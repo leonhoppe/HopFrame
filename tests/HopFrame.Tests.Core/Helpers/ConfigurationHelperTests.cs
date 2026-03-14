@@ -17,7 +17,7 @@ public class ConfigurationHelperTests {
         public TimeOnly Time { get; set; }
         public TestEnum EnumValue { get; set; }
         public List<int> Numbers { get; set; } = new();
-        public IEnumerable<string> Strings { get; set; } = new List<string>();
+        public List<string> Strings { get; set; } = new List<string>();
 
         [EmailAddress]
         public string Email { get; set; } = "";
@@ -365,7 +365,7 @@ public class ConfigurationHelperTests {
         var prop = typeof(PropertyTypeModel).GetProperty(nameof(PropertyTypeModel.Strings))!;
         var result = ConfigurationHelper.InferPropertyType(typeof(IEnumerable<string>), prop);
 
-        Assert.Equal(PropertyType.Text | PropertyType.List, result);
+        Assert.Equal(PropertyType.Text, result);
     }
 
     [Fact]
