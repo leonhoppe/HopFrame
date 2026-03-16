@@ -26,7 +26,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
     private TimeSpan _time;
     private string? _relationDisplay;
     private string[] _relationListDisplay = null!;
-    private readonly List<string?> _selectedEnums = [];
+    private List<string?> _selectedEnums = [];
 
     private InputType _passwordInputType = InputType.Password;
     private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
@@ -37,7 +37,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
             _time = TimeSpan.Zero;
             _relationDisplay = null;
             _relationListDisplay = [];
-            _selectedEnums.Clear();
+            _selectedEnums = [];
             return;
         }
 
@@ -93,7 +93,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
         await OnValueChanged(time.Value);
     }
 
-    private async Task OnValueChanged(object? value) { //TODO: Weired update behavior on time and date
+    private async Task OnValueChanged(object? value) {
         if (value is DateTime dt) {
             switch ((PropertyType)((byte)Config.PropertyType & 0x0F)) {
                 case PropertyType.DateOnly:

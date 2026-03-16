@@ -20,6 +20,9 @@ public sealed class HopFrameConfig {
 
     /// Determines if an authorization check needs to be performed
     public bool AllowAnonymousAccess { get; set; } = true;
+
+    /// Determines the title of the admin ui
+    public string CompanyName { get; set; } = "HopFrame";
     
     internal HopFrameConfig() {}
 }

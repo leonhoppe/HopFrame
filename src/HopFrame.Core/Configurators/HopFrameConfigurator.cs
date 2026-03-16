@@ -86,4 +86,10 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         Config.RedirectUnauthorized = redirect;
         return this;
     }
+
+    /// <inheritdoc cref="HopFrameConfig.CompanyName"/>
+    public HopFrameConfigurator SetCompanyName(string name) {
+        Config.CompanyName = name;
+        return this;
+    }
 }

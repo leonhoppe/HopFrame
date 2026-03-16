@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using HopFrame.Core.Configuration;
 using HopFrame.Core.EFCore;
 using HopFrame.Web;
@@ -69,6 +70,8 @@ builder.Services.AddHopFrame(config => {
         Route = "/",
         OrderIndex = 2
     });
+
+    config.SetCompanyName("Testing");
 });
 
 var app = builder.Build();
@@ -108,6 +111,22 @@ await using (var scope = app.Services.CreateAsyncScope()) {
     context.Posts.Add(new() {
         Message = Faker.Lorem.Paragraph(),
         Sender = context.Users.Skip(1).First()
+    });
+
+    context.Typers.Add(new() {
+        Id = Guid.NewGuid(),
+        Number = 200,
+        Toggle = true,
+        DateTime = DateTime.Now,
+        DateOnly = DateOnly.Parse("15.03.2022"),
+        TimeOnly = TimeOnly.Parse("15:30"),
+        SortDirection = ListSortDirection.Descending,
+        Text = "A Text",
+        Mail = "a@mail.com",
+        LongText = "A long Text",
+        Password = "1234567890",
+        PhoneNumber = "+49 1234 567890",
+        SortDirections = [ListSortDirection.Ascending, ListSortDirection.Descending]
     });
 
     await context.SaveChangesAsync();

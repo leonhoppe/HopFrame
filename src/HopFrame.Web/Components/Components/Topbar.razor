@@ -6,7 +6,7 @@
 <MudPopoverProvider />
 
 <MudAppBar Elevation="0">
-    <MudText Typo="Typo.h6">HopFrame</MudText>
+    <MudText Typo="Typo.h6">@Config.CompanyName</MudText>
     
     <MudSpacer />
     
@@ -19,6 +19,8 @@
         SelectValueOnTab="true"
         Dense="true"
         IconSize="Size.Medium"
+        @ref="_autocomplete"
+        @onfocusin="@(_ => _autocomplete.ResetAsync())"
         AdornmentIcon="@Icons.Material.Filled.Search"/>
     
     <MudSpacer />
@@ -33,6 +35,8 @@
 @code {
 
     private HomePage.RouteDefinition[] Routes { get; set; } = null!;
+
+    private MudAutocomplete<HomePage.RouteDefinition> _autocomplete = null!;
 
     protected override async Task OnInitializedAsync() {
         Routes = await HomePage.GetRoutes(Config, AuthProvider);

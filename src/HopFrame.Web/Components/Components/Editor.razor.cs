@@ -20,8 +20,8 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
     private object? Entry { get; set; }
     
     private EditorMode Mode { get; set; }
-    
-    private MudForm Form { get; set; }
+
+    private MudForm Form { get; set; } = null!;
 
     private TaskCompletionSource<object?> Completion { get; set; } = null!;
 
@@ -55,14 +55,14 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
             ApplyChanges();
             IsVisible = false;
             Completion.SetResult(Entry);
-            await Form.ResetAsync();
+            //await Form.ResetAsync();
         }
     }
 
     private void Cancel() {
         IsVisible = false;
         Completion.SetResult(null);
-        Form.ResetAsync();
+        //Form.ResetAsync();
     }
 
     private IEnumerable<PropertyConfig> GetProperties() {
