@@ -72,6 +72,19 @@ builder.Services.AddHopFrame(config => {
     });
 
     config.SetCompanyName("Testing");
+
+    config.AddRepository<VirtualRepo, Dictionary<string, object?>>(table => {
+        table.SetDisplayName("Addresses");
+        table.SetRoute("addresses");
+        
+        table.AddProperty<int>("Id");
+        table.AddProperty<string>("Country");
+        table.AddProperty<string>("City");
+        table.AddProperty<string>("Street");
+        
+        table.AddProperty<User>("Owner")
+            .IsRelation(config.Table<User>());
+    });
 });
 
 var app = builder.Build();

@@ -144,7 +144,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
     }
 
     private async Task OnRelationClick() {
-        var relationTable = configAccessor.GetTableByType(Config.RelationType!);
+        var relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
         var preselected = new List<object>();
 
         if (Value is not null) {

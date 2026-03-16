@@ -93,4 +93,15 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
         Config.PropertyType = (PropertyType)(((byte)Config.PropertyType & 0xF0) | ((byte)type & 0x0F));
         return this;
     }
+
+    /// <summary>
+    /// Forces the property to be a relation to another table
+    /// </summary>
+    /// <param name="relationTable">The table to relate to</param>
+    public PropertyConfigurator<TModel, TProp> IsRelation<TRelation>(TableConfigurator<TRelation> relationTable) where TRelation : class {
+        Config.PropertyType |= PropertyType.Relation;
+        Config.RelationType = relationTable.Config.TableType;
+        Config.RelationTable = relationTable.Config.Identifier;
+        return this;
+    }
 }

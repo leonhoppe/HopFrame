@@ -8,5 +8,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/HopFrame.Tests.Core/HopFrame.Tests.Core.csproj" />
+    <Project Path="tests/HopFrame.Tests.Web/HopFrame.Tests.Web.csproj" />
   </Folder>
 </Solution>

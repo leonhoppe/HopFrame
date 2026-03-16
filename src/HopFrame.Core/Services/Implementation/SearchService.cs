@@ -49,7 +49,7 @@ internal sealed class SearchService(IConfigAccessor accessor) : ISearchService {
         Expression expr = Expression.Property(parameter, propInfo);
 
         if ((property.PropertyType & PropertyType.Relation) != 0 && property.RelationType != null) {
-            var relationTable = accessor.GetTableByType(property.RelationType);
+            var relationTable = accessor.GetTableByIdentifier(property.RelationTable!);
             if (relationTable is null)
                 return null;
             

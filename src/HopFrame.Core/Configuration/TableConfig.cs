@@ -15,6 +15,9 @@ public class TableConfig {
 
     /// [GENERATED] The type identifier for the repository
     public required Type RepositoryType { get; set; }
+
+    /// [GENERATED] If the type of the table is an <see cref="IDictionary{string,object}"/> it is treated as a virtual table
+    public bool IsDictionary { get; set; }
     
     /// [GENERATED] the url of the table page
     public required string Route { get; set; }

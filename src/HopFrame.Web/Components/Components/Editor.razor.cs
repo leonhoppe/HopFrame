@@ -21,8 +21,6 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
     
     private EditorMode Mode { get; set; }
 
-    private MudForm Form { get; set; } = null!;
-
     private TaskCompletionSource<object?> Completion { get; set; } = null!;
 
     private Dictionary<string, object?> UpdatedValues { get; set; } = null!;
@@ -55,14 +53,12 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
             ApplyChanges();
             IsVisible = false;
             Completion.SetResult(Entry);
-            //await Form.ResetAsync();
         }
     }
 
     private void Cancel() {
         IsVisible = false;
         Completion.SetResult(null);
-        //Form.ResetAsync();
     }
 
     private IEnumerable<PropertyConfig> GetProperties() {

@@ -19,6 +19,14 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
     public object? GetValueRaw(object model, PropertyConfig property) {
         if (property.Getter is not null)
             return property.Getter.Invoke(model);
+
+        if (property.Table.IsDictionary) {
+            var dict = (IDictionary<string, object?>)model;
+            if (dict.TryGetValue(property.Identifier, out var value))
+                return value;
+
+            return null;
+        }
         
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
@@ -36,7 +44,7 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
         }
 
         if ((property.PropertyType & PropertyType.Relation) != 0) {
-            var table = accessor.GetTableByType(value.GetType());
+            var table = accessor.GetTableByIdentifier(property.RelationTable!);
             if (table?.PreferredProperty != null) {
                 var tableProp = table.Properties.First(p => p.Identifier == table.PreferredProperty);
                 return GetValue(value, tableProp);
@@ -51,13 +59,18 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
             property.Setter.Invoke(model, value);
             return;
         }
+
+        if (value?.GetType() != property.Type)
+            value = Convert.ChangeType(value, property.Type);
+
+        if (property.Table.IsDictionary) {
+            var dict = (IDictionary<string, object?>)model;
+            dict[property.Identifier] = value;
+        }
         
         var prop = model.GetType().GetProperty(property.Identifier);
         if (prop is null)
             return;
-
-        if (value?.GetType() != property.Type)
-            value = Convert.ChangeType(value, property.Type);
         
         prop.SetValue(model, value);
     }

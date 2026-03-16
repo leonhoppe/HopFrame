@@ -23,6 +23,4 @@ public sealed class HopFrameConfig {
 
     /// Determines the title of the admin ui
     public string CompanyName { get; set; } = "HopFrame";
-    
-    internal HopFrameConfig() {}
 }

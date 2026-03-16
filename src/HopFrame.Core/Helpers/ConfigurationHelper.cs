@@ -23,9 +23,14 @@ internal static class ConfigurationHelper {
             DisplayName = modelType.Name + 's',
             OrderIndex = global.Tables.Count * 10
         };
-        
-        foreach (var property in modelType.GetProperties()) {
-            config.Properties.Add(InitializeProperty(config, property.PropertyType, property.Name, property));
+
+        if (modelType.IsAssignableTo(typeof(IDictionary<string, object?>))) {
+            config.IsDictionary = true;
+        }
+        else {
+            foreach (var property in modelType.GetProperties()) {
+                config.Properties.Add(InitializeProperty(config, property.PropertyType, property.Name, property));
+            }
         }
 
         return config;
