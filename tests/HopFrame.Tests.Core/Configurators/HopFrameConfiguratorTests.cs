@@ -1,5 +1,6 @@
 ﻿using HopFrame.Core.Configuration;
 using HopFrame.Core.Configurators;
+using HopFrame.Core.Events;
 using HopFrame.Core.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,12 +11,15 @@ public class HopFrameConfiguratorTests {
         public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
+
         public Task<int> CountAsync(CancellationToken ct) {
             throw new NotImplementedException();
         }
+
         public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
             throw new NotImplementedException();
         }
+
         public Task CreateGenericAsync(object entry, CancellationToken ct) {
             throw new NotImplementedException();
         }
@@ -166,5 +170,93 @@ public class HopFrameConfiguratorTests {
         configurator.AddTable<TestModel>(table, _ => { invoked = true; });
 
         Assert.True(invoked);
+    }
+    
+    // -------------------------------------------------------------
+    // RegisterEventHandler<THandler>
+    // -------------------------------------------------------------
+
+    private class CreatedHandler : IEntityCreatedEventHandler {
+        public Task EntityCreated(object entity, TableConfig config, CancellationToken ct) => Task.CompletedTask;
+    }
+
+    private class UpdatedHandler : IEntityUpdatedEventHandler {
+        public Task EntityUpdated(object entity, TableConfig config, CancellationToken ct) => Task.CompletedTask;
+    }
+
+    private class DeletedHandler : IEntityDeletedEventHandler {
+        public Task EntityDeleted(object entity, TableConfig config, CancellationToken ct) => Task.CompletedTask;
+    }
+
+    private class MultiHandler :
+        IEntityCreatedEventHandler,
+        IEntityUpdatedEventHandler {
+        public Task EntityCreated(object entity, TableConfig config, CancellationToken ct) => Task.CompletedTask;
+        public Task EntityUpdated(object entity, TableConfig config, CancellationToken ct) => Task.CompletedTask;
+    }
+
+    private class NoEventHandler : IHopFrameEventHandler { }
+
+    private HopFrameConfigurator CreateConfigurator(out IServiceCollection services) {
+        services = new ServiceCollection();
+        return new HopFrameConfigurator(new HopFrameConfig(), services);
+    }
+
+    // -------------------------------------------------------------
+    // Single interface
+    // -------------------------------------------------------------
+    [Fact]
+    public void RegisterEventHandler_RegistersCreatedHandler() {
+        var configurator = CreateConfigurator(out var services);
+
+        configurator.RegisterEventHandler<CreatedHandler>();
+
+        Assert.Contains(services, d => d.ServiceType == typeof(IEntityCreatedEventHandler));
+    }
+
+    [Fact]
+    public void RegisterEventHandler_RegistersUpdatedHandler() {
+        var configurator = CreateConfigurator(out var services);
+
+        configurator.RegisterEventHandler<UpdatedHandler>();
+
+        Assert.Contains(services, d => d.ServiceType == typeof(IEntityUpdatedEventHandler));
+    }
+
+    [Fact]
+    public void RegisterEventHandler_RegistersDeletedHandler() {
+        var configurator = CreateConfigurator(out var services);
+
+        configurator.RegisterEventHandler<DeletedHandler>();
+
+        Assert.Contains(services, d => d.ServiceType == typeof(IEntityDeletedEventHandler));
+    }
+
+    // -------------------------------------------------------------
+    // Multiple interfaces
+    // -------------------------------------------------------------
+    [Fact]
+    public void RegisterEventHandler_RegistersMultipleInterfaces() {
+        var configurator = CreateConfigurator(out var services);
+
+        configurator.RegisterEventHandler<MultiHandler>();
+
+        Assert.Contains(services, d => d.ServiceType == typeof(IEntityCreatedEventHandler));
+        Assert.Contains(services, d => d.ServiceType == typeof(IEntityUpdatedEventHandler));
+    }
+
+    // -------------------------------------------------------------
+    // No event interfaces
+    // -------------------------------------------------------------
+    [Fact]
+    public void RegisterEventHandler_NoInterfaces_RegistersNothing() {
+        var configurator = CreateConfigurator(out var services);
+
+        configurator.RegisterEventHandler<NoEventHandler>();
+
+        Assert.DoesNotContain(services, d =>
+            d.ServiceType == typeof(IEntityCreatedEventHandler) ||
+            d.ServiceType == typeof(IEntityUpdatedEventHandler) ||
+            d.ServiceType == typeof(IEntityDeletedEventHandler));
     }
 }

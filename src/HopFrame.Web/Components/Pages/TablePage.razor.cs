@@ -8,7 +8,7 @@ using MudBlazor;
 
 namespace HopFrame.Web.Components.Pages;
 
-public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator, IDialogService dialogs, ISnackbar snackbar, IAuthProvider authProvider) : CancellableComponent {
+public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator, IDialogService dialogs, ISnackbar snackbar, IAuthProvider authProvider, IEventEmitter eventEmitter) : CancellableComponent {
     
     [Parameter]
     public string TableRoute { get; set; } = null!;
@@ -56,6 +56,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         await Repository.CreateGenericAsync(entry, TokenSource.Token);
         await TableComponent.Reload();
         snackbar.Add("Entry added", Severity.Success);
+        eventEmitter.PublishEvent(EventType.EntityCreated, entry, Table, TokenSource.Token);
     }
 
     private async Task OnEdit(object entry) {
@@ -69,6 +70,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         await Repository.UpdateGenericAsync(newEntry, TokenSource.Token);
         await TableComponent.Reload();
         snackbar.Add("Entry updated", Severity.Success);
+        eventEmitter.PublishEvent(EventType.EntityUpdated, entry, Table, TokenSource.Token);
     }
 
     private async Task OnDelete(object entry) {
@@ -83,6 +85,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
             await Repository.DeleteGenericAsync(entry, TokenSource.Token);
             await TableComponent.Reload();
             snackbar.Add("Entry deleted", Severity.Success);
+            eventEmitter.PublishEvent(EventType.EntityDeleted, entry, Table, TokenSource.Token);
         }
     }
 }

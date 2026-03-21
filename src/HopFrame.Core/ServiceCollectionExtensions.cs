@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions {
         services.AddTransient<IConfigAccessor, ConfigAccessor>();
         services.AddTransient<IEntityAccessor, EntityAccessor>();
         services.AddTransient<ISearchService, SearchService>();
+        services.AddTransient<IEventEmitter, EventEmitter>();
         
         configurator.Invoke(new HopFrameConfigurator(config, services));
         return services;

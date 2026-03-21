@@ -1,4 +1,5 @@
 ﻿using HopFrame.Core.Configuration;
+using HopFrame.Core.Events;
 using HopFrame.Core.Helpers;
 using HopFrame.Core.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,6 +91,26 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
     /// <inheritdoc cref="HopFrameConfig.CompanyName"/>
     public HopFrameConfigurator SetCompanyName(string name) {
         Config.CompanyName = name;
+        return this;
+    }
+
+    /// <summary>
+    /// Registers the provided handler as a scoped service
+    /// </summary>
+    /// <typeparam name="THandler">The handler to register</typeparam>
+    public HopFrameConfigurator RegisterEventHandler<THandler>() where THandler : IHopFrameEventHandler {
+        var type = typeof(THandler);
+
+        if (type.IsAssignableTo(typeof(IEntityCreatedEventHandler))) {
+            Services.AddScoped(typeof(IEntityCreatedEventHandler), type);
+        }
+        if (type.IsAssignableTo(typeof(IEntityUpdatedEventHandler))) {
+            Services.AddScoped(typeof(IEntityUpdatedEventHandler), type);
+        }
+        if (type.IsAssignableTo(typeof(IEntityDeletedEventHandler))) {
+            Services.AddScoped(typeof(IEntityDeletedEventHandler), type);
+        }
+
         return this;
     }
 }
