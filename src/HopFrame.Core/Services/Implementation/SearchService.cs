@@ -21,9 +21,11 @@ internal sealed class SearchService(IConfigAccessor accessor) : ISearchService {
             Expression? valueExpr = BuildPropertyAccess(parameter, property);
             if (valueExpr == null)
                 continue;
-
-            var toString = Expression.Call(valueExpr, nameof(ToString), Type.EmptyTypes);
-            var toLower = Expression.Call(toString, nameof(string.ToLower), Type.EmptyTypes);
+            
+            if (property.Type != typeof(string))
+                valueExpr = Expression.Call(valueExpr, nameof(ToString), Type.EmptyTypes);
+            
+            var toLower = Expression.Call(valueExpr, nameof(string.ToLower), Type.EmptyTypes);
             var contains = Expression.Call(toLower, nameof(string.Contains), Type.EmptyTypes, Expression.Constant(searchTerm));
 
             combined = combined == null
