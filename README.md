@@ -1,6 +1,6 @@
 # HopFrame
 
-HopFrame is a lightweight extension library for existing .NET applications that adds **administrative Blazor pages** on top of your current data model. It connects to your configured databases and provides ready‑to‑use CRUD views so you can **browse, filter, create, update, and delete** data without writing custom admin UIs.
+HopFrame is a lightweight extension library for existing .NET applications that adds **administrative Blazor pages** on top of your current data model. It connects to your configured databases and provides ready-to-use CRUD views so you can **browse, filter, create, update, and delete** data without writing custom admin UIs.
 
 HopFrame is ideal for teams who want an instant admin interface without maintaining their own Blazor pages.
 
@@ -8,17 +8,17 @@ HopFrame is ideal for teams who want an instant admin interface without maintain
 
 ## Features
 
-- **Plug‑in admin UI**  
-  Drop‑in Blazor pages that integrate into an existing ASP.NET Core / Blazor application.
+- **Plug-in admin UI**  
+  Drop-in Blazor pages that integrate into an existing ASP.NET Core / Blazor application.
 
-- **Database‑driven views**  
+- **Database-driven views**  
   Reads metadata from your configured data sources and exposes entities as editable tables and forms.
 
 - **Full CRUD support**  
   Create, read, update, and delete records directly from the browser.
 
 - **Filtering & sorting**  
-  Quickly navigate large datasets with built‑in filtering and sorting capabilities.
+  Quickly navigate large datasets with built-in filtering and sorting capabilities.
 
 - **Minimal boilerplate**  
   Focus on your domain logic—HopFrame handles the generic admin UI.
@@ -46,7 +46,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Configure HopFrame
 builder.Services.AddHopFrame(config => {
-    config.AddDbContext<DatabaseContext>();
+    config.AddDbContext<AppDbContext>();
 });
 
 var app = builder.Build();
@@ -79,7 +79,7 @@ After starting your application, open the configured admin route, for example:
 https://localhost:5001/admin
 ```
 
-You’ll see the HopFrame admin interface with your connected entities.
+You'll see the HopFrame admin interface with your connected entities.
 
 ---
 

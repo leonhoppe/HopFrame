@@ -10,7 +10,7 @@
         <PackageId>HopFrame.Web</PackageId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-        <Description>HopFrame is a lightweight extension library for existing .NET applications that adds administrative Blazor pages on top of your current data model. It connects to your configured databases and provides ready‑to‑use CRUD views so you can browse, filter, create, update, and delete data without writing custom admin UIs.</Description>
+        <Description>HopFrame is a lightweight extension library for existing .NET applications that adds **administrative Blazor pages** on top of your current data model. It connects to your configured databases and provides ready-to-use CRUD views so you can **browse, filter, create, update, and delete** data without writing custom admin UIs.</Description>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://git.leon-hoppe.de/leon.hoppe/HopFrame</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
