@@ -14,6 +14,6 @@ public interface ISortService {
     /// <param name="table">The type of the dataset</param>
     /// <typeparam name="TModel">The type of the provided data</typeparam>
     /// <returns>The sorted queryable</returns>
-    public IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table) where TModel : class;
+    IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table) where TModel : class;
 
 }
