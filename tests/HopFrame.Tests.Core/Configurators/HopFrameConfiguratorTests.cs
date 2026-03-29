@@ -8,7 +8,7 @@ namespace HopFrame.Tests.Core.Configurators;
 
 public class HopFrameConfiguratorTests {
     private class TestRepository : IHopFrameRepository {
-        public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
+        public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, Sorting sorting, CancellationToken ct) {
             throw new NotImplementedException();
         }
 
@@ -16,7 +16,7 @@ public class HopFrameConfiguratorTests {
             throw new NotImplementedException();
         }
 
-        public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
+        public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct) {
             throw new NotImplementedException();
         }
 

@@ -75,59 +75,6 @@ internal class EntityAccessor(IConfigAccessor accessor) : IEntityAccessor {
         prop.SetValue(model, value);
     }
 
-    public IEnumerable<object> SortDataByProperty(IEnumerable<object> data, PropertyConfig property, bool descending = false) {
-        var parameter = Expression.Parameter(property.Table.TableType);
-        Expression expression;
-        Type targetType = property.Type;
-
-        if (property.Getter is not null) {
-            var getterProp = typeof(PropertyConfig).GetProperty(nameof(PropertyConfig.Getter))!;
-            var invokeMethod = typeof(Func<object, object?>).GetMethod(nameof(Func<>.Invoke))!;
-            expression = Expression.Call(Expression.Property(Expression.Constant(property), getterProp), invokeMethod, Expression.Convert(parameter, typeof(object)));
-            expression = Expression.Convert(expression, targetType);
-        }
-        else {
-            var prop = property.Table.TableType.GetProperty(property.Identifier);
-            if (prop is null)
-                return data;
-
-            expression = Expression.Property(parameter, prop);
-
-            if ((property.PropertyType & PropertyType.Relation) != 0) {
-                var relationTable = accessor.GetTableByType(property.Type);
-                PropertyInfo? relationPropInfo = null;
-
-                if (relationTable?.PreferredProperty != null) {
-                    var relationProp = relationTable.Properties.First(p => p.Identifier == relationTable.PreferredProperty);
-                
-                    if ((relationProp.PropertyType & PropertyType.List) == 0)
-                        relationPropInfo = relationProp.Type.GetProperty(relationProp.Identifier);
-                }
-            
-                if (relationPropInfo == null) {
-                    var formatMethod = GetType().GetMethod(nameof(FormatValue))!;
-                    targetType = typeof(string);
-                    expression = Expression.Call(Expression.Constant(this), formatMethod, expression, Expression.Constant(property));
-                }
-                else {
-                    targetType = relationPropInfo.PropertyType;
-                    expression = Expression.Property(expression, relationPropInfo);
-                }
-            }
-        }
-        
-        var lambda = Expression.Lambda(expression, parameter);
-
-        var methodName = descending ? nameof(Enumerable.OrderByDescending) : nameof(Enumerable.OrderBy);
-        var method = typeof(Enumerable)
-            .GetMethods()
-            .Single(m => m.Name == methodName && m.GetParameters().Length == 2)
-            .MakeGenericMethod(property.Table.TableType, targetType);
-
-        var result = method.Invoke(null, [data, lambda.Compile()]);
-        return (IEnumerable<object>)result!;
-    }
-
     public IEnumerable<string> ValidateProperty(PropertyConfig property, object? value) {
         var errors = new List<string>();
 

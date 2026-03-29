@@ -13,13 +13,21 @@ namespace HopFrame.Web;
 public static class ServiceCollectionExtensions {
     
     /// Configures the library using the provided configurator
-    public static IServiceCollection AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator) {
+    public static IServiceCollection AddHopFrame(this IServiceCollection services, Action<HopFrameConfigurator> configurator, bool addMudServices = true, bool addRazorComponents = true) {
         services.AddHopFrameServices(configurator);
 
         services.AddHttpContextAccessor();
         services.AddScoped<IAuthProvider, AuthProvider>();
 
-        services.AddMudServices();
+        if (addMudServices) {
+            services.AddMudServices();
+        }
+
+        if (addRazorComponents) {
+            services.AddRazorComponents()
+                .AddInteractiveServerComponents();
+        }
+        
         return services;
     }
     
@@ -39,6 +47,7 @@ public static class ServiceCollectionExtensions {
     /// </summary>
     public static WebApplication MapHopFrame(this WebApplication app) {
         app.UseAntiforgery();
+        app.UseStaticFiles();
         app.MapStaticAssets();
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();

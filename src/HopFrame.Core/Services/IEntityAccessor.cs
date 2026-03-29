@@ -36,14 +36,6 @@ public interface IEntityAccessor {
     public void SetValue(object model, PropertyConfig property, object? value);
 
     /// <summary>
-    /// Sorts the provided dataset by the specified property
-    /// </summary>
-    /// <param name="data">The dataset that needs to be sorted</param>
-    /// <param name="property">The property that defines the sort order</param>
-    /// <param name="descending">Determines if the resulting order should be flipped</param>
-    public IEnumerable<object> SortDataByProperty(IEnumerable<object> data, PropertyConfig property, bool descending = false);
-
-    /// <summary>
     /// Checks if the provided value of meets the requirements of the property
     /// </summary>
     /// <param name="property">The property that defines the requirements</param>

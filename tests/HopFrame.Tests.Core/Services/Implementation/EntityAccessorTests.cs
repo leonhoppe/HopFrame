@@ -160,49 +160,6 @@ public class EntityAccessorTests {
     }
 
     // -------------------------------------------------------------
-    // SortDataByProperty
-    // -------------------------------------------------------------
-
-    [Fact]
-    public void SortDataByProperty_SortsByNormalProperty() {
-        var data = new List<TestModel> {
-            new() { Number = 3 },
-            new() { Number = 1 },
-            new() { Number = 2 }
-        };
-
-        var property = CreateProperty("Number", typeof(int));
-
-        var accessor = CreateAccessor();
-
-        var result = accessor.SortDataByProperty(data, property).Cast<TestModel>().ToList();
-
-        Assert.Equal([1, 2, 3], result.Select(x => x.Number));
-    }
-
-    [Fact]
-    public void SortDataByProperty_SortsUsingGetter() {
-        var data = new List<TestModel> {
-            new() { Number = 3 },
-            new() { Number = 1 },
-            new() { Number = 2 }
-        };
-
-        var property = CreateProperty(
-            "Number",
-            typeof(int),
-            getter: o => ((TestModel)o).Number * -1
-        );
-
-        var accessor = CreateAccessor();
-
-        var result = accessor.SortDataByProperty(data, property).Cast<TestModel>().ToList();
-
-        // Sortiert nach -Number → Reihenfolge: 3, 2, 1
-        Assert.Equal([3, 2, 1], result.Select(x => x.Number));
-    }
-
-    // -------------------------------------------------------------
     // ValidateProperty
     // -------------------------------------------------------------
 

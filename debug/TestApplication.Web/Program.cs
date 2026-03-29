@@ -4,9 +4,9 @@ using HopFrame.Core.EFCore;
 using HopFrame.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
-using TestApplication;
-using TestApplication.Components;
-using TestApplication.Models;
+using TestApplication.Web;
+using TestApplication.Web.Components;
+using TestApplication.Web.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

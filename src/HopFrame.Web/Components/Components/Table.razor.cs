@@ -1,4 +1,5 @@
-﻿using HopFrame.Core.Configuration;
+﻿using System.ComponentModel;
+using HopFrame.Core.Configuration;
 using HopFrame.Core.Repositories;
 using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
@@ -84,19 +85,23 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         IEnumerable<object> entries;
         int total;
 
+        var sort = new Sorting(null, ListSortDirection.Ascending);
+        if (_currentSort.HasValue) {
+            sort = new(_currentSort.Value.Key, _currentSort.Value.Value switch {
+                SortDirection.Ascending => ListSortDirection.Ascending,
+                SortDirection.Descending => ListSortDirection.Descending,
+                _ => ListSortDirection.Ascending
+            });
+        }
+
         if (string.IsNullOrWhiteSpace(_searchText)) {
-            entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, ct);
+            entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, sort, ct);
             total = await Repository.CountAsync(ct);
         }
         else {
-            var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, ct);
+            var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, sort, ct);
             entries = result.Result;
             total = result.PageCount;
-        }
-
-        if (_currentSort.HasValue) {
-            var sortProp = Config.Properties.First(p => p.Identifier == _currentSort.Value.Key);
-            entries = accessor.SortDataByProperty(entries, sortProp, _currentSort.Value.Value == SortDirection.Descending);
         }
 
         var data = entries.Select(e => new TableEntry {

@@ -6,7 +6,7 @@ namespace TestApplication;
 public class VirtualRepo : HopFrameRepository<Dictionary<string, object?>> {
     private static List<Dictionary<string, object?>> Entries { get; } = new();
     
-    public override async Task<IEnumerable<Dictionary<string, object?>>> LoadPageAsync(int page, int perPage, CancellationToken ct = default) {
+    public override async Task<IEnumerable<Dictionary<string, object?>>> LoadPageAsync(int page, int perPage, Sorting sorting, CancellationToken ct = default) {
         return Entries
             .Skip(page * perPage)
             .Take(perPage)
@@ -17,9 +17,9 @@ public class VirtualRepo : HopFrameRepository<Dictionary<string, object?>> {
         return Entries.Count;
     }
     
-    public override async Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, CancellationToken ct = default) {
+    public override async Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct = default) {
         return new() {
-            Result = await LoadPageAsync(page, perPage, ct),
+            Result = await LoadPageAsync(page, perPage, sorting, ct),
             PageCount = await CountAsync(ct)
         };
     }

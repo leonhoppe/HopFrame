@@ -17,10 +17,10 @@ public class HopFrameRepositoryTests {
 
         var expected = new List<TestModel> { new TestModel { Id = 1 } };
 
-        mock.Setup(r => r.LoadPageAsync(2, 10, It.IsAny<CancellationToken>()))
+        mock.Setup(r => r.LoadPageAsync(2, 10, It.IsAny<Sorting>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await mock.Object.LoadPageGenericAsync(2, 10, CancellationToken.None);
+        var result = await mock.Object.LoadPageGenericAsync(2, 10, new(), CancellationToken.None);
 
         Assert.Equal(expected, result);
     }
@@ -35,10 +35,10 @@ public class HopFrameRepositoryTests {
 
         var expected = new List<TestModel> { new TestModel { Id = 5 } };
 
-        mock.Setup(r => r.SearchAsync("abc", 1, 20, It.IsAny<CancellationToken>()))
+        mock.Setup(r => r.SearchAsync("abc", 1, 20, It.IsAny<Sorting>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new SearchResult(expected, 1));
 
-        var result = await mock.Object.SearchGenericAsync("abc", 1, 20, CancellationToken.None);
+        var result = await mock.Object.SearchGenericAsync("abc", 1, 20, new(), CancellationToken.None);
 
         Assert.Equal(expected, result.Result);
     }

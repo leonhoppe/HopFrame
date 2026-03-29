@@ -1,4 +1,6 @@
-﻿#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
+﻿using System.ComponentModel;
+
+#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 namespace HopFrame.Core.Repositories;
 
 /// The generic repository that provides access to the model dataset
@@ -9,7 +11,7 @@ public interface IHopFrameRepository {
     /// </summary>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct);
+    public Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, Sorting sorting, CancellationToken ct);
     
     /// <summary>
     /// Returns the total amount of entries in the dataset
@@ -22,7 +24,7 @@ public interface IHopFrameRepository {
     /// <param name="searchTerm">The search text provided by the user</param>
     /// <param name="page">The index of the current page (starts at 0)</param>
     /// <param name="perPage">The amount of entries that should be loaded</param>
-    public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct);
+    public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct);
 
     
     /// <summary>
@@ -51,3 +53,10 @@ public interface IHopFrameRepository {
 /// <param name="Result">The resulting paginated dataset</param>
 /// <param name="PageCount">The total number of pages of the search results</param>
 public readonly record struct SearchResult(IEnumerable<object> Result, int PageCount);
+
+/// <summary>
+/// Indicates if the returned dataset should be sorted
+/// </summary>
+/// <param name="PropertyIdentifier">The unique identifier of the property that should be sorted (if null, sorting can be ignored)</param>
+/// <param name="Direction">The direction of the sorting</param>
+public readonly record struct Sorting(string? PropertyIdentifier, ListSortDirection Direction);

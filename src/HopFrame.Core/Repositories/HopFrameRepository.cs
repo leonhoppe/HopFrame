@@ -6,13 +6,13 @@ namespace HopFrame.Core.Repositories;
 public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TModel : class {
 
     /// <inheritdoc cref="LoadPageGenericAsync"/>
-    public abstract Task<IEnumerable<TModel>> LoadPageAsync(int page, int perPage, CancellationToken ct = default);
+    public abstract Task<IEnumerable<TModel>> LoadPageAsync(int page, int perPage, Sorting sorting, CancellationToken ct = default);
     
     /// <inheritdoc/>
     public abstract Task<int> CountAsync(CancellationToken ct = default);
     
     /// <inheritdoc cref="SearchGenericAsync"/>
-    public abstract Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, CancellationToken ct = default);
+    public abstract Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct = default);
 
     /// <inheritdoc cref="CreateGenericAsync"/>
     public abstract Task CreateAsync(TModel entry, CancellationToken ct = default);
@@ -24,13 +24,13 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     public abstract Task DeleteAsync(TModel entry, CancellationToken ct = default);
     
     /// <inheritdoc/>
-    public async Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, CancellationToken ct) {
-        return await LoadPageAsync(page, perPage, ct);
+    public async Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, Sorting sorting, CancellationToken ct) {
+        return await LoadPageAsync(page, perPage, sorting, ct);
     }
     
     /// <inheritdoc/>
-    public async Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, CancellationToken ct) {
-        return await SearchAsync(searchTerm, page, perPage, ct);
+    public async Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct) {
+        return await SearchAsync(searchTerm, page, perPage, sorting, ct);
     }
     
     /// <inheritdoc/>

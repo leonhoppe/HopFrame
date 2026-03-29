@@ -12,7 +12,7 @@ public interface ISearchService {
     /// <param name="table">The type of the dataset</param>
     /// <param name="searchTerm">The term to search for</param>
     /// <typeparam name="TModel">The type of the provided data</typeparam>
-    /// <returns>The filtered enumerable</returns>
+    /// <returns>The filtered queryable</returns>
     public IQueryable<TModel> Search<TModel>(IQueryable<TModel> dataset, TableConfig table, string searchTerm) where TModel : notnull;
 
 }

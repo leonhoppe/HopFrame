@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/debug/">
-    <Project Path="debug/TestApplication/TestApplication.csproj" />
+    <Project Path="debug/TestApplication.Api/TestApplication.Api.csproj" />
+    <Project Path="debug/TestApplication.Web/TestApplication.Web.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/HopFrame.Core/HopFrame.Core.csproj" />
