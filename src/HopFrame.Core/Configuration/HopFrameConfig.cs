@@ -23,4 +23,7 @@ public sealed class HopFrameConfig {
 
     /// Determines the title of the admin ui
     public string CompanyName { get; set; } = "HopFrame";
+
+    /// Determines if the search bar at the top of every page should be visible
+    public bool ShowSearchBar { get; set; } = true;
 }

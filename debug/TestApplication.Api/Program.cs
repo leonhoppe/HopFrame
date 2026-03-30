@@ -84,6 +84,8 @@ builder.Services.AddHopFrame(config => {
         table.AddProperty<User>("Owner")
             .IsRelation(config.Table<User>());
     });
+
+    config.ShowSearchBar(false);
 });
 
 var app = builder.Build();

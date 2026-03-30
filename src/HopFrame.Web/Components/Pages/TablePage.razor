@@ -4,6 +4,11 @@
 @layout HopFrameLayout
 @inherits CancellableComponent
 
+
+@*ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract*@
+@if(Table is null)
+    return;
+
 <PageTitle>@Table.DisplayName</PageTitle>
 
 <MudDialogProvider />

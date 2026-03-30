@@ -10,18 +10,20 @@
     
     <MudSpacer />
     
-    <MudAutocomplete
-        T="HomePage.RouteDefinition"
-        Placeholder="Search page"
-        SearchFunc="@(Search)"
-        ValueChanged="@(OnRouteClick)"
-        ResetValueOnEmptyText="true"
-        SelectValueOnTab="true"
-        Dense="true"
-        IconSize="Size.Medium"
-        @ref="_autocomplete"
-        @onfocusin="@(_ => _autocomplete.ResetAsync())"
-        AdornmentIcon="@Icons.Material.Filled.Search"/>
+    @if (Config.ShowSearchBar) {
+        <MudAutocomplete
+            T="HomePage.RouteDefinition"
+            Placeholder="Search page"
+            SearchFunc="@(Search)"
+            ValueChanged="@(OnRouteClick)"
+            ResetValueOnEmptyText="true"
+            SelectValueOnTab="true"
+            Dense="true"
+            IconSize="Size.Medium"
+            @ref="_autocomplete"
+            @onfocusin="@(_ => _autocomplete.ResetAsync())"
+            AdornmentIcon="@Icons.Material.Filled.Search"/>
+    }
     
     <MudSpacer />
     

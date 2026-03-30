@@ -9,7 +9,7 @@
         <br>
         
         @foreach (var route in Routes) {
-            <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route">@route.Name</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route" Ripple="false">@route.Name</MudNavLink>
         }
     </MudNavMenu>
 </MudDrawer>

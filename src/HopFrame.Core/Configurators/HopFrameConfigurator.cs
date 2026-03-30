@@ -94,6 +94,12 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         return this;
     }
 
+    /// <inheritdoc cref="HopFrameConfig.ShowSearchBar"/>
+    public HopFrameConfigurator ShowSearchBar(bool show) {
+        Config.ShowSearchBar = show;
+        return this;
+    }
+
     /// <summary>
     /// Registers the provided handler as a scoped service
     /// </summary>
