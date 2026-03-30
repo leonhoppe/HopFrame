@@ -87,8 +87,8 @@ public class ConfigurationHelperTests {
 
         Assert.Equal(typeof(string), config.RepositoryType);
         Assert.Equal(typeof(TestModel), config.TableType);
-        Assert.Equal("testmodels", config.Route);
-        Assert.Equal("TestModels", config.DisplayName);
+        Assert.Equal("testmodel", config.Route);
+        Assert.Equal("TestModel", config.DisplayName);
         Assert.Equal(0, config.OrderIndex);
     }
 

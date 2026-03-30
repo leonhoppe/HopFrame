@@ -8,10 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace HopFrame.Core.EFCore;
 
-internal class EfCoreRepository<TModel, TContext>(TContext context, IConfigAccessor accessor, IEntityAccessor entityAccessor, ISearchService searchService, ISortService sortService, ILogger<EfCoreRepository<TModel, TContext>> logger) : HopFrameRepository<TModel> where TModel : class where TContext : DbContext {
+internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAccessor entityAccessor, ISearchService searchService, ISortService sortService, ILogger<EfCoreRepository<TModel, TContext>> logger) : HopFrameRepository<TModel> where TModel : class where TContext : DbContext {
 
-    private readonly TableConfig _table = accessor.GetTableByType(typeof(TModel))!;
-    
+    private TableConfig _table = null!;
+
+    public override void Initialize(TableConfig table) {
+        _table = table;
+    }
+
     public override async Task<IEnumerable<TModel>> LoadPageAsync(int page, int perPage, Sorting sorting, CancellationToken ct = default) {
         try {
             var set = context.Set<TModel>();

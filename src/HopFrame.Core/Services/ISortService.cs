@@ -5,15 +5,15 @@ namespace HopFrame.Core.Services;
 
 /// A service used to sort a dataset by a specific property
 public interface ISortService {
-
     /// <summary>
     /// Sorts the provided dataset by the given property
     /// </summary>
     /// <param name="dataset">The dataset that should be sorted</param>
     /// <param name="sorting">The sorting information</param>
     /// <param name="table">The type of the dataset</param>
+    /// <param name="executeIfUncompilable">Determines if the sorting should still be applied even if the query cannot be translated to sql</param>
     /// <typeparam name="TModel">The type of the provided data</typeparam>
     /// <returns>The sorted queryable</returns>
-    IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table) where TModel : class;
+    IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table, bool executeIfUncompilable = false) where TModel : class;
 
 }

@@ -12,9 +12,6 @@ public class PropertyConfig {
     
     /// [GENERATED] The real type of the property
     public required Type Type { get; set; }
-    
-    /// [GENERATED] The underlying type of the relation object
-    public Type? RelationType { get; set; }
 
     /// [GENERATED] The table that the property points to
     public string? RelationTable { get; set; }

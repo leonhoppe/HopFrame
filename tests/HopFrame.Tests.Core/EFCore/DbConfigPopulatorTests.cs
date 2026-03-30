@@ -102,7 +102,7 @@ public class DbConfigPopulatorTests {
         DbConfigPopulator.CheckForRelations(global, relationTable);
 
         Assert.True((relationTable.Properties[0].PropertyType & PropertyType.Relation) != 0);
-        Assert.Equal(typeof(OtherModel), relationTable.Properties[0].RelationType);
+        Assert.Equal(otherTable.Identifier, relationTable.Properties[0].RelationTable);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class DbConfigPopulatorTests {
         DbConfigPopulator.CheckForRelations(global, relationTable);
 
         Assert.True((relationTable.Properties[0].PropertyType & PropertyType.Relation) != 0);
-        Assert.Equal(typeof(OtherModel), relationTable.Properties[0].RelationType);
+        Assert.Equal(otherTable.Identifier, relationTable.Properties[0].RelationTable);
     }
 
     [Fact]
@@ -145,6 +145,6 @@ public class DbConfigPopulatorTests {
         DbConfigPopulator.CheckForRelations(global, relationTable);
 
         Assert.False((relationTable.Properties[0].PropertyType & PropertyType.Relation) != 0);
-        Assert.Null(relationTable.Properties[0].RelationType);
+        Assert.Null(relationTable.Properties[0].RelationTable);
     }
 }

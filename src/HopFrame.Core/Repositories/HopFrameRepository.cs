@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using HopFrame.Core.Configuration;
 
 namespace HopFrame.Core.Repositories;
 
@@ -47,5 +47,11 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     public Task DeleteGenericAsync(object entry, CancellationToken ct) {
         return DeleteAsync((TModel)entry, ct);
     }
-    
+
+    /// <summary>
+    /// This method is called, when the repository gets loaded. Override this method if you need to do some custom logic
+    /// </summary>
+    /// <param name="table">The table for what the repository is used</param>
+    public virtual void Initialize(TableConfig table) {}
+
 }

@@ -13,7 +13,7 @@ internal static class DbConfigPopulator {
 
         services.AddScoped(repoType);
 
-        var table = ConfigurationHelper.InitializeTable(global, repoType, modelType);
+        var table = ConfigurationHelper.InitializeTable(global, repoType, modelType, tableProperty.Name);
         global.Tables.Add(table);
         return table.Identifier;
     }
@@ -29,7 +29,6 @@ internal static class DbConfigPopulator {
             var relationTable = global.Tables.FirstOrDefault(t => t.TableType == type);
             if (relationTable is not null) {
                 property.PropertyType |= PropertyType.Relation;
-                property.RelationType = type;
                 property.RelationTable = relationTable.Identifier;
             }
         }

@@ -14,12 +14,17 @@ internal sealed class ConfigAccessor(HopFrameConfig config, IServiceProvider ser
         return config.Tables.FirstOrDefault(t => t.Route == route);
     }
     
-    public TableConfig? GetTableByType(Type type) {
-        return config.Tables.FirstOrDefault(t => t.TableType == type);
-    }
-    
     public IHopFrameRepository LoadRepository(TableConfig table) {
-        return (IHopFrameRepository)services.GetRequiredService(table.RepositoryType);
+        var repo = (IHopFrameRepository)services.GetRequiredService(table.RepositoryType);
+
+        var genericRepoType = typeof(HopFrameRepository<>).MakeGenericType(table.TableType);
+        if (table.RepositoryType.IsAssignableTo(genericRepoType)) {
+            genericRepoType
+                .GetMethod(nameof(HopFrameRepository<>.Initialize))!
+                .Invoke(repo, [table]);
+        }
+
+        return repo;
     }
     
 }

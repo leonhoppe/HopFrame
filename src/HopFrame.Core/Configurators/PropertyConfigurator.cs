@@ -100,7 +100,6 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
     /// <param name="relationTable">The table to relate to</param>
     public PropertyConfigurator<TModel, TProp> IsRelation<TRelation>(TableConfigurator<TRelation> relationTable) where TRelation : class {
         Config.PropertyType |= PropertyType.Relation;
-        Config.RelationType = relationTable.Config.TableType;
         Config.RelationTable = relationTable.Config.Identifier;
         return this;
     }

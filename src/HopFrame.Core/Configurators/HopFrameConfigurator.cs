@@ -68,6 +68,24 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
         configurator?.Invoke(modeller);
         return modeller;
     }
+    
+    /// <summary>
+    /// Loads the configurator for an existing table in the configuration
+    /// </summary>
+    /// <param name="configurator">The configurator for the table</param>
+    /// <typeparam name="TModel">The model of the table</typeparam>
+    /// <param name="identifier">The identifier used to identify the table</param>
+    /// <exception cref="ArgumentException">Is thrown when no table with the requested identifier was found</exception>
+    public TableConfigurator<TModel> Table<TModel>(string identifier, Action<TableConfigurator<TModel>>? configurator = null) where TModel : class {
+        var table = Config.Tables.FirstOrDefault(t => t.Identifier == identifier);
+
+        if (table is null)
+            throw new ArgumentException($"Table '{identifier}' not found");
+
+        var modeller = new TableConfigurator<TModel>(table);
+        configurator?.Invoke(modeller);
+        return modeller;
+    }
 
     /// <inheritdoc cref="HopFrameConfig.BaseClaim"/>
     public HopFrameConfigurator SetBaseClaim(string? claim) {

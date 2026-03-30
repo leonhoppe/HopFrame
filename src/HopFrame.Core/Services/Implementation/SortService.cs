@@ -9,16 +9,16 @@ namespace HopFrame.Core.Services.Implementation;
 
 internal sealed class SortService(IEntityAccessor entityAccessor, IConfigAccessor accessor, ILogger<SortService> logger) : ISortService {
     
-    public IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table) where TModel : class {
+    public IQueryable<TModel> Sort<TModel>(IQueryable<TModel> dataset, Sorting sorting, TableConfig table, bool executeIfUncompilable = false) where TModel : class {
         if (string.IsNullOrWhiteSpace(sorting.PropertyIdentifier))
             return dataset;
 
         var property = table.Properties.First(p => p.Identifier == sorting.PropertyIdentifier);
         return (IQueryable<TModel>)SortDataByProperty(dataset, property,
-            sorting.Direction == ListSortDirection.Descending);
+            sorting.Direction == ListSortDirection.Descending, executeIfUncompilable);
     }
     
-    private IQueryable SortDataByProperty(IQueryable data, PropertyConfig property, bool descending = false) {
+    private IQueryable SortDataByProperty(IQueryable data, PropertyConfig property, bool descending, bool executeIfUncompilable) {
         var parameter = Expression.Parameter(property.Table.TableType);
         Expression expression;
         Type targetType = property.Type;
@@ -39,13 +39,18 @@ internal sealed class SortService(IEntityAccessor entityAccessor, IConfigAccesso
 
             expression = Expression.Property(parameter, prop);
 
-            if ((property.PropertyType & PropertyType.Relation) != 0) {
+            if ((property.PropertyType & PropertyType.List) != 0) {
+                var countPropInfo = property.Type.GetProperty(nameof(List<>.Count))!;
+                expression = Expression.Property(expression, countPropInfo);
+                targetType = typeof(int);
+            }
+            else if ((property.PropertyType & PropertyType.Relation) != 0) {
                 var relationTable = accessor.GetTableByIdentifier(property.RelationTable!);
                 PropertyInfo? relationPropInfo = null;
-
+                
                 if (relationTable?.PreferredProperty != null) {
                     var relationProp = relationTable.Properties.First(p => p.Identifier == relationTable.PreferredProperty);
-                
+
                     if ((relationProp.PropertyType & PropertyType.List) == 0)
                         relationPropInfo = relationTable.TableType.GetProperty(relationProp.Identifier);
                 }
@@ -71,7 +76,7 @@ internal sealed class SortService(IEntityAccessor entityAccessor, IConfigAccesso
             .Single(m => m.Name == methodName && m.GetParameters().Length == 2)
             .MakeGenericMethod(property.Table.TableType, targetType);
 
-        if (cantBeTranslated) {
+        if (cantBeTranslated && !executeIfUncompilable) {
             logger.LogWarning("Cannot automatically sort table {table} by computed property {property}", property.Table.Identifier, property.Identifier);
             return data;
         }

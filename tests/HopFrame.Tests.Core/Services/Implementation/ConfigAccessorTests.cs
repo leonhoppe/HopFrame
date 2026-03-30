@@ -105,32 +105,6 @@ public class ConfigAccessorTests {
     }
 
     // -------------------------------------------------------------
-    // GetTableByType
-    // -------------------------------------------------------------
-
-    [Fact]
-    public void GetTableByType_ReturnsCorrectTable() {
-        var table = CreateTable("A", "a", typeof(TestModel));
-        var config = CreateConfig(table);
-
-        var accessor = new ConfigAccessor(config, Mock.Of<IServiceProvider>());
-
-        var result = accessor.GetTableByType(typeof(TestModel));
-
-        Assert.Equal(table, result);
-    }
-
-    [Fact]
-    public void GetTableByType_ReturnsNull_WhenNotFound() {
-        var config = CreateConfig();
-        var accessor = new ConfigAccessor(config, Mock.Of<IServiceProvider>());
-
-        var result = accessor.GetTableByType(typeof(TestModel));
-
-        Assert.Null(result);
-    }
-
-    // -------------------------------------------------------------
     // LoadRepository
     // -------------------------------------------------------------
 

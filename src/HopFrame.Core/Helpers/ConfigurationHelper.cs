@@ -9,8 +9,10 @@ namespace HopFrame.Core.Helpers;
 
 internal static class ConfigurationHelper {
 
-    public static TableConfig InitializeTable(HopFrameConfig global, Type repositoryType, Type modelType) {
-        var identifier = modelType.Name;
+    public static TableConfig InitializeTable(HopFrameConfig global, Type repositoryType, Type modelType, string? preferredName = null) {
+        preferredName ??= modelType.Name;
+        
+        var identifier = preferredName;
 
         if (global.Tables.Any(t => t.Identifier == identifier))
             identifier = Guid.NewGuid().ToString();
@@ -19,8 +21,8 @@ internal static class ConfigurationHelper {
             RepositoryType = repositoryType,
             TableType = modelType,
             Identifier = identifier,
-            Route = modelType.Name.ToLower() + 's',
-            DisplayName = modelType.Name + 's',
+            Route = preferredName.ToLower(),
+            DisplayName = preferredName,
             OrderIndex = global.Tables.Count * 10
         };
 
