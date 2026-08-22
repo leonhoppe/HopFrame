@@ -3,11 +3,12 @@ using HopFrame.Core.Configuration;
 using HopFrame.Core.Repositories;
 using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor) : ComponentBase {
+public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor, ILogger<Table> logger) : ComponentBase {
     
     private readonly record struct TableEntry {
         public object Entry { get; init; }
@@ -68,6 +69,7 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
                 SelectedEntries.Add(entry);
             }
         }
+        logger.LogDebug("Table component initialized for table '{table}'", Config.DisplayName);
     }
 
     public Task Reload() => Manager.ReloadServerData();
@@ -82,6 +84,7 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     }
 
     private async Task<TableData<TableEntry>> ReloadTable(TableState state, CancellationToken ct) {
+        logger.LogDebug("Table reload was initiated for '{table}'", Config.DisplayName);
         IEnumerable<object> entries;
         int total;
 
@@ -92,22 +95,28 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
                 SortDirection.Descending => ListSortDirection.Descending,
                 _ => ListSortDirection.Ascending
             });
+            
+            logger.LogDebug("The new sort direction for table '{table}' is {sort} on property '{prop}'", Config.DisplayName, sort.Direction, sort.PropertyIdentifier);
         }
 
         if (string.IsNullOrWhiteSpace(_searchText)) {
             entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, sort, ct);
             total = await Repository.CountAsync(ct);
+            logger.LogDebug("A total of {total} entries were found for table {table}, displaying {amount} entries on page {page}", total, Config.DisplayName, state.PageSize, state.Page);
         }
         else {
             var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, sort, ct);
             entries = result.Result;
             total = result.PageCount;
+            logger.LogDebug("A total of {total} entries were found for table {table} with search query '{search}', displaying {amount} entries on page {page}", total, Config.DisplayName, _searchText, state.PageSize, state.Page);
         }
 
         var data = entries.Select(e => new TableEntry {
             Entry = e,
             Columns = PrepareData(e)
         }).ToArray();
+        
+        logger.LogDebug("A total of {amount} entries were prepared to be displayed on table '{table}'", data.Length, Config.DisplayName);
 
         return new TableData<TableEntry> {
             TotalItems = total,

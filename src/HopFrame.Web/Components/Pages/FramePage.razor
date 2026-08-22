@@ -1,0 +1,25 @@
+﻿@page "/admin/page/{Identifier}"
+@layout HopFrameLayout
+
+<PageTitle>@Page.Name</PageTitle>
+
+<iframe src="@Page.Route" style="height: calc(100vh - 70px)"></iframe>
+
+@inject NavigationManager Navigator
+@code {
+
+    [Parameter]
+    public string Identifier { get; set; }
+
+    private CustomPage Page { get; set; }
+
+    protected override void OnInitialized() {
+        var page = HomePage.CustomPages.FirstOrDefault(p => p.Name == Identifier);
+        
+        if (!page.AsIFrame)
+            Navigator.NavigateTo("/admin", true);
+
+        Page = page;
+    }
+
+}

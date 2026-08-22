@@ -68,7 +68,8 @@ builder.Services.AddHopFrame(config => {
         Description = "This is a custom page",
         Icon = Icons.Material.Filled.House,
         Route = "/",
-        OrderIndex = 2
+        OrderIndex = 2,
+        AsIFrame = true
     });
 
     config.SetCompanyName("Testing");

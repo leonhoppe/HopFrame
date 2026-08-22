@@ -4,11 +4,12 @@ using HopFrame.Core.Services;
 using HopFrame.Web.Components.Components;
 using HopFrame.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor;
 
 namespace HopFrame.Web.Components.Pages;
 
-public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator, IDialogService dialogs, ISnackbar snackbar, IAuthProvider authProvider, IEventEmitter eventEmitter) : CancellableComponent {
+public partial class TablePage(IConfigAccessor accessor, NavigationManager navigator, IDialogService dialogs, ISnackbar snackbar, IAuthProvider authProvider, IEventEmitter eventEmitter, ILogger<TablePage> logger) : CancellableComponent {
     
     [Parameter]
     public string TableRoute { get; set; } = null!;
@@ -24,18 +25,22 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
     private bool ShowActionButtons { get; set; }
 
     protected override async Task OnInitializedAsync() {
+        logger.LogDebug("Initializing table page for route '{route}'", TableRoute);
         var table = accessor.GetTableByRoute(TableRoute);
 
         if (table is null) {
+            logger.LogDebug("Table for route '{route}' could not be found, redirecting to dashboard...", TableRoute);
             navigator.NavigateTo("/admin", true);
             return;
         }
         
         Table = table;
+        logger.LogDebug("Found Table '{table}' for route '{route}'", Table.DisplayName, TableRoute);
         
         var authorized = await authProvider.IsAuthenticated(Table.ViewClaim, TokenSource.Token);
         
         if (!authorized) {
+            logger.LogDebug("User is not authenticated to view '{route}' redirecting to dashboard...", TableRoute);
             navigator.NavigateTo("/admin", true);
             return;
         }
@@ -43,9 +48,11 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         ShowActionButtons = await authProvider.IsAuthenticated(Table.EditClaim, TokenSource.Token);
         Repository = accessor.LoadRepository(Table);
         snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        logger.LogDebug("Loaded repository '{rep}' for table '{table}'", Repository.GetType().FullName, Table.DisplayName);
     }
 
     private async Task OnAdd() {
+        logger.LogDebug("Received call for entry adding on table '{table}'", Table.DisplayName);
         var entry = await EditorComponent.Present(null);
         if (entry is null) return;
 
@@ -53,13 +60,18 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         if (!authorized)
             return;
         
+        logger.LogDebug("User is authorized to add an entry on table '{table}'", Table.DisplayName);
+        
         await Repository.CreateGenericAsync(entry, TokenSource.Token);
         await TableComponent.Reload();
         snackbar.Add("Entry added", Severity.Success);
+        logger.LogDebug("An entry was successfully added on table '{table}'", Table.DisplayName);
+        
         eventEmitter.PublishEvent(EventType.EntityCreated, entry, Table, TokenSource.Token);
     }
 
     private async Task OnEdit(object entry) {
+        logger.LogDebug("Received call for entry editing on table '{table}'", Table.DisplayName);
         var newEntry = await EditorComponent.Present(entry);
         if (newEntry is null) return;
         
@@ -67,13 +79,18 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         if (!authorized)
             return;
         
+        logger.LogDebug("User is authorized to edit an entry on table '{table}'", Table.DisplayName);
+        
         await Repository.UpdateGenericAsync(newEntry, TokenSource.Token);
         await TableComponent.Reload();
         snackbar.Add("Entry updated", Severity.Success);
+        logger.LogDebug("An entry was successfully edited on table '{table}'", Table.DisplayName);
+        
         eventEmitter.PublishEvent(EventType.EntityUpdated, entry, Table, TokenSource.Token);
     }
 
     private async Task OnDelete(object entry) {
+        logger.LogDebug("Received call for entry deleting on table '{table}'", Table.DisplayName);
         var dialog = await dialogs.ShowAsync<DeleteConfirmationDialog>();
         var result = await dialog.Result;
 
@@ -82,9 +99,13 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
             if (!authorized)
                 return;
             
+            logger.LogDebug("User is authorized to delete an entry on table '{table}'", Table.DisplayName);
+            
             await Repository.DeleteGenericAsync(entry, TokenSource.Token);
             await TableComponent.Reload();
             snackbar.Add("Entry deleted", Severity.Success);
+            logger.LogDebug("An entry was successfully deleted on table '{table}'", Table.DisplayName);
+            
             eventEmitter.PublishEvent(EventType.EntityDeleted, entry, Table, TokenSource.Token);
         }
     }
