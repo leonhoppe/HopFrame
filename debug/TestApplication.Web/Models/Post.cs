@@ -11,6 +11,9 @@ public class Post {
     [MaxLength(5000)]
     public required string Message { get; set; }
 
+    [MaxLength(255)]
+    public string? Type { get; set; } = "Normal";
+
     public override bool Equals(object? obj) {
         if (obj is Post post) {
             return post.Id == Id;

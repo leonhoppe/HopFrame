@@ -1,6 +1,39 @@
 ﻿@using HopFrame.Core.Configuration
 
-@if ((Config.PropertyType & PropertyType.Relation) != 0) {
+@if (Config.DropdownOptions is not null) {
+    @if (Config.PropertyType.HasFlag(PropertyType.Relation)) {
+        <MudAutocomplete 
+            T="RelationResult"
+            Value="@(new RelationResult(Value!, _formattedValue!))"
+            ValueChanged="@(v => OnValueChanged(v.Value))"
+            Label="@Config.DisplayName"
+            Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"
+            Error="@(!string.IsNullOrWhiteSpace(Error))"
+            @bind-ErrorText="Error"
+            ShowProgressIndicator="true"
+            SearchFunc="@(SearchInDropdown)"
+            MaxItems="null"/>
+    }
+    else {
+        <MudSelect
+            T="object"
+            Value="_formattedValue"
+            ValueChanged="@(v => OnValueChanged(v))"
+            Label="@Config.DisplayName"
+            Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
+            Disabled="@(!Config.Editable)"
+            Variant="Variant"
+            Error="@(!string.IsNullOrWhiteSpace(Error))"
+            @bind-ErrorText="Error">
+            @foreach (var value in Config.DropdownOptions) {
+                <MudSelectItem Value="value">@entityAccessor.FormatValue(value, Config)</MudSelectItem>
+            }
+        </MudSelect>
+    }
+}
+else if ((Config.PropertyType & PropertyType.Relation) != 0) {
     <MudStack Row="true">
         @if ((Config.PropertyType & PropertyType.List) != 0) {
             <MudField
@@ -11,11 +44,11 @@
                 OnAdornmentClick="@(OnRelationClick)"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error">
-                @foreach (var entry in _relationListDisplay.Take(10)) {
+                @foreach (var entry in _formattedListValue.Take(10)) {
                     <MudChip Value="entry"/>
                 }
 
-                @if (_relationListDisplay.Length > 10) {
+                @if (_formattedListValue.Length > 10) {
                     <MudChip T="string">...</MudChip>
                 }
             </MudField>
@@ -23,7 +56,7 @@
         else {
             <MudTextField
                 T="string"
-                Value="_relationDisplay"
+                Value="_formattedValue"
                 Label="@Config.DisplayName"
                 ReadOnly="true"
                 Variant="Variant"

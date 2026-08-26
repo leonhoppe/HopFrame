@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.ComponentModel;
 using HopFrame.Core.Configuration;
+using HopFrame.Core.Repositories;
 using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -24,31 +26,38 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
 
     private DateTime _date;
     private TimeSpan _time;
-    private string? _relationDisplay;
-    private string[] _relationListDisplay = null!;
+    private string? _formattedValue;
+    private string[] _formattedListValue = null!;
     private List<string?> _selectedEnums = [];
 
     private InputType _passwordInputType = InputType.Password;
     private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
+    private TableConfig? _relationTable;
+
+    protected override void OnInitialized() {
+        if (Config.RelationTable is not null) {
+            
+        }
+    }
 
     protected override void OnParametersSet() {
         if (Value is null) {
             _date = default;
             _time = TimeSpan.Zero;
-            _relationDisplay = null;
-            _relationListDisplay = [];
+            _formattedValue = null;
+            _formattedListValue = [];
             _selectedEnums = [];
+            _relationTable = null;
             return;
         }
+        
+        _formattedValue = entityAccessor.FormatValue(Value, Config);
 
         if (Config.PropertyType.HasFlag(PropertyType.Relation)) {
             if (Config.PropertyType.HasFlag(PropertyType.List)) {
-                _relationListDisplay = ((IEnumerable<object>)Value)
+                _formattedListValue = ((IEnumerable<object>)Value)
                     .Select(v => entityAccessor.FormatValue(v, Config, true) ?? "")
                     .ToArray();
-            }
-            else {
-                _relationDisplay = entityAccessor.FormatValue(Value, Config);
             }
 
             return;
@@ -144,7 +153,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
     }
 
     private async Task OnRelationClick() {
-        var relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
+        _relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
         var preselected = new List<object>();
 
         if (Value is not null) {
@@ -159,7 +168,7 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
         }
 
         var parameters = new DialogParameters<RelationPicker> {
-            { x => x.Config, relationTable },
+            { x => x.Config, _relationTable },
             { x => x.Multiple, (Config.PropertyType & PropertyType.List) != 0 },
             { x => x.Preselected, preselected }
         };
@@ -184,5 +193,27 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
         else {
             await ValueChanged.InvokeAsync(data.FirstOrDefault());
         }
+    }
+    
+    private readonly record struct RelationResult(object Value, string Label) {
+        public override string ToString() {
+            return Label;
+        }
+    }
+
+    private async Task<IEnumerable<RelationResult>> SearchInDropdown(string? value, CancellationToken ct) {
+        _relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
+        var repo = configAccessor.LoadRepository(_relationTable!);
+        IEnumerable<object> result;
+
+        if (!string.IsNullOrWhiteSpace(value)) {
+            var searchResult = await repo.SearchGenericAsync(value, 0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
+            result = searchResult.Result;
+        }
+        else {
+            result = await repo.LoadPageGenericAsync(0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
+        }
+        
+        return result.Select(r => new RelationResult(r, entityAccessor.FormatValue(r, Config) ?? "Something went wrong"));
     }
 }

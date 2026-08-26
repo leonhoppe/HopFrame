@@ -47,6 +47,13 @@ builder.Services.AddHopFrame(config => {
     config.Table<Post>(table => {
         table.SetDescription("The posts dataset. It contains all posts sent via the application.");
         table.SetEditClaim("deny");
+
+        table.Property(p => p.Type)
+            .AsDropdown("Normal", "VIP", "VIP++")
+            .SetType(PropertyType.Text | PropertyType.Nullable);
+
+        table.Property(p => p.Sender)
+            .AsDropdown();
     });
 
     config.Table<Typer>(table => {

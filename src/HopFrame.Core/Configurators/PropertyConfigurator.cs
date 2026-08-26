@@ -103,4 +103,10 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
         Config.RelationTable = relationTable.Config.Identifier;
         return this;
     }
+
+    /// <inheritdoc cref="PropertyConfig.DropdownOptions" />
+    public PropertyConfigurator<TModel, TProp> AsDropdown(params TProp[] options) {
+        Config.DropdownOptions = [.. options.Cast<object>()];
+        return this;
+    }
 }

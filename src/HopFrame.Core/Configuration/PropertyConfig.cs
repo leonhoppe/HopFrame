@@ -60,6 +60,12 @@ public class PropertyConfig {
     /// It should return a list of errors that were found, or an empty list if no error was found
     /// </summary>
     public Func<object, IEnumerable<string>>? Validator { get; set; }
+
+    /// If entries exist, the property will be displayed as a dropdown of these options (like an enum selector)
+    public object[]? DropdownOptions { get; set; }
+
+    /// Determines the maximum number of Items displayed in the dropdown (only applies to relation dropdowns)
+    public int MaxDropdownItems { get; set; } = 50;
 }
 
 /// <summary>
