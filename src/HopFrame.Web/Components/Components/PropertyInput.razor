@@ -2,7 +2,7 @@
 
 @if (Config.DropdownOptions is not null) {
     @if (Config.PropertyType.HasFlag(PropertyType.Relation)) {
-        <MudAutocomplete 
+        <MudAutocomplete
             T="RelationResult"
             Value="@(new RelationResult(Value!, _formattedValue!))"
             ValueChanged="@(v => OnValueChanged(v.Value))"
@@ -21,7 +21,7 @@
             T="object"
             Value="_formattedValue"
             ValueChanged="@(v => OnValueChanged(v))"
-            Label="@Config.DisplayName"
+            Label="@(Config.DisplayName + Config.PropertyType.HasFlag(PropertyType.Nullable))"
             Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
             Disabled="@(!Config.Editable)"
             Variant="Variant"

@@ -95,6 +95,15 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
     }
 
     /// <summary>
+    /// Sets the property type including the provided modifiers (like nullable).
+    /// If the property is a list or any other generic type, please use the enumerated type.
+    /// </summary>
+    public PropertyConfigurator<TModel, TProp> SetTypeRaw(PropertyType type) {
+        Config.PropertyType = type;
+        return this;
+    }
+
+    /// <summary>
     /// Forces the property to be a relation to another table
     /// </summary>
     /// <param name="relationTable">The table to relate to</param>

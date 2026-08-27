@@ -50,10 +50,11 @@ builder.Services.AddHopFrame(config => {
 
         table.Property(p => p.Type)
             .AsDropdown("Normal", "VIP", "VIP++")
-            .SetType(PropertyType.Text | PropertyType.Nullable);
+            .SetTypeRaw(PropertyType.Text | PropertyType.Nullable);
 
         table.Property(p => p.Sender)
-            .AsDropdown();
+            .AsDropdown()
+            .SetTypeRaw(PropertyType.Text | PropertyType.Relation | PropertyType.Nullable);
     });
 
     config.Table<Typer>(table => {
