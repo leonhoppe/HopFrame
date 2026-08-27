@@ -5,7 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace HopFrame.Core.Services.Implementation;
 
 internal sealed class EventEmitter(IServiceProvider services) : IEventEmitter {
-    
+    public async Task<object> PublishCallback<TCallback>(object entity, TableConfig config, CancellationToken ct) where TCallback : IHopFrameCallback {
+        var callbackHandlers = services.GetRequiredService<IEnumerable<TCallback>>();
+
+        foreach (var handler in callbackHandlers) {
+            entity = await handler.ExecuteCallback(entity, config, ct);
+        }
+
+        return entity;
+    }
+
     public void PublishEvent(EventType type, object entity, TableConfig config, CancellationToken ct) {
         switch (type) {
             case EventType.EntityCreated:

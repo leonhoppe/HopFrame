@@ -1,11 +1,12 @@
 ﻿using HopFrame.Core.Configuration;
+using HopFrame.Core.Events;
 using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : ComponentBase {
+public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IEventEmitter events) : CancellableComponent {
     
     private enum EditorMode {
         Editor,
@@ -30,12 +31,20 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
     public Task<object?> Present(object? entry) {
         Completion = new ();
         Mode = entry is null ? EditorMode.Creator : EditorMode.Editor;
-        Entry = entry ?? Activator.CreateInstance(Config.TableType)!;
         UpdatedValues = new();
 
         ErrorMessages = new();
         foreach (var property in GetProperties()) {
             ErrorMessages.Add(property.Identifier, null);
+        }
+
+        if (entry is null) {
+            Task.Run(async () => {
+                Entry = Activator.CreateInstance(Config.TableType)!;
+                Entry = await events.PublishCallback<IEntityCreateCallbackHandler>(Entry, Config, TokenSource.Token);
+            });
+        } else {
+            Entry = entry;
         }
         
         IsVisible = true;
@@ -52,6 +61,7 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor) : 
         if (result is not null && !result.Canceled) {
             ApplyChanges();
             IsVisible = false;
+            Entry = await events.PublishCallback<IEntityUpdateCallbackHandler>(Entry!, Config, TokenSource.Token);
             Completion.SetResult(Entry);
         }
     }

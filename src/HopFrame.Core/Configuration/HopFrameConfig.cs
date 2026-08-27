@@ -26,4 +26,10 @@ public sealed class HopFrameConfig {
 
     /// Determines if the search bar at the top of every page should be visible
     public bool ShowSearchBar { get; set; } = true;
+
+    /// The categories will be displayed as they are entered in this list. If empty, the categories will be sorted alphabetically
+    public string?[]? CategoryOrder { get; set; }
+
+    /// The icons that will be displayed next to the categories
+    public Dictionary<string, string> CategoryIcons { get; set; } = new();
 }

@@ -39,4 +39,7 @@ public class TableConfig {
 
     /// The claim the user needs to edit, delete or create entries in the table
     public string? EditClaim { get; set; }
+
+    /// If set, the table will be displayed under a specific category
+    public string? Category { get; set; }
 }

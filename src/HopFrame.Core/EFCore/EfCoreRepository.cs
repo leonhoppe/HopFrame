@@ -74,25 +74,23 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
     }
     
     public override async Task CreateAsync(TModel entry, CancellationToken ct = default) {
-        var relationTrackers = new List<EntityEntry>();
         foreach (var relation in _table.Properties.Where(p => (p.PropertyType & PropertyType.Relation) != 0)) {
             var value = entityAccessor.GetValueRaw(entry, relation);
             if (value is not null) {
                 if ((relation.PropertyType & PropertyType.List) != 0) {
                     foreach (var obj in (IList)value) {
-                        relationTrackers.Add(context.Attach(obj));
+                        context.Attach(obj);
                     }
                 }
                 else {
-                    relationTrackers.Add(context.Attach(value));
+                    context.Attach(value);
                 }
             }
         }
         
         var tracker = await context.AddAsync(entry, ct);
         await context.SaveChangesAsync(ct);
-        tracker.State = EntityState.Detached;
-        relationTrackers.ForEach(t => t.State = EntityState.Detached);
+        context.ChangeTracker.Clear();
     }
 
     public override async Task UpdateAsync(TModel entry, CancellationToken ct = default) {
@@ -176,6 +174,8 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
                 foreach (var e in entriesForAdding) {
                     currentCollection.Add(e);
                 }
+
+                continue;
             }
 
             var property = navigation.PropertyInfo;

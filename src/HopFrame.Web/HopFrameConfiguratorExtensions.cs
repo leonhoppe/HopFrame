@@ -25,13 +25,15 @@ public static class HopFrameConfiguratorExtensions {
 /// <param name="Route">The href of the entry</param>
 /// <param name="OrderIndex">The sort index of the entry</param>
 /// <param name="AsIFrame">Integrates the page into the layout even when the page itself has a different layout</param>
+/// <param name="Category">If set, the page will be displayed under a specific category</param>
 public readonly record struct CustomPage(
     string Name,
     string? Description,
     string Icon,
     string Route,
     int OrderIndex,
-    bool AsIFrame = false) {
+    bool AsIFrame = false,
+    string? Category = "") {
 
     internal string GetPageRoute() {
         if (AsIFrame)

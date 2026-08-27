@@ -137,4 +137,29 @@ public class HopFrameConfigurator(HopFrameConfig config, IServiceCollection serv
 
         return this;
     }
+
+    public HopFrameConfigurator RegisterCallbackHandler<THandler>() where THandler : IHopFrameCallback {
+        var type = typeof(THandler);
+
+        if (type.IsAssignableTo(typeof(IEntityCreateCallbackHandler))) {
+            Services.AddScoped(typeof(IEntityCreateCallbackHandler), type);
+        }
+        if (type.IsAssignableTo(typeof(IEntityUpdateCallbackHandler))) {
+            Services.AddScoped(typeof(IEntityUpdateCallbackHandler), type);
+        }
+
+        return this;
+    }
+
+    /// <inheritdoc cref="HopFrameConfig.CategoryOrder"/>
+    public HopFrameConfigurator DefineCategoryOrder(params string?[] categories) {
+        Config.CategoryOrder = categories;
+        return this;
+    }
+
+    /// <inheritdoc cref="HopFrameConfig.CategoryIcons"/>
+    public HopFrameConfigurator AddCategoryIcon(string category, string icon) {
+        Config.CategoryIcons[category] = icon;
+        return this;
+    }
 }

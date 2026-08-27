@@ -1,4 +1,5 @@
 ﻿using HopFrame.Core.Configuration;
+using System.ComponentModel;
 
 namespace HopFrame.Core.Configurators;
 
@@ -116,6 +117,12 @@ public class PropertyConfigurator<TModel, TProp>(PropertyConfig config) where TM
     /// <inheritdoc cref="PropertyConfig.DropdownOptions" />
     public PropertyConfigurator<TModel, TProp> AsDropdown(params TProp[] options) {
         Config.DropdownOptions = [.. options.Cast<object>()];
+        return this;
+    }
+
+    /// <inheritdoc cref="PropertyConfig.Presorted" />
+    public PropertyConfigurator<TModel, TProp> Presort(ListSortDirection direction) {
+        Config.Presorted = direction;
         return this;
     }
 }

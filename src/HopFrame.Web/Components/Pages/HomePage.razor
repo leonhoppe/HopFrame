@@ -3,6 +3,7 @@
 @using HopFrame.Web.Components.Components
 @using HopFrame.Web.Services
 @layout HopFrameLayout
+@rendermode InteractiveServer
 
 <PageTitle>@Config.CompanyName</PageTitle>
 
@@ -11,15 +12,20 @@
 
     <br>
     
-    <MudStack Wrap="Wrap.Wrap" Row="true">
-        @foreach (var route in Routes) {
-            <Card
-                Title="@route.Name"
-                Href="@route.Route"
-                Icon="@route.Icon"
-                Description="@route.Description"/>
+    @foreach (var group in GroupedRoutes) {
+        @if (!string.IsNullOrWhiteSpace(group.Key)) {
+            <MudText Typo="Typo.h6" Style="margin-top: 1rem">@group.Key</MudText>
         }
-    </MudStack>
+
+        <MudStack Wrap="Wrap.Wrap" Row="true">
+            @foreach (var route in group) {
+                <Card Title="@route.Name"
+                      Href="@route.Route"
+                      Icon="@route.Icon"
+                      Description="@route.Description" />
+            }
+        </MudStack>
+    }
 </section>
 
 @inject HopFrameConfig Config
@@ -28,23 +34,24 @@
 @code {
 
     public static readonly IList<CustomPage> CustomPages = new List<CustomPage>();
-    
+
     public readonly struct RouteDefinition {
         public required string Route { get; init; }
         public required string Icon { get; init; }
         public required string Name { get; init; }
         public string? Description { get; init; }
         public int OrderIndex { get; init; }
+        public string? Category { get; init; }
 
         public override string ToString() {
             return Name;
         }
     }
 
-    private RouteDefinition[] Routes { get; set; } = null!;
+    private IEnumerable<IGrouping<string?, RouteDefinition>> GroupedRoutes { get; set; } = null!;
 
     protected override async Task OnInitializedAsync() {
-        Routes = await GetRoutes(Config, AuthProvider);
+        GroupedRoutes = await GetGroupedRoutes(Config, AuthProvider);
     }
 
     public static async Task<RouteDefinition[]> GetRoutes(HopFrameConfig config, IAuthProvider authProvider) {
@@ -54,12 +61,13 @@
                 Icon = p.Icon,
                 Name = p.Name,
                 Description = p.Description,
-                OrderIndex = p.OrderIndex
+                OrderIndex = p.OrderIndex,
+                Category = p.Category
             })
             .ToList();
-        
+
         var tables = config.Tables;
-        
+
         foreach (var table in tables) {
             var authorized = await authProvider.IsAuthenticated(table.ViewClaim, CancellationToken.None);
             if (authorized)
@@ -68,11 +76,38 @@
                     Icon = Icons.Material.Filled.TableChart,
                     Name = table.DisplayName,
                     Description = table.Description,
-                    OrderIndex = table.OrderIndex
+                    OrderIndex = table.OrderIndex,
+                    Category = table.Category
                 });
         }
-        
+
         return pages.OrderBy(p => p.OrderIndex).ToArray();
+    }
+
+    public static async Task<IEnumerable<IGrouping<string?, RouteDefinition>>> GetGroupedRoutes(HopFrameConfig config, IAuthProvider authProvider)  {
+        var routes = await GetRoutes(config, authProvider);
+
+        IComparer<string?> comparer;
+        if (config.CategoryOrder is null || config.CategoryOrder.Length == 0)
+            comparer = StringComparer.InvariantCulture;
+        else {
+            var orderLookup = config.CategoryOrder
+                .Select((c, i) => new { Category = c ?? string.Empty, Index = i })
+                .ToDictionary(x => x.Category, x => x.Index);
+
+            comparer = Comparer<string?>.Create((a, b) => {
+                var aIndex = a is not null && orderLookup.TryGetValue(a, out var ai) ? ai : int.MaxValue;
+                var bIndex = b is not null && orderLookup.TryGetValue(b, out var bi) ? bi : int.MaxValue;
+
+                var result = aIndex.CompareTo(bIndex);
+
+                return result != 0 ? result : StringComparer.InvariantCulture.Compare(a, b);
+            });
+        }
+
+        return routes
+            .GroupBy(r => r.Category)
+            .OrderBy(g => g.Key, comparer);
     }
 
 }

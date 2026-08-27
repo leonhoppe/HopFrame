@@ -108,4 +108,10 @@ public class TableConfigurator<TModel>(TableConfig config) where TModel : class 
         Config.PreferredProperty = prop.Identifier;
         return this;
     }
+
+    /// <inheritdoc cref="TableConfig.Category"/>
+    public TableConfigurator<TModel> SetCategory(string? category) {
+        Config.Category = category;
+        return this;
+    }
 }

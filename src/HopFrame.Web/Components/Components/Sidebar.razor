@@ -2,14 +2,27 @@
 @using HopFrame.Web.Components.Pages
 @using HopFrame.Web.Services
 
-<MudDrawer Open="true" Fixed="true" ClipMode="DrawerClipMode.Docked" Width="200px">
+@rendermode InteractiveServer
+
+<MudDrawer Open="true" Fixed="true" ClipMode="DrawerClipMode.Docked" Width="250px" Style="padding-top: 64px; position: fixed" Height="100dvh">
     <MudNavMenu>
         <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SpaceDashboard" Href="admin">Dashboard</MudNavLink>
         
         <br>
         
-        @foreach (var route in Routes) {
-            <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route" Ripple="false">@route.Name</MudNavLink>
+        @foreach (var group in GroupedRoutes) {
+            @if (string.IsNullOrWhiteSpace(group.Key)) {
+                @foreach (var route in group) {
+                    <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route" Ripple="false">@route.Name</MudNavLink>
+                }
+            }
+            else {
+                <MudNavGroup Title="@group.Key" Expanded="true" Ripple="false" Icon="@(Config.CategoryIcons.TryGetValue(group.Key, out var i) ? i : null)">
+                    @foreach (var route in group) {
+                        <MudNavLink Match="NavLinkMatch.All" Icon="@route.Icon" Href="@route.Route" Ripple="false">@route.Name</MudNavLink>
+                    }
+                </MudNavGroup>
+            }
         }
     </MudNavMenu>
 </MudDrawer>
@@ -19,10 +32,10 @@
 
 @code {
 
-    private HomePage.RouteDefinition[] Routes { get; set; } = null!;
+    private IEnumerable<IGrouping<string?, HomePage.RouteDefinition>> GroupedRoutes { get; set; } = null!;
 
     protected override async Task OnInitializedAsync() {
-        Routes = await HomePage.GetRoutes(Config, AuthProvider);
+        GroupedRoutes = await HomePage.GetGroupedRoutes(Config, AuthProvider);
     }
 
 }

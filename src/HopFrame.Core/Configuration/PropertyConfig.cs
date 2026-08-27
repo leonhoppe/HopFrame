@@ -1,4 +1,6 @@
-﻿namespace HopFrame.Core.Configuration;
+﻿using System.ComponentModel;
+
+namespace HopFrame.Core.Configuration;
 
 /// <summary>
 /// The configuration for a single property
@@ -66,6 +68,9 @@ public class PropertyConfig {
 
     /// Determines the maximum number of Items displayed in the dropdown (only applies to relation dropdowns)
     public int MaxDropdownItems { get; set; } = 50;
+
+    /// If set, the table will initially be sorted by this property in the specified direction
+    public ListSortDirection? Presorted { get; set; }
 }
 
 /// <summary>

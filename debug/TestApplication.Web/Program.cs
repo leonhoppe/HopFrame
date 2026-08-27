@@ -39,9 +39,12 @@ builder.Services.AddHopFrame(config => {
                     return ["Email needs to contain a '.'"];
 
                 return [];
-            });
+            })
+            .Presort(ListSortDirection.Ascending);
 
         table.SetPreferredProperty(u => u.Email);
+
+        table.SetCategory("General");
     });
 
     config.Table<Post>(table => {
@@ -55,6 +58,8 @@ builder.Services.AddHopFrame(config => {
         table.Property(p => p.Sender)
             .AsDropdown()
             .SetTypeRaw(PropertyType.Text | PropertyType.Relation | PropertyType.Nullable);
+
+        table.SetCategory("General");
     });
 
     config.Table<Typer>(table => {
@@ -69,6 +74,8 @@ builder.Services.AddHopFrame(config => {
             .SetType(PropertyType.PhoneNumber);
 
         table.SetViewClaim("deny");
+
+        table.SetCategory("Advanced");
     });
 
     config.AddCustomPage(new() {
@@ -77,7 +84,8 @@ builder.Services.AddHopFrame(config => {
         Icon = Icons.Material.Filled.House,
         Route = "/",
         OrderIndex = 2,
-        AsIFrame = true
+        AsIFrame = true,
+        Category = "Advanced"
     });
 
     config.SetCompanyName("Testing");
@@ -94,6 +102,8 @@ builder.Services.AddHopFrame(config => {
         table.AddProperty<User>("Owner")
             .IsRelation(config.Table<User>());
     });
+
+    config.AddCategoryIcon("Advanced", Icons.Material.Filled.AccessAlarm);
 });
 
 var app = builder.Build();

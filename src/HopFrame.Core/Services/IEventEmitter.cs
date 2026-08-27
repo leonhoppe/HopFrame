@@ -17,6 +17,16 @@ public interface IEventEmitter {
     /// <param name="ct">indicates that the request was canceled</param>
     void PublishEvent(EventType type, object entity, TableConfig config, CancellationToken ct);
 
+    /// <summary>
+    /// Executes all registered Callback handler in the DI
+    /// </summary>
+    /// <typeparam name="TCallback">The type of the callback</typeparam>
+    /// <param name="entity">The affected entity</param>
+    /// <param name="config">The affected table</param>
+    /// <param name="ct">indicates that the request was canceled</param>
+    /// <returns>The resulting entity</returns>
+    Task<object> PublishCallback<TCallback>(object entity, TableConfig config, CancellationToken ct) where TCallback : IHopFrameCallback;
+
 }
 
 /// <summary>

@@ -8,7 +8,7 @@ using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor, ILogger<Table> logger) : ComponentBase {
+public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor, ILogger<Table> logger, IEventEmitter events) : ComponentBase {
     
     private readonly record struct TableEntry {
         public object Entry { get; init; }
@@ -69,7 +69,33 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
                 SelectedEntries.Add(entry);
             }
         }
+
+        var presorted = Config.Properties.FirstOrDefault(p => p.Presorted is not null);
+        if (presorted is not null) {
+            var direction = presorted.Presorted switch {
+                ListSortDirection.Ascending => SortDirection.Ascending,
+                ListSortDirection.Descending => SortDirection.Descending,
+                _ => SortDirection.None
+            };
+
+            _currentSort = new(presorted.Identifier, direction);
+        }
+
         logger.LogDebug("Table component initialized for table '{table}'", Config.DisplayName);
+    }
+
+    protected override void OnAfterRender(bool firstRender) {
+        if (!firstRender) return;
+        var presorted = Config.Properties.FirstOrDefault(p => p.Presorted is not null);
+        if (presorted is not null) {
+#pragma warning disable BL0005
+            SortDirections[presorted.Identifier].SortDirection = presorted.Presorted switch {
+                ListSortDirection.Ascending => SortDirection.Ascending,
+                ListSortDirection.Descending => SortDirection.Descending,
+                _ => SortDirection.None
+            };
+#pragma warning restore BL000
+        }
     }
 
     public Task Reload() => Manager.ReloadServerData();
