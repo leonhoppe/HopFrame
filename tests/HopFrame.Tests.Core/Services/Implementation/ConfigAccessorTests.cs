@@ -28,6 +28,10 @@ public class ConfigAccessorTests {
         public Task DeleteGenericAsync(object entry, CancellationToken ct) {
             throw new NotImplementedException();
         }
+
+        public Task<object?> GetUniqueEntryGenericAsync(object[] keys, CancellationToken ct) {
+            throw new NotImplementedException();
+        }
     }
     
     private TableConfig CreateTable(string id, string route, Type type)

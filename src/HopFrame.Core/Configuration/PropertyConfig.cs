@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace HopFrame.Core.Configuration;
 
@@ -11,9 +12,10 @@ public class PropertyConfig {
     
     /// [GENERATED] The displayed name of the Property
     public required string DisplayName { get; set; }
-    
+
     /// [GENERATED] The real type of the property
-    public required Type Type { get; set; }
+    [JsonIgnore]
+    public Type Type { get; set; } = null!;
 
     /// [GENERATED] The table that the property points to
     public string? RelationTable { get; set; }
@@ -49,18 +51,22 @@ public class PropertyConfig {
     public int OrderIndex { get; set; }
 
     /// [GENERATED] The table that owns this property
+    [JsonIgnore]
     public TableConfig Table { get; init; } = null!;
 
     /// If set, the function determines the value that should be displayed
+    [JsonIgnore]
     public Func<object, object?>? Getter { get; set; }
 
     /// If set, the function is executed to format the user entered value for the property
+    [JsonIgnore]
     public Action<object, object?>? Setter { get; set; }
     
     /// <summary>
     /// If set, the function is executed to validate if the provided value is valid.<br/>
     /// It should return a list of errors that were found, or an empty list if no error was found
     /// </summary>
+    [JsonIgnore]
     public Func<object, IEnumerable<string>>? Validator { get; set; }
 
     /// If entries exist, the property will be displayed as a dropdown of these options (like an enum selector)

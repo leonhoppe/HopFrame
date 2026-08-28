@@ -45,6 +45,13 @@ public interface IHopFrameRepository {
     /// <param name="entry">The entry that needs to be deleted</param>
     public Task DeleteGenericAsync(object entry, CancellationToken ct);
 
+    /// <summary>
+    /// Returns a single entry from the dataset that matches the provided keys
+    /// </summary>
+    /// <param name="keys">The keys (or key) of the entry</param>
+    /// <returns>The entry that matches the keys or null if none was found</returns>
+    public Task<object?> GetUniqueEntryGenericAsync(object[] keys, CancellationToken ct);
+
 }
 
 /// <summary>

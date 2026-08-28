@@ -37,4 +37,8 @@ public class VirtualRepo : HopFrameRepository<Dictionary<string, object?>> {
         Entries.Remove(entry);
         return Task.CompletedTask;
     }
+
+    public override Task<Dictionary<string, object?>?> GetUniqueEntryAsync(object[] keys, CancellationToken ct) {
+        return Task.FromResult<Dictionary<string, object?>?>(null);
+    }
 }

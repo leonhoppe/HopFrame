@@ -13,7 +13,10 @@ internal sealed class SortService(IEntityAccessor entityAccessor, IConfigAccesso
         if (string.IsNullOrWhiteSpace(sorting.PropertyIdentifier))
             return dataset;
 
-        var property = table.Properties.First(p => p.Identifier == sorting.PropertyIdentifier);
+        var property = table.Properties.FirstOrDefault(p => p.Identifier == sorting.PropertyIdentifier);
+        if (property is null)
+            return dataset;
+        
         return (IQueryable<TModel>)SortDataByProperty(dataset, property,
             sorting.Direction == ListSortDirection.Descending, executeIfUncompilable);
     }

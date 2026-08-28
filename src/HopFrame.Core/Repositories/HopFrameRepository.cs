@@ -22,6 +22,9 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     
     /// <inheritdoc cref="DeleteGenericAsync"/>
     public abstract Task DeleteAsync(TModel entry, CancellationToken ct = default);
+
+    /// <inheritdoc cref="GetUniqueEntryGenericAsync"/>
+    public abstract Task<TModel?> GetUniqueEntryAsync(object[] keys, CancellationToken ct);
     
     /// <inheritdoc/>
     public async Task<IEnumerable<object>> LoadPageGenericAsync(int page, int perPage, Sorting sorting, CancellationToken ct) {
@@ -46,6 +49,11 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     /// <inheritdoc/>
     public Task DeleteGenericAsync(object entry, CancellationToken ct) {
         return DeleteAsync((TModel)entry, ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task<object?> GetUniqueEntryGenericAsync(object[] keys, CancellationToken ct) {
+        return await GetUniqueEntryAsync(keys, ct);
     }
 
     /// <summary>

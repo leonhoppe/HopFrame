@@ -1,4 +1,6 @@
-﻿namespace HopFrame.Core.Configuration;
+﻿using System.Text.Json.Serialization;
+
+namespace HopFrame.Core.Configuration;
 
 /// <summary>
 /// The configuration for a table
@@ -11,10 +13,12 @@ public class TableConfig {
     public IList<PropertyConfig> Properties { get; set; } = new List<PropertyConfig>();
 
     /// [GENERATED] The type of the model
-    public required Type TableType { get; set; }
+    [JsonIgnore]
+    public Type TableType { get; set; } = null!;
 
     /// [GENERATED] The type identifier for the repository
-    public required Type RepositoryType { get; set; }
+    [JsonIgnore]
+    public Type RepositoryType { get; set; } = null!;
 
     /// [GENERATED] If the type of the table is an <see cref="IDictionary{string,object}"/> it is treated as a virtual table
     public bool IsDictionary { get; set; }
@@ -35,9 +39,11 @@ public class TableConfig {
     public string? PreferredProperty { get; set; }
 
     /// The claim the user needs to access the table
+    [JsonIgnore]
     public string? ViewClaim { get; set; }
 
     /// The claim the user needs to edit, delete or create entries in the table
+    [JsonIgnore]
     public string? EditClaim { get; set; }
 
     /// If set, the table will be displayed under a specific category

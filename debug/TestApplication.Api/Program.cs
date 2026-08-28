@@ -1,9 +1,8 @@
 using System.ComponentModel;
 using HopFrame.Core.Configuration;
 using HopFrame.Core.EFCore;
-using HopFrame.Web;
+using HopFrame.API;
 using Microsoft.EntityFrameworkCore;
-using MudBlazor;
 using TestApplication;
 using TestApplication.Models;
 
@@ -62,15 +61,6 @@ builder.Services.AddHopFrame(config => {
         table.SetViewClaim("deny");
     });
 
-    config.AddCustomPage(new() {
-        Name = "Custom Page",
-        Description = "This is a custom page",
-        Icon = Icons.Material.Filled.House,
-        Route = "/",
-        OrderIndex = 2,
-        AsIFrame = true
-    });
-
     config.SetCompanyName("Testing");
 
     config.AddRepository<VirtualRepo, Dictionary<string, object?>>(table => {
@@ -84,6 +74,8 @@ builder.Services.AddHopFrame(config => {
         
         table.AddProperty<User>("Owner")
             .IsRelation(config.Table<User>());
+
+        table.HasIdentifier("Id");
     });
 
     config.ShowSearchBar(false);
@@ -143,12 +135,13 @@ await using (var scope = app.Services.CreateAsyncScope()) {
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
+    app.MapSwaggerUI("swagger", options => {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();
 
-app.MapHopFrame();
-
-app.MapGet("/", () => Results.Ok("Home Page!"));
+app.MapHopFrameEndpoints();
 
 app.Run();

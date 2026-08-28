@@ -197,6 +197,30 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
         await context.SaveChangesAsync(ct);
     }
 
+    public override async Task<TModel?> GetUniqueEntryAsync(object[] keys, CancellationToken ct) {
+        var entityType = context.Model.FindEntityType(typeof(TModel));
+        var key = entityType!.FindPrimaryKey();
+
+        if (key is null) {
+            logger.LogCritical("In order to update an entry of table {name}, the model cannot be keyless!", _table.DisplayName);
+            return null;
+        }
+
+        var query = context.Set<TModel>().AsNoTracking();
+        query = IncludeForeignKeys(query);
+
+        var parameter = Expression.Parameter(typeof(TModel), "e");
+        var body = key.Properties
+            .Select((p, i) =>
+                Expression.Equal(
+                    Expression.Property(parameter, p.Name),
+                    Expression.Constant(keys[i], p.ClrType)))
+            .Aggregate(Expression.AndAlso);
+
+        var predicate = Expression.Lambda<Func<TModel, bool>>(body, parameter);
+        return await query.FirstOrDefaultAsync(predicate, ct);
+    }
+
     public async Task<TModel?> GetTrackedEntryAsync(object?[] keyValues, CancellationToken ct) {
         var entityType = context.Model.FindEntityType(typeof(TModel));
         var key = entityType!.FindPrimaryKey();
