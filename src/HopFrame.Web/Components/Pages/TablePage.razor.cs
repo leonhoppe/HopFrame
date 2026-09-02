@@ -62,12 +62,17 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         
         logger.LogDebug("User is authorized to add an entry on table '{table}'", Table.DisplayName);
         
-        await Repository.CreateGenericAsync(entry, TokenSource.Token);
-        await TableComponent.Reload();
-        snackbar.Add("Entry added", Severity.Success);
-        logger.LogDebug("An entry was successfully added on table '{table}'", Table.DisplayName);
-        
-        eventEmitter.PublishEvent(EventType.EntityCreated, entry, Table, TokenSource.Token);
+        try {
+            await Repository.CreateGenericAsync(entry, TokenSource.Token);
+            await TableComponent.Reload();
+            snackbar.Add("Entry added", Severity.Success);
+            logger.LogDebug("An entry was successfully added on table '{table}'", Table.DisplayName);
+            eventEmitter.PublishEvent(EventType.EntityCreated, entry, Table, TokenSource.Token);
+        }
+        catch (Exception e) {
+            logger.LogError(e, "An error occured while trying to add an entry to the table '{table}'", Table.DisplayName);
+            snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+        }
     }
 
     private async Task OnEdit(object entry) {
@@ -81,12 +86,17 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         
         logger.LogDebug("User is authorized to edit an entry on table '{table}'", Table.DisplayName);
         
-        await Repository.UpdateGenericAsync(newEntry, TokenSource.Token);
-        await TableComponent.Reload();
-        snackbar.Add("Entry updated", Severity.Success);
-        logger.LogDebug("An entry was successfully edited on table '{table}'", Table.DisplayName);
-        
-        eventEmitter.PublishEvent(EventType.EntityUpdated, entry, Table, TokenSource.Token);
+        try {
+            await Repository.UpdateGenericAsync(newEntry, TokenSource.Token);
+            await TableComponent.Reload();
+            snackbar.Add("Entry updated", Severity.Success);
+            logger.LogDebug("An entry was successfully edited on table '{table}'", Table.DisplayName);
+            eventEmitter.PublishEvent(EventType.EntityUpdated, entry, Table, TokenSource.Token);
+        }
+        catch (Exception e) {
+            logger.LogError(e, "An error occured while trying to edit an entry on the table '{table}'", Table.DisplayName);
+            snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+        }
     }
 
     private async Task OnDelete(object entry) {
@@ -101,12 +111,17 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
             
             logger.LogDebug("User is authorized to delete an entry on table '{table}'", Table.DisplayName);
             
-            await Repository.DeleteGenericAsync(entry, TokenSource.Token);
-            await TableComponent.Reload();
-            snackbar.Add("Entry deleted", Severity.Success);
-            logger.LogDebug("An entry was successfully deleted on table '{table}'", Table.DisplayName);
-            
-            eventEmitter.PublishEvent(EventType.EntityDeleted, entry, Table, TokenSource.Token);
+            try {
+                await Repository.DeleteGenericAsync(entry, TokenSource.Token);
+                await TableComponent.Reload();
+                snackbar.Add("Entry deleted", Severity.Success);
+                logger.LogDebug("An entry was successfully deleted on table '{table}'", Table.DisplayName);
+                eventEmitter.PublishEvent(EventType.EntityDeleted, entry, Table, TokenSource.Token);
+            }
+            catch (Exception e) {
+                logger.LogError(e, "An error occured while trying to delete an entry on the table '{table}'", Table.DisplayName);
+                snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+            }
         }
     }
 }
