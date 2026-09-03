@@ -22,6 +22,10 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IE
     
     private EditorMode Mode { get; set; }
 
+    private bool IsLoading { get; set; }
+
+    private bool GlobalyLoading { get; set; }
+
     private TaskCompletionSource<object?> Completion { get; set; } = null!;
 
     private Dictionary<string, object?> UpdatedValues { get; set; } = null!;
@@ -29,6 +33,7 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IE
     private Dictionary<string, string?> ErrorMessages { get; set; } = null!;
 
     public Task<object?> Present(object? entry) {
+        IsLoading = true;
         Completion = new ();
         Mode = entry is null ? EditorMode.Creator : EditorMode.Editor;
         UpdatedValues = new();
@@ -39,12 +44,15 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IE
         }
 
         if (entry is null) {
-            Task.Run(async () => {
+            InvokeAsync(async () => {
                 Entry = Activator.CreateInstance(Config.TableType)!;
                 Entry = await events.PublishCallback<IEntityCreateCallbackHandler>(Entry, Config, TokenSource.Token);
+                IsLoading = false;
+                StateHasChanged();
             });
         } else {
             Entry = entry;
+            IsLoading = false;
         }
         
         IsVisible = true;
@@ -59,10 +67,13 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IE
         var result = await dialog.Result;
 
         if (result is not null && !result.Canceled) {
+            GlobalyLoading = true;
+            StateHasChanged();
             ApplyChanges();
             IsVisible = false;
             Entry = await events.PublishCallback<IEntityUpdateCallbackHandler>(Entry!, Config, TokenSource.Token);
             Completion.SetResult(Entry);
+            GlobalyLoading = false;
         }
     }
 

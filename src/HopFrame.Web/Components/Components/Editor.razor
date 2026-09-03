@@ -1,5 +1,9 @@
 ﻿@inherits CancellableComponent
 
+<MudOverlay Visible="GlobalyLoading" DarkBackground="true">
+    <MudProgressCircular Indeterminate="true" />
+</MudOverlay>
+
 <MudDrawer
     Anchor="Anchor.Right"
     Elevation="1"
@@ -22,7 +26,11 @@
         
         <MudForm Style="overflow-y: auto">
             <MudFocusTrap>
-                <MudStack Spacing="5">
+                <MudStack Spacing="5" Style="position: relative;">
+                    <MudOverlay Visible="IsLoading" Absolute="true" DarkBackground="true">
+                        <MudProgressCircular Indeterminate="true" />
+                    </MudOverlay>
+
                     @if (Entry is not null) {
                         @foreach (var property in GetProperties()) {
                             <PropertyInput
@@ -38,7 +46,7 @@
         </MudForm>
 
         <MudStack Row="true" Style="margin-top: auto">
-            <MudButton Color="Color.Primary" OnClick="@(Submit)">Save</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(Submit)" Disabled="IsLoading">Save</MudButton>
             <MudButton OnClick="@(Cancel)">Cancel</MudButton>
         </MudStack>
     </MudStack>
