@@ -37,4 +37,8 @@ public class VirtualRepo : HopFrameRepository<Dictionary<string, object?>> {
         Entries.Remove(entry);
         return Task.CompletedTask;
     }
+
+    public override Task<SearchResult> SearchAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct = default) {
+        throw new NotImplementedException();
+    }
 }

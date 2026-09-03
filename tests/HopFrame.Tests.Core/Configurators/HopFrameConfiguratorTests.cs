@@ -31,6 +31,10 @@ public class HopFrameConfiguratorTests {
         public Task DeleteGenericAsync(object entry, CancellationToken ct) {
             throw new NotImplementedException();
         }
+
+        public Task<SearchResult> SearchGenericAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct) {
+            throw new NotImplementedException();
+        }
     }
 
     private HopFrameConfig CreateConfig()

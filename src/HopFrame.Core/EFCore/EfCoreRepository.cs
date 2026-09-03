@@ -73,7 +73,31 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
             return new(Enumerable.Empty<TModel>(), 1);
         }
     }
-    
+
+    public override async Task<SearchResult> SearchAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct = default) {
+        try {
+            var set = context.Set<TModel>();
+            var query = set
+                .AsNoTracking();
+
+            query = IncludeForeignKeys(query);
+            query = searchService.Search(query, _table, properties);
+            query = sortService.Sort(query, sorting, _table);
+
+            var count = await query.CountAsync(ct);
+            var data = await query
+                .Skip(page * perPage)
+                .Take(perPage)
+                .ToArrayAsync(ct);
+
+            return new(data, count);
+        }
+        catch (Exception e) {
+            logger.LogError(e, "Cannot load table {name}", _table.Identifier);
+            return new(Enumerable.Empty<TModel>(), 1);
+        }
+    }
+
     public override async Task CreateAsync(TModel entry, CancellationToken ct = default) {
         foreach (var relation in _table.Properties.Where(p => (p.PropertyType & PropertyType.Relation) != 0)) {
             var value = entityAccessor.GetValueRaw(entry, relation);
@@ -269,5 +293,5 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
         var exp = Expression.Lambda<Func<TModel, TModel, bool>>(body, xParameter, yParameter).Compile();
         return exp(x, y);
     }
-    
+
 }

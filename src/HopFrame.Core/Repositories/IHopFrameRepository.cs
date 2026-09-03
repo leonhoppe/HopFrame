@@ -26,7 +26,15 @@ public interface IHopFrameRepository {
     /// <param name="perPage">The amount of entries that should be loaded</param>
     public Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct);
 
-    
+    /// <summary>
+    /// Searches through the whole dataset and returns a page of matching entries
+    /// </summary>
+    /// <param name="properties">The search properties provided by the user</param>
+    /// <param name="page">The index of the current page (starts at 0)</param>
+    /// <param name="perPage">The amount of entries that should be loaded</param>
+    public Task<SearchResult> SearchGenericAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct);
+
+
     /// <summary>
     /// Saves the newly created entry to the dataset
     /// </summary>
@@ -60,3 +68,12 @@ public readonly record struct SearchResult(IEnumerable<object> Result, int PageC
 /// <param name="PropertyIdentifier">The unique identifier of the property that should be sorted (if null, sorting can be ignored)</param>
 /// <param name="Direction">The direction of the sorting</param>
 public readonly record struct Sorting(string? PropertyIdentifier, ListSortDirection Direction);
+
+/// <summary>
+/// Represents the settings applied in the advanced search dialog
+/// </summary>
+/// <param name="Identifier">The identifier of the property that should be sorted</param>
+/// <param name="Equal">If set indicates that the property should be equal to this value</param>
+/// <param name="LessThan">If set indicates that the property should be less than this value</param>
+/// <param name="MoreThat">Is set indicates that the property should be more than this value</param>
+public readonly record struct AdvancedSearchProperty(string Identifier, object? Equal, object? LessThan, object? MoreThan);

@@ -21,7 +21,7 @@
             T="object"
             Value="_formattedValue"
             ValueChanged="@(v => OnValueChanged(v))"
-            Label="@(Config.DisplayName + Config.PropertyType.HasFlag(PropertyType.Nullable))"
+            Label="@(Config.DisplayName)"
             Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
             Disabled="Disabled"
             Variant="Variant"

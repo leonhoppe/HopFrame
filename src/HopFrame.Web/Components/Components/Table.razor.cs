@@ -46,9 +46,13 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
 
     private Dictionary<string, MudTableSortLabel<object>> SortDirections { get; set; } = new();
 
+    private bool ShowAdvancedSearch { get; set; }
+
     private KeyValuePair<string, SortDirection>? _currentSort;
 
     private string _searchText = string.Empty;
+
+    private List<AdvancedSearchProperty> _advancedSearchProperties = new();
     
     protected override void OnInitialized() {
         base.OnInitialized();
@@ -126,7 +130,13 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
                 logger.LogDebug("The new sort direction for table '{table}' is {sort} on property '{prop}'", Config.DisplayName, sort.Direction, sort.PropertyIdentifier);
             }
 
-            if (string.IsNullOrWhiteSpace(_searchText)) {
+            if (_advancedSearchProperties.Any()) {
+                var result = await Repository.SearchGenericAsync(_advancedSearchProperties, state.Page, state.PageSize, sort, ct);
+                entries = result.Result;
+                total = result.PageCount;
+                logger.LogDebug("A total of {total} entries were found for table {table} with search query '{search}', displaying {amount} entries on page {page}", total, Config.DisplayName, _searchText, state.PageSize, state.Page);
+            }
+            else if (string.IsNullOrWhiteSpace(_searchText)) {
                 entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, sort, ct);
                 total = await Repository.CountAsync(ct);
                 logger.LogDebug("A total of {total} entries were found for table {table}, displaying {amount} entries on page {page}", total, Config.DisplayName, state.PageSize, state.Page);
@@ -183,6 +193,20 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
         Manager.CurrentPage = 0;
 #pragma warning restore BL0005
         _searchText = searchText;
+        await Manager.ReloadServerData();
+    }
+
+    private async Task OnAdvancedSearch(string identifier, AdvancedSearchProperty? property) {
+        var oldValue = _advancedSearchProperties.FirstOrDefault(p => p.Identifier == identifier);
+        if (oldValue.Identifier == identifier)
+            _advancedSearchProperties.Remove(oldValue);
+
+        if (property.HasValue)
+            _advancedSearchProperties.Add(property.Value);
+
+#pragma warning disable BL0005
+        Manager.CurrentPage = 0;
+#pragma warning restore BL0005
         await Manager.ReloadServerData();
     }
 

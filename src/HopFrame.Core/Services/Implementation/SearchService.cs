@@ -1,10 +1,11 @@
 ﻿using System.Linq.Expressions;
 using HopFrame.Core.Configuration;
+using HopFrame.Core.Repositories;
 
 namespace HopFrame.Core.Services.Implementation;
 
 internal sealed class SearchService(IConfigAccessor accessor) : ISearchService {
-    
+
     public IQueryable<TModel> Search<TModel>(IQueryable<TModel> dataset, TableConfig table, string searchTerm) where TModel : notnull {
         if (string.IsNullOrWhiteSpace(searchTerm))
             return dataset;
@@ -39,7 +40,12 @@ internal sealed class SearchService(IConfigAccessor accessor) : ISearchService {
         var lambda = Expression.Lambda<Func<TModel, bool>>(combined, parameter);
         return dataset.Where(lambda);
     }
-    
+
+    public IQueryable<TModel> Search<TModel>(IQueryable<TModel> dataset, TableConfig table, IEnumerable<AdvancedSearchProperty> properties) where TModel : notnull {
+        Console.WriteLine(string.Join(", ", properties.Select(p => $"{p.Identifier}: ={p.Equal}, <{p.LessThan}, >{p.MoreThan}")));
+        return dataset;
+    }
+
     private Expression? BuildPropertyAccess(ParameterExpression parameter, PropertyConfig property) {
         if ((property.PropertyType & PropertyType.List) != 0)
             return null;

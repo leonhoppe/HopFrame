@@ -1,0 +1,89 @@
+﻿@using HopFrame.Core.Configuration
+
+@if (Property.PropertyType.HasFlag(PropertyType.Relation)) {
+    <MudAutocomplete T="RelationResult"
+                     Label="@Property.DisplayName"
+                     Margin="Margin.Dense"
+                     Variant="Variant.Outlined"
+                     Adornment="Adornment.Start"
+                     AdornmentIcon="@(CurrentTypeIcon)"
+                     IconSize="Size.Small"
+                     Clearable="true"
+                     FullWidth="true"
+                     Style="@($"min-width: {MinWidth}px;")"
+                     @bind-ErrorText="Error"
+                     Error="@(Error is not null)"
+                     MaxItems="null"
+                     ValueChanged="@(v => OnInputValueChanged(v.Value))"
+                     ShowProgressIndicator="true"
+                     SearchFunc="@(SearchInDropdown)"
+                     ToStringFunc="@(v => v.Label)"/>
+}
+else if (CleanedType == PropertyType.Boolean) {
+    <MudStack Row="true">
+        <MudSwitch T="bool"
+                    Size="Size.Small"
+                    ValueChanged="@(val => OnInputValueChanged(val))" />
+
+        @if (MainValue is not null) {
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                            Size="Size.Small"
+                            OnClick="@(() => OnInputValueChanged(null))" />
+        }
+    </MudStack>
+}
+else if (CleanedType == PropertyType.Enum) {
+    <MudSelect T="object"
+                Label="@Property.DisplayName"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                AdornmentIcon="@(CurrentTypeIcon)"
+                IconSize="Size.Small"
+                Clearable="true"
+                FullWidth="true"
+                Style="@($"min-width: {MinWidth}px;")"
+                @bind-ErrorText="Error"
+                Error="@(Error is not null)"
+                ValueChanged="OnInputValueChanged">
+
+        @foreach (var value in Enum.GetValues(Property.Type)) {
+            <MudSelectItem Value="value">@Enum.GetName(Property.Type, value)</MudSelectItem>
+        }
+
+    </MudSelect>
+}
+else {
+    <MudStack Row="true" Spacing="1">
+        <MudTextField
+            T="string"
+            Label="@Property.DisplayName"
+            Margin="Margin.Dense"
+            Variant="Variant.Outlined"
+            Adornment="Adornment.Start"
+            AdornmentIcon="@(CurrentTypeIcon)"
+            IconSize="Size.Small"
+            OnAdornmentClick="@(GetAppliableTypes().Length > 1 ? ToggleCurrentType : null)"
+            Clearable="true"
+            FullWidth="true"
+            Style="@($"min-width: {MinWidth}px;")"
+            @bind-ErrorText="Error"
+            Error="@(Error is not null)"
+            DebounceInterval="200"
+            OnDebounceIntervalElapsed="OnInputValueChanged" />
+
+        @if (CurrentType == "<>") {
+            <MudTextField
+                T="string"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Clearable="true"
+                FullWidth="true"
+                Style="@($"min-width: {MinWidth}px; margin-top: 4px")"
+                @bind-ErrorText="SecondaryError"
+                Error="@(SecondaryError is not null)"
+                DebounceInterval="200"
+                OnDebounceIntervalElapsed="OnSecondInputValueChanged" />
+        }
+    </MudStack>
+}

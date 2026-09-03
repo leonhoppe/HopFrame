@@ -9,6 +9,7 @@
           HorizontalScrollbar="true"
           FixedHeader="true"
           FixedFooter="true"
+          CustomHeader="true"
           Elevation="0"
           Height="@(SelectionMode == SelectionMode.None ? "calc(100vh - 180px)" : "70vh")"
           OnRowClick="@(OnRowClick)"
@@ -28,7 +29,17 @@
                 FullWidth="true"
                 Clearable="true"
                 DebounceInterval="200"
-                OnDebounceIntervalElapsed="@(s => OnSearch(s))"/>
+                OnDebounceIntervalElapsed="@(s => OnSearch(s))" />
+
+            <MudTooltip Text="Advanced Search">
+                <MudIconButton
+                    Icon="@Icons.Material.Filled.ManageSearch"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Small"
+                    Style="width: 37px; height: 37px"
+                    OnClick="@(() => ShowAdvancedSearch = !ShowAdvancedSearch)" />
+            </MudTooltip>
+
             @if (ShowActionButtons) {
                 <MudButton EndIcon="@Icons.Material.Filled.Add"
                            Style="margin-right: 0.5rem"
@@ -39,28 +50,46 @@
         </MudStack>
     </ToolBarContent>
     <HeaderContent>
-        @if (SelectionMode != SelectionMode.None) {
-            <MudTh>
-                @if (SelectionMode == SelectionMode.Multiple) {
-                    <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => SelectedEntries.Clear())" Size="Size.Small" />
-                }
-            </MudTh>
-        }
+        <MudTHeadRow>
+            @if (SelectionMode != SelectionMode.None) {
+                <MudTh>
+                    @if (SelectionMode == SelectionMode.Multiple) {
+                        <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => SelectedEntries.Clear())" Size="Size.Small" />
+                    }
+                </MudTh>
+            }
         
-        @foreach (var prop in OrderedProperties) {
-            <MudTh>
-                <MudTableSortLabel
-                    T="object"
-                    @ref="SortDirections[prop.Identifier]"
-                    SortDirectionChanged="@(dir => OnSort(prop, dir))"
-                    Enabled="@prop.Sortable">
-                    @prop.DisplayName
-                </MudTableSortLabel>
-            </MudTh>
-        }
+            @foreach (var prop in OrderedProperties) {
+                <MudTh>
+                    <MudTableSortLabel
+                        T="object"
+                        @ref="SortDirections[prop.Identifier]"
+                        SortDirectionChanged="@(dir => OnSort(prop, dir))"
+                        Enabled="@prop.Sortable">
+                        @prop.DisplayName
+                    </MudTableSortLabel>
+                </MudTh>
+            }
 
-        @if (ShowActionButtons) {
-            <MudTh>Actions</MudTh>
+            @if (ShowActionButtons) {
+                <MudTh>Actions</MudTh>
+            }
+        </MudTHeadRow>
+
+        @if (ShowAdvancedSearch) {
+            <MudTHeadRow>
+                @foreach (var prop in OrderedProperties) {
+                    <MudTh Style="padding: 0.5rem;">
+                        @if (prop.Searchable) {
+                            <AdvancedSearchField Property="prop" OnValueChanged="@((value) => OnAdvancedSearch(prop.Identifier, value))" />
+                        }
+                    </MudTh>
+                }
+
+                @if (ShowActionButtons) {
+                    <MudTh />
+                }
+            </MudTHeadRow>
         }
     </HeaderContent>
     <RowTemplate>

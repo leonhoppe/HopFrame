@@ -11,8 +11,11 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     /// <inheritdoc/>
     public abstract Task<int> CountAsync(CancellationToken ct = default);
     
-    /// <inheritdoc cref="SearchGenericAsync"/>
+    /// <inheritdoc cref="SearchGenericAsync(string, int, int, Sorting, CancellationToken)"/>
     public abstract Task<SearchResult> SearchAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct = default);
+
+    /// <inheritdoc cref="SearchGenericAsync(IEnumerable{AdvancedSearchProperty}, int, int, Sorting, CancellationToken)"/>
+    public abstract Task<SearchResult> SearchAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct = default);
 
     /// <inheritdoc cref="CreateGenericAsync"/>
     public abstract Task CreateAsync(TModel entry, CancellationToken ct = default);
@@ -32,7 +35,12 @@ public abstract class HopFrameRepository<TModel> : IHopFrameRepository where TMo
     public async Task<SearchResult> SearchGenericAsync(string searchTerm, int page, int perPage, Sorting sorting, CancellationToken ct) {
         return await SearchAsync(searchTerm, page, perPage, sorting, ct);
     }
-    
+
+    /// <inheritdoc/>
+    public async Task<SearchResult> SearchGenericAsync(IEnumerable<AdvancedSearchProperty> properties, int page, int perPage, Sorting sorting, CancellationToken ct) {
+        return await SearchAsync(properties, page, perPage, sorting, ct);
+    }
+
     /// <inheritdoc/>
     public Task CreateGenericAsync(object entry, CancellationToken ct) {
         return CreateAsync((TModel)entry, ct);
