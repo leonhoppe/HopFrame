@@ -37,6 +37,7 @@
                                 Config="property"
                                 Variant="Variant.Filled"
                                 Value="@(GetPropertyValue(property))"
+                                Disabled="@(Mode == EditorMode.Creator ? !property.Creatable : !property.Editable)"
                                 ValueChanged="@(v => OnPropertyUpdated(property, v))"
                                 Error="@(ErrorMessages[property.Identifier])"/>
                         }

@@ -8,7 +8,7 @@
             ValueChanged="@(v => OnValueChanged(v.Value))"
             Label="@Config.DisplayName"
             Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
-            Disabled="@(!Config.Editable)"
+            Disabled="Disabled"
             Variant="Variant"
             Error="@(!string.IsNullOrWhiteSpace(Error))"
             @bind-ErrorText="Error"
@@ -23,7 +23,7 @@
             ValueChanged="@(v => OnValueChanged(v))"
             Label="@(Config.DisplayName + Config.PropertyType.HasFlag(PropertyType.Nullable))"
             Clearable="@(Config.PropertyType.HasFlag(PropertyType.Nullable))"
-            Disabled="@(!Config.Editable)"
+            Disabled="Disabled"
             Variant="Variant"
             Error="@(!string.IsNullOrWhiteSpace(Error))"
             @bind-ErrorText="Error">
@@ -81,7 +81,7 @@ else {
                 ValueChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
@@ -93,7 +93,7 @@ else {
                 Value="@((bool)(Value ?? false))"
                 ValueChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
             break;
@@ -110,7 +110,7 @@ else {
                         DateChanged="@(OnDateChanged)"
                         Label="Date"
                         Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                        Disabled="@(!Config.Editable)"
+                        Disabled="Disabled"
                         Variant="Variant"/>
 
                     <MudTimePicker
@@ -118,7 +118,7 @@ else {
                         TimeChanged="@(OnTimeChanged)"
                         Label="Time"
                         Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                        Disabled="@(!Config.Editable)"
+                        Disabled="Disabled"
                         Variant="Variant"/>
                 </MudStack>
             </MudField>
@@ -130,7 +130,7 @@ else {
                 DateChanged="@(OnDateChanged)"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
@@ -142,7 +142,7 @@ else {
                 TimeChanged="@(OnTimeChanged)"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
@@ -156,7 +156,7 @@ else {
                 InputType="InputType.Email"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
@@ -169,7 +169,7 @@ else {
                 InputType="@_passwordInputType"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Adornment="Adornment.End"
                 AdornmentIcon="@_passwordIcon"
@@ -186,7 +186,7 @@ else {
                 InputType="InputType.Telephone"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>
@@ -202,7 +202,7 @@ else {
                 SelectedValues="_selectedEnums"
                 Label="@Config.DisplayName"
                 Clearable="@((Config.PropertyType & (PropertyType.Nullable | PropertyType.List)) != 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error">
@@ -227,7 +227,7 @@ else {
                 ValueChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"
@@ -243,7 +243,7 @@ else {
                 ValueChanged="@(v => OnValueChanged(v))"
                 Label="@Config.DisplayName"
                 Required="@((Config.PropertyType & PropertyType.Nullable) == 0)"
-                Disabled="@(!Config.Editable)"
+                Disabled="Disabled"
                 Variant="Variant"
                 Error="@(!string.IsNullOrWhiteSpace(Error))"
                 @bind-ErrorText="Error"/>

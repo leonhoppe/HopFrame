@@ -24,6 +24,9 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
     [Parameter]
     public string? Error { get; set; }
 
+    [Parameter]
+    public bool Disabled { get; set; }
+
     private DateTime _date;
     private TimeSpan _time;
     private string? _formattedValue;

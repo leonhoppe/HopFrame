@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using System.Collections;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection.Metadata;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -90,6 +91,7 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
         
         var tracker = await context.AddAsync(entry, ct);
         await context.SaveChangesAsync(ct);
+        tracker.State = EntityState.Detached;
         context.ChangeTracker.Clear();
     }
 
@@ -185,7 +187,31 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
 
             var newValue = property.GetValue(entry);
 
-            property.SetValue(existing, newValue);
+            //property.SetValue(existing, newValue);
+            if (newValue is not null) {
+                var navEntityType = context.Model.FindEntityType(newValue.GetType());
+                var navKey = navEntityType?.FindPrimaryKey();
+
+                if (navKey is not null) {
+                    var navKeyValues = navKey.Properties
+                        .Select(p => p.PropertyInfo!.GetValue(newValue))
+                        .ToArray();
+
+                    var trackedEntity = context.ChangeTracker.Entries()
+                        .FirstOrDefault(e =>
+                            e.Metadata.ClrType == newValue.GetType() &&
+                            navKey.Properties
+                                .Select((p, i) => Equals(p.PropertyInfo!.GetValue(e.Entity), navKeyValues[i]))
+                                .All(x => x));
+
+                    if (trackedEntity is not null) {
+                        property.SetValue(existing, trackedEntity.Entity);
+                    } else {
+                        context.Attach(newValue);
+                        property.SetValue(existing, newValue);
+                    }
+                }
+            }
         }
 
         await context.SaveChangesAsync(ct);
@@ -195,6 +221,7 @@ internal class EfCoreRepository<TModel, TContext>(TContext context, IEntityAcces
     public override async Task DeleteAsync(TModel entry, CancellationToken ct = default) {
         context.Remove(entry);
         await context.SaveChangesAsync(ct);
+        context.ChangeTracker.Clear();
     }
 
     public async Task<TModel?> GetTrackedEntryAsync(object?[] keyValues, CancellationToken ct) {

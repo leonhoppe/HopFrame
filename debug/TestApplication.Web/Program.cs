@@ -40,7 +40,9 @@ builder.Services.AddHopFrame(config => {
 
                 return [];
             })
-            .Presort(ListSortDirection.Ascending);
+            .Presort(ListSortDirection.Ascending)
+            .Editable(false)
+            .Creatable(true);
 
         table.SetPreferredProperty(u => u.Email);
 
@@ -56,8 +58,11 @@ builder.Services.AddHopFrame(config => {
             .SetTypeRaw(PropertyType.Text | PropertyType.Nullable);
 
         table.Property(p => p.Sender)
-            .AsDropdown()
-            .SetTypeRaw(PropertyType.Text | PropertyType.Relation | PropertyType.Nullable);
+            .AsDropdown();
+
+        table.Property(p => p.SenderId)
+            .Listable(false)
+            .VisibleInEditor(false);
 
         table.SetCategory("General");
     });

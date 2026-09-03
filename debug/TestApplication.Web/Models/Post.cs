@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TestApplication.Web.Models;
 
 public class Post {
     [Key]
     public Guid Id { get; } = Guid.CreateVersion7();
-    
+
+    public Guid SenderId { get; set; }
+
+    [ForeignKey(nameof(SenderId))]
     public required User? Sender { get; set; }
     
     [MaxLength(5000)]
