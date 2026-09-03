@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.ComponentModel;
 using HopFrame.Core.Configuration;
-using HopFrame.Core.Repositories;
 using HopFrame.Core.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogService dialogs, IConfigAccessor configAccessor) : ComponentBase {
+public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogService dialogs, IConfigAccessor configAccessor, ISnackbar snackbar, ILogger<PropertyInput> logger) : ComponentBase {
     [Parameter]
     public object? Value { get; set; }
 
@@ -202,18 +202,24 @@ public partial class PropertyInput(IEntityAccessor entityAccessor, IDialogServic
     }
 
     private async Task<IEnumerable<RelationResult>> SearchInDropdown(string? value, CancellationToken ct) {
-        _relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
-        var repo = configAccessor.LoadRepository(_relationTable!);
-        IEnumerable<object> result;
+        try {
+            _relationTable = configAccessor.GetTableByIdentifier(Config.RelationTable!);
+            var repo = configAccessor.LoadRepository(_relationTable!);
+            IEnumerable<object> result;
 
-        if (!string.IsNullOrWhiteSpace(value)) {
-            var searchResult = await repo.SearchGenericAsync(value, 0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
-            result = searchResult.Result;
+            if (!string.IsNullOrWhiteSpace(value)) {
+                var searchResult = await repo.SearchGenericAsync(value, 0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
+                result = searchResult.Result;
+            }
+            else {
+                result = await repo.LoadPageGenericAsync(0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
+            }
+
+            return result.Select(r => new RelationResult(r, entityAccessor.FormatValue(r, Config) ?? "Something went wrong"));
+        } catch (Exception e) {
+            logger.LogError(e, "An error occured while trying to search through the relation table '{table}'", Config.RelationTable);
+            snackbar.Add($"An error occured", Severity.Error);
+            return Enumerable.Empty<RelationResult>();
         }
-        else {
-            result = await repo.LoadPageGenericAsync(0, Config.MaxDropdownItems, new(null, ListSortDirection.Ascending), ct);
-        }
-        
-        return result.Select(r => new RelationResult(r, entityAccessor.FormatValue(r, Config) ?? "Something went wrong"));
     }
 }

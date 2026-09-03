@@ -71,7 +71,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         }
         catch (Exception e) {
             logger.LogError(e, "An error occured while trying to add an entry to the table '{table}'", Table.DisplayName);
-            snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+            snackbar.Add($"An error occured", Severity.Error);
         }
     }
 
@@ -95,7 +95,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
         }
         catch (Exception e) {
             logger.LogError(e, "An error occured while trying to edit an entry on the table '{table}'", Table.DisplayName);
-            snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+            snackbar.Add($"An error occured", Severity.Error);
         }
     }
 
@@ -120,7 +120,7 @@ public partial class TablePage(IConfigAccessor accessor, NavigationManager navig
             }
             catch (Exception e) {
                 logger.LogError(e, "An error occured while trying to delete an entry on the table '{table}'", Table.DisplayName);
-                snackbar.Add($"An error occured: {e.Message}", Severity.Error);
+                snackbar.Add($"An error occured", Severity.Error);
             }
         }
     }

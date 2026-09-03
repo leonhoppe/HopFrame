@@ -8,7 +8,7 @@ using MudBlazor;
 
 namespace HopFrame.Web.Components.Components;
 
-public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor, ILogger<Table> logger, IEventEmitter events) : ComponentBase {
+public partial class Table(IEntityAccessor accessor, IConfigAccessor configAccessor, ISnackbar snackbar, ILogger<Table> logger) : ComponentBase {
     
     private readonly record struct TableEntry {
         public object Entry { get; init; }
@@ -110,44 +110,53 @@ public partial class Table(IEntityAccessor accessor, IConfigAccessor configAcces
     }
 
     private async Task<TableData<TableEntry>> ReloadTable(TableState state, CancellationToken ct) {
-        logger.LogDebug("Table reload was initiated for '{table}'", Config.DisplayName);
-        IEnumerable<object> entries;
-        int total;
+        try {
+            logger.LogDebug("Table reload was initiated for '{table}'", Config.DisplayName);
+            IEnumerable<object> entries;
+            int total;
 
-        var sort = new Sorting(null, ListSortDirection.Ascending);
-        if (_currentSort.HasValue) {
-            sort = new(_currentSort.Value.Key, _currentSort.Value.Value switch {
-                SortDirection.Ascending => ListSortDirection.Ascending,
-                SortDirection.Descending => ListSortDirection.Descending,
-                _ => ListSortDirection.Ascending
-            });
-            
-            logger.LogDebug("The new sort direction for table '{table}' is {sort} on property '{prop}'", Config.DisplayName, sort.Direction, sort.PropertyIdentifier);
+            var sort = new Sorting(null, ListSortDirection.Ascending);
+            if (_currentSort.HasValue) {
+                sort = new(_currentSort.Value.Key, _currentSort.Value.Value switch {
+                    SortDirection.Ascending => ListSortDirection.Ascending,
+                    SortDirection.Descending => ListSortDirection.Descending,
+                    _ => ListSortDirection.Ascending
+                });
+
+                logger.LogDebug("The new sort direction for table '{table}' is {sort} on property '{prop}'", Config.DisplayName, sort.Direction, sort.PropertyIdentifier);
+            }
+
+            if (string.IsNullOrWhiteSpace(_searchText)) {
+                entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, sort, ct);
+                total = await Repository.CountAsync(ct);
+                logger.LogDebug("A total of {total} entries were found for table {table}, displaying {amount} entries on page {page}", total, Config.DisplayName, state.PageSize, state.Page);
+            }
+            else {
+                var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, sort, ct);
+                entries = result.Result;
+                total = result.PageCount;
+                logger.LogDebug("A total of {total} entries were found for table {table} with search query '{search}', displaying {amount} entries on page {page}", total, Config.DisplayName, _searchText, state.PageSize, state.Page);
+            }
+
+            var data = entries.Select(e => new TableEntry {
+                Entry = e,
+                Columns = PrepareData(e)
+            }).ToArray();
+
+            logger.LogDebug("A total of {amount} entries were prepared to be displayed on table '{table}'", data.Length, Config.DisplayName);
+
+            return new TableData<TableEntry> {
+                TotalItems = total,
+                Items = data
+            };
+        } catch(Exception e) {
+            logger.LogError(e, "An error occured while trying to display the table '{table}'", Config.DisplayName);
+            snackbar.Add($"An error occured", Severity.Error);
+            return new() {
+                TotalItems = 0,
+                Items = Array.Empty<TableEntry>()
+            };
         }
-
-        if (string.IsNullOrWhiteSpace(_searchText)) {
-            entries = await Repository.LoadPageGenericAsync(state.Page, state.PageSize, sort, ct);
-            total = await Repository.CountAsync(ct);
-            logger.LogDebug("A total of {total} entries were found for table {table}, displaying {amount} entries on page {page}", total, Config.DisplayName, state.PageSize, state.Page);
-        }
-        else {
-            var result = await Repository.SearchGenericAsync(_searchText, state.Page, state.PageSize, sort, ct);
-            entries = result.Result;
-            total = result.PageCount;
-            logger.LogDebug("A total of {total} entries were found for table {table} with search query '{search}', displaying {amount} entries on page {page}", total, Config.DisplayName, _searchText, state.PageSize, state.Page);
-        }
-
-        var data = entries.Select(e => new TableEntry {
-            Entry = e,
-            Columns = PrepareData(e)
-        }).ToArray();
-        
-        logger.LogDebug("A total of {amount} entries were prepared to be displayed on table '{table}'", data.Length, Config.DisplayName);
-
-        return new TableData<TableEntry> {
-            TotalItems = total,
-            Items = data
-        };
     }
 
     private bool IsSelected(TableEntry entry) {
