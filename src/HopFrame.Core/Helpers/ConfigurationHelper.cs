@@ -33,6 +33,11 @@ internal static class ConfigurationHelper {
             foreach (var property in modelType.GetProperties()) {
                 config.Properties.Add(InitializeProperty(config, property.PropertyType, property.Name, property));
             }
+
+            config.KeyProperties = modelType.GetProperties()
+                .Where(p => p.GetCustomAttributes(true).OfType<KeyAttribute>().Any())
+                .Select(p => p.Name)
+                .ToArray();
         }
 
         return config;

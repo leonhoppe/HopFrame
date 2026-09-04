@@ -34,6 +34,9 @@ public class TableConfig {
     /// [GENERATED] The identifier of the property that should be displayed if the model is used as a relation
     public string? PreferredProperty { get; set; }
 
+    /// [GENERATED] The unique properties that identify an entry of the table
+    public string[] KeyProperties { get; set; }
+
     /// The claim the user needs to access the table
     public string? ViewClaim { get; set; }
 

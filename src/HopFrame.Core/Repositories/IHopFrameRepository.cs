@@ -76,4 +76,4 @@ public readonly record struct Sorting(string? PropertyIdentifier, ListSortDirect
 /// <param name="Equal">If set indicates that the property should be equal to this value</param>
 /// <param name="LessThan">If set indicates that the property should be less than this value</param>
 /// <param name="MoreThat">Is set indicates that the property should be more than this value</param>
-public readonly record struct AdvancedSearchProperty(string Identifier, object? Equal, object? LessThan, object? MoreThan);
+public readonly record struct AdvancedSearchProperty(string Identifier, object? Equal, object? LessThan, object? MoreThan, bool Exact = false);

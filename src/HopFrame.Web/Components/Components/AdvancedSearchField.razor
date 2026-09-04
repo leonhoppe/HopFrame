@@ -1,6 +1,6 @@
 ﻿@using HopFrame.Core.Configuration
 
-@if (Property.PropertyType.HasFlag(PropertyType.Relation)) {
+@if (Property.PropertyType.HasFlag(PropertyType.Relation) && CleanedType != PropertyType.List) {
     <MudAutocomplete T="RelationResult"
                      Label="@Property.DisplayName"
                      Margin="Margin.Dense"
@@ -45,10 +45,31 @@ else if (CleanedType == PropertyType.Enum) {
                 Style="@($"min-width: {MinWidth}px;")"
                 @bind-ErrorText="Error"
                 Error="@(Error is not null)"
-                ValueChanged="OnInputValueChanged">
+               ValueChanged="v => OnInputValueChanged(v, true)">
 
         @foreach (var value in Enum.GetValues(Property.Type)) {
             <MudSelectItem Value="value">@Enum.GetName(Property.Type, value)</MudSelectItem>
+        }
+
+    </MudSelect>
+}
+else if (Property.DropdownOptions is not null) {
+    <MudSelect T="object"
+               Label="@Property.DisplayName"
+               Margin="Margin.Dense"
+               Variant="Variant.Outlined"
+               Adornment="Adornment.Start"
+               AdornmentIcon="@(CurrentTypeIcon)"
+               IconSize="Size.Small"
+               Clearable="true"
+               FullWidth="true"
+               Style="@($"min-width: {MinWidth}px;")"
+               @bind-ErrorText="Error"
+               Error="@(Error is not null)"
+               ValueChanged="v => OnInputValueChanged(v, true)">
+
+        @foreach (var value in Property.DropdownOptions) {
+            <MudSelectItem Value="value">@entityAccessor.FormatValue(value, Property)</MudSelectItem>
         }
 
     </MudSelect>
@@ -63,14 +84,14 @@ else {
             Adornment="Adornment.Start"
             AdornmentIcon="@(CurrentTypeIcon)"
             IconSize="Size.Small"
-            OnAdornmentClick="@(GetAppliableTypes().Length > 1 ? ToggleCurrentType : null)"
+            OnAdornmentClick="@(GetAppliableTypes().Length > 1 ? ToggleCurrentType : null!)"
             Clearable="true"
             FullWidth="true"
             Style="@($"min-width: {MinWidth}px;")"
             @bind-ErrorText="Error"
             Error="@(Error is not null)"
             DebounceInterval="200"
-            OnDebounceIntervalElapsed="OnInputValueChanged" />
+            OnDebounceIntervalElapsed="v => OnInputValueChanged(v)" />
 
         @if (CurrentType == "<>") {
             <MudTextField

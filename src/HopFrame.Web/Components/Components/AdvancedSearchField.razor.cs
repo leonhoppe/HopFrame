@@ -39,6 +39,8 @@ public partial class AdvancedSearchField(IConfigAccessor configAccessor, IEntity
 
     private string? SecondaryError { get; set; }
 
+    private bool IsExact { get; set; }
+
     private async Task ToggleCurrentType() {
         var availableTypes = GetAppliableTypes();
         var currIndex = availableTypes.IndexOf(CurrentType);
@@ -85,7 +87,8 @@ public partial class AdvancedSearchField(IConfigAccessor configAccessor, IEntity
                 await OnValueChanged.InvokeAsync(new() {
                     Identifier = Property.Identifier,
                     LessThan = SecondaryValue,
-                    MoreThan = MainValue
+                    MoreThan = MainValue,
+                    Exact = IsExact
                 });
                 return;
             }
@@ -95,28 +98,32 @@ public partial class AdvancedSearchField(IConfigAccessor configAccessor, IEntity
             case "=":
                 await OnValueChanged.InvokeAsync(new() {
                     Identifier = Property.Identifier,
-                    Equal = MainValue
+                    Equal = MainValue,
+                    Exact = IsExact
                 });
                 return;
 
             case "<":
                 await OnValueChanged.InvokeAsync(new() {
                     Identifier = Property.Identifier,
-                    LessThan = MainValue
+                    LessThan = MainValue,
+                    Exact = IsExact
                 });
                 return;
 
             case ">":
                 await OnValueChanged.InvokeAsync(new() {
                     Identifier = Property.Identifier,
-                    MoreThan = MainValue
+                    MoreThan = MainValue,
+                    Exact = IsExact
                 });
                 return;
         }
     }
 
-    private async Task OnInputValueChanged(object? value) {
+    private async Task OnInputValueChanged(object? value, bool exact = false) {
         Error = null;
+        IsExact = exact;
 
         if (value is null || (value is string text && string.IsNullOrWhiteSpace(text))) {
             MainValue = null;
