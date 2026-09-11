@@ -79,7 +79,8 @@ public partial class Editor(IDialogService dialogs, IEntityAccessor accessor, IE
 
     private void Cancel() {
         IsVisible = false;
-        Completion.SetResult(null);
+        if (!Completion.Task.IsCompleted)
+            Completion.SetResult(null);
     }
 
     private IEnumerable<PropertyConfig> GetProperties() {
